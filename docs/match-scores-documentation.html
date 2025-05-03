@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Match Scores API Documentation</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <h1 id="match-scores-api-documentation">Match Scores API Documentation</h1>
+<p>The Match Scores API provides endpoints for recording, retrieving, and managing match scores for robotics competitions. The system supports automated scoring calculation, winner determination, and tournament statistics tracking.</p>
+<h2 id="api-endpoints">API Endpoints</h2>
+<h3 id="1-create-match-scores">1. Create Match Scores</h3>
+<p>Records scores for a completed match, calculates final scores with team count multipliers, determines the winning alliance, and updates team statistics.</p>
+<p><strong>Endpoint:</strong> <code>POST /match-scores</code></p>
+<p><strong>Authorization:</strong> Admin or Referee role required</p>
+<p><strong>Request Body:</strong></p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;matchId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;cltz0982v0001g8mbadcd1234&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;redAutoScore&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">45</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;redDriveScore&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">65</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;redTeamCount&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">3</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;redMultiplier&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1.75</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;blueAutoScore&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">40</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;blueDriveScore&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">60</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;blueTeamCount&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">3</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;blueMultiplier&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1.75</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;redGameElements&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;highGoal&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">4</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;midGoal&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">5</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;lowGoal&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">2</span>
+  <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;blueGameElements&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;highGoal&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">3</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;midGoal&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">4</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;lowGoal&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">3</span>
+  <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;scoreDetails&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;penalties&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+      <span class="hljs-attr">&quot;red&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">0</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;blue&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">5</span>
+    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;specialScoring&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+      <span class="hljs-attr">&quot;endgameClimb&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+        <span class="hljs-attr">&quot;red&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">15</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;blue&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">10</span>
+      <span class="hljs-punctuation">}</span>
+    <span class="hljs-punctuation">}</span>
+  <span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<p><strong>Response:</strong></p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;cltzab82v0001g8mbadef5678&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;matchId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;cltz0982v0001g8mbadcd1234&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;redAutoScore&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">45</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;redDriveScore&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">65</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;redTotalScore&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">193</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;redTeamCount&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">3</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;redMultiplier&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1.75</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;blueAutoScore&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">40</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;blueDriveScore&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">60</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;blueTotalScore&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">175</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;blueTeamCount&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">3</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;blueMultiplier&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1.75</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;redGameElements&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;highGoal&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">4</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;midGoal&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">5</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;lowGoal&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">2</span>
+  <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;blueGameElements&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;highGoal&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">3</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;midGoal&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">4</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;lowGoal&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">3</span>
+  <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;scoreDetails&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;penalties&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+      <span class="hljs-attr">&quot;red&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">0</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;blue&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">5</span>
+    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;specialScoring&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+      <span class="hljs-attr">&quot;endgameClimb&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+        <span class="hljs-attr">&quot;red&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">15</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;blue&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">10</span>
+      <span class="hljs-punctuation">}</span>
+    <span class="hljs-punctuation">}</span>
+  <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;createdAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;2025-04-27T15:45:23.456Z&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;updatedAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;2025-04-27T15:45:23.456Z&quot;</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h3 id="2-get-all-match-scores">2. Get All Match Scores</h3>
+<p>Retrieves all match scores in the system.</p>
+<p><strong>Endpoint:</strong> <code>GET /match-scores</code></p>
+<p><strong>Authorization:</strong> Public</p>
+<p><strong>Response:</strong></p>
+<pre><code class="language-json"><span class="hljs-punctuation">[</span>
+  <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;cltzab82v0001g8mbadef5678&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;matchId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;cltz0982v0001g8mbadcd1234&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;redAutoScore&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">45</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;redDriveScore&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">65</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;redTotalScore&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">193</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;redTeamCount&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">3</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;redMultiplier&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1.75</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;blueAutoScore&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">40</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;blueDriveScore&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">60</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;blueTotalScore&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">175</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;blueTeamCount&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">3</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;blueMultiplier&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1.75</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;redGameElements&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+      <span class="hljs-attr">&quot;highGoal&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">4</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;midGoal&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">5</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;lowGoal&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">2</span>
+    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;blueGameElements&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+      <span class="hljs-attr">&quot;highGoal&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">3</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;midGoal&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">4</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;lowGoal&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">3</span>
+    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;scoreDetails&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+      <span class="hljs-attr">&quot;penalties&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+        <span class="hljs-attr">&quot;red&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">0</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;blue&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">5</span>
+      <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;specialScoring&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+        <span class="hljs-attr">&quot;endgameClimb&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+          <span class="hljs-attr">&quot;red&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">15</span><span class="hljs-punctuation">,</span>
+          <span class="hljs-attr">&quot;blue&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">10</span>
+        <span class="hljs-punctuation">}</span>
+      <span class="hljs-punctuation">}</span>
+    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;match&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+      <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;cltz0982v0001g8mbadcd1234&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;matchNumber&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">12</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;status&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;COMPLETED&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;stage&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+        <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Qualification Rounds&quot;</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;tournament&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+          <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Regional Championship 2025&quot;</span>
+        <span class="hljs-punctuation">}</span>
+      <span class="hljs-punctuation">}</span>
+    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;createdAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;2025-04-27T15:45:23.456Z&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;updatedAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;2025-04-27T15:45:23.456Z&quot;</span>
+  <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-comment">// More match scores...</span>
+<span class="hljs-punctuation">]</span>
+</code></pre>
+<h3 id="3-get-match-scores-by-id">3. Get Match Scores by ID</h3>
+<p>Retrieves a specific match score by its ID.</p>
+<p><strong>Endpoint:</strong> <code>GET /match-scores/:id</code></p>
+<p><strong>Authorization:</strong> Public</p>
+<p><strong>URL Parameters:</strong></p>
+<ul>
+<li><code>id</code>: ID of the match scores to retrieve</li>
+</ul>
+<p><strong>Response:</strong></p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;cltzab82v0001g8mbadef5678&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;matchId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;cltz0982v0001g8mbadcd1234&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;redAutoScore&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">45</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;redDriveScore&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">65</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;redTotalScore&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">193</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;redTeamCount&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">3</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;redMultiplier&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1.75</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;blueAutoScore&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">40</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;blueDriveScore&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">60</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;blueTotalScore&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">175</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;blueTeamCount&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">3</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;blueMultiplier&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1.75</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;redGameElements&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;highGoal&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">4</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;midGoal&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">5</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;lowGoal&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">2</span>
+  <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;blueGameElements&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;highGoal&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">3</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;midGoal&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">4</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;lowGoal&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">3</span>
+  <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;scoreDetails&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;penalties&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+      <span class="hljs-attr">&quot;red&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">0</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;blue&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">5</span>
+    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;specialScoring&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+      <span class="hljs-attr">&quot;endgameClimb&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+        <span class="hljs-attr">&quot;red&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">15</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;blue&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">10</span>
+      <span class="hljs-punctuation">}</span>
+    <span class="hljs-punctuation">}</span>
+  <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;match&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;cltz0982v0001g8mbadcd1234&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;matchNumber&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">12</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;status&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;COMPLETED&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;alliances&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+      <span class="hljs-punctuation">{</span>
+        <span class="hljs-attr">&quot;color&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;RED&quot;</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;teamAlliances&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+          <span class="hljs-punctuation">{</span>
+            <span class="hljs-attr">&quot;teamId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;cltya12340001g8mb12345&quot;</span><span class="hljs-punctuation">,</span>
+            <span class="hljs-attr">&quot;stationPosition&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span>
+            <span class="hljs-attr">&quot;team&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+              <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;cltya12340001g8mb12345&quot;</span><span class="hljs-punctuation">,</span>
+              <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Robotic Eagles&quot;</span><span class="hljs-punctuation">,</span>
+              <span class="hljs-attr">&quot;teamNumber&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;1234&quot;</span>
+            <span class="hljs-punctuation">}</span>
+          <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+          <span class="hljs-comment">// More teams...</span>
+        <span class="hljs-punctuation">]</span>
+      <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-punctuation">{</span>
+        <span class="hljs-attr">&quot;color&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;BLUE&quot;</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;teamAlliances&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+          <span class="hljs-comment">// Teams...</span>
+        <span class="hljs-punctuation">]</span>
+      <span class="hljs-punctuation">}</span>
+    <span class="hljs-punctuation">]</span>
+  <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;createdAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;2025-04-27T15:45:23.456Z&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;updatedAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;2025-04-27T15:45:23.456Z&quot;</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h3 id="4-get-match-scores-by-match-id">4. Get Match Scores by Match ID</h3>
+<p>Retrieves the scores for a specific match.</p>
+<p><strong>Endpoint:</strong> <code>GET /match-scores/match/:matchId</code></p>
+<p><strong>Authorization:</strong> Public</p>
+<p><strong>URL Parameters:</strong></p>
+<ul>
+<li><code>matchId</code>: ID of the match to retrieve scores for</li>
+</ul>
+<p><strong>Response:</strong>
+Same as the &quot;Get Match Scores by ID&quot; endpoint.</p>
+<h3 id="5-update-match-scores">5. Update Match Scores</h3>
+<p>Updates an existing match score, recalculates totals, and updates team statistics.</p>
+<p><strong>Endpoint:</strong> <code>PATCH /match-scores/:id</code></p>
+<p><strong>Authorization:</strong> Admin or Referee role required</p>
+<p><strong>URL Parameters:</strong></p>
+<ul>
+<li><code>id</code>: ID of the match scores to update</li>
+</ul>
+<p><strong>Request Body:</strong></p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;redAutoScore&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">50</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;redDriveScore&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">70</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;redGameElements&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;highGoal&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">5</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;midGoal&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">5</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;lowGoal&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">2</span>
+  <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;scoreDetails&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;penalties&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+      <span class="hljs-attr">&quot;red&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">0</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;blue&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">10</span>
+    <span class="hljs-punctuation">}</span>
+  <span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<p><strong>Response:</strong></p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;cltzab82v0001g8mbadef5678&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;matchId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;cltz0982v0001g8mbadcd1234&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;redAutoScore&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">50</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;redDriveScore&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">70</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;redTotalScore&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">210</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;redTeamCount&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">3</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;redMultiplier&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1.75</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;blueAutoScore&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">40</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;blueDriveScore&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">60</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;blueTotalScore&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">175</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;blueTeamCount&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">3</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;blueMultiplier&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1.75</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;redGameElements&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;highGoal&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">5</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;midGoal&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">5</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;lowGoal&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">2</span>
+  <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;blueGameElements&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;highGoal&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">3</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;midGoal&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">4</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;lowGoal&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">3</span>
+  <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;scoreDetails&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;penalties&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+      <span class="hljs-attr">&quot;red&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">0</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;blue&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">10</span>
+    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;specialScoring&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+      <span class="hljs-attr">&quot;endgameClimb&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+        <span class="hljs-attr">&quot;red&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">15</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;blue&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">10</span>
+      <span class="hljs-punctuation">}</span>
+    <span class="hljs-punctuation">}</span>
+  <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;updatedAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;2025-04-27T16:12:45.789Z&quot;</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h3 id="6-delete-match-scores">6. Delete Match Scores</h3>
+<p>Deletes a match score record. Note that this will not update team statistics.</p>
+<p><strong>Endpoint:</strong> <code>DELETE /match-scores/:id</code></p>
+<p><strong>Authorization:</strong> Admin role required</p>
+<p><strong>URL Parameters:</strong></p>
+<ul>
+<li><code>id</code>: ID of the match scores to delete</li>
+</ul>
+<p><strong>Response:</strong></p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;cltzab82v0001g8mbadef5678&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;matchId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;cltz0982v0001g8mbadcd1234&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;redAutoScore&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">50</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;redDriveScore&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">70</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;redTotalScore&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">210</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;blueTotalScore&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">175</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;deletedAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;2025-04-27T16:30:12.345Z&quot;</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h2 id="team-count-multipliers">Team Count Multipliers</h2>
+<p>The scoring system includes team count multipliers to ensure fairness when alliances have different numbers of teams (e.g., if a team is absent). Multipliers are applied as follows:</p>
+<table>
+<thead>
+<tr>
+<th>Team Count</th>
+<th>Multiplier</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>1.25</td>
+</tr>
+<tr>
+<td>2</td>
+<td>1.5</td>
+</tr>
+<tr>
+<td>3</td>
+<td>1.75</td>
+</tr>
+<tr>
+<td>4</td>
+<td>2.0</td>
+</tr>
+<tr>
+<td>Other</td>
+<td>1.0</td>
+</tr>
+</tbody>
+</table>
+<h2 id="score-calculation">Score Calculation</h2>
+<p>Total scores are calculated using the following formula:</p>
+<pre><code>TotalScore = Round((AutoScore + DriveScore) * Multiplier)
+</code></pre>
+<h2 id="team-statistics">Team Statistics</h2>
+<p>When match scores are recorded or updated, team statistics are automatically calculated and updated. The system tracks:</p>
+<ul>
+<li>Wins</li>
+<li>Losses</li>
+<li>Ties</li>
+<li>Total matches played</li>
+<li>Association with tournament and stage</li>
+</ul>
+<h2 id="usage-examples">Usage Examples</h2>
+<h3 id="example-1-recording-match-scores-in-a-frontend-application">Example 1: Recording Match Scores in a Frontend Application</h3>
+<pre><code class="language-javascript"><span class="hljs-comment">// After a match is completed, record the scores</span>
+<span class="hljs-keyword">async</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">submitMatchScores</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">const</span> scoreData = {
+    <span class="hljs-attr">matchId</span>: <span class="hljs-string">&quot;cltz0982v0001g8mbadcd1234&quot;</span>,
+    <span class="hljs-attr">redAutoScore</span>: <span class="hljs-built_in">parseInt</span>(<span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&#x27;redAuto&#x27;</span>).<span class="hljs-property">value</span>),
+    <span class="hljs-attr">redDriveScore</span>: <span class="hljs-built_in">parseInt</span>(<span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&#x27;redDrive&#x27;</span>).<span class="hljs-property">value</span>),
+    <span class="hljs-attr">redTeamCount</span>: <span class="hljs-built_in">parseInt</span>(<span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&#x27;redTeamCount&#x27;</span>).<span class="hljs-property">value</span>),
+    <span class="hljs-attr">blueAutoScore</span>: <span class="hljs-built_in">parseInt</span>(<span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&#x27;blueAuto&#x27;</span>).<span class="hljs-property">value</span>),
+    <span class="hljs-attr">blueDriveScore</span>: <span class="hljs-built_in">parseInt</span>(<span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&#x27;blueDrive&#x27;</span>).<span class="hljs-property">value</span>),
+    <span class="hljs-attr">blueTeamCount</span>: <span class="hljs-built_in">parseInt</span>(<span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&#x27;blueTeamCount&#x27;</span>).<span class="hljs-property">value</span>),
+    <span class="hljs-attr">redGameElements</span>: {
+      <span class="hljs-attr">highGoal</span>: <span class="hljs-built_in">parseInt</span>(<span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&#x27;redHigh&#x27;</span>).<span class="hljs-property">value</span>),
+      <span class="hljs-attr">midGoal</span>: <span class="hljs-built_in">parseInt</span>(<span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&#x27;redMid&#x27;</span>).<span class="hljs-property">value</span>),
+      <span class="hljs-attr">lowGoal</span>: <span class="hljs-built_in">parseInt</span>(<span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&#x27;redLow&#x27;</span>).<span class="hljs-property">value</span>)
+    },
+    <span class="hljs-attr">blueGameElements</span>: {
+      <span class="hljs-attr">highGoal</span>: <span class="hljs-built_in">parseInt</span>(<span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&#x27;blueHigh&#x27;</span>).<span class="hljs-property">value</span>),
+      <span class="hljs-attr">midGoal</span>: <span class="hljs-built_in">parseInt</span>(<span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&#x27;blueMid&#x27;</span>).<span class="hljs-property">value</span>),
+      <span class="hljs-attr">lowGoal</span>: <span class="hljs-built_in">parseInt</span>(<span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&#x27;blueLow&#x27;</span>).<span class="hljs-property">value</span>)
+    },
+    <span class="hljs-attr">scoreDetails</span>: {
+      <span class="hljs-attr">penalties</span>: {
+        <span class="hljs-attr">red</span>: <span class="hljs-built_in">parseInt</span>(<span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&#x27;redPenalties&#x27;</span>).<span class="hljs-property">value</span>),
+        <span class="hljs-attr">blue</span>: <span class="hljs-built_in">parseInt</span>(<span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&#x27;bluePenalties&#x27;</span>).<span class="hljs-property">value</span>)
+      }
+    }
+  };
+
+  <span class="hljs-keyword">try</span> {
+    <span class="hljs-keyword">const</span> response = <span class="hljs-keyword">await</span> <span class="hljs-title function_">fetch</span>(<span class="hljs-string">&#x27;/api/match-scores&#x27;</span>, {
+      <span class="hljs-attr">method</span>: <span class="hljs-string">&#x27;POST&#x27;</span>,
+      <span class="hljs-attr">headers</span>: {
+        <span class="hljs-string">&#x27;Content-Type&#x27;</span>: <span class="hljs-string">&#x27;application/json&#x27;</span>,
+        <span class="hljs-string">&#x27;Authorization&#x27;</span>: <span class="hljs-string">`Bearer <span class="hljs-subst">${authToken}</span>`</span>
+      },
+      <span class="hljs-attr">body</span>: <span class="hljs-title class_">JSON</span>.<span class="hljs-title function_">stringify</span>(scoreData)
+    });
+
+    <span class="hljs-keyword">if</span> (!response.<span class="hljs-property">ok</span>) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Error</span>(<span class="hljs-string">&#x27;Failed to submit scores&#x27;</span>);
+    }
+
+    <span class="hljs-keyword">const</span> result = <span class="hljs-keyword">await</span> response.<span class="hljs-title function_">json</span>();
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;Match scores recorded:&#x27;</span>, result);
+    
+    <span class="hljs-comment">// Update UI to show the winning alliance</span>
+    <span class="hljs-keyword">const</span> winningAlliance = result.<span class="hljs-property">redTotalScore</span> &gt; result.<span class="hljs-property">blueTotalScore</span> ? <span class="hljs-string">&#x27;RED&#x27;</span> :
+      result.<span class="hljs-property">blueTotalScore</span> &gt; result.<span class="hljs-property">redTotalScore</span> ? <span class="hljs-string">&#x27;BLUE&#x27;</span> : <span class="hljs-string">&#x27;TIE&#x27;</span>;
+    <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&#x27;matchResult&#x27;</span>).<span class="hljs-property">textContent</span> = <span class="hljs-string">`Winner: <span class="hljs-subst">${winningAlliance}</span>`</span>;
+    
+    <span class="hljs-comment">// Redirect to match list</span>
+    <span class="hljs-variable language_">window</span>.<span class="hljs-property">location</span>.<span class="hljs-property">href</span> = <span class="hljs-string">&#x27;/matches&#x27;</span>;
+  } <span class="hljs-keyword">catch</span> (error) {
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">error</span>(<span class="hljs-string">&#x27;Error submitting scores:&#x27;</span>, error);
+    <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&#x27;errorMessage&#x27;</span>).<span class="hljs-property">textContent</span> = error.<span class="hljs-property">message</span>;
+  }
+}
+</code></pre>
+<h3 id="example-2-using-curl-for-api-testing">Example 2: Using cURL for API Testing</h3>
+<ol>
+<li>
+<p>Create Match Scores:</p>
+<pre><code class="language-bash">curl -X POST http://localhost:3000/match-scores \
+  -H <span class="hljs-string">&quot;Content-Type: application/json&quot;</span> \
+  -H <span class="hljs-string">&quot;Authorization: Bearer YOUR_TOKEN&quot;</span> \
+  -d <span class="hljs-string">&#x27;{
+    &quot;matchId&quot;: &quot;cltz0982v0001g8mbadcd1234&quot;,
+    &quot;redAutoScore&quot;: 45,
+    &quot;redDriveScore&quot;: 65,
+    &quot;redTeamCount&quot;: 3,
+    &quot;blueAutoScore&quot;: 40,
+    &quot;blueDriveScore&quot;: 60,
+    &quot;blueTeamCount&quot;: 3,
+    &quot;redGameElements&quot;: {
+      &quot;highGoal&quot;: 4,
+      &quot;midGoal&quot;: 5,
+      &quot;lowGoal&quot;: 2
+    },
+    &quot;blueGameElements&quot;: {
+      &quot;highGoal&quot;: 3,
+      &quot;midGoal&quot;: 4,
+      &quot;lowGoal&quot;: 3
+    }
+  }&#x27;</span>
+</code></pre>
+</li>
+<li>
+<p>Get All Match Scores:</p>
+<pre><code class="language-bash">curl -X GET http://localhost:3000/match-scores
+</code></pre>
+</li>
+<li>
+<p>Get Match Scores by ID:</p>
+<pre><code class="language-bash">curl -X GET http://localhost:3000/match-scores/cltzab82v0001g8mbadef5678
+</code></pre>
+</li>
+<li>
+<p>Get Match Scores by Match ID:</p>
+<pre><code class="language-bash">curl -X GET http://localhost:3000/match-scores/match/cltz0982v0001g8mbadcd1234
+</code></pre>
+</li>
+<li>
+<p>Update Match Scores:</p>
+<pre><code class="language-bash">curl -X PATCH http://localhost:3000/match-scores/cltzab82v0001g8mbadef5678 \
+  -H <span class="hljs-string">&quot;Content-Type: application/json&quot;</span> \
+  -H <span class="hljs-string">&quot;Authorization: Bearer YOUR_TOKEN&quot;</span> \
+  -d <span class="hljs-string">&#x27;{
+    &quot;redAutoScore&quot;: 50,
+    &quot;redDriveScore&quot;: 70,
+    &quot;redGameElements&quot;: {
+      &quot;highGoal&quot;: 5,
+      &quot;midGoal&quot;: 5,
+      &quot;lowGoal&quot;: 2
+    }
+  }&#x27;</span>
+</code></pre>
+</li>
+<li>
+<p>Delete Match Scores:</p>
+<pre><code class="language-bash">curl -X DELETE http://localhost:3000/match-scores/cltzab82v0001g8mbadef5678 \
+  -H <span class="hljs-string">&quot;Authorization: Bearer YOUR_TOKEN&quot;</span>
+</code></pre>
+</li>
+</ol>
+<h3 id="example-3-displaying-match-results">Example 3: Displaying Match Results</h3>
+<pre><code class="language-javascript"><span class="hljs-comment">// Fetch and display match results for a tournament</span>
+<span class="hljs-keyword">async</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">loadTournamentResults</span>(<span class="hljs-params">tournamentId</span>) {
+  <span class="hljs-keyword">try</span> {
+    <span class="hljs-comment">// Get all matches for the tournament</span>
+    <span class="hljs-keyword">const</span> matchesResponse = <span class="hljs-keyword">await</span> <span class="hljs-title function_">fetch</span>(<span class="hljs-string">`/api/tournaments/<span class="hljs-subst">${tournamentId}</span>/matches`</span>);
+    <span class="hljs-keyword">const</span> matches = <span class="hljs-keyword">await</span> matchesResponse.<span class="hljs-title function_">json</span>();
+    
+    <span class="hljs-comment">// Get scores for all completed matches</span>
+    <span class="hljs-keyword">const</span> completedMatches = matches.<span class="hljs-title function_">filter</span>(<span class="hljs-function"><span class="hljs-params">match</span> =&gt;</span> match.<span class="hljs-property">status</span> === <span class="hljs-string">&#x27;COMPLETED&#x27;</span>);
+    <span class="hljs-keyword">const</span> matchResults = <span class="hljs-keyword">await</span> <span class="hljs-title class_">Promise</span>.<span class="hljs-title function_">all</span>(
+      completedMatches.<span class="hljs-title function_">map</span>(<span class="hljs-keyword">async</span> match =&gt; {
+        <span class="hljs-keyword">try</span> {
+          <span class="hljs-keyword">const</span> scoreResponse = <span class="hljs-keyword">await</span> <span class="hljs-title function_">fetch</span>(<span class="hljs-string">`/api/match-scores/match/<span class="hljs-subst">${match.id}</span>`</span>);
+          <span class="hljs-keyword">const</span> scoreData = <span class="hljs-keyword">await</span> scoreResponse.<span class="hljs-title function_">json</span>();
+          
+          <span class="hljs-keyword">return</span> {
+            <span class="hljs-attr">matchNumber</span>: match.<span class="hljs-property">matchNumber</span>,
+            <span class="hljs-attr">round</span>: match.<span class="hljs-property">roundNumber</span>,
+            <span class="hljs-attr">stageName</span>: match.<span class="hljs-property">stage</span>.<span class="hljs-property">name</span>,
+            <span class="hljs-attr">redTeams</span>: match.<span class="hljs-property">alliances</span>.<span class="hljs-title function_">find</span>(<span class="hljs-function"><span class="hljs-params">a</span> =&gt;</span> a.<span class="hljs-property">color</span> === <span class="hljs-string">&#x27;RED&#x27;</span>).<span class="hljs-property">teamAlliances</span>.<span class="hljs-title function_">map</span>(<span class="hljs-function"><span class="hljs-params">ta</span> =&gt;</span> ta.<span class="hljs-property">team</span>.<span class="hljs-property">teamNumber</span>).<span class="hljs-title function_">join</span>(<span class="hljs-string">&#x27;, &#x27;</span>),
+            <span class="hljs-attr">blueTeams</span>: match.<span class="hljs-property">alliances</span>.<span class="hljs-title function_">find</span>(<span class="hljs-function"><span class="hljs-params">a</span> =&gt;</span> a.<span class="hljs-property">color</span> === <span class="hljs-string">&#x27;BLUE&#x27;</span>).<span class="hljs-property">teamAlliances</span>.<span class="hljs-title function_">map</span>(<span class="hljs-function"><span class="hljs-params">ta</span> =&gt;</span> ta.<span class="hljs-property">team</span>.<span class="hljs-property">teamNumber</span>).<span class="hljs-title function_">join</span>(<span class="hljs-string">&#x27;, &#x27;</span>),
+            <span class="hljs-attr">redScore</span>: scoreData.<span class="hljs-property">redTotalScore</span>,
+            <span class="hljs-attr">blueScore</span>: scoreData.<span class="hljs-property">blueTotalScore</span>,
+            <span class="hljs-attr">winner</span>: scoreData.<span class="hljs-property">redTotalScore</span> &gt; scoreData.<span class="hljs-property">blueTotalScore</span> ? <span class="hljs-string">&#x27;RED&#x27;</span> : 
+                   scoreData.<span class="hljs-property">blueTotalScore</span> &gt; scoreData.<span class="hljs-property">redTotalScore</span> ? <span class="hljs-string">&#x27;BLUE&#x27;</span> : <span class="hljs-string">&#x27;TIE&#x27;</span>
+          };
+        } <span class="hljs-keyword">catch</span> (err) {
+          <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">error</span>(<span class="hljs-string">`Error fetching scores for match <span class="hljs-subst">${match.id}</span>:`</span>, err);
+          <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
+        }
+      })
+    );
+    
+    <span class="hljs-comment">// Filter out any null results from errors</span>
+    <span class="hljs-keyword">const</span> validResults = matchResults.<span class="hljs-title function_">filter</span>(<span class="hljs-function"><span class="hljs-params">result</span> =&gt;</span> result !== <span class="hljs-literal">null</span>);
+    
+    <span class="hljs-comment">// Display the results in a table</span>
+    <span class="hljs-keyword">const</span> tableBody = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&#x27;resultsTable&#x27;</span>);
+    tableBody.<span class="hljs-property">innerHTML</span> = <span class="hljs-string">&#x27;&#x27;</span>;
+    
+    validResults.<span class="hljs-title function_">forEach</span>(<span class="hljs-function"><span class="hljs-params">result</span> =&gt;</span> {
+      <span class="hljs-keyword">const</span> row = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">createElement</span>(<span class="hljs-string">&#x27;tr&#x27;</span>);
+      row.<span class="hljs-property">innerHTML</span> = <span class="hljs-string">`
+        &lt;td&gt;<span class="hljs-subst">${result.matchNumber}</span>&lt;/td&gt;
+        &lt;td&gt;<span class="hljs-subst">${result.round}</span>&lt;/td&gt;
+        &lt;td&gt;<span class="hljs-subst">${result.stageName}</span>&lt;/td&gt;
+        &lt;td&gt;<span class="hljs-subst">${result.redTeams}</span>&lt;/td&gt;
+        &lt;td&gt;<span class="hljs-subst">${result.blueTeams}</span>&lt;/td&gt;
+        &lt;td&gt;<span class="hljs-subst">${result.redScore}</span>&lt;/td&gt;
+        &lt;td&gt;<span class="hljs-subst">${result.blueScore}</span>&lt;/td&gt;
+        &lt;td class=&quot;<span class="hljs-subst">${result.winner.toLowerCase()}</span>-winner&quot;&gt;<span class="hljs-subst">${result.winner}</span>&lt;/td&gt;
+      `</span>;
+      tableBody.<span class="hljs-title function_">appendChild</span>(row);
+    });
+    
+  } <span class="hljs-keyword">catch</span> (error) {
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">error</span>(<span class="hljs-string">&#x27;Error loading tournament results:&#x27;</span>, error);
+    <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&#x27;errorMessage&#x27;</span>).<span class="hljs-property">textContent</span> = <span class="hljs-string">&#x27;Failed to load tournament results&#x27;</span>;
+  }
+}
+</code></pre>
+<h2 id="tournament-statistics-integration">Tournament Statistics Integration</h2>
+<p>The Match Scores API automatically updates team statistics for the tournament when scores are recorded or updated. This enables real-time rankings and team performance tracking.</p>
+<p>Key statistics features:</p>
+<ol>
+<li>
+<p><strong>Automatic Win/Loss/Tie Tracking</strong>: Each team's record is updated when match scores are recorded.</p>
+</li>
+<li>
+<p><strong>Tournament Context</strong>: Statistics are associated with the specific tournament and can be viewed in context.</p>
+</li>
+<li>
+<p><strong>Support for Different Match Types</strong>: The system handles qualification, Swiss-style, and playoff matches.</p>
+</li>
+<li>
+<p><strong>Recalculation on Updates</strong>: If scores are modified, team statistics are automatically recalculated.</p>
+</li>
+</ol>
+<p>See the Teams API and Tournament API documentation for information on how to retrieve team statistics and rankings.</p>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+            
+        </body>
+        </html>

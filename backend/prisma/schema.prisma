@@ -1,0 +1,339 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  HEAD_REFEREE
+  ALLIANCE_REFEREE
+  COMMON
+}
+
+enum StageType {
+  SWISS
+  PLAYOFF
+  FINAL
+}
+
+enum CardType {
+  NONE
+  YELLOW
+  RED
+}
+
+enum RefereeRole {
+  HEAD_REFEREE
+  ALLIANCE_REFEREE
+}
+
+
+
+model User {
+  id              String           @id @default(uuid())
+  username        String           @unique
+  password        String
+  role            UserRole
+  email           String?          @unique
+  gender          Boolean?
+  DateOfBirth     DateTime?
+  phoneNumber     String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  createdBy       User?            @relation("CreatedUsers", fields: [createdById], references: [id])
+  createdById     String?
+  createdUsers    User[]           @relation("CreatedUsers")
+  tournaments     Tournament[]
+  scoredMatches   Match[]          @relation("ScoredBy")
+  allianceRefFor  AllianceScoring[] @relation("AllianceReferee")
+  matchReferees   MatchReferee[]   // New relation for match referees
+}
+
+model Tournament {
+  id           String     @id @default(uuid())
+  name         String
+  description  String?
+  startDate    DateTime
+  endDate      DateTime
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  adminId      String
+  admin        User       @relation(fields: [adminId], references: [id])
+  stages       Stage[]
+  teams        Team[]     // Added teams relationship
+  teamStats    TeamStats[] // New relation to track team statistics
+}
+
+model Stage {
+  id           String    @id @default(uuid())
+  name         String
+  type         StageType
+  startDate    DateTime
+  endDate      DateTime
+  tournamentId String
+  tournament   Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  matches      Match[]
+  teamStats    TeamStats[] // Added relation field for TeamStats
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model Match {
+  id            String    @id @default(uuid())
+  matchNumber   Int
+  roundNumber   Int?      // The round number this match belongs to
+  status        String    @default("PENDING") // PENDING, IN_PROGRESS, COMPLETED
+  startTime     DateTime? // Full timestamp with hour-minute precision
+  scheduledTime DateTime? // New field for the scheduled time with hour-minute precision
+  endTime       DateTime? // Full timestamp with hour-minute precision
+  duration      Int?      // Duration in minutes
+  winningAlliance String?  // "RED" or "BLUE" - indicates which alliance won
+  stageId       String
+  stage         Stage     @relation(fields: [stageId], references: [id], onDelete: Cascade)
+  alliances     Alliance[]
+  scoredById    String?
+  scoredBy      User?     @relation("ScoredBy", fields: [scoredById], references: [id])
+  referees      MatchReferee[] // New relation for match referees
+  matchScores   MatchScores?
+  matchControl  MatchControl? // Optional relation to match control for display state
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model MatchReferee {
+  id        String      @id @default(uuid())
+  matchId   String
+  match     Match       @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User        @relation(fields: [userId], references: [id])
+  role      RefereeRole // HEAD_REFEREE or ALLIANCE_REFEREE
+  position  String?     // Optional position identifier (e.g. "RED1", "BLUE2")
+  createdAt DateTime    @default(now()) 
+  updatedAt DateTime    @updatedAt
+
+  @@unique([matchId, userId])
+  @@index([matchId])
+  @@index([userId])
+}
+
+model Alliance {
+  id            String    @id @default(uuid())
+  color         String    // e.g., "RED", "BLUE"
+  score         Int       @default(0)
+  matchId       String
+  match         Match     @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  teamAlliances TeamAlliance[]
+  allianceScoring AllianceScoring?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model AllianceScoring {
+  id            String    @id @default(uuid())
+  allianceId    String    @unique
+  alliance      Alliance  @relation(fields: [allianceId], references: [id], onDelete: Cascade)
+  refereeId     String?
+  referee       User?     @relation("AllianceReferee", fields: [refereeId], references: [id])
+  scoreDetails  Json?     // Store detailed scoring information as JSON
+  card          CardType  @default(NONE)
+  notes         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Team {
+  id            String         @id @default(uuid())
+  teamNumber    String         @unique
+  name          String
+  organization  String?
+  avatar        String?        // URL to team avatar image
+  description   String?        // Team description
+  teamMembers   Json?          // Store team members as a JSON array
+  tournamentId  String?        // Optional link to tournament
+  tournament    Tournament?    @relation(fields: [tournamentId], references: [id])
+  teamAlliances TeamAlliance[]
+  teamStats     TeamStats[]    // New relation to track team statistics
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  @@index([tournamentId])
+}
+
+model TeamAlliance {
+  id          String   @id @default(uuid())
+  teamId      String
+  team        Team     @relation(fields: [teamId], references: [id])
+  allianceId  String
+  alliance    Alliance @relation(fields: [allianceId], references: [id], onDelete: Cascade)
+  stationPosition Int   @default(1)  // Station position: 1, 2, or 3 within an alliance
+  isSurrogate Boolean  @default(false) // Indicates if this is a surrogate appearance
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([teamId, allianceId])
+}
+
+model MatchScores {
+  id                String   @id @default(uuid())
+  matchId           String   @unique
+  match             Match    @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  
+  // Red Alliance Scores
+  redAutoScore      Int      @default(0)
+  redDriveScore     Int      @default(0)
+  redTotalScore     Int      @default(0)
+  
+  // Blue Alliance Scores
+  blueAutoScore     Int      @default(0)
+  blueDriveScore    Int      @default(0)
+  blueTotalScore    Int      @default(0)
+  
+  // Game Elements Scoring for Red Alliance
+  redGameElements   Json?    // Structure: [{ "element": "ball", "count": 3, "pointsEach": 20, "totalPoints": 60, "operation": "multiply" }]
+  
+  // Game Elements Scoring for Blue Alliance
+  blueGameElements  Json?    // Structure: [{ "element": "ball", "count": 3, "pointsEach": 20, "totalPoints": 60, "operation": "multiply" }]
+  
+  // Team count multipliers (applied automatically based on team count)
+  redTeamCount      Int      @default(0)  // Number of teams in red alliance (1-4)
+  redMultiplier     Float    @default(1.0) // Calculated multiplier based on team count: 1 team (x1.25), 2 teams (x1.5), 3 teams (x1.75), 4 teams (x2)
+  
+  blueTeamCount     Int      @default(0)  // Number of teams in blue alliance (1-4)
+  blueMultiplier    Float    @default(1.0) // Calculated multiplier based on team count: 1 team (x1.25), 2 teams (x1.5), 3 teams (x1.75), 4 teams (x2)
+  
+  // Additional metadata
+  scoreDetails      Json?    // Other scoring details or game-specific information
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model TeamStats {
+  id            String    @id @default(uuid())
+  teamId        String
+  team          Team      @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  tournamentId  String
+  tournament    Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  stageId       String?    // Adding optional stageId field for stage-specific stats
+  stage         Stage?     @relation(fields: [stageId], references: [id], onDelete: SetNull)
+  wins          Int       @default(0)
+  losses        Int       @default(0)
+  ties          Int       @default(0)
+  matchesPlayed Int       @default(0)
+  rank          Int?      // For playoff rankings
+  tiebreaker1   Float     @default(0) // First tiebreaker metric (e.g., average score)
+  tiebreaker2   Float     @default(0) // Second tiebreaker metric (e.g., strength of schedule)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@unique([teamId, tournamentId])
+  @@index([teamId])
+  @@index([tournamentId])
+  @@index([stageId])
+}
+
+
+enum MatchState {
+  SCHEDULED
+  READY
+  RUNNING
+  PAUSED
+  COMPLETED
+  CANCELLED
+  ERROR
+}
+
+enum ErrorSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum ErrorStatus {
+  OPEN
+  ACKNOWLEDGED
+  RESOLVED
+  CLOSED
+}
+
+enum DisplayState {
+  STANDBY
+  STARTING_SOON
+  LIVE
+  MATCH_RESULTS
+  FINISHED
+  CANCELLED
+  ERROR
+  CUSTOM_MESSAGE
+}
+
+model MatchControl {
+  id              String      @id @default(uuid())
+  matchId         String      @unique
+  match           Match       @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  currentState    MatchState  @default(SCHEDULED)
+  stateHistory    Json?       // Array of state transitions with timestamps
+  controlledBy    String?     // Admin who is currently controlling the match
+  lockToken       String?     // Token for locking control to prevent race conditions
+  lockTimestamp   DateTime?   // When the lock was acquired
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  matchTimers     MatchTimer[]
+  matchErrors     MatchError[]
+  audienceDisplay AudienceDisplay?
+}
+
+model MatchTimer {
+  id              String      @id @default(uuid())
+  matchControlId  String
+  matchControl    MatchControl @relation(fields: [matchControlId], references: [id], onDelete: Cascade)
+  timerType       String      // "AUTO", "TELEOP", "ENDGAME", "FULL_MATCH", etc.
+  duration        Int         // Total duration in seconds
+  remaining       Int         // Remaining time in seconds
+  isRunning       Boolean     @default(false)
+  startedAt       DateTime?   // When the timer was started
+  pausedAt        DateTime?   // When the timer was last paused
+  completedAt     DateTime?   // When the timer completed
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+}
+
+model MatchError {
+  id              String        @id @default(uuid())
+  matchControlId  String
+  matchControl    MatchControl  @relation(fields: [matchControlId], references: [id], onDelete: Cascade)
+  errorType       String        // "ROBOT_FAILURE", "FIELD_FAULT", "NETWORK_ISSUE", etc.
+  description     String
+  severity        ErrorSeverity @default(MEDIUM)
+  status          ErrorStatus   @default(OPEN)
+  reportedBy      String        // User ID who reported the error
+  resolvedBy      String?       // User ID who resolved the error
+  resolvedAt      DateTime?
+  affectedAlliance String?      // "RED", "BLUE", or null if affects both
+  affectedTeamId  String?       // Optional reference to specific team
+  notes           String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+model AudienceDisplay {
+  id              String        @id @default(uuid())
+  matchControlId  String        @unique
+  matchControl    MatchControl  @relation(fields: [matchControlId], references: [id], onDelete: Cascade)
+  currentState    DisplayState  @default(STANDBY)
+  customMessage   String?
+  customData      Json?         // Additional display data
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}

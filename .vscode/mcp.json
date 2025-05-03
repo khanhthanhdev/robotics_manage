@@ -1,0 +1,34 @@
+
+{
+    "mcpServers": {
+      "Framelink Figma MCP": {
+        "command": "cmd",
+        "args": [
+          "/c",
+          "npx",
+          "-y",
+          "figma-developer-mcp",
+          "--figma-api-key=figd_Y0o421X0wTMz9LcwGiB4TMeqC8xSi6Kpp7V3LdLa",
+          "--stdio"
+        ]
+      }
+    },
+    "servers": {
+      "my-mcp-server-0da1270a": {
+        "type": "stdio",
+        "command": "npx",
+        "args": [
+          "-y",
+          "@supabase/mcp-server-supabase@latest",
+          "--access-token=sbp_9af765c921e0d52a62645b128e80f18fa051875f"
+        ]
+      },
+      "Context7": {
+        "type": "stdio",
+        "command": "npx",
+        "args": ["-y", "@upstash/context7-mcp@latest"]
+      }
+
+    }
+  }
+  
