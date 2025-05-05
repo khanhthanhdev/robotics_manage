@@ -58,6 +58,45 @@ export class MatchSchedulerService {
   private bracketAdvancements: BracketAdvancement[] = [];
 
   constructor(private readonly prisma: PrismaService) {}
+  
+  /**
+   * Helper method to create initial match scores with 0-0 for all new matches
+   * This ensures that score data is always available when requested
+   * 
+   * @param matchId ID of the match to create scores for
+   * @returns Created match score record
+   */
+  private async createInitialMatchScore(matchId: string) {
+    return this.prisma.matchScores.create({
+      data: {
+        matchId,
+        redAutoScore: 0,
+        redDriveScore: 0,
+        redTotalScore: 0,
+        blueAutoScore: 0,
+        blueDriveScore: 0,
+        blueTotalScore: 0,
+        redTeamCount: 0,
+        blueTeamCount: 0,
+        redMultiplier: 1.0,
+        blueMultiplier: 1.0,
+        redGameElements: {},
+        blueGameElements: {},
+        scoreDetails: {
+          penalties: {
+            red: 0,
+            blue: 0
+          },
+          specialScoring: {
+            endgameClimb: {
+              red: 0,
+              blue: 0
+            }
+          }
+        }
+      }
+    });
+  }
 
   /**
    * Generates an FRC-style schedule using simulated annealing algorithm.
@@ -200,6 +239,9 @@ export class MatchSchedulerService {
           }
         }
       });
+      
+      // Create initial match score record
+      await this.createInitialMatchScore(dbMatch.id);
       
       createdMatches.push(dbMatch as any);
     }
@@ -813,6 +855,9 @@ export class MatchSchedulerService {
         }
       });
       
+      // Create initial match score record
+      await this.createInitialMatchScore(dbMatch.id);
+      
       matches.push(dbMatch as any);
     }
     
@@ -928,6 +973,9 @@ export class MatchSchedulerService {
               }
             }
           });
+          
+          // Create initial match score record
+          await this.createInitialMatchScore(dbMatch.id);
           
           matches.push(dbMatch as any);
           

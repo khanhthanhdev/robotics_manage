@@ -488,6 +488,20 @@ export default function MatchScoresForm({
           </div>
         </CardContent>
       </Card>
+
+      {/* Bottom submit button */}
+      <div className="flex justify-center mt-8">
+        <Button 
+          onClick={handleSubmit} 
+          disabled={isSubmitting} 
+          className="w-full sm:w-auto px-8 py-2"
+          size="lg"
+          variant="default"
+        >
+          <SaveIcon className="h-5 w-5 mr-2" />
+          {isSubmitting ? "Saving..." : "Submit Final Scores"}
+        </Button>
+      </div>
     </div>
   );
 }

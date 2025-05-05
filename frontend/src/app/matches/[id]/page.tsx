@@ -14,14 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  PieChart,
-  Pie,
-  Cell,
-  ResponsiveContainer,
-  Tooltip,
-  TooltipProps,
-} from "recharts";
+
 import {
   Clock,
   Calendar,
@@ -104,22 +97,6 @@ export default function MatchDetailsPage() {
         return <Badge variant="secondary">{status}</Badge>;
     }
   };
-
-  // Prepare data for pie chart
-  const redTeams = formatTeams(redAlliance || { 
-    id: '', color: 'RED', score: 0, matchId: '', 
-    createdAt: '', updatedAt: '', teamAlliances: [], allianceScoring: null 
-  });
-  const blueTeams = formatTeams(blueAlliance || { 
-    id: '', color: 'BLUE', score: 0, matchId: '', 
-    createdAt: '', updatedAt: '', teamAlliances: [], allianceScoring: null 
-  });
-  
-  // Score data for pie chart
-  const scoreData = [
-    { name: "Red", value: redAlliance?.score || 0, color: "#ef4444" },
-    { name: "Blue", value: blueAlliance?.score || 0, color: "#3b82f6" },
-  ];
 
   return (
     <div className="container mx-auto py-8 px-4">
@@ -221,81 +198,136 @@ export default function MatchDetailsPage() {
                 </Card>
 
                 {match.status === MatchStatus.COMPLETED && (
-                  <Card className="md:col-span-2">
-                    <CardHeader className="pb-2">
+                  <Card className="md:col-span-2 border-t-2 border-t-gray-700 shadow-lg">
+                    <CardHeader className="pb-2 bg-gradient-to-r from-gray-900 to-gray-800">
                       <CardTitle className="flex items-center text-lg">
-                        <Trophy className="mr-2 size-5 text-muted-foreground" />
-                        Results
+                        <Trophy className="mr-2 size-5 text-yellow-500" />
+                        Match Results
                       </CardTitle>
                     </CardHeader>
-                    <CardContent className="space-y-4">
-                      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                        <div className="flex flex-col items-center justify-center space-y-2">
-                          <div className="flex items-center space-x-4">
-                            <div 
-                              className="size-4 rounded-full" 
-                              style={{ backgroundColor: "#ef4444" }}
-                            />
-                            <h3 className="text-xl">Red Alliance: {redAlliance?.score || 0} points</h3>
+                    <CardContent className="space-y-6 pt-4">
+                      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                        {/* Red Alliance */}
+                        <div className={cn(
+                          "flex flex-col items-center justify-center space-y-2 rounded-lg p-4 border",
+                          match.winningAlliance === "RED" 
+                            ? "bg-gradient-to-b from-red-950 to-red-900 border-red-500 shadow-md shadow-red-900/30 ring-1 ring-red-500/30" 
+                            : "border-gray-800 bg-gray-900/30"
+                        )}>
+                          <div className="flex items-center space-x-2 mb-1">
+                            <div className="size-4 rounded-full" style={{ backgroundColor: "#ef4444" }} />
+                            <h3 className="text-base font-semibold text-gray-200">Red Alliance</h3>
                           </div>
+                          
+                          <div className="w-full px-2 py-3 rounded-md bg-black/30 flex flex-col items-center">
+                            <span className={cn(
+                              "text-4xl font-bold",
+                              match.winningAlliance === "RED" ? "text-red-400" : "text-gray-300"
+                            )}>
+                              {redAlliance?.score || 0}
+                            </span>
+                            <span className="text-xs text-gray-400 mt-1">TOTAL POINTS</span>
+                          </div>
+                          
                           {redAlliance?.teamAlliances.map((ta) => (
-                            <div key={ta.id} className="text-center">
-                              <p>{ta.team.name}</p>
+                            <div key={ta.id} className="text-center w-full bg-black/20 rounded px-2 py-1">
+                              <p className={cn(
+                                "text-sm",
+                                match.winningAlliance === "RED" ? "text-red-300" : "text-gray-400"
+                              )}>
+                                Team #{ta.team.teamNumber} · {ta.team.name}
+                              </p>
                             </div>
                           ))}
                         </div>
-                        <div className="flex flex-col items-center justify-center space-y-2">
-                          <div className="flex items-center space-x-4">
-                            <div 
-                              className="size-4 rounded-full" 
-                              style={{ backgroundColor: "#3b82f6" }}
-                            />
-                            <h3 className="text-xl">Blue Alliance: {blueAlliance?.score || 0} points</h3>
+
+                        {/* Match Result */}
+                        <div className="flex flex-col items-center justify-center space-y-3">
+                          {match.winningAlliance && (
+                            <div className="text-center">
+                              <div className="flex flex-col items-center justify-center gap-2 mb-2">
+                                <Trophy className="h-8 w-8 text-yellow-500" />
+                                <div className={cn(
+                                  "text-white text-lg font-bold px-6 py-2 rounded-md",
+                                  match.winningAlliance === "RED" 
+                                    ? "bg-gradient-to-r from-red-800 to-red-700" 
+                                    : "bg-gradient-to-r from-blue-800 to-blue-700"
+                                )}>
+                                  {match.winningAlliance} WINS
+                                </div>
+                              </div>
+                              <div className="mt-4 text-sm text-gray-400">
+                                Score Difference:
+                                <span className="font-semibold text-white ml-1">
+                                  {Math.abs((redAlliance?.score || 0) - (blueAlliance?.score || 0))} points
+                                </span>
+                              </div>
+                              {match.winningAlliance === "TIE" && (
+                                <Badge className="mt-2 bg-amber-700 text-amber-100">
+                                  TIE MATCH
+                                </Badge>
+                              )}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Blue Alliance */}
+                        <div className={cn(
+                          "flex flex-col items-center justify-center space-y-2 rounded-lg p-4 border",
+                          match.winningAlliance === "BLUE" 
+                            ? "bg-gradient-to-b from-blue-950 to-blue-900 border-blue-500 shadow-md shadow-blue-900/30 ring-1 ring-blue-500/30" 
+                            : "border-gray-800 bg-gray-900/30"
+                        )}>
+                          <div className="flex items-center space-x-2 mb-1">
+                            <div className="size-4 rounded-full" style={{ backgroundColor: "#3b82f6" }} />
+                            <h3 className="text-base font-semibold text-gray-200">Blue Alliance</h3>
                           </div>
+                          
+                          <div className="w-full px-2 py-3 rounded-md bg-black/30 flex flex-col items-center">
+                            <span className={cn(
+                              "text-4xl font-bold",
+                              match.winningAlliance === "BLUE" ? "text-blue-400" : "text-gray-300"
+                            )}>
+                              {blueAlliance?.score || 0}
+                            </span>
+                            <span className="text-xs text-gray-400 mt-1">TOTAL POINTS</span>
+                          </div>
+                          
                           {blueAlliance?.teamAlliances.map((ta) => (
-                            <div key={ta.id} className="text-center">
-                              <p>{ta.team.name}</p>
+                            <div key={ta.id} className="text-center w-full bg-black/20 rounded px-2 py-1">
+                              <p className={cn(
+                                "text-sm",
+                                match.winningAlliance === "BLUE" ? "text-blue-300" : "text-gray-400"
+                              )}>
+                                Team #{ta.team.teamNumber} · {ta.team.name}
+                              </p>
                             </div>
                           ))}
                         </div>
                       </div>
                       
-                      <div className="mt-4 flex items-center justify-center">
-                        {match.winningAlliance && (
-                          <div className="text-center">
-                            <p className="text-lg font-medium">Winner</p>
-                            <Badge 
-                              className={cn(
-                                "mt-1 text-white",
-                                match.winningAlliance === "RED" ? "bg-red-500" : "bg-blue-500"
-                              )}
-                            >
-                              {match.winningAlliance} Alliance
-                            </Badge>
+                      {/* Additional match statistics - only shown if match is completed */}
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4 border-t border-gray-800 pt-4">
+                        <div className="bg-gray-900/60 rounded-md p-3">
+                          <div className="text-xs uppercase text-gray-500 mb-1">Match Duration</div>
+                          <div className="font-medium text-white">
+                            {match.duration ? `${match.duration} seconds` : "Not recorded"}
                           </div>
-                        )}
-                      </div>
-
-                      <div className="h-[200px] mt-4">
-                        <ResponsiveContainer width="100%" height="100%">
-                          <PieChart>
-                            <Pie
-                              data={scoreData}
-                              cx="50%"
-                              cy="50%"
-                              innerRadius={60}
-                              outerRadius={80}
-                              dataKey="value"
-                              paddingAngle={5}
-                              label={({ name, value }) => `${name}: ${value}`}
-                            >
-                              {scoreData.map((entry, index) => (
-                                <Cell key={`cell-${index}`} fill={entry.color} />
-                              ))}
-                            </Pie>
-                            <Tooltip />
-                          </PieChart>
-                        </ResponsiveContainer>
+                        </div>
+                        
+                        <div className="bg-gray-900/60 rounded-md p-3">
+                          <div className="text-xs uppercase text-gray-500 mb-1">Match Number</div>
+                          <div className="font-medium text-white">
+                            #{match.matchNumber} in {match.stage.name}
+                          </div>
+                        </div>
+                        
+                        <div className="bg-gray-900/60 rounded-md p-3">
+                          <div className="text-xs uppercase text-gray-500 mb-1">Completed On</div>
+                          <div className="font-medium text-white">
+                            {match.endTime ? format(parseISO(match.endTime), "MMM d, h:mm a") : "N/A"}
+                          </div>
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
@@ -431,23 +463,63 @@ export default function MatchDetailsPage() {
                 </div>
                 
                 {match.status === MatchStatus.COMPLETED && match.winningAlliance && (
-                  <div className="mt-4 rounded-lg bg-muted p-3 text-center">
-                    <p className="text-sm text-muted-foreground">MATCH WINNER</p>
-                    <p className="text-xl font-bold">
-                      {match.winningAlliance} Alliance
-                    </p>
-                    <div className="mt-2 grid grid-cols-2">
-                      <div className="text-center">
-                        <p className="text-sm text-muted-foreground">RED</p>
-                        <p className="text-xl font-medium text-red-500">
-                          {redAlliance?.score || 0}
-                        </p>
+                  <div className="mt-4">
+                    <div className={cn(
+                      "rounded-lg p-4 text-center",
+                      match.winningAlliance === "RED" 
+                        ? "bg-gradient-to-br from-red-950 to-red-900 border border-red-800 shadow-inner shadow-red-800/10" 
+                        : match.winningAlliance === "BLUE"
+                          ? "bg-gradient-to-br from-blue-950 to-blue-900 border border-blue-800 shadow-inner shadow-blue-800/10"
+                          : "bg-gradient-to-br from-amber-950 to-amber-900 border border-amber-800"
+                    )}>
+                      <div className="flex items-center justify-center gap-2 mb-3">
+                        <Trophy className="h-5 w-5 text-yellow-500" />
+                        <p className="text-sm uppercase tracking-wider text-gray-300 font-medium">Winner</p>
                       </div>
-                      <div className="text-center">
-                        <p className="text-sm text-muted-foreground">BLUE</p>
-                        <p className="text-xl font-medium text-blue-500">
-                          {blueAlliance?.score || 0}
-                        </p>
+                      
+                      <div className={cn(
+                        "text-xl font-bold mb-3 py-1 px-3 rounded-md inline-block",
+                        match.winningAlliance === "RED" 
+                          ? "text-white bg-red-800/50" 
+                          : match.winningAlliance === "BLUE"
+                            ? "text-white bg-blue-800/50"
+                            : "text-amber-100 bg-amber-800/50"
+                      )}>
+                        {match.winningAlliance === "TIE" ? "TIE MATCH" : `${match.winningAlliance} ALLIANCE`}
+                      </div>
+                      
+                      <div className="grid grid-cols-2 gap-2 mt-3 pt-3 border-t border-gray-700/50">
+                        <div className={cn(
+                          "text-center p-2 rounded-md",
+                          match.winningAlliance === "RED" ? "bg-red-800/30 ring-1 ring-red-700" : "bg-gray-800/40"
+                        )}>
+                          <p className="text-xs text-gray-400">RED</p>
+                          <p className={cn(
+                            "text-xl font-semibold",
+                            match.winningAlliance === "RED" ? "text-red-300" : "text-gray-300"
+                          )}>
+                            {redAlliance?.score || 0}
+                          </p>
+                        </div>
+                        
+                        <div className={cn(
+                          "text-center p-2 rounded-md",
+                          match.winningAlliance === "BLUE" ? "bg-blue-800/30 ring-1 ring-blue-700" : "bg-gray-800/40"
+                        )}>
+                          <p className="text-xs text-gray-400">BLUE</p>
+                          <p className={cn(
+                            "text-xl font-semibold",
+                            match.winningAlliance === "BLUE" ? "text-blue-300" : "text-gray-300"
+                          )}>
+                            {blueAlliance?.score || 0}
+                          </p>
+                        </div>
+                      </div>
+                      
+                      <div className="mt-3 text-xs text-gray-400">
+                        Score Difference: <span className="font-semibold text-white">
+                          {Math.abs((redAlliance?.score || 0) - (blueAlliance?.score || 0))} points
+                        </span>
                       </div>
                     </div>
                   </div>

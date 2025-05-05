@@ -1,6 +1,8 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import { useMatches, useMatch, useMatchScores, useUpdateMatchScores, useCreateMatchScores } from '@/hooks/use-matches';
 import { useWebSocket } from '@/hooks/useWebSocket';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -12,6 +14,8 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+// Import the extracted ConnectionStatus component
+import ConnectionStatus from './components/ConnectionStatus';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -21,7 +25,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { fetchMatches, Match } from '@/lib/match-service';
 import {
   Table,
   TableBody,
@@ -46,6 +49,56 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { toast } from "sonner";
+
+// Convert game elements from object format to array format
+const objectToArrayGameElements = (gameElements: Record<string, any> | any[] | null | undefined) => {
+  // Handle null/undefined case
+  if (!gameElements) return [];
+  
+  // If it's already an array, return it
+  if (Array.isArray(gameElements)) return gameElements;
+  
+  // Handle empty object case
+  if (typeof gameElements === 'object' && Object.keys(gameElements).length === 0) return [];
+  
+  try {
+    // Convert object format to array format
+    return Object.entries(gameElements).map(([element, value]) => {
+      // Handle the case where value is already an object with required properties
+      if (typeof value === 'object' && value !== null && 'count' in value) {
+        return {
+          element,
+          count: Number(value.count || 0),
+          pointsEach: Number(value.pointsEach || 1),
+          totalPoints: Number(value.totalPoints || value.count),
+          operation: value.operation || 'multiply'
+        };
+      }
+      
+      // Standard case where value is just a number
+      return {
+        element,
+        count: Number(value),
+        pointsEach: 1, // Default value
+        totalPoints: Number(value), // Default to same as count
+        operation: 'multiply' // Default operation
+      };
+    });
+  } catch (error) {
+    console.error('Error converting game elements:', error, gameElements);
+    return [];
+  }
+};
+
+// Convert game elements from array format to object format for API
+const arrayToObjectGameElements = (gameElements: Array<{element: string, count: number, pointsEach: number, totalPoints: number, operation: string}>) => {
+  const result: Record<string, number> = {};
+  gameElements.forEach(item => {
+    result[item.element] = item.count;
+  });
+  return result;
+};
 
 // Client component using WebSockets
 export default function ControlMatchPage() {
@@ -55,6 +108,65 @@ export default function ControlMatchPage() {
       ? new URLSearchParams(window.location.search).get('tournamentId') ||
         'demo-tournament'
       : 'demo-tournament';
+
+  // React Query client for cache manipulation
+  const queryClient = useQueryClient();
+  
+  // UI state declarations 
+  // NOTE: We need to declare selectedMatchId BEFORE we use it in React Query hooks below
+  const [displayMode, setDisplayMode] = React.useState<string>('match');
+  const [selectedMatchId, setSelectedMatchId] = React.useState<string>('');
+  const [showTimer, setShowTimer] = React.useState<boolean>(true);
+  const [showScores, setShowScores] = React.useState<boolean>(true);
+  const [showTeams, setShowTeams] = React.useState<boolean>(true);
+  const [announcementMessage, setAnnouncementMessage] = React.useState<string>('');
+  const [currentTab, setCurrentTab] = useState<string>('matches');
+  
+  // State for storing all match scores
+  const [matchScoresMap, setMatchScoresMap] = useState<Record<string, {redTotalScore: number, blueTotalScore: number}>>({});
+
+  // Fetch matches using React Query
+  const { 
+    data: matchesData = [], 
+    isLoading: isLoadingMatches 
+  } = useMatches();
+  
+  // Fetch selected match details when a match is selected
+  const { 
+    data: selectedMatch, 
+    isLoading: isLoadingMatchDetails 
+  } = useMatch(selectedMatchId || '');
+  
+  // Fetch match scores for the selected match
+  const { 
+    data: matchScores, 
+    isLoading: isLoadingScores,
+    refetch: refetchScores 
+  } = useMatchScores(selectedMatchId || '');
+  
+  // Mutations for creating and updating scores
+  const createMatchScores = useCreateMatchScores();
+  const updateMatchScores = useUpdateMatchScores();
+
+  // Helper function to extract red teams from alliances
+  const getRedTeams = (match?: any) => {
+    if (!match?.alliances) return [];
+    const redAlliance = match.alliances.find((alliance: any) => alliance.color === 'RED');
+    if (!redAlliance?.teamAlliances) return [];
+    return redAlliance.teamAlliances.map((ta: any) => 
+      ta.team?.teamNumber || ta.team?.name || 'Unknown'
+    );
+  };
+
+  // Helper function to extract blue teams from alliances
+  const getBlueTeams = (match?: any) => {
+    if (!match?.alliances) return [];
+    const blueAlliance = match.alliances.find((alliance: any) => alliance.color === 'BLUE');
+    if (!blueAlliance?.teamAlliances) return [];
+    return blueAlliance.teamAlliances.map((ta: any) => 
+      ta.team?.teamNumber || ta.team?.name || 'Unknown'
+    );
+  };
 
   // Connect to WebSocket with the tournament ID
   const {
@@ -70,15 +182,6 @@ export default function ControlMatchPage() {
     sendScoreUpdate,
     subscribe
   } = useWebSocket({ tournamentId });
-
-  // UI state for display controls
-  const [displayMode, setDisplayMode] = React.useState<string>('match');
-  const [selectedMatchId, setSelectedMatchId] = React.useState<string>('');
-  const [showTimer, setShowTimer] = React.useState<boolean>(true);
-  const [showScores, setShowScores] = React.useState<boolean>(true);
-  const [showTeams, setShowTeams] = React.useState<boolean>(true);
-  const [announcementMessage, setAnnouncementMessage] =
-    React.useState<string>('');
 
   // UI state for timer controls
   const [timerDuration, setTimerDuration] = React.useState<number>(150000); // 2:30 in ms
@@ -123,12 +226,103 @@ export default function ControlMatchPage() {
     };
   }, [subscribe]);
 
+  // Subscribe to WebSocket score updates and update React Query cache
+  useEffect(() => {
+    if (!selectedMatchId) return;
+    
+    const handleScoreUpdate = (data: {
+      matchId: string;
+      redAutoScore?: number;
+      redDriveScore?: number;
+      redTotalScore?: number;
+      blueAutoScore?: number;
+      blueDriveScore?: number;
+      blueTotalScore?: number;
+      [key: string]: any;
+    }) => {
+      if (data.matchId === selectedMatchId) {
+        // Update the React Query cache directly
+        queryClient.setQueryData(
+          ['match-scores', selectedMatchId],
+          (oldData: Record<string, any> | undefined) => ({
+            ...(oldData || {}),
+            ...data,
+          })
+        );
+        
+        // Force a refetch to ensure we have the latest data
+        refetchScores();
+      }
+    };
+    
+    // Subscribe to score updates using the websocket hook
+    const unsubscribe = subscribe('score_update', handleScoreUpdate);
+    
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, [selectedMatchId, subscribe, queryClient, refetchScores]);
+
+  // Fetch all match scores when matches are loaded
+  useEffect(() => {
+    // Only fetch scores if we have matches
+    if (!isLoadingMatches && matchesData.length > 0) {
+      const fetchScores = async () => {
+        try {
+          // Get auth token from localStorage
+          const authToken = localStorage.getItem('auth-token');
+          if (!authToken) {
+            console.error("Authentication required for fetching scores");
+            return;
+          }
+          
+          const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+          
+          // Create a map to store scores by matchId
+          const scoresMap: Record<string, {redTotalScore: number, blueTotalScore: number}> = {};
+          
+          // For each match, fetch its scores
+          await Promise.all(
+            matchesData.map(async (match) => {
+              try {
+                const response = await fetch(`${API_BASE_URL}/api/match-scores/match/${match.id}`, {
+                  headers: {
+                    "Authorization": `Bearer ${authToken}`
+                  }
+                });
+                
+                if (response.ok) {
+                  const data = await response.json();
+                  if (data && data.redTotalScore !== undefined && data.blueTotalScore !== undefined) {
+                    scoresMap[match.id] = {
+                      redTotalScore: data.redTotalScore,
+                      blueTotalScore: data.blueTotalScore
+                    };
+                  }
+                }
+              } catch (error) {
+                console.error(`Error fetching scores for match ${match.id}:`, error);
+              }
+            })
+          );
+          
+          // Update state with all scores
+          setMatchScoresMap(scoresMap);
+        } catch (error) {
+          console.error("Error fetching match scores:", error);
+        }
+      };
+      
+      fetchScores();
+    }
+  }, [matchesData, isLoadingMatches]);
+
   // UI state for score controls
   const [redAutoScore, setRedAutoScore] = React.useState<number>(0);
   const [redDriveScore, setRedDriveScore] = React.useState<number>(0);
   const [blueAutoScore, setBlueAutoScore] = React.useState<number>(0);
   const [blueDriveScore, setBlueDriveScore] = React.useState<number>(0);
-
+  
   // Enhanced scoring states
   const [redGameElements, setRedGameElements] = useState<Array<{element: string, count: number, pointsEach: number, totalPoints: number, operation: string}>>([]);
   const [blueGameElements, setBlueGameElements] = useState<Array<{element: string, count: number, pointsEach: number, totalPoints: number, operation: string}>>([]);
@@ -157,32 +351,49 @@ export default function ControlMatchPage() {
   const [redTotalScore, setRedTotalScore] = useState<number>(0);
   const [blueTotalScore, setBlueTotalScore] = useState<number>(0);
 
-  // State for matches list
-  const [matches, setMatches] = useState<Match[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
-  const [currentTab, setCurrentTab] = useState<string>('matches');
-
-  // Fetch matches when the component mounts or tournamentId changes
+  // Sync local state with match scores data from React Query
   useEffect(() => {
-    async function loadMatches() {
-      setIsLoading(true);
-      try {
-        const matchesList = await fetchMatches(tournamentId);
-        setMatches(matchesList);
-      } catch (error) {
-        console.error('Failed to load matches:', error);
-      } finally {
-        setIsLoading(false);
-      }
+    if (matchScores) {
+      // Update all score-related states from fetched data
+      setRedAutoScore(matchScores.redAutoScore || 0);
+      setRedDriveScore(matchScores.redDriveScore || 0);
+      setBlueAutoScore(matchScores.blueAutoScore || 0);
+      setBlueDriveScore(matchScores.blueDriveScore || 0);
+      setRedTotalScore(matchScores.redTotalScore || 0);
+      setBlueTotalScore(matchScores.blueTotalScore || 0);
+      
+      // Team counts and multipliers
+      setRedTeamCount(matchScores.redTeamCount || 0);
+      setBlueTeamCount(matchScores.blueTeamCount || 0);
+      setRedMultiplier(matchScores.redMultiplier || 1.0);
+      setBlueMultiplier(matchScores.blueMultiplier || 1.0);
+      
+      // Game elements - convert from object to array if needed
+      setRedGameElements(objectToArrayGameElements(matchScores.redGameElements));
+      setBlueGameElements(objectToArrayGameElements(matchScores.blueGameElements));
+      
+      // Score details
+      setScoreDetails(matchScores.scoreDetails || {});
+    } else if (!isLoadingScores && selectedMatchId) {
+      // If we finished loading and there are no scores yet, reset to default values
+      setRedAutoScore(0);
+      setRedDriveScore(0);
+      setBlueAutoScore(0);
+      setBlueDriveScore(0);
+      setRedTotalScore(0);
+      setBlueTotalScore(0);
+      setRedTeamCount(0);
+      setBlueTeamCount(0);
+      setRedMultiplier(1.0);
+      setBlueMultiplier(1.0);
+      setRedGameElements([]);
+      setBlueGameElements([]);
+      setScoreDetails({});
     }
-
-    loadMatches();
-  }, [tournamentId]);
+  }, [matchScores, isLoadingScores, selectedMatchId]);
 
   // Handle selecting a match
-  const handleSelectMatch = (match: Match) => {
-    setSelectedMatch(match);
+  const handleSelectMatch = (match: { id: string; matchNumber: string | number }) => {
     setSelectedMatchId(match.id);
     
     // Automatically update display settings to show the selected match
@@ -253,7 +464,14 @@ export default function ControlMatchPage() {
 
   // Handle score updates
   const handleUpdateScores = () => {
-    sendScoreUpdate({
+    if (!selectedMatchId) return;
+    
+    // Convert game elements arrays to object format for API compatibility
+    const redGameElementsObj = arrayToObjectGameElements(redGameElements);
+    const blueGameElementsObj = arrayToObjectGameElements(blueGameElements);
+    
+    // Create data for React Query mutations (using arrays for game elements)
+    const mutationData = {
       matchId: selectedMatchId,
       redAutoScore,
       redDriveScore,
@@ -261,15 +479,67 @@ export default function ControlMatchPage() {
       blueAutoScore,
       blueDriveScore,
       blueTotalScore,
-      // Additional details for the backend
-      redGameElements,
-      blueGameElements,
+      redGameElements, // Keep as array for mutations
+      blueGameElements, // Keep as array for mutations
       redTeamCount,
       redMultiplier,
       blueTeamCount,
       blueMultiplier,
       scoreDetails
+    };
+    
+    // Create data for WebSocket (using objects for game elements)
+    const wsScoreData = {
+      matchId: selectedMatchId,
+      redAutoScore,
+      redDriveScore,
+      redTotalScore,
+      blueAutoScore,
+      blueDriveScore,
+      blueTotalScore,
+      redGameElements: redGameElementsObj, // Use object format for WebSocket
+      blueGameElements: blueGameElementsObj, // Use object format for WebSocket
+      redTeamCount,
+      redMultiplier,
+      blueTeamCount,
+      blueMultiplier,
+      scoreDetails
+    };
+    
+    if (matchScores?.id) {
+      // Update existing scores
+      updateMatchScores.mutate({
+        id: matchScores.id,
+        ...mutationData // Use array format for mutations
+      });
+    } else {
+      // Create new scores
+      createMatchScores.mutate(mutationData); // Use array format for mutations
+    }
+    
+    // Send the WebSocket update with object format
+    sendScoreUpdate(wsScoreData);
+  };
+
+  // Handle submitting final scores and completing the match
+  const handleSubmitScores = () => {
+    // First update the scores
+    handleUpdateScores();
+    
+    // Then mark the match as completed
+    sendMatchStateChange({
+      matchId: selectedMatchId,
+      status: 'COMPLETED',
+      currentPeriod: null,
     });
+    
+    // Show toast notification
+    toast.success("Match Completed", {
+      description: `Final score: Red ${redTotalScore} - Blue ${blueTotalScore}`,
+    });
+    
+    // Switch to matches tab to select next match
+    setCurrentTab('matches');
   };
 
   // Handle sending an announcement
@@ -352,167 +622,6 @@ export default function ControlMatchPage() {
     }
   };
 
-  // Fetch match score details with retry logic
-  const fetchMatchScores = async (matchId: string, retryCount = 0) => {
-    try {
-      const authToken = localStorage.getItem('auth-token');
-      // Make sure we're using the correct URL format according to documentation:
-      // GET /match-scores/match/:matchId
-      const baseUrl = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api`;
-      const response = await fetch(`${baseUrl}/match-scores/match/${matchId}`, {
-        headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Content-Type': 'application/json',
-        }
-      });
-
-      console.log('Fetching match scores from API:', response.status, response.statusText);
-      
-      // If match scores don't exist yet, create them
-      if (response.status === 404) {
-        console.log('Match scores not found. Creating initial match scores...');
-        try {
-          // Create initial match scores with all zeroes
-          const createResponse = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/match-scores`, {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${authToken}`,
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              matchId: matchId,
-              redAutoScore: 0,
-              redDriveScore: 0,
-              redTotalScore: 0,
-              blueAutoScore: 0,
-              blueDriveScore: 0,
-              blueTotalScore: 0,
-              redTeamCount: 0,
-              blueTeamCount: 0,
-              redMultiplier: 1.0,
-              blueMultiplier: 1.0,
-              redGameElements: [],
-              blueGameElements: [],
-              scoreDetails: {}
-            })
-          });
-          
-          if (!createResponse.ok) {
-            const errorText = await createResponse.text();
-            console.error('Failed to create match scores:', errorText);
-            
-            // Set default values if creation fails
-            updateScoreStates({
-              redAutoScore: 0,
-              redDriveScore: 0,
-              blueAutoScore: 0,
-              blueDriveScore: 0,
-              redTotalScore: 0,
-              blueTotalScore: 0,
-              redGameElements: [],
-              blueGameElements: [],
-              redTeamCount: 0,
-              blueTeamCount: 0,
-              redMultiplier: 1.0,
-              blueMultiplier: 1.0,
-              scoreDetails: {}
-            });
-            return;
-          }
-          
-          const scoreData = await createResponse.json();
-          updateScoreStates(scoreData);
-          
-          // Try to fetch the newly created scores to confirm
-          setTimeout(async () => {
-            await fetchMatchScores(matchId);
-          }, 1000);
-        } catch (createError) {
-          console.error('Error creating match scores:', createError);
-          // Set default values on error
-          updateScoreStates({
-            redAutoScore: 0,
-            redDriveScore: 0,
-            blueAutoScore: 0,
-            blueDriveScore: 0,
-            redTotalScore: 0,
-            blueTotalScore: 0,
-            redGameElements: [],
-            blueGameElements: [],
-            redTeamCount: 0,
-            blueTeamCount: 0,
-            redMultiplier: 1.0,
-            blueMultiplier: 1.0,
-            scoreDetails: {}
-          });
-        }
-        return;
-      }
-      
-      if (!response.ok) {
-        console.error('Failed to fetch match scores:', await response.text());
-        return;
-      }
-      
-      const scoreData = await response.json();
-      updateScoreStates(scoreData);
-    } catch (error) {
-      console.error('Failed to fetch match score details:', error);
-      
-      // Retry logic for network errors (max 3 retries with increasing delay)
-      if (retryCount < 3) {
-        const retryDelay = 1000 * (retryCount + 1); // 1s, 2s, 3s
-        console.log(`Retrying fetch match scores in ${retryDelay/1000}s...`);
-        
-        setTimeout(() => {
-          fetchMatchScores(matchId, retryCount + 1);
-        }, retryDelay);
-      } else {
-        // After max retries, set default values
-        updateScoreStates({
-          redAutoScore: 0,
-          redDriveScore: 0,
-          blueAutoScore: 0,
-          blueDriveScore: 0,
-          redTotalScore: 0,
-          blueTotalScore: 0,
-          redGameElements: [],
-          blueGameElements: [],
-          redTeamCount: 0,
-          blueTeamCount: 0,
-          redMultiplier: 1.0,
-          blueMultiplier: 1.0,
-          scoreDetails: {}
-        });
-      }
-    }
-  };
-
-  // Helper function to update all score states with fetched data
-  const updateScoreStates = (scoreData: any) => {
-    setRedAutoScore(scoreData.redAutoScore || 0);
-    setRedDriveScore(scoreData.redDriveScore || 0);
-    setBlueAutoScore(scoreData.blueAutoScore || 0);
-    setBlueDriveScore(scoreData.blueDriveScore || 0);
-    
-    // Ensure gameElements are always arrays
-    const safeRedElements = Array.isArray(scoreData.redGameElements) 
-      ? scoreData.redGameElements 
-      : [];
-      
-    const safeBlueElements = Array.isArray(scoreData.blueGameElements)
-      ? scoreData.blueGameElements
-      : [];
-    
-    setRedGameElements(safeRedElements);
-    setBlueGameElements(safeBlueElements);
-    setRedTeamCount(scoreData.redTeamCount || 0);
-    setBlueTeamCount(scoreData.blueTeamCount || 0);
-    setRedMultiplier(scoreData.redMultiplier || 1.0);
-    setBlueMultiplier(scoreData.blueMultiplier || 1.0);
-    setScoreDetails(scoreData.scoreDetails || null);
-  };
-
   // Add a new game element to red alliance
   const addRedGameElement = () => {
     if (!newElement.element.trim()) return;
@@ -578,38 +687,13 @@ export default function ControlMatchPage() {
     }
   };
 
-  // Load match scores when a match is selected
-  useEffect(() => {
-    if (selectedMatchId) {
-      fetchMatchScores(selectedMatchId);
-    }
-  }, [selectedMatchId]);
-
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Match Control Panel</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-        <Card>
-          <CardHeader>
-            <CardTitle>Connection Status</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-2">
-              <div
-                className={`w-3 h-3 rounded-full ${
-                  isConnected ? 'bg-green-500' : 'bg-red-500'
-                }`}
-              ></div>
-              <span>{isConnected ? 'Connected' : 'Disconnected'}</span>
-            </div>
-            <div className="mt-2">
-              <span className="text-sm text-gray-500">
-                Tournament ID: {currentTournament}
-              </span>
-            </div>
-          </CardContent>
-        </Card>
+        {/* Replace the nested ConnectionStatus with our proper component */}
+        <ConnectionStatus isConnected={isConnected} tournamentId={currentTournament} />
         
         {selectedMatch && (
           <Card>
@@ -627,15 +711,15 @@ export default function ControlMatchPage() {
                   Match {selectedMatch.matchNumber}
                 </span>
                 <span className="text-sm text-gray-500">
-                  ({formatDate(selectedMatch.scheduledStartTime)})
+                  ({formatDate(selectedMatch.scheduledTime || '')})
                 </span>
               </div>
               <div className="flex mt-2 gap-2">
                 <div className="flex-1 text-red-700 text-sm">
-                  Red: {selectedMatch.redTeams?.join(', ') || 'N/A'}
+                  Red: {getRedTeams(selectedMatch).join(', ') || 'N/A'}
                 </div>
                 <div className="flex-1 text-blue-700 text-sm">
-                  Blue: {selectedMatch.blueTeams?.join(', ') || 'N/A'}
+                  Blue: {getBlueTeams(selectedMatch).join(', ') || 'N/A'}
                 </div>
               </div>
             </CardContent>
@@ -662,9 +746,9 @@ export default function ControlMatchPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              {isLoading ? (
+              {isLoadingMatches ? (
                 <div className="text-center p-4">Loading matches...</div>
-              ) : matches.length === 0 ? (
+              ) : matchesData.length === 0 ? (
                 <div className="text-center p-4">No matches found for this tournament</div>
               ) : (
                 <Table>
@@ -673,18 +757,19 @@ export default function ControlMatchPage() {
                       <TableHead>Match #</TableHead>
                       <TableHead>Time</TableHead>
                       <TableHead>Status</TableHead>
+                      <TableHead>Scores</TableHead>
                       <TableHead>Teams</TableHead>
                       <TableHead>Action</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {matches.map((match) => (
+                    {matchesData.map((match) => (
                       <TableRow 
                         key={match.id} 
                         className={selectedMatch?.id === match.id ? 'bg-blue-50' : ''}
                       >
                         <TableCell>{match.matchNumber}</TableCell>
-                        <TableCell>{formatDate(match.scheduledStartTime)}</TableCell>
+                        <TableCell>{formatDate(match.scheduledTime || '')}</TableCell>
                         <TableCell>
                           <Badge 
                             className={getStatusBadgeColor(match.status)}
@@ -693,10 +778,21 @@ export default function ControlMatchPage() {
                           </Badge>
                         </TableCell>
                         <TableCell>
+                          {matchScoresMap[match.id] ? (
+                            <div className="text-sm">
+                              <span className="text-red-700">{matchScoresMap[match.id].redTotalScore}</span>
+                              <span className="mx-1">-</span>
+                              <span className="text-blue-700">{matchScoresMap[match.id].blueTotalScore}</span>
+                            </div>
+                          ) : (
+                            <span className="text-gray-500">N/A</span>
+                          )}
+                        </TableCell>
+                        <TableCell>
                           <div className="flex gap-1 text-xs">
-                            <span className="text-red-700">R: {match.redTeams?.join(', ') || 'N/A'}</span>
+                            <span className="text-red-700">R: {getRedTeams(match).join(', ') || 'N/A'}</span>
                             <span className="mx-1">|</span>
-                            <span className="text-blue-700">B: {match.blueTeams?.join(', ') || 'N/A'}</span>
+                            <span className="text-blue-700">B: {getBlueTeams(match).join(', ') || 'N/A'}</span>
                           </div>
                         </TableCell>
                         <TableCell>
@@ -717,12 +813,7 @@ export default function ControlMatchPage() {
             <CardFooter className="flex justify-between">
               <Button 
                 variant="outline" 
-                onClick={() => {
-                  setIsLoading(true);
-                  fetchMatches(tournamentId)
-                    .then(setMatches)
-                    .finally(() => setIsLoading(false));
-                }}
+                onClick={() => queryClient.invalidateQueries({ queryKey: ['matches'] })}
               >
                 Refresh Matches
               </Button>
@@ -1043,7 +1134,7 @@ export default function ControlMatchPage() {
                   
                   {selectedMatch && (
                     <div className="text-sm font-medium bg-red-900 bg-opacity-70 text-red-100 p-2 rounded mb-3 text-center border-l-4 border-red-500">
-                      Teams: {selectedMatch.redTeams?.join(', ') || 'N/A'}
+                      Teams: {getRedTeams(selectedMatch).join(', ') || 'N/A'}
                     </div>
                   )}
                   
@@ -1317,7 +1408,7 @@ export default function ControlMatchPage() {
                   
                   {selectedMatch && (
                     <div className="text-sm font-medium bg-blue-900 bg-opacity-70 text-blue-100 p-2 rounded mb-3 text-center border-l-4 border-blue-500">
-                      Teams: {selectedMatch.blueTeams?.join(', ') || 'N/A'}
+                      Teams: {getBlueTeams(selectedMatch).join(', ') || 'N/A'}
                     </div>
                   )}
                   
@@ -1607,23 +1698,34 @@ export default function ControlMatchPage() {
                 </div>
               </div>
             </CardContent>
-            <CardFooter className="bg-gray-800 border-t border-gray-700 pt-4 pb-4">
+            <CardFooter className="bg-gray-800 border-t border-gray-700 pt-4 pb-4 flex justify-between gap-4">
               <Button 
                 onClick={handleUpdateScores} 
-                className="w-full bg-green-700 hover:bg-green-600 text-white font-bold py-3"
+                className="flex-1 bg-blue-600 hover:bg-blue-500 text-white"
+                disabled={!selectedMatchId}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                  <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
+                </svg>
+                Update Scores
+              </Button>
+              <Button 
+                onClick={handleSubmitScores} 
+                className="flex-1 bg-green-700 hover:bg-green-600 text-white font-bold"
                 disabled={!selectedMatchId}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                 </svg>
-                Update Scores
+                Submit Final Scores
               </Button>
             </CardFooter>
           </Card>
         </TabsContent>
       </Tabs>
 
-      <div className="mt-4 p-4 border border-gray-200 rounded-lg">
+      <div className="mt-4 p-4 border border-gray-200 rounded-lg"></div>
         <h2 className="text-lg font-medium mb-2">Instructions</h2>
         <ol className="list-decimal list-inside space-y-1">
           <li>First, select a match from the Matches tab</li>
@@ -1631,6 +1733,5 @@ export default function ControlMatchPage() {
           <li>Open the audience display in another window to see the live updates</li>
         </ol>
       </div>
-    </div>
   );
 }

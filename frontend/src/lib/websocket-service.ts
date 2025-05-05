@@ -33,14 +33,14 @@ export interface ScoreData {
     pointsEach: number;
     totalPoints: number;
     operation: string;
-  }>;
+  }> | Record<string, number>; // Accept both array and object formats
   blueGameElements?: Array<{
     element: string;
     count: number;
     pointsEach: number;
     totalPoints: number;
     operation: string;
-  }>;
+  }> | Record<string, number>; // Accept both array and object formats
   redTeamCount?: number;
   redMultiplier?: number;
   blueTeamCount?: number;

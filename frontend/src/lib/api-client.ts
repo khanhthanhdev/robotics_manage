@@ -6,17 +6,37 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 class ApiClient {
   private token: string | null = null;
 
+  constructor() {
+    // Initialize token from localStorage if we're in a browser environment
+    if (typeof window !== 'undefined') {
+      this.token = localStorage.getItem('auth-token');
+    }
+  }
+
   /**
    * Sets the authentication token for subsequent requests
    */
   setToken(token: string | null) {
     this.token = token;
+    
+    // Also update localStorage when token changes
+    if (typeof window !== 'undefined') {
+      if (token) {
+        localStorage.setItem('auth-token', token);
+      } else {
+        localStorage.removeItem('auth-token');
+      }
+    }
   }
 
   /**
    * Gets the current authentication token
    */
   getToken(): string | null {
+    // If token is not set but exists in localStorage, retrieve it
+    if (!this.token && typeof window !== 'undefined') {
+      this.token = localStorage.getItem('auth-token');
+    }
     return this.token;
   }
 

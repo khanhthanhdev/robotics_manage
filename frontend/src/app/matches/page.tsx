@@ -1,110 +1,175 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import Link from "next/link";
-import { 
-  Card, 
-  CardContent, 
-  CardHeader, 
-  CardTitle,
-  CardDescription 
-} from "@/components/ui/card";
-import { 
-  Table, 
-  TableHeader, 
-  TableRow, 
-  TableHead, 
-  TableBody, 
-  TableCell 
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Spinner } from "@/components/ui/spinner";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { useMatches, MatchResponse } from "@/hooks/use-matches";
+import { useState, useEffect, useMemo } from "react";
+import { format } from "date-fns";
+import { useRouter } from "next/navigation";
+import { useMatches } from "@/hooks/use-matches";
+import { useAuth } from "@/hooks/use-auth";
 import { MatchStatus } from "@/lib/types";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { ArrowUpDown, ChevronDown, ChevronUp } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 export default function MatchesPage() {
-  const { data: matches, isLoading, error } = useMatches();
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string | null>(null);
+  const router = useRouter();
+  const { user, isLoading: authLoading } = useAuth();
+  const { data: matches, isLoading: matchesLoading, error: matchesError } = useMatches();
 
-  // Format team names for an alliance
-  const formatTeams = (alliance: MatchResponse["alliances"][0]) => {
-    if (!alliance.teamAlliances || alliance.teamAlliances.length === 0) {
-      return "No teams";
+  // State for sorting
+  const [sortField, setSortField] = useState<string>('tournamentName');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+  
+  // State for filter
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+
+  // Handle sort click
+  const handleSortClick = (field: string) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortDirection('asc');
     }
-
-    return alliance.teamAlliances
-      .sort((a, b) => a.stationPosition - b.stationPosition)
-      .map((ta) => ta.team?.name || `Team ${ta.teamId.substring(0, 6)}`)
-      .join(", ");
   };
 
-  // Status badge color mapping
+  // Sort and filter matches
+  const sortedMatches = useMemo(() => {
+    if (!matches) return [];
+    
+    // First, apply filters
+    const filteredMatches = statusFilter === "all" 
+      ? matches 
+      : matches.filter(match => match.status === statusFilter);
+    
+    // Then, sort the filtered matches
+    return [...filteredMatches].sort((a, b) => {
+      let valueA, valueB;
+
+      // Extract the values based on the sort field
+      switch (sortField) {
+        case 'tournamentName':
+          valueA = a.stage.tournament.name.toLowerCase();
+          valueB = b.stage.tournament.name.toLowerCase();
+          break;
+        case 'stageName':
+          valueA = a.stage.name.toLowerCase();
+          valueB = b.stage.name.toLowerCase();
+          break;
+        case 'matchNumber':
+          valueA = a.matchNumber;
+          valueB = b.matchNumber;
+          break;
+        case 'roundNumber':
+          valueA = a.roundNumber;
+          valueB = b.roundNumber;
+          break;
+        case 'status':
+          valueA = a.status;
+          valueB = b.status;
+          break;
+        case 'scheduledTime':
+          valueA = a.scheduledTime ? new Date(a.scheduledTime).getTime() : 0;
+          valueB = b.scheduledTime ? new Date(b.scheduledTime).getTime() : 0;
+          break;
+        default:
+          valueA = a.matchNumber;
+          valueB = b.matchNumber;
+      }
+      
+      // Sort based on direction
+      if (sortDirection === 'asc') {
+        return valueA > valueB ? 1 : valueA < valueB ? -1 : 0;
+      } else {
+        return valueA < valueB ? 1 : valueA > valueB ? -1 : 0;
+      }
+    });
+  }, [matches, sortField, sortDirection, statusFilter]);
+
+  // Format date for display
+  const formatDate = (dateString: string | null) => {
+    if (!dateString) return "Not scheduled";
+    try {
+      return format(new Date(dateString), "PPp");
+    } catch (e) {
+      return dateString;
+    }
+  };
+
+  // Get status badge
   const getStatusBadge = (status: string) => {
     switch (status) {
       case MatchStatus.PENDING:
-      case "SCHEDULED":
-        return <Badge variant="outline">Scheduled</Badge>;
+        return <Badge variant="outline">Pending</Badge>;
       case MatchStatus.IN_PROGRESS:
-        return <Badge className="bg-blue-500 text-white">In Progress</Badge>;
+        return <Badge variant="default" className="bg-blue-500">In Progress</Badge>;
       case MatchStatus.COMPLETED:
-        return <Badge className="bg-green-500 text-white">Completed</Badge>;
+        return <Badge variant="default" className="bg-green-500">Completed</Badge>;
       default:
-        return <Badge variant="secondary">{status}</Badge>;
+        return <Badge variant="outline">{status}</Badge>;
     }
   };
 
-  // Apply filters to matches
-  const filteredMatches = useMemo(() => {
-    if (!matches) return [];
-    
-    return matches.filter((match) => {
-      const matchesSearchTerm = searchTerm
-        ? match.matchNumber.toString().includes(searchTerm) ||
-          match.stage.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          match.stage.tournament.name.toLowerCase().includes(searchTerm.toLowerCase())
-        : true;
-      
-      const matchesStatus = statusFilter
-        ? match.status === statusFilter
-        : true;
-      
-      return matchesSearchTerm && matchesStatus;
-    });
-  }, [matches, searchTerm, statusFilter]);
+  // Navigate to match details
+  const handleMatchClick = (matchId: string) => {
+    router.push(`/matches/${matchId}`);
+  };
 
-  if (isLoading) {
+  // Loading state
+  if (matchesLoading) {
     return (
-      <div className="flex justify-center items-center min-h-[60vh]">
-        <Spinner size="lg" />
+      <div className="container mx-auto py-8 px-4">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold">Matches</h1>
+        </div>
+        <Card>
+          <CardContent className="flex justify-center py-8">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary mx-auto mb-4"></div>
+              <p className="text-gray-500">Loading matches...</p>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
-  if (error) {
+  // Error state
+  if (matchesError) {
     return (
-      <div className="flex justify-center items-center min-h-[60vh]">
-        <Card className="w-full max-w-xl">
-          <CardHeader>
-            <CardTitle className="text-red-600">Error</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p>Failed to load match data. Please try again later.</p>
-            <Button 
-              onClick={() => window.location.reload()} 
-              className="mt-4"
-            >
-              Retry
-            </Button>
+      <div className="container mx-auto py-8 px-4">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold">Matches</h1>
+        </div>
+        <Card>
+          <CardContent className="py-8">
+            <div className="text-center">
+              <h3 className="text-xl font-semibold text-red-600 mb-2">Error Loading Matches</h3>
+              <p className="text-gray-500">There was a problem loading the match data. Please try again later.</p>
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -113,121 +178,185 @@ export default function MatchesPage() {
 
   return (
     <div className="container mx-auto py-8 px-4">
-      <div className="flex flex-col space-y-6">
-        <div className="flex items-center justify-between">
+      <div className="flex justify-between items-center mb-6">
+        <div>
           <h1 className="text-3xl font-bold">Matches</h1>
-          <Link href="/match-control">
-            <Button>Match Control</Button>
-          </Link>
+          <p className="text-gray-500">View and manage all competition matches</p>
         </div>
+        <div className="w-[200px]">
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger>
+              <SelectValue placeholder="Filter by status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Status</SelectLabel>
+                <SelectItem value="all">All Statuses</SelectItem>
+                <SelectItem value={MatchStatus.PENDING}>Pending</SelectItem>
+                <SelectItem value={MatchStatus.IN_PROGRESS}>In Progress</SelectItem>
+                <SelectItem value={MatchStatus.COMPLETED}>Completed</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
 
-        <Card className="overflow-hidden">
-          <CardHeader className="bg-muted/40">
-            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-              <CardTitle>All Matches</CardTitle>
-              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                <Input
-                  placeholder="Search matches..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full sm:w-[200px] md:w-[250px]"
-                />
-                <Select
-                  value={statusFilter || "all"}
-                  onValueChange={(value) => setStatusFilter(value === "all" ? null : value)}
-                >
-                  <SelectTrigger className="w-full sm:w-[180px]">
-                    <SelectValue placeholder="Filter by status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Statuses</SelectItem>
-                    <SelectItem value={MatchStatus.PENDING}>Pending</SelectItem>
-                    <SelectItem value="SCHEDULED">Scheduled</SelectItem>
-                    <SelectItem value={MatchStatus.IN_PROGRESS}>In Progress</SelectItem>
-                    <SelectItem value={MatchStatus.COMPLETED}>Completed</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </CardHeader>
+      {/* Table of matches */}
+      {sortedMatches.length > 0 ? (
+        <Card>
           <CardContent className="p-0">
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Match #</TableHead>
-                    <TableHead>Round</TableHead>
-                    <TableHead>Tournament</TableHead>
-                    <TableHead>Stage</TableHead>
-                    <TableHead>Red Alliance</TableHead>
-                    <TableHead>Blue Alliance</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Score</TableHead>
-                    <TableHead className="text-right">Action</TableHead>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead 
+                    className="cursor-pointer"
+                    onClick={() => handleSortClick('tournamentName')}
+                  >
+                    Tournament
+                    {sortField === 'tournamentName' && (
+                      <span className="ml-2 inline-block">
+                        {sortDirection === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                      </span>
+                    )}
+                  </TableHead>
+                  <TableHead 
+                    className="cursor-pointer"
+                    onClick={() => handleSortClick('stageName')}
+                  >
+                    Stage
+                    {sortField === 'stageName' && (
+                      <span className="ml-2 inline-block">
+                        {sortDirection === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                      </span>
+                    )}
+                  </TableHead>
+                  <TableHead 
+                    className="cursor-pointer"
+                    onClick={() => handleSortClick('matchNumber')}
+                  >
+                    Match
+                    {sortField === 'matchNumber' && (
+                      <span className="ml-2 inline-block">
+                        {sortDirection === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                      </span>
+                    )}
+                  </TableHead>
+                  <TableHead 
+                    className="cursor-pointer"
+                    onClick={() => handleSortClick('roundNumber')}
+                  >
+                    Round
+                    {sortField === 'roundNumber' && (
+                      <span className="ml-2 inline-block">
+                        {sortDirection === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                      </span>
+                    )}
+                  </TableHead>
+                  <TableHead 
+                    className="cursor-pointer"
+                    onClick={() => handleSortClick('status')}
+                  >
+                    Status
+                    {sortField === 'status' && (
+                      <span className="ml-2 inline-block">
+                        {sortDirection === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                      </span>
+                    )}
+                  </TableHead>
+                  <TableHead 
+                    className="cursor-pointer"
+                    onClick={() => handleSortClick('scheduledTime')}
+                  >
+                    Scheduled Time
+                    {sortField === 'scheduledTime' && (
+                      <span className="ml-2 inline-block">
+                        {sortDirection === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                      </span>
+                    )}
+                  </TableHead>
+                  <TableHead>Teams</TableHead>
+                  <TableHead>Scores</TableHead>
+                  <TableHead>Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {sortedMatches.map((match) => (
+                  <TableRow 
+                    key={match.id} 
+                    className="hover:bg-muted/50 cursor-pointer"
+                    onClick={() => handleMatchClick(match.id)}
+                  >
+                    <TableCell className="font-medium">
+                      {match.stage.tournament.name}
+                    </TableCell>
+                    <TableCell>{match.stage.name}</TableCell>
+                    <TableCell>{match.matchNumber}</TableCell>
+                    <TableCell>{match.roundNumber}</TableCell>
+                    <TableCell>{getStatusBadge(match.status)}</TableCell>
+                    <TableCell>{formatDate(match.scheduledTime)}</TableCell>
+                    <TableCell>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div>
+                          <div className="text-xs font-semibold text-red-600">Red</div>
+                          {match.alliances.find(a => a.color === 'RED')?.teamAlliances.map(ta => (
+                            <div key={ta.id} className="text-xs">{ta.team.name}</div>
+                          ))}
+                        </div>
+                        <div>
+                          <div className="text-xs font-semibold text-blue-600">Blue</div>
+                          {match.alliances.find(a => a.color === 'BLUE')?.teamAlliances.map(ta => (
+                            <div key={ta.id} className="text-xs">{ta.team.name}</div>
+                          ))}
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      {match.status === "COMPLETED" ? (
+                        <div className="flex items-center space-x-1">
+                          <span className="text-red-600 font-medium">
+                            {match.alliances.find(a => a.color === 'RED')?.score || 0}
+                          </span>
+                          <span className="text-gray-500">-</span>
+                          <span className="text-blue-600 font-medium">
+                            {match.alliances.find(a => a.color === 'BLUE')?.score || 0}
+                          </span>
+                        </div>
+                      ) : (
+                        <span className="text-sm text-muted-foreground">-</span>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleMatchClick(match.id);
+                        }}
+                      >
+                        View Details
+                      </Button>
+                    </TableCell>
                   </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredMatches.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={9} className="h-24 text-center">
-                        No matches found.
-                      </TableCell>
-                    </TableRow>
-                  ) : (
-                    filteredMatches.map((match) => {
-                      // Find red and blue alliances
-                      const redAlliance = match.alliances.find(a => a.color === "RED");
-                      const blueAlliance = match.alliances.find(a => a.color === "BLUE");
-
-                      return (
-                        <TableRow key={match.id}>
-                          <TableCell className="font-medium">
-                            {match.matchNumber}
-                          </TableCell>
-                          <TableCell>{match.roundNumber}</TableCell>
-                          <TableCell>
-                            <Link href={`/tournaments/${match.stage.tournament.id}`} className="text-blue-600 hover:underline">
-                              {match.stage.tournament.name}
-                            </Link>
-                          </TableCell>
-                          <TableCell>
-                            <Link href={`/stages/${match.stage.id}`} className="text-blue-600 hover:underline">
-                              {match.stage.name}
-                            </Link>
-                          </TableCell>
-                          <TableCell>
-                            {redAlliance ? formatTeams(redAlliance) : "No red alliance"}
-                          </TableCell>
-                          <TableCell>
-                            {blueAlliance ? formatTeams(blueAlliance) : "No blue alliance"}
-                          </TableCell>
-                          <TableCell>{getStatusBadge(match.status)}</TableCell>
-                          <TableCell>
-                            {match.status === MatchStatus.COMPLETED ? (
-                              <span className="font-medium">
-                                {redAlliance?.score || 0} - {blueAlliance?.score || 0}
-                              </span>
-                            ) : (
-                              "—"
-                            )}
-                          </TableCell>
-                          <TableCell className="text-right">
-                            <Link href={`/matches/${match.id}`}>
-                              <Button variant="outline" size="sm">
-                                View Details
-                              </Button>
-                            </Link>
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })
-                  )}
-                </TableBody>
-              </Table>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      ) : (
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center py-12">
+            <div className="text-center">
+              <h3 className="text-xl font-semibold mb-2">No Matches Found</h3>
+              <p className="text-gray-500">
+                {statusFilter !== "all" 
+                  ? `There are no matches with status "${statusFilter}". Try changing the filter.` 
+                  : "There are no matches in the system yet."}
+              </p>
             </div>
           </CardContent>
         </Card>
-      </div>
+      )}
     </div>
   );
 }

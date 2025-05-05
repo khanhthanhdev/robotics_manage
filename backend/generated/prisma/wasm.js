@@ -258,6 +258,59 @@ exports.Prisma.TeamStatsScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.MatchControlScalarFieldEnum = {
+  id: 'id',
+  matchId: 'matchId',
+  currentState: 'currentState',
+  stateHistory: 'stateHistory',
+  controlledBy: 'controlledBy',
+  lockToken: 'lockToken',
+  lockTimestamp: 'lockTimestamp',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.MatchTimerScalarFieldEnum = {
+  id: 'id',
+  matchControlId: 'matchControlId',
+  timerType: 'timerType',
+  duration: 'duration',
+  remaining: 'remaining',
+  isRunning: 'isRunning',
+  startedAt: 'startedAt',
+  pausedAt: 'pausedAt',
+  completedAt: 'completedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.MatchErrorScalarFieldEnum = {
+  id: 'id',
+  matchControlId: 'matchControlId',
+  errorType: 'errorType',
+  description: 'description',
+  severity: 'severity',
+  status: 'status',
+  reportedBy: 'reportedBy',
+  resolvedBy: 'resolvedBy',
+  resolvedAt: 'resolvedAt',
+  affectedAlliance: 'affectedAlliance',
+  affectedTeamId: 'affectedTeamId',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AudienceDisplayScalarFieldEnum = {
+  id: 'id',
+  matchControlId: 'matchControlId',
+  currentState: 'currentState',
+  customMessage: 'customMessage',
+  customData: 'customData',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -307,6 +360,41 @@ exports.CardType = exports.$Enums.CardType = {
   RED: 'RED'
 };
 
+exports.MatchState = exports.$Enums.MatchState = {
+  SCHEDULED: 'SCHEDULED',
+  READY: 'READY',
+  RUNNING: 'RUNNING',
+  PAUSED: 'PAUSED',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED',
+  ERROR: 'ERROR'
+};
+
+exports.ErrorSeverity = exports.$Enums.ErrorSeverity = {
+  LOW: 'LOW',
+  MEDIUM: 'MEDIUM',
+  HIGH: 'HIGH',
+  CRITICAL: 'CRITICAL'
+};
+
+exports.ErrorStatus = exports.$Enums.ErrorStatus = {
+  OPEN: 'OPEN',
+  ACKNOWLEDGED: 'ACKNOWLEDGED',
+  RESOLVED: 'RESOLVED',
+  CLOSED: 'CLOSED'
+};
+
+exports.DisplayState = exports.$Enums.DisplayState = {
+  STANDBY: 'STANDBY',
+  STARTING_SOON: 'STARTING_SOON',
+  LIVE: 'LIVE',
+  MATCH_RESULTS: 'MATCH_RESULTS',
+  FINISHED: 'FINISHED',
+  CANCELLED: 'CANCELLED',
+  ERROR: 'ERROR',
+  CUSTOM_MESSAGE: 'CUSTOM_MESSAGE'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   Tournament: 'Tournament',
@@ -318,7 +406,11 @@ exports.Prisma.ModelName = {
   Team: 'Team',
   TeamAlliance: 'TeamAlliance',
   MatchScores: 'MatchScores',
-  TeamStats: 'TeamStats'
+  TeamStats: 'TeamStats',
+  MatchControl: 'MatchControl',
+  MatchTimer: 'MatchTimer',
+  MatchError: 'MatchError',
+  AudienceDisplay: 'AudienceDisplay'
 };
 
 /**

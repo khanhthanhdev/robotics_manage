@@ -134,6 +134,26 @@ export function useMatches() {
 }
 
 /**
+ * Hook to fetch matches by stage ID
+ */
+export function useMatchesByStage(stageId: string) {
+  return useQuery({
+    queryKey: QueryKeys.matches.byStage(stageId),
+    queryFn: async () => {
+      try {
+        const data = await apiClient.get<MatchResponse[]>(`/matches?stageId=${stageId}`);
+        return data;
+      } catch (error: any) {
+        toast.error(`Failed to fetch matches for stage: ${error.message}`);
+        throw error;
+      }
+    },
+    enabled: !!stageId,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  });
+}
+
+/**
  * Hook to fetch a specific match by ID
  */
 export function useMatch(matchId: string) {
@@ -205,27 +225,54 @@ export function useMatchScores(matchId: string) {
     queryFn: async () => {
       if (!matchId) throw new Error("Match ID is required");
 
+      // Check for authentication token first
+      const token = apiClient.getToken();
+      if (!token) {
+        console.warn("Authentication token missing when attempting to fetch match scores");
+        throw new Error("Authentication required. Please log in.");
+      }
+
       try {
         // First verify match exists to prevent relationship errors
-        await apiClient.get(`/matches/${matchId}`);
+        try {
+          await apiClient.get(`/matches/${matchId}`);
+        } catch (matchError: any) {
+          // If the match itself doesn't exist, handle that specifically
+          if (matchError.status === 404) {
+            throw new Error(`Match with ID ${matchId} does not exist`);
+          }
+          throw matchError;
+        }
 
-        // Fix: Remove the trailing slash to avoid double slash in the URL
+        // Fetch the match scores
         const data = await apiClient.get<MatchScores>(`/match-scores/match/${matchId}`);
         return data;
       } catch (error: any) {
-        if (error.response?.status === 404) {
-          // If scores don't exist yet, we'll handle it
-          throw new Error(`Match scores not found: ${error.message}`);
+        if (error.status === 401 || error.message?.includes('Unauthorized')) {
+          console.error("Authentication error when fetching match scores:", error);
+          toast.error("Authentication required. Please log in to view match scores.");
+          throw new Error("Authentication required");
         }
+        
+        if (error.status === 404 || error.message?.includes('not found')) {
+          // This is expected for matches that haven't been scored yet
+          console.info(`No scores found for match ${matchId} - this is normal for unscored matches`);
+          // Return null to indicate no scores exist yet (not an error condition)
+          return null;
+        }
+        
+        console.error(`Error fetching match scores for ${matchId}:`, error);
+        toast.error(`Failed to fetch match scores: ${error.message}`);
         throw error;
       }
     },
     enabled: !!matchId,
     staleTime: 1000 * 60 * 1, // 1 minute
     retry: (failureCount, error) => {
-      // Don't retry for 404 errors (scores don't exist yet)
-      if (error instanceof Error && error.message.includes("not found")) {
-        return false;
+      // Don't retry for 404 errors (scores don't exist yet) or auth errors (401)
+      if (error instanceof Error) {
+        if (error.message.includes("not found")) return false;
+        if (error.message.includes("Authentication required")) return false;
       }
       return failureCount < 2;
     },
@@ -255,10 +302,21 @@ export function useCreateMatchScores() {
       blueGameElements?: any[];
       scoreDetails?: Record<string, any>;
     }) => {
+      // Check for authentication token first
+      const token = apiClient.getToken();
+      if (!token) {
+        console.warn("Authentication token missing when attempting to create match scores");
+        throw new Error("Authentication required. Please log in.");
+      }
+
       // First verify the match exists to prevent relationship errors
       try {
         await apiClient.get(`/matches/${data.matchId}`);
-      } catch (error) {
+      } catch (error: any) {
+        if (error.status === 401 || error.message?.includes('Unauthorized')) {
+          toast.error("Authentication required. Please log in to create match scores.");
+          throw new Error("Authentication required");
+        }
         throw new Error(
           `Match not found. Cannot create scores for non-existent match.`
         );
@@ -274,7 +332,12 @@ export function useCreateMatchScores() {
           // If scores exist, update them instead
           return await apiClient.patch(`/match-scores/${existingScores.id}`, data);
         }
-      } catch (error) {
+      } catch (error: any) {
+        // Handle auth errors but ignore 404 errors (scores don't exist yet)
+        if (error.status === 401 || error.message?.includes('Unauthorized')) {
+          toast.error("Authentication required. Please log in to create match scores.");
+          throw new Error("Authentication required");
+        }
         // Scores don't exist, proceed with creation
       }
 
@@ -341,8 +404,23 @@ export function useUpdateMatchScores() {
         throw new Error("Match scores ID is required for updates");
       }
 
-      // Update match scores with patch operation
-      return await apiClient.patch(`/match-scores/${data.id}`, data);
+      // Check for authentication token first
+      const token = apiClient.getToken();
+      if (!token) {
+        console.warn("Authentication token missing when attempting to update match scores");
+        throw new Error("Authentication required. Please log in.");
+      }
+
+      try {
+        // Update match scores with patch operation
+        return await apiClient.patch(`/match-scores/${data.id}`, data);
+      } catch (error: any) {
+        if (error.status === 401 || error.message?.includes('Unauthorized')) {
+          toast.error("Authentication required. Please log in to update match scores.");
+          throw new Error("Authentication required");
+        }
+        throw error;
+      }
     },
     onSuccess: (data) => {
       if (data?.matchId) {

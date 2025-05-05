@@ -10,7 +10,7 @@ const navigationItems = [
   { name: "Tournaments", href: "/tournaments" },
   { name: "Stages", href: "/stages" },
   { name: "Matches", href: "/matches" },
-  { name: "Match Control", href: "/match-control" },
+  { name: "Match Control", href: "/control-match" },
   { name: "Audience Display", href: "/audience-display" },
 ];
 
