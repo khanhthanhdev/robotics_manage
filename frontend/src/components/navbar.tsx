@@ -18,35 +18,35 @@ export default function Navbar() {
   const pathname = usePathname();
   const { user, logout, isLoading } = useAuth();
   const [isMounted, setIsMounted] = useState(false);
-  
+
   // Only show user-dependent UI after hydration to avoid mismatch
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
   return (
-    <nav className="bg-background border-b">
+    <nav className="bg-background border-b sticky top-0 z-50 shadow-sm">
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
-          <div className="flex items-center">
-            <Link href="/" className="flex items-center gap-2">
-              <span className="font-bold text-xl text-primary">RBA</span>
-              <span className="hidden md:block text-lg">Robotics Tournament Manager</span>
+          {/* Logo and Brand */}
+          <div className="flex items-center gap-2 min-w-0">
+            <Link href="/" className="flex items-center gap-2 min-w-0">
+              <span className="font-bold text-xl text-primary truncate">RBA</span>
+              <span className="hidden md:block text-lg truncate">Robotics Tournament Manager</span>
             </Link>
           </div>
 
-          <div className="hidden md:block">
-            <div className="flex items-center space-x-4">
+          {/* Desktop Navigation */}
+          <div className="hidden lg:flex flex-1 justify-center">
+            <div className="flex items-center space-x-2 xl:space-x-4">
               {navigationItems.map((item) => {
-                const isActive = pathname === item.href || 
-                  (item.href !== "/" && pathname?.startsWith(item.href));
-                
+                const isActive = pathname === item.href || (item.href !== "/" && pathname?.startsWith(item.href));
                 return (
                   <Link
                     key={item.name}
                     href={item.href}
                     className={cn(
-                      "px-3 py-2 rounded-md text-sm font-medium transition-colors",
+                      "px-3 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap",
                       isActive
                         ? "bg-primary/10 text-primary"
                         : "text-foreground/70 hover:bg-accent hover:text-foreground"
@@ -60,41 +60,34 @@ export default function Navbar() {
             </div>
           </div>
 
-          <div className="hidden md:block">
-            <div className="flex items-center space-x-4">
-              {isMounted && (
-                <>
-                  {!user ? (
-                    <Link
-                      href="/login"
-                      className="px-3 py-1.5 border border-primary/30 text-primary hover:bg-primary/10 rounded text-sm font-medium transition-colors"
-                    >
-                      Sign in
-                    </Link>
-                  ) : (
-                    <div className="flex items-center gap-4">
-                      <div className="text-sm">
-                        <span className="text-muted-foreground mr-1">Signed in as</span>
-                        <span className="font-medium">{user?.username}</span>
-                      </div>
-                      <button
-                        onClick={() => logout()}
-                        className="px-3 py-1.5 border border-destructive/30 text-destructive hover:bg-destructive/10 rounded text-sm font-medium transition-colors"
-                      >
-                        Sign out
-                      </button>
-                    </div>
-                  )}
-                </>
-              )}
-              {!isMounted && (
-                <div className="w-[200px] h-[32px]"></div>
-              )}
-            </div>
+          {/* Desktop Auth */}
+          <div className="hidden lg:flex items-center space-x-4 min-w-[180px] justify-end">
+            {isMounted ? (
+              user ? (
+                <div className="flex items-center gap-3">
+                  <span className="text-sm text-muted-foreground truncate max-w-[100px]">{user?.username}</span>
+                  <button
+                    onClick={logout}
+                    className="px-3 py-1.5 border border-destructive/30 text-destructive hover:bg-destructive/10 rounded text-sm font-medium transition-colors"
+                  >
+                    Sign out
+                  </button>
+                </div>
+              ) : (
+                <Link
+                  href="/login"
+                  className="px-3 py-1.5 border border-primary/30 text-primary hover:bg-primary/10 rounded text-sm font-medium transition-colors"
+                >
+                  Sign in
+                </Link>
+              )
+            ) : (
+              <div className="w-[120px] h-[32px] bg-accent/10 rounded animate-pulse" />
+            )}
           </div>
 
           {/* Mobile menu button */}
-          <div className="md:hidden">
+          <div className="lg:hidden flex items-center">
             <MobileMenu
               navigationItems={navigationItems}
               pathname={pathname}
@@ -122,8 +115,9 @@ function MobileMenu({ navigationItems, pathname, user, logout, isMounted }: {
     <>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="inline-flex items-center justify-center p-2 rounded-md text-foreground/70 hover:text-foreground hover:bg-accent focus:outline-none"
+        className="inline-flex items-center justify-center p-2 rounded-md text-foreground/70 hover:text-foreground hover:bg-accent focus:outline-none focus:ring-2 focus:ring-primary/30"
         aria-expanded={isOpen}
+        aria-label="Toggle navigation menu"
       >
         <span className="sr-only">Open main menu</span>
         {/* Menu icon */}
@@ -135,12 +129,7 @@ function MobileMenu({ navigationItems, pathname, user, logout, isMounted }: {
           stroke="currentColor"
           aria-hidden="true"
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M4 6h16M4 12h16M4 18h16"
-          />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
         </svg>
         {/* X icon */}
         <svg
@@ -151,23 +140,26 @@ function MobileMenu({ navigationItems, pathname, user, logout, isMounted }: {
           stroke="currentColor"
           aria-hidden="true"
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M6 18L18 6M6 6l12 12"
-          />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
         </svg>
       </button>
 
+      {/* Mobile menu overlay */}
+      <div
+        className={cn(
+          "fixed inset-0 z-40 bg-black/30 transition-opacity duration-200",
+          isOpen ? "block" : "hidden"
+        )}
+        onClick={() => setIsOpen(false)}
+        aria-hidden="true"
+      />
+
       {/* Mobile menu */}
       {isOpen && (
-        <div className="absolute top-16 left-0 right-0 z-50 bg-background border-b shadow-lg">
+        <div className="fixed top-0 left-0 right-0 z-50 bg-background border-b shadow-lg animate-slide-down">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
             {navigationItems.map((item) => {
-              const isActive = pathname === item.href || 
-                (item.href !== "/" && pathname?.startsWith(item.href));
-                
+              const isActive = pathname === item.href || (item.href !== "/" && pathname?.startsWith(item.href));
               return (
                 <Link
                   key={item.name}
@@ -185,38 +177,32 @@ function MobileMenu({ navigationItems, pathname, user, logout, isMounted }: {
                 </Link>
               );
             })}
-
             <div className="pt-4 pb-3 border-t border-accent/20">
-              {isMounted && (
-                <>
-                  {user ? (
-                    <>
-                      <div className="px-3 py-2 text-base font-medium text-foreground">
-                        {user.username}
-                      </div>
-                      <button
-                        onClick={() => {
-                          logout();
-                          setIsOpen(false);
-                        }}
-                        className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-destructive hover:bg-destructive/10 transition-colors"
-                      >
-                        Sign out
-                      </button>
-                    </>
-                  ) : (
-                    <Link
-                      href="/login"
-                      className="block px-3 py-2 rounded-md text-base font-medium text-primary hover:bg-primary/10 transition-colors"
-                      onClick={() => setIsOpen(false)}
+              {isMounted ? (
+                user ? (
+                  <>
+                    <div className="px-3 py-2 text-base font-medium text-foreground truncate">{user.username}</div>
+                    <button
+                      onClick={() => {
+                        logout();
+                        setIsOpen(false);
+                      }}
+                      className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-destructive hover:bg-destructive/10 transition-colors"
                     >
-                      Sign in
-                    </Link>
-                  )}
-                </>
-              )}
-              {!isMounted && (
-                <div className="h-[40px]"></div>
+                      Sign out
+                    </button>
+                  </>
+                ) : (
+                  <Link
+                    href="/login"
+                    className="block px-3 py-2 rounded-md text-base font-medium text-primary hover:bg-primary/10 transition-colors"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Sign in
+                  </Link>
+                )
+              ) : (
+                <div className="h-[40px]" />
               )}
             </div>
           </div>

@@ -62,6 +62,18 @@ export default function MatchDetailsPage() {
   const redAlliance = match.alliances.find((a) => a.color === "RED");
   const blueAlliance = match.alliances.find((a) => a.color === "BLUE");
 
+  // Determine match result based on scores
+  let calculatedWinningAlliance: string | null = null;
+  if (typeof redAlliance?.score === "number" && typeof blueAlliance?.score === "number") {
+    if (redAlliance.score > blueAlliance.score) {
+      calculatedWinningAlliance = "RED";
+    } else if (blueAlliance.score > redAlliance.score) {
+      calculatedWinningAlliance = "BLUE";
+    } else {
+      calculatedWinningAlliance = "TIE";
+    }
+  }
+
   // Format time with date-fns
   const formatDateTime = (dateString: string | null) => {
     if (!dateString) return "Not scheduled";
@@ -197,10 +209,10 @@ export default function MatchDetailsPage() {
                   </CardContent>
                 </Card>
 
-                {match.status === MatchStatus.COMPLETED && (
-                  <Card className="md:col-span-2 border-t-2 border-t-gray-700 shadow-lg">
+                {((match.status === MatchStatus.COMPLETED) && (calculatedWinningAlliance)) && (
+                  <Card className="md:col-span-2 border-t-2 border-t-gray-700 shadow-lg bg-gray-900 border-gray-800">
                     <CardHeader className="pb-2 bg-gradient-to-r from-gray-900 to-gray-800">
-                      <CardTitle className="flex items-center text-lg">
+                      <CardTitle className="flex items-center text-lg text-gray-100">
                         <Trophy className="mr-2 size-5 text-yellow-500" />
                         Match Results
                       </CardTitle>
@@ -210,7 +222,7 @@ export default function MatchDetailsPage() {
                         {/* Red Alliance */}
                         <div className={cn(
                           "flex flex-col items-center justify-center space-y-2 rounded-lg p-4 border",
-                          match.winningAlliance === "RED" 
+                          calculatedWinningAlliance === "RED" 
                             ? "bg-gradient-to-b from-red-950 to-red-900 border-red-500 shadow-md shadow-red-900/30 ring-1 ring-red-500/30" 
                             : "border-gray-800 bg-gray-900/30"
                         )}>
@@ -218,42 +230,41 @@ export default function MatchDetailsPage() {
                             <div className="size-4 rounded-full" style={{ backgroundColor: "#ef4444" }} />
                             <h3 className="text-base font-semibold text-gray-200">Red Alliance</h3>
                           </div>
-                          
                           <div className="w-full px-2 py-3 rounded-md bg-black/30 flex flex-col items-center">
                             <span className={cn(
                               "text-4xl font-bold",
-                              match.winningAlliance === "RED" ? "text-red-400" : "text-gray-300"
+                              calculatedWinningAlliance === "RED" ? "text-red-400" : "text-gray-300"
                             )}>
                               {redAlliance?.score || 0}
                             </span>
                             <span className="text-xs text-gray-400 mt-1">TOTAL POINTS</span>
                           </div>
-                          
                           {redAlliance?.teamAlliances.map((ta) => (
                             <div key={ta.id} className="text-center w-full bg-black/20 rounded px-2 py-1">
                               <p className={cn(
                                 "text-sm",
-                                match.winningAlliance === "RED" ? "text-red-300" : "text-gray-400"
+                                calculatedWinningAlliance === "RED" ? "text-red-300" : "text-gray-400"
                               )}>
                                 Team #{ta.team.teamNumber} · {ta.team.name}
                               </p>
                             </div>
                           ))}
                         </div>
-
                         {/* Match Result */}
                         <div className="flex flex-col items-center justify-center space-y-3">
-                          {match.winningAlliance && (
+                          {calculatedWinningAlliance && (
                             <div className="text-center">
                               <div className="flex flex-col items-center justify-center gap-2 mb-2">
                                 <Trophy className="h-8 w-8 text-yellow-500" />
                                 <div className={cn(
                                   "text-white text-lg font-bold px-6 py-2 rounded-md",
-                                  match.winningAlliance === "RED" 
+                                  calculatedWinningAlliance === "RED" 
                                     ? "bg-gradient-to-r from-red-800 to-red-700" 
-                                    : "bg-gradient-to-r from-blue-800 to-blue-700"
+                                    : calculatedWinningAlliance === "BLUE"
+                                      ? "bg-gradient-to-r from-blue-800 to-blue-700"
+                                      : "bg-gradient-to-r from-amber-800 to-amber-700"
                                 )}>
-                                  {match.winningAlliance} WINS
+                                  {calculatedWinningAlliance === "TIE" ? "TIE MATCH" : `${calculatedWinningAlliance} WINS`}
                                 </div>
                               </div>
                               <div className="mt-4 text-sm text-gray-400">
@@ -262,7 +273,7 @@ export default function MatchDetailsPage() {
                                   {Math.abs((redAlliance?.score || 0) - (blueAlliance?.score || 0))} points
                                 </span>
                               </div>
-                              {match.winningAlliance === "TIE" && (
+                              {calculatedWinningAlliance === "TIE" && (
                                 <Badge className="mt-2 bg-amber-700 text-amber-100">
                                   TIE MATCH
                                 </Badge>
@@ -270,11 +281,10 @@ export default function MatchDetailsPage() {
                             </div>
                           )}
                         </div>
-
                         {/* Blue Alliance */}
                         <div className={cn(
                           "flex flex-col items-center justify-center space-y-2 rounded-lg p-4 border",
-                          match.winningAlliance === "BLUE" 
+                          calculatedWinningAlliance === "BLUE" 
                             ? "bg-gradient-to-b from-blue-950 to-blue-900 border-blue-500 shadow-md shadow-blue-900/30 ring-1 ring-blue-500/30" 
                             : "border-gray-800 bg-gray-900/30"
                         )}>
@@ -282,22 +292,20 @@ export default function MatchDetailsPage() {
                             <div className="size-4 rounded-full" style={{ backgroundColor: "#3b82f6" }} />
                             <h3 className="text-base font-semibold text-gray-200">Blue Alliance</h3>
                           </div>
-                          
                           <div className="w-full px-2 py-3 rounded-md bg-black/30 flex flex-col items-center">
                             <span className={cn(
                               "text-4xl font-bold",
-                              match.winningAlliance === "BLUE" ? "text-blue-400" : "text-gray-300"
+                              calculatedWinningAlliance === "BLUE" ? "text-blue-400" : "text-gray-300"
                             )}>
                               {blueAlliance?.score || 0}
                             </span>
                             <span className="text-xs text-gray-400 mt-1">TOTAL POINTS</span>
                           </div>
-                          
                           {blueAlliance?.teamAlliances.map((ta) => (
                             <div key={ta.id} className="text-center w-full bg-black/20 rounded px-2 py-1">
                               <p className={cn(
                                 "text-sm",
-                                match.winningAlliance === "BLUE" ? "text-blue-300" : "text-gray-400"
+                                calculatedWinningAlliance === "BLUE" ? "text-blue-300" : "text-gray-400"
                               )}>
                                 Team #{ta.team.teamNumber} · {ta.team.name}
                               </p>
@@ -305,28 +313,19 @@ export default function MatchDetailsPage() {
                           ))}
                         </div>
                       </div>
-                      
                       {/* Additional match statistics - only shown if match is completed */}
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4 border-t border-gray-800 pt-4">
                         <div className="bg-gray-900/60 rounded-md p-3">
                           <div className="text-xs uppercase text-gray-500 mb-1">Match Duration</div>
-                          <div className="font-medium text-white">
-                            {match.duration ? `${match.duration} seconds` : "Not recorded"}
-                          </div>
+                          <div className="text-lg font-semibold text-gray-100">{match.duration ? `${match.duration} seconds` : "Not completed"}</div>
                         </div>
-                        
                         <div className="bg-gray-900/60 rounded-md p-3">
-                          <div className="text-xs uppercase text-gray-500 mb-1">Match Number</div>
-                          <div className="font-medium text-white">
-                            #{match.matchNumber} in {match.stage.name}
-                          </div>
+                          <div className="text-xs uppercase text-gray-500 mb-1">Scheduled Time</div>
+                          <div className="text-lg font-semibold text-gray-100">{formatDateTime(match.scheduledTime)}</div>
                         </div>
-                        
                         <div className="bg-gray-900/60 rounded-md p-3">
-                          <div className="text-xs uppercase text-gray-500 mb-1">Completed On</div>
-                          <div className="font-medium text-white">
-                            {match.endTime ? format(parseISO(match.endTime), "MMM d, h:mm a") : "N/A"}
-                          </div>
+                          <div className="text-xs uppercase text-gray-500 mb-1">Start Time</div>
+                          <div className="text-lg font-semibold text-gray-100">{formatDateTime(match.startTime)}</div>
                         </div>
                       </div>
                     </CardContent>
@@ -462,13 +461,13 @@ export default function MatchDetailsPage() {
                   )}
                 </div>
                 
-                {match.status === MatchStatus.COMPLETED && match.winningAlliance && (
+                {match.status === MatchStatus.COMPLETED && calculatedWinningAlliance && (
                   <div className="mt-4">
                     <div className={cn(
                       "rounded-lg p-4 text-center",
-                      match.winningAlliance === "RED" 
+                      calculatedWinningAlliance === "RED" 
                         ? "bg-gradient-to-br from-red-950 to-red-900 border border-red-800 shadow-inner shadow-red-800/10" 
-                        : match.winningAlliance === "BLUE"
+                        : calculatedWinningAlliance === "BLUE"
                           ? "bg-gradient-to-br from-blue-950 to-blue-900 border border-blue-800 shadow-inner shadow-blue-800/10"
                           : "bg-gradient-to-br from-amber-950 to-amber-900 border border-amber-800"
                     )}>
@@ -479,24 +478,24 @@ export default function MatchDetailsPage() {
                       
                       <div className={cn(
                         "text-xl font-bold mb-3 py-1 px-3 rounded-md inline-block",
-                        match.winningAlliance === "RED" 
+                        calculatedWinningAlliance === "RED" 
                           ? "text-white bg-red-800/50" 
-                          : match.winningAlliance === "BLUE"
+                          : calculatedWinningAlliance === "BLUE"
                             ? "text-white bg-blue-800/50"
                             : "text-amber-100 bg-amber-800/50"
                       )}>
-                        {match.winningAlliance === "TIE" ? "TIE MATCH" : `${match.winningAlliance} ALLIANCE`}
+                        {calculatedWinningAlliance === "TIE" ? "TIE MATCH" : `${calculatedWinningAlliance} ALLIANCE`}
                       </div>
                       
                       <div className="grid grid-cols-2 gap-2 mt-3 pt-3 border-t border-gray-700/50">
                         <div className={cn(
                           "text-center p-2 rounded-md",
-                          match.winningAlliance === "RED" ? "bg-red-800/30 ring-1 ring-red-700" : "bg-gray-800/40"
+                          calculatedWinningAlliance === "RED" ? "bg-red-800/30 ring-1 ring-red-700" : "bg-gray-800/40"
                         )}>
                           <p className="text-xs text-gray-400">RED</p>
                           <p className={cn(
                             "text-xl font-semibold",
-                            match.winningAlliance === "RED" ? "text-red-300" : "text-gray-300"
+                            calculatedWinningAlliance === "RED" ? "text-red-300" : "text-gray-300"
                           )}>
                             {redAlliance?.score || 0}
                           </p>
@@ -504,12 +503,12 @@ export default function MatchDetailsPage() {
                         
                         <div className={cn(
                           "text-center p-2 rounded-md",
-                          match.winningAlliance === "BLUE" ? "bg-blue-800/30 ring-1 ring-blue-700" : "bg-gray-800/40"
+                          calculatedWinningAlliance === "BLUE" ? "bg-blue-800/30 ring-1 ring-blue-700" : "bg-gray-800/40"
                         )}>
                           <p className="text-xs text-gray-400">BLUE</p>
                           <p className={cn(
                             "text-xl font-semibold",
-                            match.winningAlliance === "BLUE" ? "text-blue-300" : "text-gray-300"
+                            calculatedWinningAlliance === "BLUE" ? "text-blue-300" : "text-gray-300"
                           )}>
                             {blueAlliance?.score || 0}
                           </p>

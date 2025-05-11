@@ -1,43 +1,67 @@
-import { MatchData } from "./websocket-service";
+import { apiClient } from "@/lib/api-client";
+import { MatchResponse, MatchScores } from "@/hooks/use-matches";
+import { MatchStatus } from "@/lib/types";
 
-export interface Match {
-  id: string;
-  matchNumber: number;
-  tournamentId: string;
-  status: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED';
-  scheduledStartTime: string;
-  redTeams: string[];
-  blueTeams: string[];
-}
-
-export async function fetchMatches(tournamentId: string): Promise<Match[]> {
-  try {
-    const apiUrl = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/matches`;
-    const response = await fetch(`${apiUrl}?tournamentId=${tournamentId}`);
-    
-    if (!response.ok) {
-      throw new Error(`Failed to fetch matches: ${response.statusText}`);
-    }
-    
-    return await response.json();
-  } catch (error) {
-    console.error('Error fetching matches:', error);
-    return [];
+export class MatchService {
+  static async getAllMatches(): Promise<MatchResponse[]> {
+    return apiClient.get<MatchResponse[]>("/matches");
   }
-}
 
-export async function fetchMatchById(matchId: string): Promise<Match | null> {
-  try {
-    const apiUrl = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/matches/${matchId}`;
-    const response = await fetch(apiUrl);
-    
-    if (!response.ok) {
-      throw new Error(`Failed to fetch match: ${response.statusText}`);
+  static async getMatchesByStage(stageId: string): Promise<MatchResponse[]> {
+    return apiClient.get<MatchResponse[]>(`/matches?stageId=${stageId}`);
+  }
+
+  static async getMatchById(matchId: string): Promise<MatchResponse> {
+    return apiClient.get<MatchResponse>(`/matches/${matchId}`);
+  }
+
+  static async updateMatchStatus(matchId: string, status: MatchStatus): Promise<MatchResponse> {
+    return apiClient.patch<MatchResponse>(`/matches/${matchId}/status`, { status });
+  }
+
+  static async getMatchScores(matchId: string): Promise<MatchScores | null> {
+    await apiClient.get(`/matches/${matchId}`);
+    try {
+      return await apiClient.get<MatchScores>(`/match-scores/match/${matchId}`);
+    } catch (error: any) {
+      if (error.status === 404 || error.message?.includes('not found')) {
+        return null;
+      }
+      throw error;
     }
-    
-    return await response.json();
-  } catch (error) {
-    console.error(`Error fetching match ${matchId}:`, error);
-    return null;
+  }
+
+  static async createOrUpdateMatchScores(data: Partial<MatchScores> & { matchId: string }): Promise<MatchScores> {
+    await apiClient.get(`/matches/${data.matchId}`);
+    try {
+      const existingScores = await apiClient.get(`/match-scores/match/${data.matchId}`);
+      if (existingScores) {
+        return await apiClient.patch(`/match-scores/${existingScores.id}`, data);
+      }
+    } catch (error: any) {
+      if (error.status !== 404 && !error.message?.includes('not found')) {
+        throw error;
+      }
+    }
+    return await apiClient.post(`/match-scores`, {
+      matchId: data.matchId,
+      redAutoScore: data.redAutoScore || 0,
+      redDriveScore: data.redDriveScore || 0,
+      redTotalScore: data.redTotalScore || 0,
+      blueAutoScore: data.blueAutoScore || 0,
+      blueDriveScore: data.blueDriveScore || 0,
+      blueTotalScore: data.blueTotalScore || 0,
+      redTeamCount: data.redTeamCount || 0,
+      blueTeamCount: data.blueTeamCount || 0,
+      redMultiplier: data.redMultiplier || 1.0,
+      blueMultiplier: data.blueMultiplier || 1.0,
+      redGameElements: data.redGameElements || [],
+      blueGameElements: data.blueGameElements || [],
+      scoreDetails: data.scoreDetails || {},
+    });
+  }
+
+  static async updateMatchScores(data: Partial<MatchScores> & { id: string }): Promise<MatchScores> {
+    return apiClient.patch(`/match-scores/${data.id}`, data);
   }
 }

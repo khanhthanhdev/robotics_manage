@@ -2,13 +2,22 @@ import { Injectable, NotFoundException, BadRequestException } from '@nestjs/comm
 import { PrismaService } from '../prisma.service';
 import { CreateMatchScoresDto, UpdateMatchScoresDto } from './dto';
 import { Prisma } from '@prisma/client';
+import { ScoreCalculator, IScoreCalculator } from './score-calculator';
+import { JsonFieldParser } from './json-field-parser';
+import { TeamStatsService } from './team-stats.service';
 
 /**
  * Service for managing match scores
  */
 @Injectable()
 export class MatchScoresService {
-  constructor(private readonly prisma: PrismaService) {}
+  private readonly scoreCalculator: IScoreCalculator;
+  private readonly teamStatsService: TeamStatsService;
+
+  constructor(private readonly prisma: PrismaService) {
+    this.scoreCalculator = new ScoreCalculator();
+    this.teamStatsService = new TeamStatsService(prisma);
+  }
 
   /**
    * Creates match scores for a match
@@ -43,21 +52,21 @@ export class MatchScoresService {
 
       // Apply team count multipliers if not explicitly provided
       if (createMatchScoresDto.redTeamCount && !createMatchScoresDto.redMultiplier) {
-        createMatchScoresDto.redMultiplier = this.calculateMultiplier(createMatchScoresDto.redTeamCount);
+        createMatchScoresDto.redMultiplier = this.scoreCalculator.calculateMultiplier(createMatchScoresDto.redTeamCount);
       }
 
       if (createMatchScoresDto.blueTeamCount && !createMatchScoresDto.blueMultiplier) {
-        createMatchScoresDto.blueMultiplier = this.calculateMultiplier(createMatchScoresDto.blueTeamCount);
+        createMatchScoresDto.blueMultiplier = this.scoreCalculator.calculateMultiplier(createMatchScoresDto.blueTeamCount);
       }
 
       // Calculate total scores
-      const redTotalScore = this.calculateTotalScore(
+      const redTotalScore = this.scoreCalculator.calculateTotalScore(
         createMatchScoresDto.redAutoScore || 0,
         createMatchScoresDto.redDriveScore || 0,
         createMatchScoresDto.redMultiplier || 1.0,
       );
 
-      const blueTotalScore = this.calculateTotalScore(
+      const blueTotalScore = this.scoreCalculator.calculateTotalScore(
         createMatchScoresDto.blueAutoScore || 0,
         createMatchScoresDto.blueDriveScore || 0,
         createMatchScoresDto.blueMultiplier || 1.0,
@@ -132,23 +141,15 @@ export class MatchScoresService {
 
       // Update team stats if needed
       if (match?.alliances && match.alliances.length > 0 && match?.stage?.tournament) {
-        await this.recalculateTeamStats(createMatchScoresDto.matchId, winningAlliance);
+        const teamIds = match.alliances.flatMap(alliance =>
+          alliance.teamAlliances.filter(ta => !ta.isSurrogate).map(ta => ta.teamId)
+        );
+        await this.teamStatsService.recalculateTeamStats(match, teamIds);
       }
       
-      return this.parseJsonFields(matchScores);
+      return JsonFieldParser.parseJsonFields(matchScores);
     } catch (error) {
       console.error('Error creating match scores:', error);
-      
-      // // Enhance error handling for Prisma errors
-      // if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      //   if (error.code === 'P2014') {
-      //     throw new BadRequestException(
-      //       `Failed to establish relationship between MatchScores and Match. Please ensure the match with ID ${createMatchScoresDto.matchId} exists.`
-      //     );
-      //   }
-      //   // Add specific handling for other Prisma error codes as needed
-      // }
-      
       throw error;
     }
   }
@@ -181,7 +182,7 @@ export class MatchScoresService {
     });
 
     // Parse JSON fields
-    return scores.map((score) => this.parseJsonFields(score));
+    return scores.map((score) => JsonFieldParser.parseJsonFields(score));
   }
 
   /**
@@ -214,7 +215,7 @@ export class MatchScoresService {
     }
 
     // Parse JSON fields
-    return this.parseJsonFields(score);
+    return JsonFieldParser.parseJsonFields(score);
   }
 
   /**
@@ -247,7 +248,7 @@ export class MatchScoresService {
     }
 
     // Parse JSON fields
-    return this.parseJsonFields(score);
+    return JsonFieldParser.parseJsonFields(score);
   }
 
   /**
@@ -281,11 +282,11 @@ export class MatchScoresService {
 
     // Apply team count multipliers if needed
     if (updateMatchScoresDto.redTeamCount && !updateMatchScoresDto.redMultiplier) {
-      updateMatchScoresDto.redMultiplier = this.calculateMultiplier(updateMatchScoresDto.redTeamCount);
+      updateMatchScoresDto.redMultiplier = this.scoreCalculator.calculateMultiplier(updateMatchScoresDto.redTeamCount);
     }
 
     if (updateMatchScoresDto.blueTeamCount && !updateMatchScoresDto.blueMultiplier) {
-      updateMatchScoresDto.blueMultiplier = this.calculateMultiplier(updateMatchScoresDto.blueTeamCount);
+      updateMatchScoresDto.blueMultiplier = this.scoreCalculator.calculateMultiplier(updateMatchScoresDto.blueTeamCount);
     }
 
     // Recalculate total scores if component scores are updated
@@ -297,7 +298,7 @@ export class MatchScoresService {
       updateMatchScoresDto.redDriveScore !== undefined ||
       updateMatchScoresDto.redMultiplier !== undefined
     ) {
-      redTotalScore = this.calculateTotalScore(
+      redTotalScore = this.scoreCalculator.calculateTotalScore(
         updateMatchScoresDto.redAutoScore ?? existingScores.redAutoScore,
         updateMatchScoresDto.redDriveScore ?? existingScores.redDriveScore,
         updateMatchScoresDto.redMultiplier ?? existingScores.redMultiplier,
@@ -309,7 +310,7 @@ export class MatchScoresService {
       updateMatchScoresDto.blueDriveScore !== undefined ||
       updateMatchScoresDto.blueMultiplier !== undefined
     ) {
-      blueTotalScore = this.calculateTotalScore(
+      blueTotalScore = this.scoreCalculator.calculateTotalScore(
         updateMatchScoresDto.blueAutoScore ?? existingScores.blueAutoScore,
         updateMatchScoresDto.blueDriveScore ?? existingScores.blueDriveScore,
         updateMatchScoresDto.blueMultiplier ?? existingScores.blueMultiplier,
@@ -387,10 +388,30 @@ export class MatchScoresService {
       }
       
       // Re-calculate team statistics for this match
-      await this.recalculateTeamStats(updatedScores.matchId, winningAlliance);
+      const match = await this.prisma.match.findUnique({
+        where: { id: updatedScores.matchId },
+        include: {
+          alliances: {
+            include: {
+              teamAlliances: true,
+            },
+          },
+          stage: {
+            include: {
+              tournament: true,
+            },
+          },
+        },
+      });
+      if (match?.alliances && match.alliances.length > 0 && match?.stage?.tournament) {
+        const teamIds = match.alliances.flatMap(alliance =>
+          alliance.teamAlliances.filter(ta => !ta.isSurrogate).map(ta => ta.teamId)
+        );
+        await this.teamStatsService.recalculateTeamStats(match, teamIds);
+      }
     }
 
-    return this.parseJsonFields(updatedScores);
+    return JsonFieldParser.parseJsonFields(updatedScores);
   }
 
   /**
@@ -451,7 +472,7 @@ export class MatchScoresService {
 
       // If scores already exist, just return them
       if (existingScores) {
-        return this.parseJsonFields(existingScores);
+        return JsonFieldParser.parseJsonFields(existingScores);
       }
 
       // Create initial scores with zero values
@@ -475,197 +496,10 @@ export class MatchScoresService {
         },
       });
 
-      return this.parseJsonFields(initialScores);
+      return JsonFieldParser.parseJsonFields(initialScores);
     } catch (error) {
       console.error(`Error initializing match scores for match ${matchId}:`, error);
       throw error;
     }
-  }
-
-  /**
-   * Recalculates team statistics for a match
-   * @param matchId - Match ID
-   * @param winningAlliance - Alliance that won the match
-   */
-  private async recalculateTeamStats(matchId: string, winningAlliance: 'RED' | 'BLUE' | 'TIE'): Promise<void> {
-    const match = await this.prisma.match.findUnique({
-      where: { id: matchId },
-      include: {
-        alliances: {
-          include: {
-            teamAlliances: {
-              include: {
-                team: true,
-              },
-            },
-          },
-        },
-        stage: {
-          include: {
-            tournament: true,
-          },
-        },
-      },
-    });
-
-    if (!match) return;
-
-    // Get all team IDs in this match (excluding surrogates)
-    const teamIds = match.alliances.flatMap(alliance => 
-      alliance.teamAlliances
-        .filter(ta => !ta.isSurrogate)
-        .map(ta => ta.teamId)
-    );
-    
-    // Use a single optimized query to get all relevant matches for these teams
-    const allTeamMatches = await this.prisma.match.findMany({
-      where: {
-        stage: {
-          tournamentId: match.stage.tournament.id,
-        },
-        alliances: {
-          some: {
-            teamAlliances: {
-              some: {
-                teamId: {
-                  in: teamIds
-                },
-                isSurrogate: false,
-              },
-            },
-          },
-        },
-        status: 'COMPLETED',
-      },
-      include: {
-        alliances: {
-          include: {
-            teamAlliances: {
-              where: {
-                teamId: {
-                  in: teamIds
-                }
-              },
-            },
-          },
-        },
-      },
-    });
-
-    // Group matches by team for more efficient processing
-    const matchesByTeam = new Map<string, any[]>();
-    
-    // Initialize with empty arrays
-    teamIds.forEach(teamId => matchesByTeam.set(teamId, []));
-    
-    // Populate with relevant matches
-    for (const teamMatch of allTeamMatches) {
-      for (const alliance of teamMatch.alliances) {
-        for (const teamAlliance of alliance.teamAlliances) {
-          const matches = matchesByTeam.get(teamAlliance.teamId) || [];
-          matches.push({
-            ...teamMatch,
-            teamAllianceColor: alliance.color
-          });
-          matchesByTeam.set(teamAlliance.teamId, matches);
-        }
-      }
-    }
-    
-    // Use batched updates for better performance
-    const statsUpdates: Promise<any>[] = [];
-    
-    // Calculate and update stats for each team
-    for (const [teamId, teamMatches] of matchesByTeam.entries()) {
-      // Calculate team stats
-      let wins = 0;
-      let losses = 0;
-      let ties = 0;
-      const matchesPlayed = teamMatches.length;
-
-      for (const teamMatch of teamMatches) {
-        if (teamMatch.winningAlliance === 'TIE') {
-          ties++;
-        } else if (teamMatch.winningAlliance === teamMatch.teamAllianceColor) {
-          wins++;
-        } else {
-          losses++;
-        }
-      }
-
-      // Add stats update to batch
-      statsUpdates.push(
-        this.prisma.teamStats.upsert({
-          where: {
-            teamId_tournamentId: {
-              teamId,
-              tournamentId: match.stage.tournament.id,
-            },
-          },
-          create: {
-            teamId,
-            tournamentId: match.stage.tournament.id,
-            wins,
-            losses,
-            ties,
-            matchesPlayed,
-          },
-          update: {
-            wins,
-            losses,
-            ties,
-            matchesPlayed,
-          },
-        })
-      );
-    }
-    
-    // Execute all stats updates in parallel
-    await Promise.all(statsUpdates);
-  }
-  
-  /**
-   * Parse JSON fields from database strings
-   * @param score Match score object with potentially stringified JSON fields
-   * @returns Score with parsed JSON fields
-   */
-  private parseJsonFields(score: any): any {
-    return {
-      ...score,
-      redGameElements: score.redGameElements ? JSON.parse(String(score.redGameElements)) : null,
-      blueGameElements: score.blueGameElements ? JSON.parse(String(score.blueGameElements)) : null,
-      scoreDetails: score.scoreDetails ? JSON.parse(String(score.scoreDetails)) : null,
-    };
-  }
-
-  /**
-   * Calculates score multiplier based on team count
-   * @param teamCount Number of teams
-   * @returns Score multiplier
-   */
-  private calculateMultiplier(teamCount: number): number {
-    switch (teamCount) {
-      case 1:
-        return 1.25;
-      case 2:
-        return 1.5;
-      case 3:
-        return 1.75;
-      case 4:
-        return 2.0;
-      default:
-        return 1.0;
-    }
-  }
-
-  /**
-   * Calculates total score
-   * @param autoScore Autonomous score
-   * @param driveScore Driver-controlled score
-   * @param multiplier Score multiplier
-   * @returns Total score
-   */
-  private calculateTotalScore(autoScore: number, driveScore: number, multiplier: number = 1.0): number {
-    return Math.round((autoScore + driveScore) * multiplier);
   }
 }
