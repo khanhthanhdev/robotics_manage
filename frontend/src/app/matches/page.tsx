@@ -143,13 +143,13 @@ export default function MatchesPage() {
     return (
       <div className="container mx-auto py-8 px-4">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold">Matches</h1>
+          <h1 className="text-3xl font-bold text-gray-100">Matches</h1>
         </div>
-        <Card>
+        <Card className="border border-gray-800 bg-gray-900">
           <CardContent className="flex justify-center py-8">
             <div className="text-center">
               <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary mx-auto mb-4"></div>
-              <p className="text-gray-500">Loading matches...</p>
+              <p className="text-gray-400">Loading matches...</p>
             </div>
           </CardContent>
         </Card>
@@ -162,13 +162,13 @@ export default function MatchesPage() {
     return (
       <div className="container mx-auto py-8 px-4">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold">Matches</h1>
+          <h1 className="text-3xl font-bold text-gray-100">Matches</h1>
         </div>
-        <Card>
+        <Card className="border border-gray-800 bg-gray-900">
           <CardContent className="py-8">
             <div className="text-center">
-              <h3 className="text-xl font-semibold text-red-600 mb-2">Error Loading Matches</h3>
-              <p className="text-gray-500">There was a problem loading the match data. Please try again later.</p>
+              <h3 className="text-xl font-semibold text-red-400 mb-2">Error Loading Matches</h3>
+              <p className="text-gray-400">There was a problem loading the match data. Please try again later.</p>
             </div>
           </CardContent>
         </Card>
@@ -178,23 +178,23 @@ export default function MatchesPage() {
 
   return (
     <div className="container mx-auto py-8 px-4">
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-3xl font-bold">Matches</h1>
-          <p className="text-gray-500">View and manage all competition matches</p>
+          <h1 className="text-3xl font-bold text-gray-100 tracking-tight mb-1">Matches</h1>
+          <p className="text-base text-gray-400">View and manage all competition matches</p>
         </div>
         <div className="w-[200px]">
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger>
+            <SelectTrigger className="bg-gray-800 border-gray-700 text-gray-100">
               <SelectValue placeholder="Filter by status" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-gray-900 border-gray-700 text-gray-100">
               <SelectGroup>
                 <SelectLabel>Status</SelectLabel>
-                <SelectItem value="all">All Statuses</SelectItem>
-                <SelectItem value={MatchStatus.PENDING}>Pending</SelectItem>
-                <SelectItem value={MatchStatus.IN_PROGRESS}>In Progress</SelectItem>
-                <SelectItem value={MatchStatus.COMPLETED}>Completed</SelectItem>
+                <SelectItem value="all" className="bg-gray-900 text-gray-100 hover:bg-gray-800">All Statuses</SelectItem>
+                <SelectItem value={MatchStatus.PENDING} className="bg-gray-900 text-gray-100 hover:bg-gray-800">Pending</SelectItem>
+                <SelectItem value={MatchStatus.IN_PROGRESS} className="bg-gray-900 text-gray-100 hover:bg-gray-800">In Progress</SelectItem>
+                <SelectItem value={MatchStatus.COMPLETED} className="bg-gray-900 text-gray-100 hover:bg-gray-800">Completed</SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>
@@ -203,109 +203,47 @@ export default function MatchesPage() {
 
       {/* Table of matches */}
       {sortedMatches.length > 0 ? (
-        <Card>
+        <Card className="border border-gray-800 bg-gray-900">
           <CardContent className="p-0">
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead 
-                    className="cursor-pointer"
-                    onClick={() => handleSortClick('tournamentName')}
-                  >
-                    Tournament
-                    {sortField === 'tournamentName' && (
-                      <span className="ml-2 inline-block">
-                        {sortDirection === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                      </span>
-                    )}
-                  </TableHead>
-                  <TableHead 
-                    className="cursor-pointer"
-                    onClick={() => handleSortClick('stageName')}
-                  >
-                    Stage
-                    {sortField === 'stageName' && (
-                      <span className="ml-2 inline-block">
-                        {sortDirection === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                      </span>
-                    )}
-                  </TableHead>
-                  <TableHead 
-                    className="cursor-pointer"
-                    onClick={() => handleSortClick('matchNumber')}
-                  >
-                    Match
-                    {sortField === 'matchNumber' && (
-                      <span className="ml-2 inline-block">
-                        {sortDirection === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                      </span>
-                    )}
-                  </TableHead>
-                  <TableHead 
-                    className="cursor-pointer"
-                    onClick={() => handleSortClick('roundNumber')}
-                  >
-                    Round
-                    {sortField === 'roundNumber' && (
-                      <span className="ml-2 inline-block">
-                        {sortDirection === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                      </span>
-                    )}
-                  </TableHead>
-                  <TableHead 
-                    className="cursor-pointer"
-                    onClick={() => handleSortClick('status')}
-                  >
-                    Status
-                    {sortField === 'status' && (
-                      <span className="ml-2 inline-block">
-                        {sortDirection === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                      </span>
-                    )}
-                  </TableHead>
-                  <TableHead 
-                    className="cursor-pointer"
-                    onClick={() => handleSortClick('scheduledTime')}
-                  >
-                    Scheduled Time
-                    {sortField === 'scheduledTime' && (
-                      <span className="ml-2 inline-block">
-                        {sortDirection === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                      </span>
-                    )}
-                  </TableHead>
-                  <TableHead>Teams</TableHead>
-                  <TableHead>Scores</TableHead>
-                  <TableHead>Actions</TableHead>
+                <TableRow className="bg-gray-800 border-b border-gray-700">
+                  <TableHead className="text-gray-300 font-semibold text-sm cursor-pointer" onClick={() => handleSortClick('tournamentName')}>Tournament{sortField === 'tournamentName' && (<span className="ml-2 inline-block">{sortDirection === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />}</span>)}</TableHead>
+                  <TableHead className="text-gray-300 font-semibold text-sm cursor-pointer" onClick={() => handleSortClick('stageName')}>Stage{sortField === 'stageName' && (<span className="ml-2 inline-block">{sortDirection === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />}</span>)}</TableHead>
+                  <TableHead className="text-gray-300 font-semibold text-sm cursor-pointer" onClick={() => handleSortClick('matchNumber')}>Match{sortField === 'matchNumber' && (<span className="ml-2 inline-block">{sortDirection === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />}</span>)}</TableHead>
+                  <TableHead className="text-gray-300 font-semibold text-sm cursor-pointer" onClick={() => handleSortClick('roundNumber')}>Round{sortField === 'roundNumber' && (<span className="ml-2 inline-block">{sortDirection === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />}</span>)}</TableHead>
+                  <TableHead className="text-gray-300 font-semibold text-sm cursor-pointer" onClick={() => handleSortClick('status')}>Status{sortField === 'status' && (<span className="ml-2 inline-block">{sortDirection === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />}</span>)}</TableHead>
+                  <TableHead className="text-gray-300 font-semibold text-sm cursor-pointer" onClick={() => handleSortClick('scheduledTime')}>Scheduled Time{sortField === 'scheduledTime' && (<span className="ml-2 inline-block">{sortDirection === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />}</span>)}</TableHead>
+                  <TableHead className="text-gray-300 font-semibold text-sm">Teams</TableHead>
+                  <TableHead className="text-gray-300 font-semibold text-sm">Scores</TableHead>
+                  <TableHead className="text-gray-300 font-semibold text-sm">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {sortedMatches.map((match) => (
                   <TableRow 
                     key={match.id} 
-                    className="hover:bg-muted/50 cursor-pointer"
+                    className="hover:bg-gray-800/70 cursor-pointer transition"
                     onClick={() => handleMatchClick(match.id)}
                   >
-                    <TableCell className="font-medium">
-                      {match.stage.tournament.name}
-                    </TableCell>
-                    <TableCell>{match.stage.name}</TableCell>
-                    <TableCell>{match.matchNumber}</TableCell>
-                    <TableCell>{match.roundNumber}</TableCell>
+                    <TableCell className="font-medium text-gray-100">{match.stage.tournament.name}</TableCell>
+                    <TableCell className="text-gray-300">{match.stage.name}</TableCell>
+                    <TableCell className="text-gray-300">{match.matchNumber}</TableCell>
+                    <TableCell className="text-gray-300">{match.roundNumber}</TableCell>
                     <TableCell>{getStatusBadge(match.status)}</TableCell>
-                    <TableCell>{formatDate(match.scheduledTime)}</TableCell>
+                    <TableCell className="text-gray-300">{formatDate(match.scheduledTime)}</TableCell>
                     <TableCell>
                       <div className="grid grid-cols-2 gap-2">
                         <div>
-                          <div className="text-xs font-semibold text-red-600">Red</div>
+                          <div className="text-xs font-semibold text-red-400">Red</div>
                           {match.alliances.find(a => a.color === 'RED')?.teamAlliances.map(ta => (
-                            <div key={ta.id} className="text-xs">{ta.team.name}</div>
+                            <div key={ta.id} className="text-xs text-gray-200">{ta.team.name}</div>
                           ))}
                         </div>
                         <div>
-                          <div className="text-xs font-semibold text-blue-600">Blue</div>
+                          <div className="text-xs font-semibold text-blue-400">Blue</div>
                           {match.alliances.find(a => a.color === 'BLUE')?.teamAlliances.map(ta => (
-                            <div key={ta.id} className="text-xs">{ta.team.name}</div>
+                            <div key={ta.id} className="text-xs text-gray-200">{ta.team.name}</div>
                           ))}
                         </div>
                       </div>
@@ -313,22 +251,23 @@ export default function MatchesPage() {
                     <TableCell>
                       {match.status === "COMPLETED" ? (
                         <div className="flex items-center space-x-1">
-                          <span className="text-red-600 font-medium">
+                          <span className="text-red-400 font-medium">
                             {match.alliances.find(a => a.color === 'RED')?.score || 0}
                           </span>
                           <span className="text-gray-500">-</span>
-                          <span className="text-blue-600 font-medium">
+                          <span className="text-blue-400 font-medium">
                             {match.alliances.find(a => a.color === 'BLUE')?.score || 0}
                           </span>
                         </div>
                       ) : (
-                        <span className="text-sm text-muted-foreground">-</span>
+                        <span className="text-sm text-gray-500">-</span>
                       )}
                     </TableCell>
                     <TableCell>
                       <Button 
                         variant="outline" 
                         size="sm"
+                        className="border-gray-700 text-gray-400 hover:bg-gray-800 hover:text-white focus:ring-2 focus:ring-primary-700"
                         onClick={(e) => {
                           e.stopPropagation();
                           handleMatchClick(match.id);
@@ -344,11 +283,11 @@ export default function MatchesPage() {
           </CardContent>
         </Card>
       ) : (
-        <Card>
+        <Card className="border border-gray-800 bg-gray-900">
           <CardContent className="flex flex-col items-center justify-center py-12">
             <div className="text-center">
-              <h3 className="text-xl font-semibold mb-2">No Matches Found</h3>
-              <p className="text-gray-500">
+              <h3 className="text-xl font-semibold text-gray-100 mb-2">No Matches Found</h3>
+              <p className="text-gray-400">
                 {statusFilter !== "all" 
                   ? `There are no matches with status "${statusFilter}". Try changing the filter.` 
                   : "There are no matches in the system yet."}

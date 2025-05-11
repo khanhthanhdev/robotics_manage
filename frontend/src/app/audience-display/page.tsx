@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useWebSocket } from '@/hooks/useWebSocket';
+import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent } from '@/components/ui/card';
 import { 
   AudienceDisplaySettings, 
@@ -9,6 +10,8 @@ import {
   ScoreData, 
   TimerData 
 } from '@/lib/websocket-service';
+import TeamsDisplay, { Team } from './components/TeamsDisplay';
+import ScheduleDisplay, { Match } from './components/ScheduleDisplay';
 
 export default function AudienceDisplayPage() {
   // Tournament ID from query params or use default for demo
@@ -65,6 +68,77 @@ export default function AudienceDisplayPage() {
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   };
   
+  // Fetch teams using TanStack Query
+  const {
+    data: teamsData = [],
+    isLoading: isLoadingTeamsQuery,
+    refetch: refetchTeams,
+  } = useQuery({
+    queryKey: ['teams', tournamentId],
+    queryFn: async () => {
+      const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+      const response = await fetch(`${API_BASE_URL}/api/teams`);
+      if (!response.ok) throw new Error('Failed to fetch teams');
+      return await response.json();
+    },
+    enabled: !!tournamentId,
+    staleTime: 60 * 1000,
+  });
+
+  // Fetch matches (schedule) using TanStack Query
+  const {
+    data: matchesData = [],
+    isLoading: isLoadingMatchesQuery,
+    refetch: refetchMatches,
+  } = useQuery({
+    queryKey: ['matches', tournamentId],
+    queryFn: async () => {
+      const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+      const response = await fetch(`${API_BASE_URL}/api/matches`);
+      if (!response.ok) throw new Error('Failed to fetch matches');
+      return await response.json();
+    },
+    enabled: !!tournamentId,
+    staleTime: 60 * 1000,
+  });
+
+  // TanStack Query: fetch match scores by matchId when match changes
+  const matchId = displaySettings.matchId || matchState.matchId;
+  const {
+    data: matchScoresData,
+    isLoading: isLoadingMatchScores,
+    refetch: refetchMatchScores,
+  } = useQuery({
+    queryKey: ['match-scores', matchId],
+    queryFn: async () => {
+      if (!matchId) return null;
+      const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+      const authToken = typeof window !== 'undefined' ? localStorage.getItem('auth-token') : null;
+      const headers: Record<string, string> = {};
+      if (authToken) headers['Authorization'] = `Bearer ${authToken}`;
+      const response = await fetch(`${API_BASE_URL}/api/match-scores/match/${matchId}`, { headers });
+      if (!response.ok) return null;
+      return await response.json();
+    },
+    enabled: !!matchId && displaySettings.displayMode === 'match',
+    staleTime: 2000,
+  });
+
+  // Update scoreData state when matchScoresData changes (if not from socket)
+  useEffect(() => {
+    if (
+      displaySettings.displayMode === 'match' &&
+      matchScoresData &&
+      matchScoresData.matchId === matchId
+    ) {
+      setScoreData((prev) => ({
+        ...prev,
+        ...matchScoresData,
+        tournamentId,
+      }));
+    }
+  }, [matchScoresData, matchId, displaySettings.displayMode, tournamentId]);
+
   // Subscribe to WebSocket events
   useEffect(() => {
     // Handle display mode changes
@@ -73,6 +147,16 @@ export default function AudienceDisplayPage() {
       (data) => {
         console.log('Display mode change received:', data);
         setDisplaySettings(data);
+        
+        // Fetch teams when display mode changes to 'teams'
+        if (data.displayMode === 'teams' && teamsData.length === 0) {
+          refetchTeams();
+        }
+        
+        // Fetch schedule when display mode changes to 'schedule'
+        if (data.displayMode === 'schedule' && matchesData.length === 0) {
+          refetchMatches();
+        }
         
         if (data.displayMode === 'announcement') {
           setShowAnnouncement(true);
@@ -148,9 +232,11 @@ export default function AudienceDisplayPage() {
       case 'match':
         return renderMatchDisplay();
       case 'teams':
-        return renderTeamsDisplay();
+        // Use the dedicated TeamsDisplay component
+        return <TeamsDisplay teams={teamsData} isLoading={isLoadingTeamsQuery} />;
       case 'schedule':
-        return renderScheduleDisplay();
+        // Use the new ScheduleDisplay component
+        return <ScheduleDisplay matches={matchesData} isLoading={isLoadingMatchesQuery} tournamentId={tournamentId} />;
       case 'rankings':
         return renderRankingsDisplay();
       case 'announcement':
@@ -168,75 +254,68 @@ export default function AudienceDisplayPage() {
     return (
       <div className="flex flex-col h-full">
         {/* Match Header */}
-        <div className="bg-gray-800 text-white p-4 text-center">
-          <h2 className="text-4xl font-bold">
-            Match {matchState.matchId || displaySettings.matchId || '#'} 
+        <div className="bg-gradient-to-r from-blue-900 via-indigo-800 to-purple-900 shadow-xl text-white p-8 text-center rounded-b-3xl border-b-4 border-blue-400 relative animate-fade-in">
+          <h2 className="text-5xl font-extrabold tracking-tight drop-shadow-lg mb-2">
+            Match <span className="text-yellow-300">{matchState.matchId || displaySettings.matchId || '#'}</span>
             {matchState.status === 'IN_PROGRESS' && matchState.currentPeriod && (
-              <span className="ml-2 text-yellow-300">
+              <span className="ml-4 text-3xl text-green-300 animate-pulse">
                 [{matchState.currentPeriod.toUpperCase()}]
               </span>
             )}
           </h2>
-          <p className="text-yellow-300">
-            Status: {matchState.status.replace('_', ' ')}
+          <p className="text-2xl text-yellow-300 font-bold animate-fade-in-slow">
+            Status: <span className={
+              matchState.status === 'IN_PROGRESS' ? 'text-green-400' :
+              matchState.status === 'COMPLETED' ? 'text-blue-300' :
+              'text-yellow-300'
+            }>{matchState.status.replace('_', ' ')}</span>
           </p>
         </div>
-        
         {/* Timer (if enabled) */}
         {displaySettings.showTimer !== false && (
-          <div className={`p-4 text-center ${timerData.isRunning ? 'bg-green-100' : ''}`}>
-            <div className="text-6xl font-bold">
+          <div className={`p-8 text-center ${timerData.isRunning ? 'bg-green-100' : 'bg-yellow-50'} animate-fade-in`}> 
+            <div className="text-7xl font-extrabold text-blue-900 drop-shadow-lg">
               {formatTime(timerData.remaining)}
             </div>
-            <div className="text-3xl text-yellow-300">
+            <div className={`text-3xl font-bold mt-2 ${timerData.isRunning ? 'text-green-600 animate-pulse' : 'text-yellow-600'}`}> 
               {timerData.isRunning ? 'Running' : 'Paused'}
             </div>
           </div>
         )}
-        
         {/* Scores (if enabled) */}
         {displaySettings.showScores !== false && (
-          <div className="flex-1 grid grid-cols-2 gap-4 p-4">
+          <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-8 p-8 animate-fade-in-slow">
             {/* Red Alliance */}
-            <div className="bg-red-700 border-2 border-red-100 rounded-lg p-4">
-              <h3 className="text-xl font-bold text-white text-center mb-4">Red Alliance</h3>
-              
-              <div className="flex justify-between mb-2">
-                <span className="font-semibold">Auto:</span>
+            <div className="bg-gradient-to-br from-red-700 to-red-500 border-4 border-yellow-300 rounded-2xl p-8 shadow-xl flex flex-col justify-between">
+              <h3 className="text-3xl font-extrabold text-white text-center mb-6 tracking-wider drop-shadow">Red Alliance</h3>
+              <div className="flex justify-between mb-4 text-xl font-semibold">
+                <span className="text-yellow-200">Auto:</span>
                 <span className="text-white">{scoreData.redAutoScore}</span>
               </div>
-              
-              <div className="flex justify-between mb-2">
-                <span className="font-semibold">Teleop/Endgame:</span>
+              <div className="flex justify-between mb-4 text-xl font-semibold">
+                <span className="text-yellow-200">Teleop/Endgame:</span>
                 <span className="text-white">{scoreData.redDriveScore}</span>
               </div>
-              
-              <div className="h-px bg-red-300 my-4" />
-              
-              <div className="flex justify-between text-xl font-bold">
-                <span>Total:</span>
+              <div className="h-1 bg-yellow-300 my-6 rounded-full" />
+              <div className="flex justify-between text-3xl font-extrabold">
+                <span className="text-yellow-200">Total:</span>
                 <span className="text-white">{scoreData.redTotalScore}</span>
               </div>
             </div>
-            
             {/* Blue Alliance */}
-            <div className="bg-blue-700 border-2 border-white rounded-lg p-4">
-              <h3 className="text-xl font-bold text-white text-center mb-4">Blue Alliance</h3>
-              
-              <div className="flex justify-between mb-2">
-                <span className="font-semibold">Auto:</span>
+            <div className="bg-gradient-to-br from-blue-700 to-blue-500 border-4 border-yellow-300 rounded-2xl p-8 shadow-xl flex flex-col justify-between">
+              <h3 className="text-3xl font-extrabold text-white text-center mb-6 tracking-wider drop-shadow">Blue Alliance</h3>
+              <div className="flex justify-between mb-4 text-xl font-semibold">
+                <span className="text-yellow-200">Auto:</span>
                 <span className="text-white">{scoreData.blueAutoScore}</span>
               </div>
-              
-              <div className="flex justify-between mb-2">
-                <span className="font-semibold">Teleop/Endgame:</span>
+              <div className="flex justify-between mb-4 text-xl font-semibold">
+                <span className="text-yellow-200">Teleop/Endgame:</span>
                 <span className="text-white">{scoreData.blueDriveScore}</span>
               </div>
-              
-              <div className="h-px bg-blue-300 my-4" />
-              
-              <div className="flex justify-between text-xl font-bold">
-                <span>Total:</span>
+              <div className="h-1 bg-yellow-300 my-6 rounded-full" />
+              <div className="flex justify-between text-3xl font-extrabold">
+                <span className="text-yellow-200">Total:</span>
                 <span className="text-white">{scoreData.blueTotalScore}</span>
               </div>
             </div>
@@ -245,81 +324,56 @@ export default function AudienceDisplayPage() {
       </div>
     );
   };
-  
-  // TODO: Placeholder for teams display
-  const renderTeamsDisplay = () => {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <div className="text-center p-8">
-          <h2 className="text-2xl font-bold mb-4">Teams</h2>
-          <p className="text-gray-500">Team information would be displayed here</p>
-        </div>
-      </div>
-    );
-  };
-  
-  // TODO: Placeholder for schedule display
-  const renderScheduleDisplay = () => {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <div className="text-center p-8">
-          <h2 className="text-2xl font-bold mb-4">Match Schedule</h2>
-          <p className="text-gray-500">Schedule information would be displayed here</p>
-        </div>
-      </div>
-    );
-  };
-  
+
   // TODO: Placeholder for rankings display
   const renderRankingsDisplay = () => {
     return (
-      <div className="flex items-center justify-center h-full">
-        <div className="text-center p-8">
-          <h2 className="text-2xl font-bold mb-4">Team Rankings</h2>
-          <p className="text-gray-500">Ranking information would be displayed here</p>
+      <div className="flex items-center justify-center h-full animate-fade-in">
+        <div className="text-center p-12 bg-gradient-to-br from-blue-100 to-yellow-50 rounded-2xl shadow-xl border-2 border-blue-200">
+          <h2 className="text-4xl font-extrabold mb-6 text-blue-900 drop-shadow">Team Rankings</h2>
+          <p className="text-xl text-blue-700">Ranking information would be displayed here</p>
         </div>
       </div>
     );
   };
-  
+
   // TODO: Render announcement display
   const renderAnnouncementDisplay = () => {
     return (
-      <div className="flex items-center justify-center h-full bg-gray-800">
-        <div className="text-center p-8 max-w-4xl">
-          <h2 className="text-3xl font-bold text-white mb-6">Announcement</h2>
-          <div className="text-2xl text-white bg-gray-700 p-8 rounded-lg border-2 border-yellow-500">
+      <div className="flex items-center justify-center h-full bg-gradient-to-br from-yellow-200 to-blue-100 animate-fade-in">
+        <div className="text-center p-12 max-w-4xl bg-white rounded-2xl border-4 border-yellow-400 shadow-xl">
+          <h2 className="text-4xl font-extrabold text-yellow-600 mb-8 drop-shadow">Announcement</h2>
+          <div className="text-3xl text-blue-900 bg-yellow-100 p-10 rounded-lg border-2 border-yellow-500 font-bold animate-pulse">
             {displaySettings.message || announcement}
           </div>
         </div>
       </div>
     );
   };
-  
+
   return (
     <div className="h-screen flex flex-col">
       {/* Connection status bar */}
-      <div className={`px-4 py-1 text-xs text-white ${isConnected ? 'bg-green-600' : 'bg-red-600'}`}>
+      <div className={`px-4 py-2 text-sm font-bold text-white shadow-lg ${isConnected ? 'bg-green-600' : 'bg-red-600'} animate-fade-in`}> 
         <div className="container mx-auto flex justify-between items-center">
           <span>
-            {isConnected ? 'Connected' : 'Disconnected'} to tournament: {tournamentId}
+            <span className="inline-block w-3 h-3 rounded-full mr-2 align-middle bg-green-300 animate-pulse"></span>
+            {isConnected ? <span className="text-green-200">Connected</span> : <span className="text-red-200">Disconnected</span>} to tournament: <span className="text-yellow-300 font-extrabold">{tournamentId}</span>
           </span>
-          <span>Display Mode: {displaySettings.displayMode}</span>
+          <span className="text-blue-100">Display Mode: <span className="font-bold text-yellow-200">{displaySettings.displayMode}</span></span>
         </div>
       </div>
-      
       {/* Main content area */}
-      <div className="flex-1 overflow-hidden">
+      <div className="flex-1 overflow-hidden bg-gradient-to-b from-blue-50 to-yellow-50 animate-fade-in-slow">
         {renderContent()}
       </div>
-      
       {/* Announcement overlay */}
       {showAnnouncement && displaySettings.displayMode !== 'announcement' && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-          <Card className="w-full max-w-2xl mx-4">
-            <CardContent className="p-6">
-              <h3 className="text-2xl font-bold mb-4">Announcement</h3>
-              <p className="text-lg">{announcement}</p>
+        <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 animate-fade-in">
+          <Card className="w-full max-w-2xl mx-4 shadow-2xl border-4 border-yellow-400">
+            <CardContent className="p-10">
+              <h3 className="text-3xl font-extrabold mb-6 text-yellow-600 drop-shadow">Announcement</h3>
+              <p className="text-2xl text-blue-900 font-bold animate-pulse">{announcement}</p>
             </CardContent>
           </Card>
         </div>

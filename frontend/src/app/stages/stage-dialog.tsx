@@ -177,12 +177,22 @@ export default function StageDialog({
         }
       }}
     >
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[500px] bg-gray-900 border border-gray-800 shadow-xl">
         <DialogHeader>
-          <DialogTitle>
-            {mode === 'create' ? 'Create Stage' : 'Edit Stage'}
+          <DialogTitle className="text-2xl font-bold text-gray-100 flex items-center gap-2">
+            {mode === 'create' ? (
+              <span className="inline-flex items-center gap-2">
+                <span className="bg-primary-900 text-primary-300 px-2 py-1 rounded-full text-xs font-semibold">NEW</span>
+                Create Stage
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-2">
+                <span className="bg-purple-900 text-purple-200 px-2 py-1 rounded-full text-xs font-semibold">EDIT</span>
+                Edit Stage
+              </span>
+            )}
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-gray-400">
             {mode === 'create' 
               ? `Add a new stage to "${tournament.name}"` 
               : `Edit stage for "${tournament.name}"`}
@@ -196,9 +206,9 @@ export default function StageDialog({
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel className="font-semibold text-gray-200">Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="Stage name (e.g., Qualification Rounds)" {...field} />
+                    <Input placeholder="Stage name (e.g., Qualification Rounds)" {...field} className="bg-gray-800 border-gray-700 text-gray-100 focus:border-primary-500 focus:ring-2 focus:ring-primary-900" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -210,21 +220,21 @@ export default function StageDialog({
               name="type"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Type</FormLabel>
+                  <FormLabel className="font-semibold text-gray-200">Type</FormLabel>
                   <Select 
                     onValueChange={field.onChange} 
                     defaultValue={field.value}
                     value={field.value}
                   >
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger className="bg-gray-800 border-gray-700 text-gray-100">
                         <SelectValue placeholder="Select stage type" />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent>
-                      <SelectItem value="SWISS">SWISS</SelectItem>
-                      <SelectItem value="PLAYOFF">PLAYOFF</SelectItem>
-                      <SelectItem value="FINAL">FINAL</SelectItem>
+                    <SelectContent className="bg-gray-900 border-gray-700 text-gray-100">
+                      <SelectItem value="SWISS" className="bg-gray-900 text-gray-100 hover:bg-gray-800">SWISS</SelectItem>
+                      <SelectItem value="PLAYOFF" className="bg-gray-900 text-gray-100 hover:bg-gray-800">PLAYOFF</SelectItem>
+                      <SelectItem value="FINAL" className="bg-gray-900 text-gray-100 hover:bg-gray-800">FINAL</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -238,9 +248,9 @@ export default function StageDialog({
                 name="startDate"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Start Date & Time</FormLabel>
+                    <FormLabel className="font-semibold text-gray-200">Start Date & Time</FormLabel>
                     <FormControl>
-                      <Input type="datetime-local" {...field} />
+                      <Input type="datetime-local" {...field} className="bg-gray-800 border-gray-700 text-gray-100 focus:border-primary-500 focus:ring-2 focus:ring-primary-900" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -252,9 +262,9 @@ export default function StageDialog({
                 name="endDate"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>End Date & Time</FormLabel>
+                    <FormLabel className="font-semibold text-gray-200">End Date & Time</FormLabel>
                     <FormControl>
-                      <Input type="datetime-local" {...field} />
+                      <Input type="datetime-local" {...field} className="bg-gray-800 border-gray-700 text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-900" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -262,17 +272,18 @@ export default function StageDialog({
               />
             </div>
 
-            <div className="text-xs text-muted-foreground">
+            <div className="text-xs text-gray-500">
               Note: Stage dates must be within tournament dates: {format(tournamentStartDate, 'PPP p')} - {format(tournamentEndDate, 'PPP p')}
             </div>
 
-            <DialogFooter>
+            <DialogFooter className="flex justify-between items-center mt-4">
               <DialogClose asChild>
-                <Button type="button" variant="outline">Cancel</Button>
+                <Button type="button" variant="outline" className="border-gray-700 text-gray-300 hover:bg-gray-800">Cancel</Button>
               </DialogClose>
               <Button 
                 type="submit" 
                 disabled={isSubmitting}
+                className="bg-primary-600 text-white font-semibold rounded-md px-6 py-2 shadow-sm hover:bg-primary-700 focus:ring-2 focus:ring-primary-400 focus:outline-none transition flex items-center gap-2"
               >
                 {isSubmitting ? (
                   <>
@@ -280,7 +291,9 @@ export default function StageDialog({
                     {mode === 'create' ? 'Creating...' : 'Updating...'}
                   </>
                 ) : (
-                  mode === 'create' ? 'Create Stage' : 'Update Stage'
+                  <>
+                    {mode === 'create' ? 'Create Stage' : 'Update Stage'}
+                  </>
                 )}
               </Button>
             </DialogFooter>

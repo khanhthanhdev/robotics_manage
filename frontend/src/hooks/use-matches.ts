@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { apiClient } from "@/lib/api-client";
 import { QueryKeys } from "@/lib/query-keys";
 import { MatchStatus } from "@/lib/types";
+import { MatchService } from "@/lib/match-service";
 
 // Type definition for our match response
 export interface MatchResponse {
@@ -122,8 +123,7 @@ export function useMatches() {
     queryKey: QueryKeys.matches.all(),
     queryFn: async () => {
       try {
-        const data = await apiClient.get<MatchResponse[]>("/matches");
-        return data;
+        return await MatchService.getAllMatches();
       } catch (error: any) {
         toast.error("Failed to fetch matches");
         throw error;
@@ -141,8 +141,7 @@ export function useMatchesByStage(stageId: string) {
     queryKey: QueryKeys.matches.byStage(stageId),
     queryFn: async () => {
       try {
-        const data = await apiClient.get<MatchResponse[]>(`/matches?stageId=${stageId}`);
-        return data;
+        return await MatchService.getMatchesByStage(stageId);
       } catch (error: any) {
         toast.error(`Failed to fetch matches for stage: ${error.message}`);
         throw error;
@@ -161,10 +160,8 @@ export function useMatch(matchId: string) {
     queryKey: QueryKeys.matches.byId(matchId),
     queryFn: async () => {
       if (!matchId) throw new Error("Match ID is required");
-
       try {
-        const data = await apiClient.get<MatchResponse>(`/matches/${matchId}`);
-        return data;
+        return await MatchService.getMatchById(matchId);
       } catch (error: any) {
         toast.error(`Failed to fetch match details: ${error.message}`);
         throw error;
@@ -180,33 +177,18 @@ export function useMatch(matchId: string) {
  */
 export function useUpdateMatchStatus() {
   const queryClient = useQueryClient();
-
   return useMutation({
-    mutationFn: async ({
-      matchId,
-      status,
-    }: {
-      matchId: string;
-      status: MatchStatus;
-    }) => {
+    mutationFn: async ({ matchId, status }: { matchId: string; status: MatchStatus }) => {
       try {
-        const data = await apiClient.patch<MatchResponse>(
-          `/matches/${matchId}/status`,
-          { status }
-        );
-        return data;
+        return await MatchService.updateMatchStatus(matchId, status);
       } catch (error: any) {
         throw error;
       }
     },
     onSuccess: (data) => {
       toast.success("Match status updated successfully");
-
-      // Invalidate relevant queries
       queryClient.invalidateQueries({ queryKey: QueryKeys.matches.all() });
-      queryClient.invalidateQueries({
-        queryKey: QueryKeys.matches.byId(data.id),
-      });
+      queryClient.invalidateQueries({ queryKey: QueryKeys.matches.byId(data.id) });
     },
     onError: (error: any) => {
       toast.error(`Failed to update match status: ${error.message}`);
@@ -218,50 +200,20 @@ export function useUpdateMatchStatus() {
  * Hook to fetch match scores by match ID
  */
 export function useMatchScores(matchId: string) {
-  const queryClient = useQueryClient();
-
   return useQuery({
     queryKey: QueryKeys.matchScores.byMatch(matchId),
     queryFn: async () => {
       if (!matchId) throw new Error("Match ID is required");
-
-      // Check for authentication token first
-      const token = apiClient.getToken();
-      if (!token) {
-        console.warn("Authentication token missing when attempting to fetch match scores");
-        throw new Error("Authentication required. Please log in.");
-      }
-
       try {
-        // First verify match exists to prevent relationship errors
-        try {
-          await apiClient.get(`/matches/${matchId}`);
-        } catch (matchError: any) {
-          // If the match itself doesn't exist, handle that specifically
-          if (matchError.status === 404) {
-            throw new Error(`Match with ID ${matchId} does not exist`);
-          }
-          throw matchError;
-        }
-
-        // Fetch the match scores
-        const data = await apiClient.get<MatchScores>(`/match-scores/match/${matchId}`);
-        return data;
+        return await MatchService.getMatchScores(matchId);
       } catch (error: any) {
         if (error.status === 401 || error.message?.includes('Unauthorized')) {
-          console.error("Authentication error when fetching match scores:", error);
           toast.error("Authentication required. Please log in to view match scores.");
           throw new Error("Authentication required");
         }
-        
         if (error.status === 404 || error.message?.includes('not found')) {
-          // This is expected for matches that haven't been scored yet
-          console.info(`No scores found for match ${matchId} - this is normal for unscored matches`);
-          // Return null to indicate no scores exist yet (not an error condition)
           return null;
         }
-        
-        console.error(`Error fetching match scores for ${matchId}:`, error);
         toast.error(`Failed to fetch match scores: ${error.message}`);
         throw error;
       }
@@ -269,7 +221,6 @@ export function useMatchScores(matchId: string) {
     enabled: !!matchId,
     staleTime: 1000 * 60 * 1, // 1 minute
     retry: (failureCount, error) => {
-      // Don't retry for 404 errors (scores don't exist yet) or auth errors (401)
       if (error instanceof Error) {
         if (error.message.includes("not found")) return false;
         if (error.message.includes("Authentication required")) return false;
@@ -284,7 +235,6 @@ export function useMatchScores(matchId: string) {
  */
 export function useCreateMatchScores() {
   const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: async (data: {
       matchId: string;
@@ -302,71 +252,20 @@ export function useCreateMatchScores() {
       blueGameElements?: any[];
       scoreDetails?: Record<string, any>;
     }) => {
-      // Check for authentication token first
-      const token = apiClient.getToken();
-      if (!token) {
-        console.warn("Authentication token missing when attempting to create match scores");
-        throw new Error("Authentication required. Please log in.");
-      }
-
-      // First verify the match exists to prevent relationship errors
       try {
-        await apiClient.get(`/matches/${data.matchId}`);
+        return await MatchService.createOrUpdateMatchScores(data);
       } catch (error: any) {
         if (error.status === 401 || error.message?.includes('Unauthorized')) {
           toast.error("Authentication required. Please log in to create match scores.");
           throw new Error("Authentication required");
         }
-        throw new Error(
-          `Match not found. Cannot create scores for non-existent match.`
-        );
+        throw error;
       }
-
-      // Check if scores already exist
-      try {
-        // Use the correct endpoint format based on backend implementation
-        const existingScores = await apiClient.get(
-          `/match-scores/match/${data.matchId}`
-        );
-        if (existingScores) {
-          // If scores exist, update them instead
-          return await apiClient.patch(`/match-scores/${existingScores.id}`, data);
-        }
-      } catch (error: any) {
-        // Handle auth errors but ignore 404 errors (scores don't exist yet)
-        if (error.status === 401 || error.message?.includes('Unauthorized')) {
-          toast.error("Authentication required. Please log in to create match scores.");
-          throw new Error("Authentication required");
-        }
-        // Scores don't exist, proceed with creation
-      }
-
-      // Create new match scores with proper match relationship
-      return await apiClient.post(`/match-scores`, {
-        matchId: data.matchId,
-        redAutoScore: data.redAutoScore || 0,
-        redDriveScore: data.redDriveScore || 0,
-        redTotalScore: data.redTotalScore || 0,
-        blueAutoScore: data.blueAutoScore || 0,
-        blueDriveScore: data.blueDriveScore || 0,
-        blueTotalScore: data.blueTotalScore || 0,
-        redTeamCount: data.redTeamCount || 0,
-        blueTeamCount: data.blueTeamCount || 0,
-        redMultiplier: data.redMultiplier || 1.0,
-        blueMultiplier: data.blueMultiplier || 1.0,
-        redGameElements: data.redGameElements || [],
-        blueGameElements: data.blueGameElements || [],
-        scoreDetails: data.scoreDetails || {},
-      });
     },
     onSuccess: (data) => {
       if (data?.matchId) {
-        queryClient.invalidateQueries({
-          queryKey: QueryKeys.matchScores.byMatch(data.matchId),
-        });
-        queryClient.invalidateQueries({
-          queryKey: QueryKeys.matches.byId(data.matchId),
-        });
+        queryClient.invalidateQueries({ queryKey: QueryKeys.matchScores.byMatch(data.matchId) });
+        queryClient.invalidateQueries({ queryKey: QueryKeys.matches.byId(data.matchId) });
         toast.success("Match scores created successfully");
       }
     },
@@ -381,7 +280,6 @@ export function useCreateMatchScores() {
  */
 export function useUpdateMatchScores() {
   const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: async (data: {
       id: string;
@@ -403,17 +301,8 @@ export function useUpdateMatchScores() {
       if (!data.id) {
         throw new Error("Match scores ID is required for updates");
       }
-
-      // Check for authentication token first
-      const token = apiClient.getToken();
-      if (!token) {
-        console.warn("Authentication token missing when attempting to update match scores");
-        throw new Error("Authentication required. Please log in.");
-      }
-
       try {
-        // Update match scores with patch operation
-        return await apiClient.patch(`/match-scores/${data.id}`, data);
+        return await MatchService.updateMatchScores(data);
       } catch (error: any) {
         if (error.status === 401 || error.message?.includes('Unauthorized')) {
           toast.error("Authentication required. Please log in to update match scores.");
@@ -424,12 +313,8 @@ export function useUpdateMatchScores() {
     },
     onSuccess: (data) => {
       if (data?.matchId) {
-        queryClient.invalidateQueries({
-          queryKey: QueryKeys.matchScores.byMatch(data.matchId),
-        });
-        queryClient.invalidateQueries({
-          queryKey: QueryKeys.matches.byId(data.matchId),
-        });
+        queryClient.invalidateQueries({ queryKey: QueryKeys.matchScores.byMatch(data.matchId) });
+        queryClient.invalidateQueries({ queryKey: QueryKeys.matches.byId(data.matchId) });
         toast.success("Match scores updated successfully");
       }
     },

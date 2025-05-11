@@ -114,64 +114,63 @@ export default function TournamentsPage() {
 
   return (
     <div className="container mx-auto py-8 px-4">
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-3xl font-bold">Tournaments</h1>
-          <p className="text-gray-500">Manage all robotics tournaments</p>
+          <h1 className="text-3xl font-bold text-gray-100 tracking-tight mb-1">Tournaments</h1>
+          <p className="text-base text-gray-400">Manage all robotics tournaments</p>
         </div>
         <Button 
           onClick={() => setIsCreateDialogOpen(true)}
-          className="flex items-center gap-2"
+          className="flex items-center gap-2 bg-primary-600 text-white font-medium rounded-md px-5 py-2.5 shadow-sm hover:bg-primary-700 focus:ring-2 focus:ring-primary-400 focus:outline-none transition"
         >
-          <PlusIcon size={16} />
+          <PlusIcon size={18} />
           Add Tournament
         </Button>
       </div>
 
       {tournamentsError ? (
-        <Alert variant="destructive" className="mb-6">
-          <AlertTitle>Error</AlertTitle>
-          <AlertDescription>
+        <Alert variant="destructive" className="mb-6 border-l-2 border-red-600 bg-red-900/30">
+          <AlertTitle className="font-semibold text-red-300">Error</AlertTitle>
+          <AlertDescription className="text-red-400">
             Failed to load tournaments. Please try again later.
           </AlertDescription>
         </Alert>
       ) : null}
 
       {tournamentsLoading ? (
-        <Card>
-          <CardContent className="flex justify-center py-8">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary mx-auto mb-4"></div>
-              <p className="text-gray-500">Loading tournaments...</p>
-            </div>
+        <Card className="shadow-none border border-gray-800 bg-gray-900">
+          <CardContent className="flex flex-col items-center justify-center py-12">
+            <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-gray-700 mb-4"></div>
+            <p className="text-base text-gray-400">Loading tournaments...</p>
           </CardContent>
         </Card>
       ) : tournaments && tournaments.length > 0 ? (
-        <Card>
+        <Card className="shadow-none border border-gray-800 bg-gray-900">
           <CardContent className="p-0">
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Description</TableHead>
-                  <TableHead>Start Date</TableHead>
-                  <TableHead>End Date</TableHead>
-                  <TableHead>Admin</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                <TableRow className="bg-gray-800 border-b border-gray-700">
+                  <TableHead className="text-gray-300 font-semibold text-sm">Name</TableHead>
+                  <TableHead className="text-gray-300 font-semibold text-sm">Description</TableHead>
+                  <TableHead className="text-gray-300 font-semibold text-sm">Start Date</TableHead>
+                  <TableHead className="text-gray-300 font-semibold text-sm">End Date</TableHead>
+                  <TableHead className="text-gray-300 font-semibold text-sm">Admin</TableHead>
+                  <TableHead className="text-right text-gray-300 font-semibold text-sm">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {tournaments.map((tournament) => (
-                  <TableRow key={tournament.id}>
-                    <TableCell className="font-medium">{tournament.name}</TableCell>
-                    <TableCell>{tournament.description}</TableCell>
-                    <TableCell>{formatDate(tournament.startDate)}</TableCell>
-                    <TableCell>{formatDate(tournament.endDate)}</TableCell>
-                    <TableCell>{tournament.admin?.username || '-'}</TableCell>
-                    <TableCell className="text-right space-x-2">
+                  <TableRow key={tournament.id} className="hover:bg-gray-800/70 transition">
+                    <TableCell className="font-medium text-gray-100 whitespace-nowrap">{tournament.name}</TableCell>
+                    <TableCell className="text-gray-400 max-w-xs truncate" title={tournament.description}>{tournament.description}</TableCell>
+                    <TableCell className="text-gray-300">{formatDate(tournament.startDate)}</TableCell>
+                    <TableCell className="text-gray-300">{formatDate(tournament.endDate)}</TableCell>
+                    <TableCell className="text-gray-300">{tournament.admin?.username || '-'}</TableCell>
+                    <TableCell className="text-right space-x-1">
                       <Button
                         variant="outline"
-                        size="sm"
+                        size="icon"
+                        className="border-gray-700 text-gray-400 hover:bg-gray-800 hover:text-white focus:ring-2 focus:ring-primary-700"
                         onClick={() => handleEditTournament(tournament)}
                       >
                         <PencilIcon size={16} />
@@ -179,8 +178,8 @@ export default function TournamentsPage() {
                       </Button>
                       <Button
                         variant="outline"
-                        size="sm"
-                        className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                        size="icon"
+                        className="border-gray-700 text-red-400 hover:bg-red-900/30 hover:text-red-300 focus:ring-2 focus:ring-red-700"
                         onClick={() => handleDeleteClick(tournament)}
                       >
                         <TrashIcon size={16} />
@@ -194,13 +193,13 @@ export default function TournamentsPage() {
           </CardContent>
         </Card>
       ) : (
-        <Card>
-          <CardContent className="flex flex-col items-center justify-center py-12">
+        <Card className="shadow-none border border-gray-800 bg-gray-900">
+          <CardContent className="flex flex-col items-center justify-center py-16">
             <div className="text-center mb-6">
-              <h3 className="text-xl font-semibold mb-1">No tournaments found</h3>
-              <p className="text-gray-500">Create your first tournament to get started</p>
+              <h3 className="text-lg font-semibold text-gray-100 mb-1">No tournaments found</h3>
+              <p className="text-gray-400 text-base">Create your first tournament to get started</p>
             </div>
-            <Button onClick={() => setIsCreateDialogOpen(true)}>
+            <Button onClick={() => setIsCreateDialogOpen(true)} className="bg-primary-600 text-white font-medium rounded-md px-5 py-2.5 shadow-sm hover:bg-primary-700 focus:ring-2 focus:ring-primary-400 focus:outline-none transition">
               Create Tournament
             </Button>
           </CardContent>

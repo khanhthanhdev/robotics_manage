@@ -141,12 +141,22 @@ export default function TournamentDialog({
     <Dialog open={isOpen} onOpenChange={(open) => {
       if (!open) onClose();
     }}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[500px] bg-gray-900 border border-gray-800 shadow-xl">
         <DialogHeader>
-          <DialogTitle>
-            {mode === 'create' ? 'Create Tournament' : 'Edit Tournament'}
+          <DialogTitle className="text-2xl font-bold text-gray-100 flex items-center gap-2">
+            {mode === 'create' ? (
+              <span className="inline-flex items-center gap-2">
+                <span className="bg-primary-900 text-primary-300 px-2 py-1 rounded-full text-xs font-semibold">NEW</span>
+                Create Tournament
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-2">
+                <span className="bg-purple-900 text-purple-200 px-2 py-1 rounded-full text-xs font-semibold">EDIT</span>
+                Edit Tournament
+              </span>
+            )}
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-gray-400">
             {mode === 'create' 
               ? 'Add a new tournament to the system.' 
               : 'Edit the details of this tournament.'}
@@ -160,9 +170,9 @@ export default function TournamentDialog({
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel className="font-semibold text-gray-200">Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="Tournament name" {...field} />
+                    <Input placeholder="Tournament name" {...field} className="bg-gray-800 border-gray-700 text-gray-100 focus:border-primary-500 focus:ring-2 focus:ring-primary-900" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -174,12 +184,12 @@ export default function TournamentDialog({
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description</FormLabel>
+                  <FormLabel className="font-semibold text-gray-200">Description</FormLabel>
                   <FormControl>
                     <Textarea 
                       placeholder="Tournament description" 
                       {...field}
-                      className="min-h-[100px]" 
+                      className="min-h-[100px] bg-gray-800 border-gray-700 text-gray-100 focus:border-primary-500 focus:ring-2 focus:ring-primary-900" 
                     />
                   </FormControl>
                   <FormMessage />
@@ -193,9 +203,9 @@ export default function TournamentDialog({
                 name="startDate"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Start Date</FormLabel>
+                    <FormLabel className="font-semibold text-gray-200">Start Date</FormLabel>
                     <FormControl>
-                      <Input type="date" {...field} />
+                      <Input type="date" {...field} className="bg-gray-800 border-gray-700 text-gray-100 focus:border-primary-500 focus:ring-2 focus:ring-primary-900" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -207,9 +217,9 @@ export default function TournamentDialog({
                 name="endDate"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>End Date</FormLabel>
+                    <FormLabel className="font-semibold text-gray-200">End Date</FormLabel>
                     <FormControl>
-                      <Input type="date" {...field} />
+                      <Input type="date" {...field} className="bg-gray-800 border-gray-700 text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-900" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -217,13 +227,14 @@ export default function TournamentDialog({
               />
             </div>
 
-            <DialogFooter>
+            <DialogFooter className="flex justify-between items-center mt-4">
               <DialogClose asChild>
-                <Button type="button" variant="outline">Cancel</Button>
+                <Button type="button" variant="outline" className="border-gray-700 text-gray-300 hover:bg-gray-800">Cancel</Button>
               </DialogClose>
               <Button 
                 type="submit" 
                 disabled={isSubmitting}
+                className="bg-primary-600 text-white font-semibold rounded-md px-6 py-2 shadow-sm hover:bg-primary-700 focus:ring-2 focus:ring-primary-400 focus:outline-none transition flex items-center gap-2"
               >
                 {isSubmitting ? (
                   <>
@@ -231,7 +242,9 @@ export default function TournamentDialog({
                     {mode === 'create' ? 'Creating...' : 'Updating...'}
                   </>
                 ) : (
-                  mode === 'create' ? 'Create Tournament' : 'Update Tournament'
+                  <>
+                    {mode === 'create' ? 'Create Tournament' : 'Update Tournament'}
+                  </>
                 )}
               </Button>
             </DialogFooter>

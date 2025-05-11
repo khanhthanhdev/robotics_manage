@@ -1,16 +1,12 @@
 "use client";
 
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { toast } from "sonner";
 import { SaveIcon } from "lucide-react";
-import { Separator } from "@/components/ui/separator";
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL|| 'http://localhost:5000';
+import { useMatchScoresForm } from "./useMatchScoresForm";
 
 interface MatchScoresFormProps {
   matchId: string;
@@ -23,175 +19,14 @@ export default function MatchScoresForm({
   onScoresSubmit, 
   className = "" 
 }: MatchScoresFormProps) {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formData, setFormData] = useState({
-    // Red alliance scores
-    redAutoScore: 0,
-    redDriveScore: 0,
-    redTeamCount: 3,
-    redGameElements: {
-      highGoal: 0,
-      midGoal: 0,
-      lowGoal: 0,
-    },
-    
-    // Blue alliance scores
-    blueAutoScore: 0,
-    blueDriveScore: 0,
-    blueTeamCount: 3,
-    blueGameElements: {
-      highGoal: 0,
-      midGoal: 0,
-      lowGoal: 0,
-    },
-    
-    // Penalties and special scoring
-    scoreDetails: {
-      penalties: {
-        red: 0,
-        blue: 0,
-      },
-      specialScoring: {
-        endgameClimb: {
-          red: 0,
-          blue: 0,
-        },
-      },
-    },
-  });
-
-  // Calculate total scores for display
-  const redTotalScore = Math.round(
-    (formData.redAutoScore + formData.redDriveScore + 
-     formData.scoreDetails.specialScoring.endgameClimb.red - 
-     formData.scoreDetails.penalties.red) * getMultiplier(formData.redTeamCount)
-  );
-
-  const blueTotalScore = Math.round(
-    (formData.blueAutoScore + formData.blueDriveScore + 
-     formData.scoreDetails.specialScoring.endgameClimb.blue - 
-     formData.scoreDetails.penalties.blue) * getMultiplier(formData.blueTeamCount)
-  );
-
-  function getMultiplier(teamCount: number): number {
-    switch (teamCount) {
-      case 1: return 1.25;
-      case 2: return 1.5;
-      case 3: return 1.75;
-      case 4: return 2.0;
-      default: return 1.0;
-    }
-  }
-
-  // Generic handler for updating values
-  const handleChange = (
-    section: string,
-    field: string,
-    value: number | string
-  ) => {
-    const numValue = typeof value === "string" ? parseInt(value, 10) || 0 : value;
-
-    if (section === "red" || section === "blue") {
-      // Handle top-level scores
-      setFormData((prev) => ({
-        ...prev,
-        [`${section}${field}`]: numValue,
-      }));
-    } else if (section === "redGameElements" || section === "blueGameElements") {
-      // Handle game elements
-      setFormData((prev) => ({
-        ...prev,
-        [section]: {
-          ...(prev[section as "redGameElements" | "blueGameElements"]),
-          [field]: numValue,
-        },
-      }));
-    } else if (section === "penalties") {
-      // Handle penalties
-      setFormData((prev) => ({
-        ...prev,
-        scoreDetails: {
-          ...prev.scoreDetails,
-          penalties: {
-            ...prev.scoreDetails.penalties,
-            [field]: numValue,
-          },
-        },
-      }));
-    } else if (section === "endgameClimb") {
-      // Handle special scoring
-      setFormData((prev) => ({
-        ...prev,
-        scoreDetails: {
-          ...prev.scoreDetails,
-          specialScoring: {
-            ...prev.scoreDetails.specialScoring,
-            endgameClimb: {
-              ...prev.scoreDetails.specialScoring.endgameClimb,
-              [field]: numValue,
-            },
-          },
-        },
-      }));
-    }
-  };
-
-  const handleSubmit = async () => {
-    if (!matchId) {
-      toast.error("No match selected");
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    try {
-      const payload = {
-        matchId,
-        ...formData,
-        // Calculate total scores
-        redTotalScore,
-        blueTotalScore,
-        // Include multipliers based on team counts
-        redMultiplier: getMultiplier(formData.redTeamCount),
-        blueMultiplier: getMultiplier(formData.blueTeamCount),
-      };
-
-      // Get auth token from localStorage
-      const authToken = localStorage.getItem('auth-token');
-      
-      if (!authToken) {
-        toast.error("Authentication required. Please log in again.");
-        return;
-      }
-
-      const response = await fetch(`${API_BASE_URL}/api/match-scores`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${authToken}`
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || `Error: ${response.status}`);
-      }
-
-      const result = await response.json();
-      toast.success("Match scores saved successfully");
-      
-      // Callback for parent component
-      if (onScoresSubmit) {
-        onScoresSubmit();
-      }
-    } catch (error: any) {
-      console.error("Failed to submit scores:", error);
-      toast.error(error.message || "Failed to save match scores");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  const {
+    formData,
+    isSubmitting,
+    handleChange,
+    handleSubmit,
+    redTotalScore,
+    blueTotalScore
+  } = useMatchScoresForm({ matchId, onScoresSubmit });
 
   return (
     <div className={`space-y-6 ${className}`}>
@@ -328,9 +163,6 @@ export default function MatchScoresForm({
                   <span>Total Score:</span>
                   <span className="text-red-600">{redTotalScore}</span>
                 </div>
-                <div className="text-xs text-muted-foreground">
-                  Multiplier: {getMultiplier(formData.redTeamCount)}x
-                </div>
               </div>
             </div>
           </CardContent>
@@ -455,9 +287,6 @@ export default function MatchScoresForm({
                 <div className="text-lg font-bold flex justify-between">
                   <span>Total Score:</span>
                   <span className="text-blue-600">{blueTotalScore}</span>
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  Multiplier: {getMultiplier(formData.blueTeamCount)}x
                 </div>
               </div>
             </div>

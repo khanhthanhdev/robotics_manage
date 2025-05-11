@@ -91,8 +91,15 @@ class ApiClient {
       'Content-Type': 'application/json',
     };
 
+    // Always get the latest token from localStorage before making a request
+    if (typeof window !== 'undefined') {
+      this.token = localStorage.getItem('auth-token');
+    }
+
     if (this.token) {
       headers['Authorization'] = `Bearer ${this.token}`;
+    } else {
+      console.warn(`Making unauthenticated request to ${endpoint} - no auth token found`);
     }
 
     const config: RequestInit = {
