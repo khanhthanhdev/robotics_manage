@@ -1,4 +1,4 @@
-import { StageType } from '../../../generated/prisma';
+import { StageType } from '../../utils/prisma-types';
 import { z } from 'zod';
 import { createZodDto } from 'nestjs-zod';
 

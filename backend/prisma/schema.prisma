@@ -38,6 +38,41 @@ enum RefereeRole {
   ALLIANCE_REFEREE
 }
 
+enum MatchState {
+  SCHEDULED
+  READY
+  RUNNING
+  PAUSED
+  COMPLETED
+  CANCELLED
+  ERROR
+}
+
+enum ErrorSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum ErrorStatus {
+  OPEN
+  ACKNOWLEDGED
+  RESOLVED
+  CLOSED
+}
+
+enum DisplayState {
+  STANDBY
+  STARTING_SOON
+  LIVE
+  MATCH_RESULTS
+  FINISHED
+  CANCELLED
+  ERROR
+  CUSTOM_MESSAGE
+}
+
 model User {
   id              String           @id @default(uuid())
   username        String           @unique
@@ -277,40 +312,7 @@ model Field {
   updatedAt    DateTime   @updatedAt
 }
 
-enum MatchState {
-  SCHEDULED
-  READY
-  RUNNING
-  PAUSED
-  COMPLETED
-  CANCELLED
-  ERROR
-}
 
-enum ErrorSeverity {
-  LOW
-  MEDIUM
-  HIGH
-  CRITICAL
-}
-
-enum ErrorStatus {
-  OPEN
-  ACKNOWLEDGED
-  RESOLVED
-  CLOSED
-}
-
-enum DisplayState {
-  STANDBY
-  STARTING_SOON
-  LIVE
-  MATCH_RESULTS
-  FINISHED
-  CANCELLED
-  ERROR
-  CUSTOM_MESSAGE
-}
 
 model MatchControl {
   id              String      @id @default(uuid())

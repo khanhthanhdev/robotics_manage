@@ -4,6 +4,8 @@ export {
   RefereeRole,
   StageType, 
   CardType,
+  MatchState,
+  DisplayState,
   User,
   Tournament,
   Stage,
@@ -11,5 +13,14 @@ export {
   Alliance,
   AllianceScoring,
   Team,
-  TeamAlliance
+  TeamAlliance,
+  MatchControl,
+  MatchTimer,
+  MatchError,
+  MatchReferee,
+  AudienceDisplay,
+  Field,
+  TeamStats,
+  Schedule
+
 } from '../../generated/prisma';

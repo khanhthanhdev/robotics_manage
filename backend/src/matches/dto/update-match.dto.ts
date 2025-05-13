@@ -1,7 +1,6 @@
 import { z } from 'zod';
 import { createZodDto } from 'nestjs-zod';
-import { CreateMatchSchema } from './create-match.dto';
-import { CardType } from '../../../generated/prisma';
+import { CardType } from '../../utils/prisma-types';
 
 // Define the Alliance update schema
 export const UpdateAllianceSchema = z.object({
