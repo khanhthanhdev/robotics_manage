@@ -180,7 +180,21 @@ export function useUpdateMatchStatus() {
   return useMutation({
     mutationFn: async ({ matchId, status }: { matchId: string; status: MatchStatus }) => {
       try {
-        return await MatchService.updateMatchStatus(matchId, status);
+        // Use the new /matches/:id/status endpoint
+        const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+        const response = await fetch(`${API_BASE_URL}/api/matches/${matchId}/status`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+          body: JSON.stringify({ status }),
+        });
+        if (!response.ok) {
+          const error = await response.json().catch(() => ({}));
+          throw new Error(error.message || `Failed to update match status: ${response.status}`);
+        }
+        return await response.json();
       } catch (error: any) {
         throw error;
       }

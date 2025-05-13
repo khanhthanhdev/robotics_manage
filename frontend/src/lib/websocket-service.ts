@@ -88,7 +88,7 @@ class WebSocketService {
   } = {};
 
   // Connect to the WebSocket server
-  connect(url: string = process.env.NEXT_PUBLIC_WS_URL || 'http://localhost:3001'): void {
+  connect(url: string = process.env.NEXT_PUBLIC_WS_URL || 'http://localhost:5000'): void {
     if (this.socket) {
       return;
     }

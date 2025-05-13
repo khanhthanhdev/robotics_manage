@@ -14,6 +14,7 @@ interface MatchScoresFormProps {
   className?: string;
 }
 
+
 export default function MatchScoresForm({ 
   matchId, 
   onScoresSubmit, 

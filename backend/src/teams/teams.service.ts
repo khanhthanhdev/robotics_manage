@@ -19,18 +19,15 @@ export class TeamsService {
    */
   private async generateNextTeamNumber(): Promise<string> {
     try {
-      // Find all existing team numbers
       const allTeams = await this.prisma.team.findMany({
         select: {
           teamNumber: true
         }
       });
 
-      // Find the highest numeric team number
       let highestNumber = 0;
 
       for (const team of allTeams) {
-        // Remove any leading zeros
         const cleanNumber = team.teamNumber.replace(/^0+/, '');
 
         if (/^\d+$/.test(cleanNumber)) {
@@ -41,42 +38,56 @@ export class TeamsService {
         }
       }
 
-      // Increment and format with leading zeros
       const nextNumber = highestNumber + 1;
       return nextNumber.toString().padStart(6, '0');
     } catch (error) {
       console.error("Error generating team number:", error);
-      return Math.floor(100000 + Math.random() * 900000).toString(); // Fallback random 6-digit number
+      return Math.floor(100000 + Math.random() * 900000).toString();
     }
   }
 
-  async create(createTeamDto: CreateTeamDto) {
-    // Auto-generate team number if not provided
-    const teamNumber = createTeamDto.teamNumber || await this.generateNextTeamNumber();
+  /**
+   * Check if a team exists by ID. Throws NotFoundException if not found.
+   */
+  private async ensureTeamExistsById(id: string) {
+    const team = await this.prisma.team.findUnique({ where: { id } });
+    if (!team) {
+      throw new NotFoundException(`Team with ID ${id} not found`);
+    }
+    return team;
+  }
 
-    // Check if team number already exists
-    const existingTeam = await this.prisma.team.findUnique({
-      where: { teamNumber },
-    });
-
-    if (existingTeam) {
+  /**
+   * Check if a team number is unique (not used by another team).
+   * Throws BadRequestException if not unique.
+   */
+  private async ensureTeamNumberUnique(teamNumber: string, excludeId?: string) {
+    const existingTeam = await this.prisma.team.findUnique({ where: { teamNumber } });
+    if (existingTeam && existingTeam.id !== excludeId) {
       throw new BadRequestException(`Team with number ${teamNumber} already exists`);
     }
+  }
 
-    // Format team members if provided
-    let teamMembers = undefined;
-    try {
-      if (createTeamDto.teamMembers !== undefined) {
-        teamMembers = Array.isArray(createTeamDto.teamMembers)
-          ? createTeamDto.teamMembers
-          : typeof createTeamDto.teamMembers === 'string'
-            ? JSON.parse(createTeamDto.teamMembers)
-            : createTeamDto.teamMembers;
+  /**
+   * Parse teamMembers from DTO, handling string/array/object.
+   */
+  private parseTeamMembers(input: any): any {
+    if (input === undefined) return undefined;
+    if (Array.isArray(input)) return input;
+    if (typeof input === 'string') {
+      try {
+        return JSON.parse(input);
+      } catch (error) {
+        throw new BadRequestException(`Invalid teamMembers format: ${error.message}`);
       }
-    } catch (error) {
-      throw new BadRequestException(`Invalid teamMembers format: ${error.message}`);
     }
+    return input;
+  }
 
+  async create(createTeamDto: CreateTeamDto) {
+    const teamNumber = createTeamDto.teamNumber || await this.generateNextTeamNumber();
+    await this.ensureTeamNumberUnique(teamNumber);
+    const teamMembers = this.parseTeamMembers(createTeamDto.teamMembers);
     try {
       return this.prisma.team.create({
         data: {
@@ -88,9 +99,7 @@ export class TeamsService {
           teamMembers,
           tournamentId: createTeamDto.tournamentId,
         },
-        include: {
-          tournament: true,
-        },
+        include: { tournament: true },
       });
     } catch (error) {
       throw new BadRequestException(`Failed to create team: ${error.message}`);
@@ -123,9 +132,7 @@ export class TeamsService {
                 match: {
                   include: {
                     stage: {
-                      include: {
-                        tournament: true,
-                      },
+                      include: { tournament: true },
                     },
                   },
                 },
@@ -135,49 +142,18 @@ export class TeamsService {
         },
       },
     });
-
     if (!team) {
       throw new NotFoundException(`Team with ID ${id} not found`);
     }
-
     return team;
   }
 
   async update(id: string, updateTeamDto: UpdateTeamDto) {
-    // Check if team exists
-    const team = await this.prisma.team.findUnique({
-      where: { id },
-    });
-
-    if (!team) {
-      throw new NotFoundException(`Team with ID ${id} not found`);
+    await this.ensureTeamExistsById(id);
+    if (updateTeamDto.teamNumber) {
+      await this.ensureTeamNumberUnique(updateTeamDto.teamNumber, id);
     }
-
-    // Check if updating to an existing team number
-    if (updateTeamDto.teamNumber && updateTeamDto.teamNumber !== team.teamNumber) {
-      const existingTeam = await this.prisma.team.findUnique({
-        where: { teamNumber: updateTeamDto.teamNumber },
-      });
-
-      if (existingTeam && existingTeam.id !== id) {
-        throw new BadRequestException(`Team with number ${updateTeamDto.teamNumber} already exists`);
-      }
-    }
-
-    // Format team members if provided
-    let teamMembers = undefined;
-    try {
-      if (updateTeamDto.teamMembers !== undefined) {
-        teamMembers = Array.isArray(updateTeamDto.teamMembers)
-          ? updateTeamDto.teamMembers
-          : typeof updateTeamDto.teamMembers === 'string'
-            ? JSON.parse(updateTeamDto.teamMembers)
-            : updateTeamDto.teamMembers;
-      }
-    } catch (error) {
-      throw new BadRequestException(`Invalid teamMembers format: ${error.message}`);
-    }
-
+    const teamMembers = this.parseTeamMembers(updateTeamDto.teamMembers);
     try {
       return this.prisma.team.update({
         where: { id },
@@ -190,9 +166,7 @@ export class TeamsService {
           teamMembers,
           tournamentId: updateTeamDto.tournamentId,
         },
-        include: {
-          tournament: true,
-        }
+        include: { tournament: true },
       });
     } catch (error) {
       throw new BadRequestException(`Failed to update team: ${error.message}`);
@@ -200,107 +174,59 @@ export class TeamsService {
   }
 
   async remove(id: string) {
-    // Check if team exists
-    const team = await this.prisma.team.findUnique({
-      where: { id },
-    });
-
-    if (!team) {
-      throw new NotFoundException(`Team with ID ${id} not found`);
-    }
-
-    return this.prisma.team.delete({
-      where: { id },
-    });
+    await this.ensureTeamExistsById(id);
+    return this.prisma.team.delete({ where: { id } });
   }
 
   /**
    * Import multiple teams from CSV content or copy-pasted text
    */
   async importTeams(importTeamsDto: ImportTeamsDto) {
-    const { content, format, hasHeader, delimiter, tournamentId } = importTeamsDto;
-
+    const { content, format, hasHeader = false, delimiter = ',', tournamentId } = importTeamsDto;
     try {
-      // Parse the content into lines
       const lines = content.split(/\r?\n/).filter(line => line.trim() !== '');
-
-      // Skip header if needed
       const dataLines = hasHeader ? lines.slice(1) : lines;
-
       if (dataLines.length === 0) {
         throw new BadRequestException('No team data found in the content');
       }
-
-      // Parse each line into a team
-      const teamsToCreate: TeamData[] = [];
-      for (const line of dataLines) {
+      const teamsToCreate: TeamData[] = dataLines.map(line => {
         const parts = line.split(delimiter).map(part => part.trim());
-
-        if (parts.length < 1) {
+        if (!parts[0]) {
           throw new BadRequestException(`Invalid line format: ${line}. Expected at least team name`);
         }
-
-        // First column is now the name, teamNumber will be auto-generated
-        const name = parts[0];
-        const organization = parts.length > 1 ? parts[1] : undefined;
-        const description = parts.length > 2 ? parts[2] : undefined;
-
-        teamsToCreate.push({
-          name,
-          organization,
-          description
-        });
-      }
-
-      // Create all teams one by one to avoid conflicts
+        return {
+          name: parts[0],
+          organization: parts[1] !== undefined && parts[1] !== '' ? parts[1] : undefined,
+          description: parts[2] !== undefined && parts[2] !== '' ? parts[2] : undefined,
+        };
+      });
       const createdTeams: any[] = [];
-
       for (const teamData of teamsToCreate) {
         try {
-          // Generate a unique team number for each team
           const teamNumber = await this.generateNextTeamNumber();
-
-          // Ensure this team number doesn't already exist
-          const existingTeam = await this.prisma.team.findUnique({
-            where: { teamNumber },
-          });
-
-          if (existingTeam) {
-            console.log(`Team number ${teamNumber} already exists, retrying with a new number`);
-            continue; // Skip this iteration and try again
-          }
-
-          // Create the team
+          await this.ensureTeamNumberUnique(teamNumber);
           const team = await this.prisma.team.create({
             data: {
               teamNumber,
               name: teamData.name,
               organization: teamData.organization,
               description: teamData.description,
-              tournamentId // Add the tournament ID to associate teams with a tournament
+              tournamentId: tournamentId || null,
             },
-            include: {
-              tournament: true
-            }
+            include: { tournament: true },
           });
-
           createdTeams.push(team);
         } catch (error) {
           console.error(`Error creating team ${teamData.name}:`, error);
-          // Continue with other teams
         }
       }
-
       return {
         success: true,
         message: `Successfully imported ${createdTeams.length} teams`,
-        teams: createdTeams
+        teams: createdTeams,
       };
-
     } catch (error) {
-      if (error instanceof BadRequestException) {
-        throw error;
-      }
+      if (error instanceof BadRequestException) throw error;
       throw new BadRequestException(`Failed to import teams: ${error.message}`);
     }
   }

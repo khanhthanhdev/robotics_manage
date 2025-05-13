@@ -8,7 +8,9 @@ import {
   useMatchScores,
   useUpdateMatchScores,
   useCreateMatchScores,
+  useUpdateMatchStatus,
 } from "@/hooks/use-matches";
+import { MatchStatus } from "@/lib/types";
 import { useWebSocket } from "@/hooks/useWebSocket";
 import { Card } from "@/components/ui/card";
 // Import the extracted ConnectionStatus component
@@ -118,12 +120,11 @@ export default function ControlMatchPage() {
   } = useQuery({
     queryKey: ["all-match-scores"],
     queryFn: async () => {
-      const token = localStorage.getItem("auth-token");
-      if (!token) throw new Error("Authentication required");
+      
       const API_BASE_URL =
         process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
       const response = await fetch(`${API_BASE_URL}/api/match-scores`, {
-        headers: { Authorization: `Bearer ${token}` },
+        credentials: "include",
       });
       if (!response.ok) throw new Error("Failed to fetch match scores");
       return await response.json();
@@ -406,8 +407,7 @@ export default function ControlMatchPage() {
   // Handle timer controls
   const handleStartTimer = () => {
     // If timer is already running, do nothing
-    if (timerIsRunning) return;
-    // If timerRemaining is 0, reset to duration
+    if (timerIsRunning) return;    // If timerRemaining is 0, reset to duration
     const startTime = timerRemaining > 0 ? timerRemaining : timerDuration;
     startTimer({
       duration: timerDuration,
@@ -418,6 +418,12 @@ export default function ControlMatchPage() {
       matchId: selectedMatchId,
       status: "IN_PROGRESS",
       currentPeriod: matchPeriod as any,
+    });
+    
+    // Also update the match status in the database
+    updateMatchStatus.mutate({ 
+      matchId: selectedMatchId, 
+      status: MatchStatus.IN_PROGRESS 
     });
   };
 
@@ -431,8 +437,7 @@ export default function ControlMatchPage() {
     setTimerIsRunning(false);
   };
 
-  const handleResetTimer = () => {
-    resetTimer({
+  const handleResetTimer = () => {    resetTimer({
       duration: timerDuration,
       remaining: timerDuration,
       isRunning: false,
@@ -443,6 +448,12 @@ export default function ControlMatchPage() {
       matchId: selectedMatchId,
       status: "PENDING",
       currentPeriod: null,
+    });
+    
+    // Also update the match status in the database
+    updateMatchStatus.mutate({ 
+      matchId: selectedMatchId, 
+      status: MatchStatus.PENDING 
     });
   };
 
@@ -503,18 +514,25 @@ export default function ControlMatchPage() {
 
     // Send the WebSocket update with object format
     sendScoreUpdate(wsScoreData);
-  };
-
+  };  // Get the match status update mutation
+  const updateMatchStatus = useUpdateMatchStatus();
+  
   // Handle submitting final scores and completing the match
   const handleSubmitScores = () => {
     // First update the scores
     handleUpdateScores();
 
-    // Then mark the match as completed
+    // Then mark the match as completed via both WebSocket and API
     sendMatchStateChange({
       matchId: selectedMatchId,
       status: "COMPLETED",
       currentPeriod: null,
+    });
+    
+    // Update the match status in database as well
+    updateMatchStatus.mutate({ 
+      matchId: selectedMatchId, 
+      status: MatchStatus.COMPLETED 
     });
 
     // Show toast notification

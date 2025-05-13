@@ -249,6 +249,7 @@ export default function MatchControlTabs({
           handleStartTimer={handleStartTimer}
           handlePauseTimer={handlePauseTimer}
           handleResetTimer={handleResetTimer}
+
         />
       </TabsContent>
 

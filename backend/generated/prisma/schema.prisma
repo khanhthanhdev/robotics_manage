@@ -71,20 +71,24 @@ model Tournament {
   stages      Stage[]
   teams       Team[] // Added teams relationship
   teamStats   TeamStats[] // New relation to track team statistics
+  fields      Field[] // New relation: Tournament has many Fields
 }
 
 model Stage {
-  id           String      @id @default(uuid())
-  name         String
-  type         StageType
-  startDate    DateTime
-  endDate      DateTime
-  tournamentId String
-  tournament   Tournament  @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
-  matches      Match[]
-  teamStats    TeamStats[] // Added relation field for TeamStats
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
+  id               String      @id @default(uuid())
+  name             String
+  type             StageType
+  startDate        DateTime
+  endDate          DateTime
+  tournamentId     String
+  tournament       Tournament  @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  matches          Match[]
+  teamStats        TeamStats[] // Added relation field for TeamStats
+  teamsPerAlliance Int         @default(2) // Number of teams per alliance (2v2, 3v3, etc.)
+  teamsPerMatch    Int         @default(4) // Number of teams per match (all alliances)
+  schedules        Schedule[] // Add this line for relation
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
 }
 
 model Match {
@@ -105,6 +109,11 @@ model Match {
   referees        MatchReferee[] // New relation for match referees
   matchScores     MatchScores?
   matchControl    MatchControl? // Optional relation to match control for display state
+  roundType       String? // e.g., "QUALIFICATION", "SWISS", "PLAYOFF", "FINAL"
+  scheduleId      String?
+  schedule        Schedule?      @relation(fields: [scheduleId], references: [id], onDelete: SetNull)
+  fieldId         String?
+  field           Field?         @relation(fields: [fieldId], references: [id], onDelete: SetNull)
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
 }
@@ -217,27 +226,55 @@ model MatchScores {
 }
 
 model TeamStats {
-  id            String     @id @default(uuid())
-  teamId        String
-  team          Team       @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  tournamentId  String
-  tournament    Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
-  stageId       String? // Adding optional stageId field for stage-specific stats
-  stage         Stage?     @relation(fields: [stageId], references: [id], onDelete: SetNull)
-  wins          Int        @default(0)
-  losses        Int        @default(0)
-  ties          Int        @default(0)
-  matchesPlayed Int        @default(0)
-  rank          Int? // For playoff rankings
-  tiebreaker1   Float      @default(0) // First tiebreaker metric (e.g., average score)
-  tiebreaker2   Float      @default(0) // Second tiebreaker metric (e.g., strength of schedule)
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
+  id                    String     @id @default(uuid())
+  teamId                String
+  team                  Team       @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  tournamentId          String
+  tournament            Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  stageId               String? // Adding optional stageId field for stage-specific stats
+  stage                 Stage?     @relation(fields: [stageId], references: [id], onDelete: SetNull)
+  wins                  Int        @default(0)
+  losses                Int        @default(0)
+  ties                  Int        @default(0)
+  pointsScored          Int        @default(0)
+  pointsConceded        Int        @default(0)
+  matchesPlayed         Int        @default(0)
+  rankingPoints         Int        @default(0)
+  opponentWinPercentage Float      @default(0)
+  pointDifferential     Int        @default(0)
+  rank                  Int? // For playoff rankings
+  tiebreaker1           Float      @default(0) // First tiebreaker metric (e.g., average score)
+  tiebreaker2           Float      @default(0) // Second tiebreaker metric (e.g., strength of schedule)
+  createdAt             DateTime   @default(now())
+  updatedAt             DateTime   @updatedAt
 
   @@unique([teamId, tournamentId])
   @@index([teamId])
   @@index([tournamentId])
   @@index([stageId])
+}
+
+model Schedule {
+  id        String   @id @default(uuid())
+  stageId   String
+  stage     Stage    @relation(fields: [stageId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  matches   Match[]
+  algorithm String? // e.g., "simulated_annealing", "swiss"
+  quality   String? // e.g., "low", "medium", "high"
+  params    Json? // Store algorithm parameters
+}
+
+model Field {
+  id           String     @id @default(uuid())
+  name         String
+  location     String?
+  description  String?
+  tournamentId String
+  tournament   Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  matches      Match[]
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
 }
 
 enum MatchState {

@@ -8,23 +8,6 @@ import {
 // API base URL - should be from env vars in a real app
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
-// Helper function to get the auth token
-const getAuthToken = (): string | null => {
-  if (typeof window !== 'undefined') {
-    return localStorage.getItem('auth-token');
-  }
-  return null;
-};
-
-// Helper function to create headers with auth token
-const getAuthHeaders = (): HeadersInit => {
-  const token = getAuthToken();
-  return {
-    'Content-Type': 'application/json',
-    ...(token ? { Authorization: `Bearer ${token}` } : {})
-  };
-};
-
 // Helper function to handle API errors
 const handleApiError = async (response: Response): Promise<never> => {
   let errorMessage = `Error: ${response.status}`;
@@ -179,7 +162,7 @@ export interface AudienceDisplayData {
 class MatchControlService {
   static async fetchMatches() {
     const response = await fetch(`${API_BASE_URL}/matches`, {
-      headers: getAuthHeaders(),
+      credentials: 'include',
     });
     if (!response.ok) throw new Error(`Failed to fetch matches: ${response.status}`);
     return response.json();
@@ -187,23 +170,22 @@ class MatchControlService {
 
   static async fetchMatchById(matchId: string) {
     const response = await fetch(`${API_BASE_URL}/matches/${matchId}`, {
-      headers: getAuthHeaders(),
+      credentials: 'include',
     });
     if (!response.ok) throw new Error(`Failed to fetch match: ${response.status}`);
     return response.json();
   }
 
   static async fetchMatchScores(matchId: string) {
-    // Fetch all scores, then find by matchId
     const allScoresResponse = await fetch(`${API_BASE_URL}/match-scores`, {
-      headers: getAuthHeaders(),
+      credentials: 'include',
     });
     if (!allScoresResponse.ok) throw new Error(`Failed to fetch match scores: ${allScoresResponse.status}`);
     const allScores = await allScoresResponse.json();
     const matchScore = allScores.find((score: any) => score.matchId === matchId);
     if (!matchScore) return null;
     const scoreResponse = await fetch(`${API_BASE_URL}/match-scores/${matchScore.id}`, {
-      headers: getAuthHeaders(),
+      credentials: 'include',
     });
     if (!scoreResponse.ok) throw new Error(`Failed to fetch specific match score: ${scoreResponse.status}`);
     return scoreResponse.json();
@@ -214,7 +196,8 @@ class MatchControlService {
     if (timestamp) payload[status === 'IN_PROGRESS' ? 'startTime' : 'endTime'] = timestamp.toISOString();
     const response = await fetch(`${API_BASE_URL}/matches/${id}`, {
       method: 'PATCH',
-      headers: getAuthHeaders(),
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     });
     if (!response.ok) throw new Error(`Failed to update match status: ${response.status}`);
@@ -223,19 +206,19 @@ class MatchControlService {
 
   static async updateOrCreateScores({ id, matchId, scoreUpdates }: { id?: string; matchId: string; scoreUpdates: ScoreUpdate }) {
     if (id) {
-      // Try update
       const response = await fetch(`${API_BASE_URL}/match-scores/${id}`, {
         method: 'PATCH',
-        headers: getAuthHeaders(),
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(scoreUpdates),
       });
       if (response.ok) return response.json();
       if (response.status !== 404) throw new Error(`Failed to update scores: ${response.status}`);
     }
-    // Create if not found
     const createResponse = await fetch(`${API_BASE_URL}/match-scores`, {
       method: 'POST',
-      headers: getAuthHeaders(),
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         matchId,
         ...scoreUpdates,
@@ -248,6 +231,29 @@ class MatchControlService {
   }
 }
 // --- End Service Layer ---
+
+// --- Additional hooks for audience display controller ---
+export function useScheduledMatches() {
+  return useQuery({
+    queryKey: ['scheduledMatches'],
+    queryFn: async () => {
+      const matches = await MatchControlService.fetchMatches();
+      return matches.filter((m: Match) => m.status === 'PENDING');
+    },
+    staleTime: 30 * 1000,
+    refetchInterval: 15 * 1000,
+  });
+}
+
+export function useActiveMatch(matchId: string | null) {
+  return useQuery({
+    queryKey: ['activeMatch', matchId],
+    queryFn: () => matchId ? MatchControlService.fetchMatchById(matchId) : null,
+    enabled: !!matchId,
+    staleTime: 5 * 1000,
+    refetchInterval: matchId ? 5 * 1000 : false,
+  });
+}
 
 export function useMatchControl() {
   const queryClient = useQueryClient();

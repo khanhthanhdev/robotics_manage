@@ -19,6 +19,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useUpdateMatchStatus } from "@/hooks/use-matches";
+import { MatchStatus } from "@/lib/types";
 
 interface CombinedMatchTimerControlProps {
   selectedMatchId: string;
@@ -58,6 +60,18 @@ const CombinedMatchTimerControl: React.FC<CombinedMatchTimerControlProps> = ({
   handleResetTimer,
 }) => {
   const prevTimerRunning = useRef(timerIsRunning);
+  const updateMatchStatus = useUpdateMatchStatus();
+
+  // Helper to update match status both server and websocket
+  const handleMatchStatusChange = (status: MatchStatus, currentPeriod: string | null) => {
+    if (!selectedMatchId) return;
+    sendMatchStateChange({
+      matchId: selectedMatchId,
+      status,
+      currentPeriod,
+    });
+    updateMatchStatus.mutate({ matchId: selectedMatchId, status });
+  };
 
   useEffect(() => {
     if (!prevTimerRunning.current && timerIsRunning) {
@@ -71,29 +85,17 @@ const CombinedMatchTimerControl: React.FC<CombinedMatchTimerControlProps> = ({
     // Transition to teleop at 2:00 (120000 ms)
     if (matchPeriod === "auto" && timerRemaining <= 120000 && timerRemaining > 30000) {
       setMatchPeriod("teleop");
-      sendMatchStateChange({
-        matchId: selectedMatchId,
-        status: "IN_PROGRESS",
-        currentPeriod: "teleop",
-      });
+      handleMatchStatusChange(MatchStatus.IN_PROGRESS, "teleop");
     }
     // Transition to endgame at 0:30 (30000 ms)
     if ((matchPeriod === "auto" || matchPeriod === "teleop") && timerRemaining <= 30000 && timerRemaining > 0) {
       setMatchPeriod("endgame");
-      sendMatchStateChange({
-        matchId: selectedMatchId,
-        status: "IN_PROGRESS",
-        currentPeriod: "endgame",
-      });
+      handleMatchStatusChange(MatchStatus.IN_PROGRESS, "endgame");
     }
     // Set match status to COMPLETED at 0
     if (timerRemaining <= 0 && matchPeriod !== "completed") {
       setMatchPeriod("completed");
-      sendMatchStateChange({
-        matchId: selectedMatchId,
-        status: "COMPLETED",
-        currentPeriod: null,
-      });
+      handleMatchStatusChange(MatchStatus.COMPLETED, null);
     }
   }, [timerIsRunning, timerRemaining, matchPeriod, selectedMatchId]);
 
@@ -105,6 +107,7 @@ const CombinedMatchTimerControl: React.FC<CombinedMatchTimerControlProps> = ({
       status: "PENDING",
       currentPeriod: "auto",
     });
+    updateMatchStatus.mutate({ matchId: selectedMatchId, status: MatchStatus.PENDING });
   };
 
   return (
@@ -171,21 +174,13 @@ const CombinedMatchTimerControl: React.FC<CombinedMatchTimerControlProps> = ({
         <Button onClick={handlePauseTimer} disabled={!selectedMatchId}>Pause Timer</Button>
         <Button onClick={handleReset} disabled={!selectedMatchId}>Reset Timer</Button>
         <Button
-          onClick={() => sendMatchStateChange({
-            matchId: selectedMatchId,
-            status: "IN_PROGRESS",
-            currentPeriod: matchPeriod as any,
-          })}
+          onClick={() => handleMatchStatusChange(MatchStatus.IN_PROGRESS, matchPeriod as any)}
           disabled={!selectedMatchId}
         >
           Update Match State
         </Button>
         <Button
-          onClick={() => sendMatchStateChange({
-            matchId: selectedMatchId,
-            status: "COMPLETED",
-            currentPeriod: null,
-          })}
+          onClick={() => handleMatchStatusChange(MatchStatus.COMPLETED, null)}
           disabled={!selectedMatchId}
           variant="destructive"
         >

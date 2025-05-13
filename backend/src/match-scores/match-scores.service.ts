@@ -5,6 +5,7 @@ import { Prisma } from '@prisma/client';
 import { ScoreCalculator, IScoreCalculator } from './score-calculator';
 import { JsonFieldParser } from './json-field-parser';
 import { TeamStatsService } from './team-stats.service';
+import { MatchSchedulerService } from '../match-scheduler/match-scheduler.service';
 
 /**
  * Service for managing match scores
@@ -14,7 +15,10 @@ export class MatchScoresService {
   private readonly scoreCalculator: IScoreCalculator;
   private readonly teamStatsService: TeamStatsService;
 
-  constructor(private readonly prisma: PrismaService) {
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly matchSchedulerService: MatchSchedulerService // Injected
+  ) {
     this.scoreCalculator = new ScoreCalculator();
     this.teamStatsService = new TeamStatsService(prisma);
   }
@@ -145,6 +149,10 @@ export class MatchScoresService {
           alliance.teamAlliances.filter(ta => !ta.isSurrogate).map(ta => ta.teamId)
         );
         await this.teamStatsService.recalculateTeamStats(match, teamIds);
+        // Recalculate Swiss rankings for the stage
+        if (match.stage?.id) {
+          await this.matchSchedulerService.updateSwissRankings(match.stage.id);
+        }
       }
       
       return JsonFieldParser.parseJsonFields(matchScores);
@@ -408,6 +416,10 @@ export class MatchScoresService {
           alliance.teamAlliances.filter(ta => !ta.isSurrogate).map(ta => ta.teamId)
         );
         await this.teamStatsService.recalculateTeamStats(match, teamIds);
+        // Recalculate Swiss rankings for the stage
+        if (match.stage?.id) {
+          await this.matchSchedulerService.updateSwissRankings(match.stage.id);
+        }
       }
     }
 

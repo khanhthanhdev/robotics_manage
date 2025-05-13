@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import React from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -27,17 +28,17 @@ interface ScoreControlProps {
   selectedMatch: any | null;
   selectedMatchId: string;
   redAutoScore: number;
-  setRedAutoScore: (score: number) => void;
+  setRedAutoScore: React.Dispatch<React.SetStateAction<number>>;
   redDriveScore: number;
-  setRedDriveScore: (score: number) => void;
+  setRedDriveScore: React.Dispatch<React.SetStateAction<number>>;
   redTeamCount: number;
   setRedTeamCount: (count: number) => void;
   redMultiplier: number;
   setRedMultiplier: (multiplier: number) => void;
   blueAutoScore: number;
-  setBlueAutoScore: (score: number) => void;
+  setBlueAutoScore: React.Dispatch<React.SetStateAction<number>>;
   blueDriveScore: number;
-  setBlueDriveScore: (score: number) => void;
+  setBlueDriveScore: React.Dispatch<React.SetStateAction<number>>;
   blueTeamCount: number;
   setBlueTeamCount: (count: number) => void;
   blueMultiplier: number;
@@ -109,6 +110,20 @@ export default function ScoreControl({
     totalPoints: 0
   });
 
+  // Debounce handleUpdateScores to avoid rapid/broken websocket updates
+  const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
+  const debouncedUpdateScores = () => {
+    if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
+    debounceTimeout.current = setTimeout(() => {
+      handleUpdateScores();
+    }, 200); // 200ms debounce
+  };
+
+  useEffect(() => {
+    debouncedUpdateScores();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [redAutoScore, redDriveScore, blueAutoScore, blueDriveScore]);
+
   return (
     <Card className="bg-gray-900 border-gray-700 shadow-lg">
       <CardHeader className="bg-gradient-to-r from-gray-900 to-gray-800 border-b border-gray-700">
@@ -157,12 +172,12 @@ export default function ScoreControl({
                   <Badge className="bg-red-800 text-red-100 font-mono">{redMultiplier}×</Badge>
                 </div>
               </div>
-              <div className="grid grid-cols-5 gap-1" tabIndex={0} onBlur={handleUpdateScores}>
+              <div className="grid grid-cols-5 gap-1" tabIndex={0} onBlur={debouncedUpdateScores}>
                 <Button 
                   size="sm" 
                   variant="outline"
                   className={`text-xs ${redTeamCount === 0 ? 'bg-red-700 text-white' : 'bg-gray-700'}`}
-                  onClick={() => updateRedTeamCount(0)}
+                  onClick={() => { updateRedTeamCount(0); debouncedUpdateScores(); }}
                 >
                   0
                 </Button>
@@ -170,7 +185,7 @@ export default function ScoreControl({
                   size="sm" 
                   variant="outline"
                   className={`text-xs ${redTeamCount === 1 ? 'bg-red-700 text-white' : 'bg-gray-700'}`}
-                  onClick={() => updateRedTeamCount(1)}
+                  onClick={() => { updateRedTeamCount(1); debouncedUpdateScores(); }}
                 >
                   1
                 </Button>
@@ -178,7 +193,7 @@ export default function ScoreControl({
                   size="sm" 
                   variant="outline"
                   className={`text-xs ${redTeamCount === 2 ? 'bg-red-700 text-white' : 'bg-gray-700'}`}
-                  onClick={() => updateRedTeamCount(2)}
+                  onClick={() => { updateRedTeamCount(2); debouncedUpdateScores(); }}
                 >
                   2
                 </Button>
@@ -186,7 +201,7 @@ export default function ScoreControl({
                   size="sm" 
                   variant="outline"
                   className={`text-xs ${redTeamCount === 3 ? 'bg-red-700 text-white' : 'bg-gray-700'}`}
-                  onClick={() => updateRedTeamCount(3)}
+                  onClick={() => { updateRedTeamCount(3); debouncedUpdateScores(); }}
                 >
                   3
                 </Button>
@@ -194,7 +209,7 @@ export default function ScoreControl({
                   size="sm" 
                   variant="outline"
                   className={`text-xs ${redTeamCount === 4 ? 'bg-red-700 text-white' : 'bg-gray-700'}`}
-                  onClick={() => updateRedTeamCount(4)}
+                  onClick={() => { updateRedTeamCount(4); debouncedUpdateScores(); }}
                 >
                   4
                 </Button>
@@ -211,7 +226,7 @@ export default function ScoreControl({
                       size="icon"
                       variant="outline" 
                       className="bg-red-800 text-red-100 rounded-r-none border-red-600"
-                      onClick={() => setRedAutoScore(Math.max(0, redAutoScore - 5))}
+                      onClick={() => setRedAutoScore((prev: number) => Math.max(0, prev - 5))}
                     >
                       -
                     </Button>
@@ -223,14 +238,14 @@ export default function ScoreControl({
                         const val = e.target.value === '' ? 0 : parseInt(e.target.value);
                         setRedAutoScore(isNaN(val) ? 0 : val);
                       }}
-                      onBlur={handleUpdateScores}
+                      onBlur={debouncedUpdateScores}
                       className="text-center border-red-600 bg-red-900 text-red-100 rounded-none"
                     />
                     <Button 
                       size="icon"
                       variant="outline" 
                       className="bg-red-800 text-red-100 rounded-l-none border-red-600"
-                      onClick={() => setRedAutoScore(redAutoScore + 5)}
+                      onClick={() => setRedAutoScore((prev: number) => prev + 5)}
                     >
                       +
                     </Button>
@@ -243,7 +258,7 @@ export default function ScoreControl({
                       size="icon"
                       variant="outline" 
                       className="bg-red-800 text-red-100 rounded-r-none border-red-600"
-                      onClick={() => setRedDriveScore(Math.max(0, redDriveScore - 5))}
+                      onClick={() => setRedDriveScore((prev: number) => Math.max(0, prev - 5))}
                     >
                       -
                     </Button>
@@ -255,14 +270,14 @@ export default function ScoreControl({
                         const val = e.target.value === '' ? 0 : parseInt(e.target.value);
                         setRedDriveScore(isNaN(val) ? 0 : val);
                       }}
-                      onBlur={handleUpdateScores}
+                      onBlur={debouncedUpdateScores}
                       className="text-center border-red-600 bg-red-900 text-red-100 rounded-none"
                     />
                     <Button 
                       size="icon"
                       variant="outline" 
                       className="bg-red-800 text-red-100 rounded-l-none border-red-600"
-                      onClick={() => setRedDriveScore(redDriveScore + 5)}
+                      onClick={() => setRedDriveScore((prev: number) => prev + 5)}
                     >
                       +
                     </Button>
@@ -476,12 +491,12 @@ export default function ScoreControl({
                   <Badge className="bg-blue-800 text-blue-100 font-mono">{blueMultiplier}×</Badge>
                 </div>
               </div>
-              <div className="grid grid-cols-5 gap-1" tabIndex={0} onBlur={handleUpdateScores}>
+              <div className="grid grid-cols-5 gap-1" tabIndex={0} onBlur={debouncedUpdateScores}>
                 <Button 
                   size="sm" 
                   variant="outline"
                   className={`text-xs ${blueTeamCount === 0 ? 'bg-blue-700 text-white' : 'bg-gray-700'}`}
-                  onClick={() => updateBlueTeamCount(0)}
+                  onClick={() => { updateBlueTeamCount(0); debouncedUpdateScores(); }}
                 >
                   0
                 </Button>
@@ -489,7 +504,7 @@ export default function ScoreControl({
                   size="sm" 
                   variant="outline"
                   className={`text-xs ${blueTeamCount === 1 ? 'bg-blue-700 text-white' : 'bg-gray-700'}`}
-                  onClick={() => updateBlueTeamCount(1)}
+                  onClick={() => { updateBlueTeamCount(1); debouncedUpdateScores(); }}
                 >
                   1
                 </Button>
@@ -497,7 +512,7 @@ export default function ScoreControl({
                   size="sm" 
                   variant="outline"
                   className={`text-xs ${blueTeamCount === 2 ? 'bg-blue-700 text-white' : 'bg-gray-700'}`}
-                  onClick={() => updateBlueTeamCount(2)}
+                  onClick={() => { updateBlueTeamCount(2); debouncedUpdateScores(); }}
                 >
                   2
                 </Button>
@@ -505,7 +520,7 @@ export default function ScoreControl({
                   size="sm" 
                   variant="outline"
                   className={`text-xs ${blueTeamCount === 3 ? 'bg-blue-700 text-white' : 'bg-gray-700'}`}
-                  onClick={() => updateBlueTeamCount(3)}
+                  onClick={() => { updateBlueTeamCount(3); debouncedUpdateScores(); }}
                 >
                   3
                 </Button>
@@ -513,7 +528,7 @@ export default function ScoreControl({
                   size="sm" 
                   variant="outline"
                   className={`text-xs ${blueTeamCount === 4 ? 'bg-blue-700 text-white' : 'bg-gray-700'}`}
-                  onClick={() => updateBlueTeamCount(4)}
+                  onClick={() => { updateBlueTeamCount(4); debouncedUpdateScores(); }}
                 >
                   4
                 </Button>
@@ -530,7 +545,7 @@ export default function ScoreControl({
                       size="icon"
                       variant="outline" 
                       className="bg-blue-800 text-blue-100 rounded-r-none border-blue-600"
-                      onClick={() => setBlueAutoScore(Math.max(0, blueAutoScore - 5))}
+                      onClick={() => setBlueAutoScore((prev: number) => Math.max(0, prev - 5))}
                     >
                       -
                     </Button>
@@ -542,14 +557,14 @@ export default function ScoreControl({
                         const val = e.target.value === '' ? 0 : parseInt(e.target.value);
                         setBlueAutoScore(isNaN(val) ? 0 : val);
                       }}
-                      onBlur={handleUpdateScores}
+                      onBlur={debouncedUpdateScores}
                       className="text-center border-blue-600 bg-blue-900 text-blue-100 rounded-none"
                     />
                     <Button 
                       size="icon"
                       variant="outline" 
                       className="bg-blue-800 text-blue-100 rounded-l-none border-blue-600"
-                      onClick={() => setBlueAutoScore(blueAutoScore + 5)}
+                      onClick={() => setBlueAutoScore((prev: number) => prev + 5)}
                     >
                       +
                     </Button>
@@ -562,7 +577,7 @@ export default function ScoreControl({
                       size="icon"
                       variant="outline" 
                       className="bg-blue-800 text-blue-100 rounded-r-none border-blue-600"
-                      onClick={() => setBlueDriveScore(Math.max(0, blueDriveScore - 5))}
+                      onClick={() => setBlueDriveScore((prev: number) => Math.max(0, prev - 5))}
                     >
                       -
                     </Button>
@@ -574,14 +589,14 @@ export default function ScoreControl({
                         const val = e.target.value === '' ? 0 : parseInt(e.target.value);
                         setBlueDriveScore(isNaN(val) ? 0 : val);
                       }}
-                      onBlur={handleUpdateScores}
+                      onBlur={debouncedUpdateScores}
                       className="text-center border-blue-600 bg-blue-900 text-blue-100 rounded-none"
                     />
                     <Button 
                       size="icon"
                       variant="outline" 
                       className="bg-blue-800 text-blue-100 rounded-l-none border-blue-600"
-                      onClick={() => setBlueDriveScore(blueDriveScore + 5)}
+                      onClick={() => setBlueDriveScore((prev: number) => prev + 5)}
                     >
                       +
                     </Button>

@@ -7,6 +7,7 @@ import { patchNestJsSwagger } from 'nestjs-zod';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { PrismaClient } from '../generated/prisma';
 import { Logger } from '@nestjs/common';
+import * as cookieParser from 'cookie-parser';
 
 /**
  * Verifies that Prisma client can be instantiated
@@ -56,6 +57,9 @@ async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
   const logger = new Logger('Bootstrap');
   
+  // Enable cookie parsing for HTTP-only JWT cookies
+  app.use(cookieParser());
+
   // Enable CORS with specific configuration for credentialed requests
   app.enableCors({
     origin: 'http://localhost:3000', // Your frontend origin

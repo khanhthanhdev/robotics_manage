@@ -1,4 +1,5 @@
-import { Controller, Request, Post, UseGuards, Body, Get, UnauthorizedException } from '@nestjs/common';
+import { Controller, Request, Post, UseGuards, Body, Get, UnauthorizedException, Res } from '@nestjs/common';
+import { Response } from 'express';
 import { AuthService } from './auth.service';
 import { UserRole } from '../utils/prisma-types';
 import { JwtAuthGuard } from './jwt-auth.guard';
@@ -20,14 +21,38 @@ export class AuthController {
   }
 
   @Post('login')
-  async login(@Body() loginDto: { username: string; password: string }) {
+  async login(
+    @Body() loginDto: { username: string; password: string },
+    @Res({ passthrough: true }) res: Response
+  ) {
     const user = await this.authService.validateUser(loginDto.username, loginDto.password);
 
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    return this.authService.login(user);
+    const { access_token, user: userInfo } = await this.authService.login(user);
+
+    // Set JWT as HTTP-only cookie
+    res.cookie('token', access_token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 1 week
+    });
+
+    // Do not return the token in the response body for security
+    return { user: userInfo, message: 'Login successful' };
+  }
+
+  @Post('logout')
+  logout(@Res({ passthrough: true }) res: Response) {
+    res.clearCookie('token', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+    });
+    return { message: 'Logged out' };
   }
 
   @Get('init-admin')

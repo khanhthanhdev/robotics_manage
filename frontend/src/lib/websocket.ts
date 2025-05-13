@@ -126,20 +126,20 @@ class WebSocketService implements IWebSocketService {
   }
 
   public emit(event: string, data: any): void {
-    if (this.socket && this.socket.connected) {
-      this.socket.emit(event, data);
-    } else {
-      console.warn('Socket not connected, attempting to connect before emitting');
+    if (!this.socket || !this.socket.connected) {
+      console.error('Failed to emit event, socket not connected', { event, data });
+      // Try to reconnect and queue the event
       this.connect();
-      // Add a small delay to ensure connection is established
       setTimeout(() => {
-        if (this.socket?.connected) {
+        if (this.socket && this.socket.connected) {
           this.socket.emit(event, data);
         } else {
-          console.error('Failed to emit event, socket not connected', { event, data });
+          console.error('Still not connected, event not sent:', event);
         }
       }, 500);
+      return;
     }
+    this.socket.emit(event, data);
   }
 
   public isConnected(): boolean {
@@ -170,17 +170,16 @@ class WebSocketService implements IWebSocketService {
   public sendMatchStateChange(data: any): void {
     this.emit('match_state_change', data);
   }
-
   public startTimer(data: any): void {
-    this.emit('timer_start', data);
+    this.emit('start_timer', data);
   }
 
   public pauseTimer(data: any): void {
-    this.emit('timer_pause', data);
+    this.emit('pause_timer', data);
   }
 
   public resetTimer(data: any): void {
-    this.emit('timer_reset', data);
+    this.emit('reset_timer', data);
   }
 
   public sendAnnouncement(data: any): void {

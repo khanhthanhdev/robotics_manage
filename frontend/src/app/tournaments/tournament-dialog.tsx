@@ -42,6 +42,7 @@ const tournamentFormSchema = z.object({
   endDate: z.string().refine((date) => !isNaN(Date.parse(date)), {
     message: "End date must be a valid date"
   }),
+  numberOfFields: z.coerce.number().int().min(1, { message: "There must be at least 1 field" }).max(20, { message: "Too many fields (max 20)" })
 }).refine((data) => {
   const startDate = new Date(data.startDate);
   const endDate = new Date(data.endDate);
@@ -81,6 +82,7 @@ export default function TournamentDialog({
       endDate: tournament?.endDate 
         ? format(new Date(tournament.endDate), 'yyyy-MM-dd')
         : format(new Date(new Date().setDate(new Date().getDate() + 7)), 'yyyy-MM-dd'),
+      numberOfFields: tournament && (tournament as any).numberOfFields ? (tournament as any).numberOfFields : 1,
     },
   });
 
@@ -96,6 +98,7 @@ export default function TournamentDialog({
         endDate: tournament?.endDate 
           ? format(new Date(tournament.endDate), 'yyyy-MM-dd')
           : format(new Date(new Date().setDate(new Date().getDate() + 7)), 'yyyy-MM-dd'),
+        numberOfFields: tournament && (tournament as any).numberOfFields ? (tournament as any).numberOfFields : 1,
       });
     }
   }, [isOpen, tournament, form]);
@@ -125,6 +128,7 @@ export default function TournamentDialog({
           description: '',
           startDate: format(new Date(), 'yyyy-MM-dd'),
           endDate: format(new Date(new Date().setDate(new Date().getDate() + 7)), 'yyyy-MM-dd'),
+          numberOfFields: 1,
         });
       }
       
@@ -226,6 +230,20 @@ export default function TournamentDialog({
                 )}
               />
             </div>
+
+            <FormField
+              control={form.control}
+              name="numberOfFields"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="font-semibold text-gray-200">Number of Fields</FormLabel>
+                  <FormControl>
+                    <Input type="number" min={1} max={20} step={1} {...field} className="bg-gray-800 border-gray-700 text-gray-100 focus:border-green-500 focus:ring-2 focus:ring-green-900" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <DialogFooter className="flex justify-between items-center mt-4">
               <DialogClose asChild>

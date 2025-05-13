@@ -55,6 +55,14 @@ export class MatchesController {
     return this.matchesService.updateAllianceScoring(id, body.refereeId, body.data);
   }
 
+  @Patch(':id/status')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  updateStatus(@Param('id') id: string, @Body() body: { status: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' }) {
+    // Only allow status update
+    return this.matchesService.update(id, { status: body.status });
+  }
+
   @Delete(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)

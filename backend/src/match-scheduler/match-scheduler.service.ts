@@ -99,6 +99,173 @@ export class MatchSchedulerService {
   }
 
   /**
+   * Updates Swiss-style rankings for all teams in a stage.
+   * Call this after each round.
+   */
+  async updateSwissRankings(stageId: string): Promise<void> {
+    // 1. Get all teams and their stats
+    let teamStats = await this.prisma.teamStats.findMany({
+      where: { stageId },
+      include: { team: true }
+    });
+    const matches = await this.prisma.match.findMany({
+      where: { stageId },
+      include: {
+        alliances: { include: { teamAlliances: true } },
+        matchScores: true
+      }
+    });
+    console.log(`[SwissRankings] Stage ${stageId}: Found ${teamStats.length} teamStats, ${matches.length} matches`);
+    if (teamStats.length === 0) {
+      console.warn(`[SwissRankings] WARNING: No teamStats found for stage ${stageId}. Attempting to create teamStats for all teams in this stage's tournament.`);
+      // Find all teams in the tournament for this stage
+      const stageObj = await this.prisma.stage.findUnique({
+        where: { id: stageId },
+        include: { tournament: { include: { teams: true } } }
+      });
+      if (stageObj?.tournament?.teams) {
+        for (const team of stageObj.tournament.teams) {
+          // Check if a tournament-level teamStats row exists
+          const existing = await this.prisma.teamStats.findUnique({
+            where: { teamId_tournamentId: { teamId: team.id, tournamentId: stageObj.tournament.id } }
+          });
+          if (existing && !existing.stageId) {
+            // Update the existing row to set the stageId
+            await this.prisma.teamStats.update({
+              where: { teamId_tournamentId: { teamId: team.id, tournamentId: stageObj.tournament.id } },
+              data: { stageId }
+            });
+          } else if (!existing) {
+            // Create a new row for this stage
+            await this.prisma.teamStats.create({
+              data: {
+                teamId: team.id,
+                tournamentId: stageObj.tournament.id,
+                stageId,
+              }
+            });
+          }
+          // If existing and stageId is already set, do nothing
+        }
+        // Reload teamStats
+        teamStats = await this.prisma.teamStats.findMany({
+          where: { stageId },
+          include: { team: true }
+        });
+        console.log(`[SwissRankings] Created/updated ${teamStats.length} teamStats for stage ${stageId}`);
+      } else {
+        console.error(`[SwissRankings] ERROR: Could not find teams for stage ${stageId}`);
+        return;
+      }
+    }
+
+    // 3. Build a map of teamId -> opponents and results
+    const teamResults = new Map<string, {
+      wins: number,
+      losses: number,
+      ties: number,
+      pointsScored: number,
+      pointsConceded: number,
+      opponents: Set<string>
+    }>();
+
+    for (const stats of teamStats) {
+      teamResults.set(stats.teamId, {
+        wins: 0,
+        losses: 0,
+        ties: 0,
+        pointsScored: 0,
+        pointsConceded: 0,
+        opponents: new Set<string>()
+      });
+    }
+
+    for (const match of matches) {
+      // Get scores for both alliances
+      const scoreRed = match.matchScores?.redTotalScore ?? 0;
+      const scoreBlue = match.matchScores?.blueTotalScore ?? 0;
+      const redTeams = match.alliances.find(a => a.color === 'RED')?.teamAlliances.map(ta => ta.teamId) ?? [];
+      const blueTeams = match.alliances.find(a => a.color === 'BLUE')?.teamAlliances.map(ta => ta.teamId) ?? [];
+
+      // Update stats for each team
+      for (const teamId of redTeams) {
+        const result = teamResults.get(teamId);
+        if (!result) continue;
+        result.pointsScored += scoreRed;
+        result.pointsConceded += scoreBlue;
+        blueTeams.forEach(op => result.opponents.add(op));
+        if (scoreRed > scoreBlue) result.wins++;
+        else if (scoreRed < scoreBlue) result.losses++;
+        else result.ties++;
+      }
+      for (const teamId of blueTeams) {
+        const result = teamResults.get(teamId);
+        if (!result) continue;
+        result.pointsScored += scoreBlue;
+        result.pointsConceded += scoreRed;
+        redTeams.forEach(op => result.opponents.add(op));
+        if (scoreBlue > scoreRed) result.wins++;
+        else if (scoreBlue < scoreRed) result.losses++;
+        else result.ties++;
+      }
+    }
+
+    // 4. Calculate OWP for each team
+    const winPercents = new Map<string, number>();
+    for (const [teamId, result] of teamResults.entries()) {
+      const total = result.wins + result.losses + result.ties;
+      winPercents.set(teamId, total > 0 ? result.wins / total : 0);
+    }
+
+    for (const [teamId, result] of teamResults.entries()) {
+      // OWP: average win percent of all opponents
+      let owp = 0;
+      if (result.opponents.size > 0) {
+        owp =
+          Array.from(result.opponents)
+            .map(opId => winPercents.get(opId) ?? 0)
+            .reduce((a, b) => a + b, 0) / result.opponents.size;
+      }
+      // Point differential
+      const pointDiff = result.pointsScored - result.pointsConceded;
+      // Ranking points: Win=2, Tie=1, Loss=0
+      const rankingPoints = result.wins * 2 + result.ties;
+
+      // Update TeamStats in DB
+      await this.prisma.teamStats.updateMany({
+        where: { stageId, teamId },
+        data: {
+          wins: result.wins,
+          losses: result.losses,
+          ties: result.ties,
+          pointsScored: result.pointsScored,
+          pointsConceded: result.pointsConceded,
+          matchesPlayed: result.wins + result.losses + result.ties,
+          rankingPoints,
+          opponentWinPercentage: owp,
+          pointDifferential: pointDiff
+        }
+      });
+    }
+  }
+
+  /**
+   * Returns the current Swiss-style ranking for a stage, ordered by all tiebreakers.
+   */
+  async getSwissRankings(stageId: string) {
+    return this.prisma.teamStats.findMany({
+      where: { stageId },
+      orderBy: [
+        { rankingPoints: 'desc' },
+        { opponentWinPercentage: 'desc' },
+        { pointDifferential: 'desc' },
+        { matchesPlayed: 'desc' }
+      ],
+      include: { team: true }
+    });
+  }
+
+  /**
    * Generates an FRC-style schedule using simulated annealing algorithm.
    * This creates a balanced schedule where each team plays in a specified number of rounds.
    * 
@@ -729,7 +896,12 @@ export class MatchSchedulerService {
         tiebreaker1: 0,
         tiebreaker2: 0,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
+        pointsScored: 0,
+        pointsConceded: 0,
+        rankingPoints: 0,
+        opponentWinPercentage: 0,
+        pointDifferential: 0
       }));
     }
     

@@ -10,6 +10,9 @@ import {
   ScoreData, 
   TimerData 
 } from '@/lib/websocket-service';
+import { useSwissRankings } from '../../hooks/useSwissRankings';
+import { useStagesByTournament } from '@/hooks/use-stages';
+import { SwissRankingsDisplay } from './components/SwissRankingsDisplay';
 import TeamsDisplay, { Team } from './components/TeamsDisplay';
 import ScheduleDisplay, { Match } from './components/ScheduleDisplay';
 
@@ -59,7 +62,44 @@ export default function AudienceDisplayPage() {
   
   const [announcement, setAnnouncement] = useState<string>('');
   const [showAnnouncement, setShowAnnouncement] = useState<boolean>(false);
+
+  // Add state for selected stage (for rankings)
+  const [selectedStageId, setSelectedStageId] = useState<string>("");
+
+  // Fetch stages for the current tournament
+  const { data: stages = [], isLoading: isLoadingStages } = useStagesByTournament(tournamentId);
+
+  // Fetch Swiss rankings for the selected stage
+  const {
+    data: swissRankings = [],
+    isLoading: isLoadingSwissRankings,
+    refetch: refetchSwissRankings,
+  } = useSwissRankings(selectedStageId);
+
+  useEffect(() => {
+    console.log('Selected Stage ID:', selectedStageId);
+    console.log('Swiss Rankings:', swissRankings);
+  }, [selectedStageId, swissRankings]);
+
+  // Refetch rankings when display mode is 'rankings' or selectedStageId changes
+  useEffect(() => {
+    if (displaySettings.displayMode === 'rankings' && selectedStageId) {
+      refetchSwissRankings();
+    }
+  }, [displaySettings.displayMode, selectedStageId, refetchSwissRankings]);
   
+  // Smooth local countdown for timer
+  useEffect(() => {
+    if (!timerData.isRunning || timerData.remaining <= 0) return;
+    const interval = setInterval(() => {
+      setTimerData(prev => {
+        if (!prev.isRunning || prev.remaining <= 0) return prev;
+        return { ...prev, remaining: prev.remaining - 1000 };
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [timerData.isRunning, timerData.remaining]);
+
   // Format timer as MM:SS
   const formatTime = (ms: number) => {
     const totalSeconds = Math.floor(ms / 1000);
@@ -113,10 +153,9 @@ export default function AudienceDisplayPage() {
     queryFn: async () => {
       if (!matchId) return null;
       const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
-      const authToken = typeof window !== 'undefined' ? localStorage.getItem('auth-token') : null;
-      const headers: Record<string, string> = {};
-      if (authToken) headers['Authorization'] = `Bearer ${authToken}`;
-      const response = await fetch(`${API_BASE_URL}/api/match-scores/match/${matchId}`, { headers });
+      const response = await fetch(`${API_BASE_URL}/api/match-scores/match/${matchId}`, {
+        credentials: 'include',
+      });
       if (!response.ok) return null;
       return await response.json();
     },
@@ -325,19 +364,38 @@ export default function AudienceDisplayPage() {
     );
   };
 
-  // TODO: Placeholder for rankings display
+  // Rankings display
   const renderRankingsDisplay = () => {
     return (
-      <div className="flex items-center justify-center h-full animate-fade-in">
-        <div className="text-center p-12 bg-gradient-to-br from-blue-100 to-yellow-50 rounded-2xl shadow-xl border-2 border-blue-200">
-          <h2 className="text-4xl font-extrabold mb-6 text-blue-900 drop-shadow">Team Rankings</h2>
-          <p className="text-xl text-blue-700">Ranking information would be displayed here</p>
+      <div className="flex flex-col items-center justify-center h-full animate-fade-in">
+        <div className="text-center p-6 bg-gradient-to-br from-blue-100 to-yellow-50 rounded-2xl shadow-xl border-2 border-blue-200 mb-6">
+          <h2 className="text-4xl font-extrabold mb-2 text-blue-900 drop-shadow">Team Rankings</h2>
+          <div className="mb-4">
+            <label htmlFor="stage-select" className="text-blue-700 font-semibold mr-2">Stage:</label>
+            <select
+              id="stage-select"
+              value={selectedStageId}
+              onChange={e => setSelectedStageId(e.target.value)}
+              className="border rounded px-2 py-1 text-blue-900"
+              disabled={isLoadingStages}
+            >
+              <option value="">Select Stage</option>
+              {stages.filter(s => s.type === 'SWISS').map(stage => (
+                <option key={stage.id} value={stage.id}>{stage.name}</option>
+              ))}
+            </select>
+          </div>
         </div>
+        {isLoadingSwissRankings ? (
+          <div className="text-blue-400 text-xl">Loading rankings...</div>
+        ) : (
+          <SwissRankingsDisplay rankings={swissRankings} />
+        )}
       </div>
     );
   };
 
-  // TODO: Render announcement display
+  // Render announcement display
   const renderAnnouncementDisplay = () => {
     return (
       <div className="flex items-center justify-center h-full bg-gradient-to-br from-yellow-200 to-blue-100 animate-fade-in">

@@ -28,14 +28,6 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 // API base URL - update to correct server port
 const API_BASE_URL = 'http://localhost:5000/api';
 
-// Get auth token from local storage
-const getAuthToken = () => {
-  if (typeof window !== 'undefined') {
-    return localStorage.getItem('auth-token');
-  }
-  return null;
-};
-
 // Auth provider component
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -44,34 +36,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const { data, error, isLoading, refetch } = useQuery({
     queryKey: ['currentUser'],
     queryFn: async () => {
-      const token = getAuthToken();
-      
-      if (!token) {
-        return null;
-      }
-      
       const response = await fetch(`${API_BASE_URL}/auth/check-auth`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+        credentials: 'include',
       });
-      
       if (!response.ok) {
         if (response.status === 401) {
-          // Clear invalid token
-          localStorage.removeItem('auth-token');
           return null;
         }
         throw new Error('Failed to fetch user data');
       }
-      
       const data = await response.json();
       return data.user;
     },
     retry: false,
     refetchOnWindowFocus: false,
-    // Only run the query if there's a token
-    enabled: !!getAuthToken()
   });
   
   // Update user state when data changes
@@ -85,19 +63,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password, email }),
+        credentials: 'include',
       });
-      
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Registration failed');
       }
-      
-      const { access_token, user } = await response.json();
-      
-      // Store token in local storage
-      localStorage.setItem('auth-token', access_token);
-      
-      // Set the user directly from response to avoid an additional API call
+      // No need to store token, cookie is set by server
+      const { user } = await response.json();
       setUser(user);
     } catch (error) {
       throw error;
@@ -111,22 +84,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
+        credentials: 'include',
       });
-      
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Login failed');
       }
-      
-      const { access_token, user } = await response.json();
-      
-      // Store token in local storage
-      localStorage.setItem('auth-token', access_token);
-      
-      // Set the user directly from response to avoid an additional API call
+      const { user } = await response.json();
       setUser(user);
-      
-      // Refetch user data
       await refetch();
     } catch (error) {
       throw error;
@@ -135,13 +100,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   
   // Logout function
   const logout = async () => {
-    // Remove token from local storage
-    localStorage.removeItem('auth-token');
-    
-    // Clear user state
+    await fetch(`${API_BASE_URL}/auth/logout`, {
+      method: 'POST',
+      credentials: 'include',
+    });
     setUser(null);
-    
-    // Refetch user data (which will now return null)
     await refetch();
   };
   

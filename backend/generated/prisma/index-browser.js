@@ -149,6 +149,8 @@ exports.Prisma.StageScalarFieldEnum = {
   startDate: 'startDate',
   endDate: 'endDate',
   tournamentId: 'tournamentId',
+  teamsPerAlliance: 'teamsPerAlliance',
+  teamsPerMatch: 'teamsPerMatch',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -165,6 +167,9 @@ exports.Prisma.MatchScalarFieldEnum = {
   winningAlliance: 'winningAlliance',
   stageId: 'stageId',
   scoredById: 'scoredById',
+  roundType: 'roundType',
+  scheduleId: 'scheduleId',
+  fieldId: 'fieldId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -250,10 +255,34 @@ exports.Prisma.TeamStatsScalarFieldEnum = {
   wins: 'wins',
   losses: 'losses',
   ties: 'ties',
+  pointsScored: 'pointsScored',
+  pointsConceded: 'pointsConceded',
   matchesPlayed: 'matchesPlayed',
+  rankingPoints: 'rankingPoints',
+  opponentWinPercentage: 'opponentWinPercentage',
+  pointDifferential: 'pointDifferential',
   rank: 'rank',
   tiebreaker1: 'tiebreaker1',
   tiebreaker2: 'tiebreaker2',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ScheduleScalarFieldEnum = {
+  id: 'id',
+  stageId: 'stageId',
+  createdAt: 'createdAt',
+  algorithm: 'algorithm',
+  quality: 'quality',
+  params: 'params'
+};
+
+exports.Prisma.FieldScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  location: 'location',
+  description: 'description',
+  tournamentId: 'tournamentId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -407,6 +436,8 @@ exports.Prisma.ModelName = {
   TeamAlliance: 'TeamAlliance',
   MatchScores: 'MatchScores',
   TeamStats: 'TeamStats',
+  Schedule: 'Schedule',
+  Field: 'Field',
   MatchControl: 'MatchControl',
   MatchTimer: 'MatchTimer',
   MatchError: 'MatchError',

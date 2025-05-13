@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { useWebSocket } from '@/hooks/useWebSocket';
+import { useUpdateMatchStatus } from '@/hooks/use-matches';
+import { MatchStatus } from '@/lib/types';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL|| 'http://localhost:5000';
 
@@ -24,7 +26,7 @@ export function calculateAllianceScore({ autoScore, driveScore, endgameClimb, pe
   return Math.round((autoScore + driveScore + endgameClimb - penalties) * getMultiplier(teamCount));
 }
 
-export function useMatchScoresForm({ matchId, onScoresSubmit }: { matchId: string, onScoresSubmit?: () => void }) {
+export function useMatchScoresForm({ matchId, onScoresSubmit, onCompleteMatch }: { matchId: string, onScoresSubmit?: () => void, onCompleteMatch?: () => Promise<void> }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     redAutoScore: 0,
@@ -42,6 +44,7 @@ export function useMatchScoresForm({ matchId, onScoresSubmit }: { matchId: strin
   });
 
   const { sendScoreUpdate } = useWebSocket();
+  const updateMatchStatus = useUpdateMatchStatus();
 
   const redTotalScore = calculateAllianceScore({
     autoScore: formData.redAutoScore,
@@ -156,16 +159,13 @@ export function useMatchScoresForm({ matchId, onScoresSubmit }: { matchId: strin
         redMultiplier: getMultiplier(formData.redTeamCount),
         blueMultiplier: getMultiplier(formData.blueTeamCount),
       };
-      const authToken = localStorage.getItem('auth-token');
-      if (!authToken) {
-        toast.error("Authentication required. Please log in again.");
-        return;
-      }
+      
       const response = await fetch(`${API_BASE_URL}/api/match-scores`, {
+        credentials: "include",
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${authToken}`
+          
         },
         body: JSON.stringify(payload),
       });
@@ -176,6 +176,9 @@ export function useMatchScoresForm({ matchId, onScoresSubmit }: { matchId: strin
       await response.json();
       toast.success("Match scores saved successfully");
       if (onScoresSubmit) onScoresSubmit();
+      // Mark match as completed after successful score submission
+      updateMatchStatus.mutate({ matchId, status: MatchStatus.COMPLETED });
+      if (onCompleteMatch) await onCompleteMatch();
     } catch (error: any) {
       console.error("Failed to submit scores:", error);
       toast.error(error.message || "Failed to save match scores");

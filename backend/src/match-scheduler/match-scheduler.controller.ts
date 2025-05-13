@@ -65,6 +65,32 @@ export class MatchSchedulerController {
     }
 
     /**
+     * Updates Swiss-style rankings for all teams in a stage.
+     * Call this after each round.
+     */
+    @Post('update-swiss-rankings/:stageId')
+    @Roles(UserRole.ADMIN)
+    async updateSwissRankings(@Param('stageId') stageId: string) {
+        await this.matchSchedulerService.updateSwissRankings(stageId);
+        return {
+            message: `Swiss rankings updated for stage ${stageId}`
+        };
+    }
+
+    /**
+     * Gets Swiss-style rankings for a stage, ordered by all tiebreakers.
+     */
+    @Post('get-swiss-rankings/:stageId')
+    @Roles(UserRole.ADMIN)
+    async getSwissRankings(@Param('stageId') stageId: string) {
+        const rankings = await this.matchSchedulerService.getSwissRankings(stageId);
+        return {
+            message: `Swiss rankings for stage ${stageId}`,
+            rankings
+        };
+    }
+
+    /**
      * Generates a playoff tournament schedule.
      * Creates elimination bracket based on team seeding.
      */

@@ -4,42 +4,6 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
  * API client for making requests to the backend
  */
 class ApiClient {
-  private token: string | null = null;
-
-  constructor() {
-    // Initialize token from localStorage if we're in a browser environment
-    if (typeof window !== 'undefined') {
-      this.token = localStorage.getItem('auth-token');
-    }
-  }
-
-  /**
-   * Sets the authentication token for subsequent requests
-   */
-  setToken(token: string | null) {
-    this.token = token;
-    
-    // Also update localStorage when token changes
-    if (typeof window !== 'undefined') {
-      if (token) {
-        localStorage.setItem('auth-token', token);
-      } else {
-        localStorage.removeItem('auth-token');
-      }
-    }
-  }
-
-  /**
-   * Gets the current authentication token
-   */
-  getToken(): string | null {
-    // If token is not set but exists in localStorage, retrieve it
-    if (!this.token && typeof window !== 'undefined') {
-      this.token = localStorage.getItem('auth-token');
-    }
-    return this.token;
-  }
-
   /**
    * Makes a GET request to the API
    */
@@ -91,16 +55,6 @@ class ApiClient {
       'Content-Type': 'application/json',
     };
 
-    // Always get the latest token from localStorage before making a request
-    if (typeof window !== 'undefined') {
-      this.token = localStorage.getItem('auth-token');
-    }
-
-    if (this.token) {
-      headers['Authorization'] = `Bearer ${this.token}`;
-    } else {
-      console.warn(`Making unauthenticated request to ${endpoint} - no auth token found`);
-    }
 
     const config: RequestInit = {
       method,

@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { useAuth } from "@/hooks/use-auth";
 import { useTournaments } from "@/hooks/use-tournaments";
-import { useStage, useStagesByTournament, useDeleteStage } from "@/hooks/use-stages";
+import { useStage, useDeleteStage, useStagesByTournament } from "@/hooks/use-stages";
 import { useMatchesByStage } from "@/hooks/use-matches";
 import { Button } from "@/components/ui/button";
 import {
@@ -50,6 +50,7 @@ import { toast } from "sonner";
 import { PlusIcon, PencilIcon, TrashIcon, InfoIcon, CalendarIcon, ArrowLeftIcon, ListIcon, ClipboardIcon, BarChart3Icon, AlarmClock, Medal } from "lucide-react";
 import StageDialog from "./stage-dialog";
 import MatchSchedulerDialog from "./match-scheduler-dialog";
+import { MatchService } from "@/lib/match-service";
 
 export default function StagesPage() {
   const router = useRouter();
@@ -59,10 +60,18 @@ export default function StagesPage() {
   // State for selected tournament and stages
   const [selectedTournamentId, setSelectedTournamentId] = useState<string>("");
   const { 
-    data: stages, 
+    data: stagesData, 
     isLoading: stagesLoading, 
     error: stagesError 
   } = useStagesByTournament(selectedTournamentId);
+  // Use useMemo to filter stages by selectedTournamentId for extra safety
+  const stages = useMemo(
+    () =>
+      selectedTournamentId && stagesData
+        ? stagesData.filter((stage) => stage.tournamentId === selectedTournamentId)
+        : [],
+    [selectedTournamentId, stagesData]
+  );
   
   // State for selected stage
   const [selectedStageId, setSelectedStageId] = useState<string>("");
@@ -77,6 +86,15 @@ export default function StagesPage() {
     isLoading: matchesLoading,
     error: matchesError
   } = useMatchesByStage(selectedStageId);
+
+  // Filter matches by selectedStageId for extra safety
+  const filteredStageMatches = useMemo(
+    () =>
+      stageMatches && selectedStageId
+        ? stageMatches.filter((match) => match.stageId === selectedStageId)
+        : [],
+    [stageMatches, selectedStageId]
+  );
   
   const deleteMutation = useDeleteStage(selectedTournamentId);
   
@@ -88,6 +106,9 @@ export default function StagesPage() {
 
   // State for match scheduler dialog
   const [isMatchSchedulerDialogOpen, setIsMatchSchedulerDialogOpen] = useState(false);
+
+  // Add state for match scores map
+  const [matchScoresMap, setMatchScoresMap] = useState<Record<string, { redTotalScore: number, blueTotalScore: number }>>({});
 
   // Reset selected stage when tournament changes
   useEffect(() => {
@@ -106,6 +127,34 @@ export default function StagesPage() {
     }
   }, [user, authLoading, router]);
   
+  // Fetch match scores for all matches in the current stage
+  useEffect(() => {
+    async function fetchScores() {
+      if (!filteredStageMatches || filteredStageMatches.length === 0) {
+        setMatchScoresMap({});
+        return;
+      }
+      const scores: Record<string, { redTotalScore: number, blueTotalScore: number }> = {};
+      await Promise.all(
+        filteredStageMatches.map(async (match) => {
+          try {
+            const score = await MatchService.getMatchScores(match.id);
+            if (score) {
+              scores[match.id] = {
+                redTotalScore: score.redTotalScore,
+                blueTotalScore: score.blueTotalScore,
+              };
+            }
+          } catch (e) {
+            // ignore errors for missing scores
+          }
+        })
+      );
+      setMatchScoresMap(scores);
+    }
+    fetchScores();
+  }, [filteredStageMatches]);
+
   // Return null during authentication check to prevent flash of content
   if (authLoading || !user) {
     return (
@@ -197,6 +246,16 @@ export default function StagesPage() {
     setSelectedStageId("");
     setSelectedStage(null);
   };
+
+  // Find the latest round number and check if all matches in that round are completed
+  const isSwissStage = stageDetails?.type === 'SWISS';
+  let latestRoundNumber = 0;
+  let allMatchesCompleted = false;
+  if (isSwissStage && filteredStageMatches.length > 0) {
+    latestRoundNumber = Math.max(...filteredStageMatches.map(m => m.roundNumber || 0));
+    const matchesInLatestRound = filteredStageMatches.filter(m => (m.roundNumber || 0) === latestRoundNumber);
+    allMatchesCompleted = matchesInLatestRound.length > 0 && matchesInLatestRound.every(m => m.status === 'COMPLETED');
+  }
   
   return (
     <div className="container mx-auto py-8 px-4">
@@ -375,13 +434,28 @@ export default function StagesPage() {
                     All scheduled matches for {stageDetails.name}
                   </CardDescription>
                 </div>
-                <Button 
-                  onClick={() => setIsMatchSchedulerDialogOpen(true)} 
-                  className="flex items-center gap-2 bg-primary-600 text-white font-medium rounded-md px-5 py-2.5 shadow-sm hover:bg-primary-700 focus:ring-2 focus:ring-primary-400 focus:outline-none transition"
-                >
-                  <PlusIcon size={16} />
-                  Schedule Matches
-                </Button>
+                <div className="flex gap-2">
+                  <Button 
+                    onClick={() => setIsMatchSchedulerDialogOpen(true)} 
+                    className="flex items-center gap-2 bg-primary-600 text-white font-medium rounded-md px-5 py-2.5 shadow-sm hover:bg-primary-700 focus:ring-2 focus:ring-primary-400 focus:outline-none transition"
+                  >
+                    <PlusIcon size={16} />
+                    Schedule Matches
+                  </Button>
+                  {/* Show Generate Next Swiss Round button if all matches in latest round are completed */}
+                  {isSwissStage && allMatchesCompleted && (
+                    <Button
+                      onClick={() => {
+                        setIsMatchSchedulerDialogOpen(true);
+                        // Optionally, you could pass latestRoundNumber as a prop or context to the dialog
+                      }}
+                      className="flex items-center gap-2 bg-blue-700 text-white font-medium rounded-md px-5 py-2.5 shadow-sm hover:bg-blue-800 focus:ring-2 focus:ring-blue-400 focus:outline-none transition"
+                    >
+                      <Medal size={16} />
+                      Generate Next Swiss Round
+                    </Button>
+                  )}
+                </div>
               </div>
             </CardHeader>
             {matchesLoading ? (
@@ -398,7 +472,7 @@ export default function StagesPage() {
                   Failed to load matches for this stage. Please try again later.
                 </AlertDescription>
               </Alert>
-            ) : stageMatches && stageMatches.length > 0 ? (
+            ) : filteredStageMatches && filteredStageMatches.length > 0 ? (
               <CardContent>
                 <Table>
                   <TableHeader>
@@ -414,7 +488,7 @@ export default function StagesPage() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {stageMatches.map((match) => (
+                    {filteredStageMatches.map((match) => (
                       <TableRow key={match.id} className="hover:bg-gray-800/70 transition">
                         <TableCell className="font-medium text-gray-100">{match.matchNumber}</TableCell>
                         <TableCell className="text-gray-400">{match.roundNumber}</TableCell>
@@ -437,15 +511,11 @@ export default function StagesPage() {
                           </div>
                         </TableCell>
                         <TableCell>
-                          {match.status === "COMPLETED" ? (
+                          {matchScoresMap[match.id] ? (
                             <div className="flex items-center space-x-1">
-                              <span className="text-red-400 font-medium">
-                                {match.alliances.find(a => a.color === 'RED')?.score || 0}
-                              </span>
+                              <span className="text-red-400 font-medium">{matchScoresMap[match.id].redTotalScore}</span>
                               <span className="text-gray-500">-</span>
-                              <span className="text-blue-400 font-medium">
-                                {match.alliances.find(a => a.color === 'BLUE')?.score || 0}
-                              </span>
+                              <span className="text-blue-400 font-medium">{matchScoresMap[match.id].blueTotalScore}</span>
                             </div>
                           ) : (
                             <span className="text-sm text-gray-500">-</span>
