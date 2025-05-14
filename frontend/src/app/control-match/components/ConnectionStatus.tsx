@@ -6,9 +6,14 @@ import {
   CardContent
 } from "@/components/ui/card";
 
-import { ConnectionStatusProps } from './types';
 
 
+interface ConnectionStatusProps {
+
+    isConnected: boolean;
+    
+    tournamentId: string | null;
+  }
 
 /**
  * ConnectionStatus component displays the current connection state

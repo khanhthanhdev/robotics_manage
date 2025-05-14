@@ -66,12 +66,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         credentials: 'include',
       });
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Registration failed');
+        let errorMsg = 'Registration failed';
+        try {
+          const errorData = await response.json();
+          errorMsg = errorData.message || errorMsg;
+        } catch {}
+        throw new Error(errorMsg);
       }
-      // No need to store token, cookie is set by server
-      const { user } = await response.json();
-      setUser(user);
+      // Registration successful, now log in the user
+      await login(username, password);
+      // No refetch here
     } catch (error) {
       throw error;
     }
@@ -87,11 +91,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         credentials: 'include',
       });
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Login failed');
+        let errorMsg = 'Login failed';
+        try {
+          const errorData = await response.json();
+          errorMsg = errorData.message || errorMsg;
+        } catch {}
+        throw new Error(errorMsg);
       }
-      const { user } = await response.json();
-      setUser(user);
+      // Refetch user state after successful login
       await refetch();
     } catch (error) {
       throw error;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { useAuth } from "@/hooks/use-auth";
@@ -117,8 +117,11 @@ export default function StagesPage() {
   }, [selectedTournamentId]);
 
   // Check if user is admin for access control
+  const hasRedirected = useRef(false);
+
   useEffect(() => {
-    if (!authLoading && user && user.role !== UserRole.ADMIN) {
+    if (!authLoading && user && user.role !== UserRole.ADMIN && !hasRedirected.current) {
+      hasRedirected.current = true;
       toast.error("You don't have permission to access this page", {
         duration: 5000,
         id: "admin-access-denied",

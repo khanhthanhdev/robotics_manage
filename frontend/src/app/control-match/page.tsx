@@ -103,11 +103,6 @@ export default function ControlMatchPage() {
   const [announcementMessage, setAnnouncementMessage] =
     React.useState<string>("");
 
-  // State for storing all match scores
-  const [matchScoresMap, setMatchScoresMap] = useState<
-    Record<string, { redTotalScore: number; blueTotalScore: number }>
-  >({});
-
   // Fetch matches using React Query
   const { data: matchesData = [], isLoading: isLoadingMatches } = useMatches();
 
@@ -134,7 +129,7 @@ export default function ControlMatchPage() {
   });
 
   // Build a map of matchId -> { redTotalScore, blueTotalScore }
-  useEffect(() => {
+  const matchScoresMap = React.useMemo(() => {
     if (!isLoadingAllScores && Array.isArray(allMatchScores)) {
       const scoresMap: Record<
         string,
@@ -152,8 +147,9 @@ export default function ControlMatchPage() {
           };
         }
       });
-      setMatchScoresMap(scoresMap);
+      return scoresMap;
     }
+    return {};
   }, [allMatchScores, isLoadingAllScores]);
 
   // Fetch selected match details when a match is selected

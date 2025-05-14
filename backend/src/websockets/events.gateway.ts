@@ -310,4 +310,9 @@ export class EventsGateway
     this.server.emit(event, payload);
     this.logger.log(`Broadcasted ${event}: ${JSON.stringify(payload)}`);
   }
+
+  // Add this helper for testability
+  public hasActiveTimer(tournamentId: string): boolean {
+    return this.activeTimers.has(tournamentId);
+  }
 }

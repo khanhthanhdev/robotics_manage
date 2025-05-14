@@ -1,4 +1,4 @@
-import { Controller, Request, Post, UseGuards, Body, Get, UnauthorizedException, Res } from '@nestjs/common';
+import { Controller, Request, Post, UseGuards, Body, Get, UnauthorizedException, Res, HttpCode } from '@nestjs/common';
 import { Response } from 'express';
 import { AuthService } from './auth.service';
 import { UserRole } from '../utils/prisma-types';
@@ -62,8 +62,14 @@ export class AuthController {
   }
 
   @Get('init-admin')
+  @HttpCode(201)
   async initializeAdmin() {
-    return this.authService.createDefaultAdmin();
+    const admin = await this.authService.createDefaultAdmin();
+    if ('role' in admin && 'username' in admin) {
+      return admin;
+    }
+    // If only message is returned, still return 201 for idempotency
+    return admin;
   }
 
   @Get('check-auth')

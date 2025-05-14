@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -20,6 +21,7 @@ const formSchema = z.object({
 
 export default function RegisterPage() {
   const { register } = useAuth();
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
   // Form definition using react-hook-form
@@ -37,7 +39,10 @@ export default function RegisterPage() {
     try {
       setIsLoading(true);
       await register(values.username, values.password, values.email || undefined);
-      // Registration success will be handled by the useAuth hook by navigating to login
+      // Add a small delay before navigating to ensure auth state is updated
+      setTimeout(() => {
+        router.replace("/");
+      }, 100);
     } catch (error) {
       console.error("Registration failed:", error);
       setIsLoading(false);

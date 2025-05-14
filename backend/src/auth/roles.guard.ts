@@ -1,4 +1,4 @@
-import { Injectable, CanActivate, ExecutionContext, UnauthorizedException, Logger } from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext, UnauthorizedException, ForbiddenException, Logger } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { UserRole } from '../utils/prisma-types';
 import { ROLES_KEY } from './roles.decorator';
@@ -36,7 +36,7 @@ export class RolesGuard implements CanActivate {
     
     if (!hasRole) {
       this.logger.warn(`Access denied: User ${user.username} with role ${user.role} does not have permission. Required roles: ${requiredRoles.join(', ')}`);
-      throw new UnauthorizedException(`User with role ${user.role} does not have permission to access this resource`);
+      throw new ForbiddenException(`User with role ${user.role} does not have permission to access this resource`);
     }
     
     this.logger.debug(`Access granted: User ${user.username} has required role ${user.role}`);

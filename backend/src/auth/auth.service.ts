@@ -86,8 +86,8 @@ export class AuthService {
   }
 
   async createDefaultAdmin() {
-    const adminUsername = 'admin';
-    
+    const adminUsername = process.env.ADMIN_USERNAME || 'admin';
+    const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
     try {
       // Check if admin already exists
       const existingAdmin = await this.prisma.user.findUnique({
@@ -104,18 +104,16 @@ export class AuthService {
       }
 
       // Create default admin user
-      const hashedPassword = await bcrypt.hash('admin123', 10);
-      
+      const hashedPassword = await bcrypt.hash(adminPassword, 10);
       await this.prisma.user.create({
         data: {
           username: adminUsername,
           password: hashedPassword,
           role: UserRole.ADMIN,
-          // Do not include email field here
         },
       });
 
-      return { message: 'Default admin user created successfully' };
+      return { message: `Default admin user created successfully (username: ${adminUsername})` };
     } catch (error) {
       console.error('Error creating default admin account:', error.message);
       throw new BadRequestException('Failed to create admin account: ' + error.message);
