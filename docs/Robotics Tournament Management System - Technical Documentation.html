@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Robotics Tournament Management System - Technical Documentation</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <h1 id="robotics-tournament-management-system---technical-documentation">Robotics Tournament Management System - Technical Documentation</h1>
+<h2 id="1-introduction">1. Introduction</h2>
+<h3 id="system-purpose-and-scope">System Purpose and Scope</h3>
+<p>The Robotics Tournament Management System is a full-stack application designed to manage robotics competitions, from tournament creation to real-time match control and scoring. The system enables tournament organizers to:</p>
+<ul>
+<li>Create and manage robotics tournaments</li>
+<li>Register teams and organize them into alliances</li>
+<li>Define tournament stages (Swiss format, playoffs, finals)</li>
+<li>Schedule and control matches in real-time</li>
+<li>Track scores and provide audience displays</li>
+<li>Maintain tournament statistics and rankings</li>
+</ul>
+<p>This document provides a technical overview of the application's architecture, API, and key technology implementations. It is intended for software engineers involved in the development and maintenance of the system.</p>
+<h2 id="2-overall-application-architecture">2. Overall Application Architecture</h2>
+<p>The Robotics Tournament Management System employs a modern full-stack architecture with a clear separation of concerns between the frontend and backend components.</p>
+<ul>
+<li><strong>Frontend:</strong> A Next.js application is responsible for the user interface and client-side logic. It interacts with the backend via REST APIs and real-time WebSocket connections. Key technologies include TanStack Query for state management and data synchronization, Shadcn for UI components, and <a href="http://Socket.io">Socket.io</a> client for real-time communication.</li>
+<li><strong>Backend:</strong> A NestJS application serves as the backend API and handles business logic, data persistence, and real-time event broadcasting. It exposes RESTful endpoints and manages WebSocket connections using <a href="http://Socket.io">Socket.io</a> server. Prisma is utilized as the Object-Relational Mapper (ORM) for database interactions.</li>
+<li><strong>Database:</strong> A relational database (e.g., PostgreSQL, MySQL, SQLite, as supported by Prisma) stores all persistent data, including tournament details, team information, match schedules, scores, and user accounts.</li>
+<li><strong>Real-time Communication:</strong> <a href="http://Socket.io">Socket.io</a> is used to facilitate bidirectional, real-time communication between the frontend and backend. This is crucial for features like live match control, real-time scoring updates, and audience displays.</li>
+</ul>
+<p>The general flow involves the Next.js frontend making requests to the NestJS backend. For data retrieval and mutations, standard HTTP requests (managed by TanStack Query) are used. For real-time updates, both frontend and backend establish a <a href="http://Socket.io">Socket.io</a> connection, allowing the server to push updates to clients and clients to send real-time commands to the server.</p>
+<h2 id="3-frontend-architecture-nextjs">3. Frontend Architecture (Next.js)</h2>
+<p>The frontend of the Robotics Tournament Management System is built using Next.js with the App Router, providing a robust framework for server-side rendering, static site generation, and client-side navigation. TypeScript is used throughout the frontend codebase for type safety and improved developer experience.</p>
+<h3 id="31-folder-structure">3.1. Folder Structure</h3>
+<p>The primary source code for the frontend resides within the <code>/frontend/src</code> directory. Key subdirectories include:</p>
+<ul>
+<li><strong><code>src/app</code></strong>: This directory leverages the Next.js App Router paradigm. It contains subdirectories for different routes (e.g., <code>/tournaments</code>, <code>/matches</code>, <code>/control-match</code>, <code>/audience-display</code>, <code>/login</code>, <code>/register</code>). Each route directory typically includes a <code>page.tsx</code> file for the main page component and may also contain <code>layout.tsx</code> for shared UI structures, as well as route-specific components and sub-routes.
+<ul>
+<li><code>providers.tsx</code> within this directory likely wraps the application with global context providers, such as the TanStack Query <code>QueryClientProvider</code> and potentially <a href="http://Socket.io">Socket.io</a> context.</li>
+</ul>
+</li>
+<li><strong><code>src/components</code></strong>: This houses reusable React components utilized across various parts of the application.
+<ul>
+<li><strong><code>src/components/ui</code></strong>: This subdirectory is dedicated to UI primitives and components, largely based on Shadcn UI. It contains individual files for components like <code>button.tsx</code>, <code>card.tsx</code>, <code>dialog.tsx</code>, <code>table.tsx</code>, etc., which are typically composed to build more complex interfaces.</li>
+<li>Other general-purpose components like <code>navbar.tsx</code> and <code>secure-layout.tsx</code> (for handling authenticated routes) are also found here.</li>
+</ul>
+</li>
+<li><strong><code>src/hooks</code></strong>: This directory contains custom React hooks that encapsulate reusable logic, particularly for state management, data fetching, and side effects.
+<ul>
+<li>Hooks like <code>use-tournaments.ts</code>, <code>use-matches.ts</code>, <code>use-stages.ts</code> are likely custom hooks built on top of TanStack Query for managing data related to their respective domains.</li>
+<li><code>useWebSocket.ts</code> is central to managing the <a href="http://Socket.io">Socket.io</a> client connection and event handling.</li>
+<li><code>use-auth.tsx</code> probably handles authentication state and logic.</li>
+</ul>
+</li>
+<li><strong><code>src/lib</code></strong>: This directory contains utility functions, library configurations, service definitions, and type declarations.
+<ul>
+<li><code>api-client.ts</code>: This file likely configures and exports an HTTP client instance (e.g., Axios or a fetch wrapper) for making API calls to the NestJS backend.</li>
+<li><code>query-keys.ts</code>: Defines constants for TanStack Query keys, ensuring consistency and avoiding typos when referencing queries and mutations.</li>
+<li><code>websocket.ts</code> and <code>websocket-service.ts</code>: These files are responsible for establishing and managing the <a href="http://Socket.io">Socket.io</a> client connection, and providing a service layer for sending and receiving real-time messages.</li>
+<li><code>types.ts</code>: Contains shared TypeScript type definitions used across the frontend application.</li>
+</ul>
+</li>
+</ul>
+<h3 id="32-state-management-with-tanstack-query">3.2. State Management with TanStack Query</h3>
+<p>TanStack Query (formerly React Query) is the primary library for managing server state in the frontend. It simplifies data fetching, caching, synchronization, and updates with the backend API.</p>
+<ul>
+<li><strong>Data Fetching and Caching:</strong> Custom hooks (e.g., <code>use-tournaments</code>, <code>use-matches</code>) encapsulate TanStack Query's <code>useQuery</code> hook to fetch data from the backend. These hooks typically define a query key (sourced from <code>src/lib/query-keys.ts</code>) and a fetcher function that uses the <code>api-client.ts</code> to make the actual HTTP request. TanStack Query automatically handles caching, background updates, and stale-while-revalidate strategies, significantly improving performance and user experience.</li>
+<li><strong>Mutations:</strong> For operations that modify data on the server (POST, PUT, DELETE requests), TanStack Query's <code>useMutation</code> hook is employed. These mutations are often wrapped in custom hooks as well. <code>useMutation</code> provides helper states like <code>isLoading</code>, <code>isError</code>, and <code>isSuccess</code>, and allows for optimistic updates and query invalidation to ensure the UI reflects the latest server state after a mutation.</li>
+<li><strong>Query Invalidation and Refetching:</strong> After successful mutations, relevant queries are often invalidated using their query keys. This prompts TanStack Query to refetch the data, ensuring the UI displays the most up-to-date information. This is crucial for maintaining data consistency across the application.</li>
+<li><strong>Global Configuration:</strong> The <code>QueryClient</code> is typically instantiated and provided at the root of the application, likely within <code>src/app/providers.tsx</code>, making it accessible to all components and hooks.</li>
+</ul>
+<h3 id="33-ui-components-with-shadcn-ui">3.3. UI Components with Shadcn UI</h3>
+<p>The user interface is built using Shadcn UI, a collection of beautifully designed, accessible, and customizable React components. Shadcn UI is not a traditional component library but rather a set of reusable components that can be copied into the project and modified as needed.</p>
+<ul>
+<li><strong>Component Integration:</strong> The components are located in the <code>src/components/ui</code> directory. Each component (e.g., <code>Button</code>, <code>Card</code>, <code>Dialog</code>, <code>Table</code>, <code>Input</code>) has its own file (e.g., <code>button.tsx</code>, <code>card.tsx</code>). These components are built using Radix UI primitives and styled with Tailwind CSS, offering excellent accessibility and flexibility.</li>
+<li><strong>Customization and Theming:</strong> Since Shadcn components are directly part of the project's codebase, they can be easily customized to fit the specific design requirements of the Robotics Tournament Management System. Theming is primarily handled through Tailwind CSS configuration (<code>tailwind.config.js</code>) and global styles (<code>src/app/globals.css</code>).</li>
+<li><strong>Composition:</strong> These base UI components are composed to create more complex UI elements and page layouts throughout the application, ensuring a consistent look and feel.</li>
+</ul>
+<h3 id="34-real-time-communication-socketio-client">3.4. Real-time Communication (<a href="http://Socket.io">Socket.io</a> Client)</h3>
+<p>Real-time communication between the frontend and backend is facilitated by <a href="http://Socket.io">Socket.io</a>. The frontend uses the <a href="http://Socket.io">Socket.io</a> client library to connect to the NestJS <a href="http://Socket.io">Socket.io</a> server.</p>
+<ul>
+<li><strong>Client Setup:</strong> The <a href="http://Socket.io">Socket.io</a> client instance is likely initialized and managed in <code>src/lib/websocket.ts</code> or <code>src/lib/websocket-service.ts</code>. This service might provide functions to connect, disconnect, send messages, and register event listeners.</li>
+<li><strong>Connection Management:</strong> The <code>useWebSocket.ts</code> custom hook likely encapsulates the logic for establishing and maintaining the WebSocket connection. It might provide the socket instance and connection status (connected, disconnected) to components that need real-time updates.</li>
+<li><strong>Event Handling:</strong> Components or hooks subscribe to specific <a href="http://Socket.io">Socket.io</a> events emitted by the server. For example, a component displaying live match scores would listen for an <code>updateScore</code> event. When such an event is received, the component updates its state to reflect the new information. TanStack Query's <code>queryClient.setQueryData</code> might be used to update the local cache with real-time data, ensuring consistency with other data fetching mechanisms.</li>
+<li><strong>Emitting Events:</strong> The frontend can also emit events to the server. For instance, in the match control interface (<code>src/app/control-match</code>), actions like starting a timer or submitting a score might trigger the emission of a <a href="http://Socket.io">Socket.io</a> event to the backend, which then processes the command and broadcasts updates to other connected clients (like the audience display).</li>
+</ul>
+<p>The integration of these technologies (Next.js, TanStack Query, Shadcn UI, and <a href="http://Socket.io">Socket.io</a> client) allows for the development of a responsive, interactive, and real-time user experience for managing robotics tournaments.</p>
+<h2 id="4-backend-architecture-nestjs">4. Backend Architecture (NestJS)</h2>
+<p>The backend of the Robotics Tournament Management System is developed using NestJS, a progressive Node.js framework for building efficient, reliable, and scalable server-side applications. It leverages TypeScript and is built with a modular architecture, making it well-suited for complex applications.</p>
+<h3 id="41-folder-structure">4.1. Folder Structure</h3>
+<p>The primary source code for the backend resides within the <code>/backend/src</code> directory. The structure is organized by modules, promoting separation of concerns and maintainability:</p>
+<ul>
+<li><strong><code>src/main.ts</code></strong>: The entry point of the NestJS application, responsible for bootstrapping the application and starting the HTTP server and WebSocket gateway.</li>
+<li><strong><code>src/app.module.ts</code></strong>: The root module of the application, which imports all other feature modules.</li>
+<li><strong><code>src/prisma.service.ts</code></strong>: A service that instantiates and provides the Prisma Client, making it available for dependency injection across different modules for database interactions.</li>
+<li><strong><code>src/auth</code></strong>: This module handles authentication and authorization. It likely includes:
+<ul>
+<li><code>auth.controller.ts</code>: Defines routes for login, registration, and potentially token refresh.</li>
+<li><code>auth.service.ts</code>: Contains the business logic for user authentication (e.g., validating credentials, generating JWTs).</li>
+<li><code>jwt.strategy.ts</code>: Implements the JWT passport strategy for validating tokens.</li>
+<li><code>jwt-auth.guard.ts</code>: An authentication guard to protect routes that require a valid JWT.</li>
+<li><code>roles.decorator.ts</code> and <code>roles.guard.ts</code>: Implement role-based access control (RBAC).</li>
+</ul>
+</li>
+<li><strong><code>src/users</code></strong>: Manages user-related operations (CRUD for users, profile management).
+<ul>
+<li><code>users.controller.ts</code>: Exposes API endpoints for user management.</li>
+<li><code>users.service.ts</code>: Handles the logic for user data manipulation.</li>
+</ul>
+</li>
+<li><strong><code>src/tournaments</code></strong>: Manages tournament creation, retrieval, updates, and deletion.
+<ul>
+<li><code>tournaments.controller.ts</code>: Defines API endpoints for tournament operations.</li>
+<li><code>tournaments.service.ts</code>: Contains business logic related to tournaments.</li>
+</ul>
+</li>
+<li><strong><code>src/stages</code></strong>: Manages tournament stages (e.g., Swiss, Playoffs).
+<ul>
+<li><code>stages.controller.ts</code>: API endpoints for stage management.</li>
+<li><code>stages.service.ts</code>: Business logic for stages.</li>
+</ul>
+</li>
+<li><strong><code>src/teams</code></strong>: Handles team registration and management within tournaments.
+<ul>
+<li><code>teams.controller.ts</code>: API endpoints for team operations.</li>
+<li><code>teams.service.ts</code>: Business logic for teams.</li>
+</ul>
+</li>
+<li><strong><code>src/matches</code></strong>: Manages match creation, scheduling, and status updates.
+<ul>
+<li><code>matches.controller.ts</code>: API endpoints for match-related actions.</li>
+<li><code>matches.service.ts</code>: Business logic for matches.</li>
+</ul>
+</li>
+<li><strong><code>src/match-scheduler</code></strong>: Contains logic for automatically scheduling matches based on defined algorithms (e.g., Swiss system).
+<ul>
+<li><code>match-scheduler.controller.ts</code>: Endpoints to trigger or configure match scheduling.</li>
+<li><code>match-scheduler.service.ts</code>: Implements scheduling algorithms.</li>
+</ul>
+</li>
+<li><strong><code>src/match-scores</code></strong>: Manages the recording and calculation of scores for matches.
+<ul>
+<li><code>match-scores.controller.ts</code>: API endpoints for submitting and retrieving scores.</li>
+<li><code>match-scores.service.ts</code>: Business logic for score processing and validation.</li>
+<li><code>team-stats.service.ts</code>: Likely calculates and updates team statistics based on match outcomes.</li>
+</ul>
+</li>
+<li><strong><code>src/websockets</code></strong>: This module is responsible for real-time communication using <a href="http://Socket.io">Socket.io</a>.
+<ul>
+<li><code>events.gateway.ts</code>: The core of the real-time functionality. This NestJS Gateway listens for incoming WebSocket connections, handles client messages, and broadcasts events to connected clients (e.g., score updates, match state changes).</li>
+</ul>
+</li>
+<li><strong><code>src/utils</code></strong>: Contains utility functions or shared types, such as <code>prisma-types.ts</code> which might re-export Prisma-generated types for easier use.</li>
+<li><strong>DTOs (Data Transfer Objects)</strong>: Each feature module typically has a <code>dto</code> subdirectory (e.g., <code>src/tournaments/dto</code>) containing classes that define the shape of data for requests and responses. These DTOs are often used with NestJS pipes for validation.</li>
+<li><strong><code>prisma/schema.prisma</code></strong>: Located in <code>/backend/prisma/schema.prisma</code>, this file defines the database schema, including models, fields, relations, and enums. Prisma Migrate uses this schema to generate and apply database migrations, and Prisma Client is generated based on this schema for type-safe database access.</li>
+</ul>
+<h3 id="42-data-modeling-with-prisma">4.2. Data Modeling with Prisma</h3>
+<p>Prisma is used as the ORM to interact with the database. The data model is defined in the <code>prisma/schema.prisma</code> file.</p>
+<ul>
+<li><strong>Schema Definition:</strong> The schema defines various models such as <code>User</code>, <code>Tournament</code>, <code>Stage</code>, <code>Match</code>, <code>Team</code>, <code>Alliance</code>, <code>MatchScores</code>, <code>TeamStats</code>, <code>MatchControl</code>, <code>MatchTimer</code>, <code>AudienceDisplay</code>, and several enums like <code>UserRole</code>, <code>StageType</code>, <code>MatchState</code>, etc. These models represent the entities in the application and their relationships.
+<ul>
+<li><strong>Key Models and Relations:</strong>
+<ul>
+<li><code>User</code>: Stores user information and roles (ADMIN, HEAD_REFEREE, etc.).</li>
+<li><code>Tournament</code>: Represents a robotics competition, linked to an admin <code>User</code> and containing multiple <code>Stage</code>s and <code>Team</code>s.</li>
+<li><code>Stage</code>: Defines a phase of a tournament (e.g., SWISS, PLAYOFF), linked to a <code>Tournament</code> and containing <code>Match</code>es.</li>
+<li><code>Team</code>: Represents a participating team, linked to a <code>Tournament</code>.</li>
+<li><code>Match</code>: Represents a single game between alliances, linked to a <code>Stage</code>, <code>Alliance</code>s, and potentially <code>Field</code> and <code>Schedule</code>.</li>
+<li><code>Alliance</code>: Represents a group of teams (e.g., Red, Blue) within a <code>Match</code>.</li>
+<li><code>TeamAlliance</code>: A join table linking <code>Team</code>s to <code>Alliance</code>s for a specific match.</li>
+<li><code>MatchScores</code>: Stores detailed scores for each alliance in a <code>Match</code>.</li>
+<li><code>TeamStats</code>: Tracks statistics for each <code>Team</code> within a <code>Tournament</code> and optionally a <code>Stage</code>.</li>
+<li><code>MatchControl</code>: Manages the real-time state of a <code>Match</code> (e.g., SCHEDULED, RUNNING, PAUSED), linked to <code>MatchTimer</code>s and <code>AudienceDisplay</code>.</li>
+<li><code>MatchTimer</code>: Tracks various timers associated with a match (e.g., AUTO, TELEOP).</li>
+<li><code>AudienceDisplay</code>: Manages the state of the audience display for a specific match.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Prisma Client:</strong> NestJS services inject the <code>PrismaService</code> (which provides an instance of <code>PrismaClient</code>) to perform CRUD operations and other database queries in a type-safe manner. The queries are written using Prisma Client's fluent API.</li>
+<li><strong>Migrations:</strong> Prisma Migrate is used to manage database schema evolution. Changes to <code>schema.prisma</code> are translated into SQL migration files that can be applied to the database to keep its structure in sync with the application's data model.</li>
+</ul>
+<h3 id="43-api-endpoints-rest">4.3. API Endpoints (REST)</h3>
+<p>The NestJS backend exposes a RESTful API for the frontend to consume. Controllers within each module define the routes and handle incoming HTTP requests.</p>
+<ul>
+<li><strong>Standard CRUD Operations:</strong> Most modules (Tournaments, Stages, Teams, Matches, Users) provide standard CRUD (Create, Read, Update, Delete) endpoints for managing their respective resources.</li>
+<li><strong>Request/Response Payloads:</strong> DTOs are used to define the structure of request bodies and response payloads. NestJS pipes, such as <code>ValidationPipe</code>, are often used globally or per-endpoint to validate incoming request data against these DTOs.</li>
+<li><strong>Authentication and Authorization:</strong>
+<ul>
+<li>The <code>AuthModule</code> provides endpoints like <code>/auth/login</code> for user authentication. Upon successful login, a JWT (JSON Web Token) is typically returned to the client.</li>
+<li>The <code>JwtAuthGuard</code> is applied to routes that require authentication. It validates the JWT sent in the <code>Authorization</code> header (usually as a Bearer token).</li>
+<li>The <code>RolesGuard</code> and <code>@Roles()</code> decorator are used to implement role-based access control, restricting access to certain endpoints or operations based on the authenticated user's role (e.g., only an ADMIN can create a tournament).</li>
+</ul>
+</li>
+<li><strong>API Versioning/Prefix:</strong> A global API prefix (e.g., <code>/api/v1</code>) might be configured in <code>main.ts</code> for all routes.</li>
+</ul>
+<h3 id="44-real-time-communication-socketio-server">4.4. Real-time Communication (<a href="http://Socket.io">Socket.io</a> Server)</h3>
+<p>Real-time functionality is handled by the <code>WebsocketsModule</code> using <a href="http://Socket.io">Socket.io</a>, integrated with NestJS via Gateways.</p>
+<ul>
+<li><strong><code>EventsGateway</code> (<code>src/websockets/events.gateway.ts</code>):</strong> This class is decorated with <code>@WebSocketGateway()</code> and implements NestJS WebSocket lifecycle hooks (<code>OnGatewayInit</code>, <code>OnGatewayConnection</code>, <code>OnGatewayDisconnect</code>).
+<ul>
+<li>It listens for client connections and disconnections.</li>
+<li>It uses <code>@SubscribeMessage('eventName')</code> decorators on methods to handle specific messages (events) sent by connected clients. For example, a client might send a <code>startMatchTimer</code> event, which would be handled by a corresponding method in the gateway.</li>
+<li>The gateway can broadcast events to all connected clients, to specific rooms (e.g., a room for a particular match), or to individual clients using the <code>Socket.io</code> server instance (often accessed via <code>@WebSocketServer()</code> decorator).</li>
+</ul>
+</li>
+<li><strong>Key Real-time Events Handled and Emitted:</strong>
+<ul>
+<li><strong>Match Control:</strong> Events related to starting/pausing/resetting match timers, updating match states (e.g., <code>matchStateChanged</code>).</li>
+<li><strong>Score Updates:</strong> Events broadcasting real-time score changes (<code>scoreUpdated</code>).</li>
+<li><strong>Audience Display:</strong> Events to control the content shown on audience displays (<code>audienceDisplayUpdated</code>).</li>
+<li><strong>Notifications:</strong> General notifications or alerts to connected users.</li>
+</ul>
+</li>
+<li><strong>Integration with Services:</strong> The <code>EventsGateway</code> often injects and uses other services (e.g., <code>MatchControlService</code>, <code>MatchScoresService</code>) to process real-time commands and fetch data that needs to be broadcasted. When data is updated via a REST API call (e.g., a score is submitted), the corresponding service might then trigger an event emission through the <code>EventsGateway</code> to notify all relevant clients of the change.</li>
+</ul>
+<p>This modular and feature-rich backend architecture allows for robust management of tournament data, secure access control, and seamless real-time interactions essential for a dynamic robotics competition environment.</p>
+<h2 id="5-real-time-features-and-integration-socketio">5. Real-time Features and Integration (<a href="http://Socket.io">Socket.io</a>)</h2>
+<p><a href="http://Socket.io">Socket.io</a> is pivotal for enabling real-time interactions within the Robotics Tournament Management System. It facilitates instantaneous communication between the Next.js frontend and the NestJS backend, which is crucial for features like live match control, dynamic score updates, and synchronized audience displays. The <code>EventsGateway</code> on the backend and the <code>useWebSocket</code> hook (along with <code>websocket-service.ts</code>) on the frontend are the core components managing this real-time data flow.</p>
+<h3 id="51-data-flow-for-real-time-interactions">5.1. Data Flow for Real-time Interactions</h3>
+<p>The general data flow for real-time features involves the following steps:</p>
+<ol>
+<li><strong>Connection Establishment:</strong> When a user accesses a relevant part of the frontend application (e.g., the match control interface or an audience display page), the <code>useWebSocket</code> hook initiates a <a href="http://Socket.io">Socket.io</a> connection to the NestJS backend's <code>EventsGateway</code>.</li>
+<li><strong>Room Subscription (Optional but Recommended):</strong> For targeted communication, clients might join specific <a href="http://Socket.io">Socket.io</a> rooms. For example, all clients viewing or controlling a particular match (e.g., <code>match_123</code>) could join a room named <code>match_123_updates</code>. This allows the backend to broadcast events only to relevant clients.</li>
+<li><strong>Client-to-Server Events (Commands/Actions):</strong>
+<ul>
+<li>Users performing actions in the frontend (e.g., an admin clicking &quot;Start Timer&quot; in the match control interface) trigger the emission of a <a href="http://Socket.io">Socket.io</a> event from the client to the server. The <code>websocket-service.ts</code> would handle sending this event, perhaps named <code>startMatchTimer</code>, along with a payload containing necessary data like <code>matchId</code> and <code>timerType</code>.</li>
+<li>The <code>EventsGateway</code> on the backend has a handler (a method decorated with <code>@SubscribeMessage(&quot;startMatchTimer&quot;)</code>) that receives this event. This handler would then typically call a relevant service (e.g., <code>MatchControlService</code>) to process the command, update the database (e.g., change match state, update timer records via Prisma), and prepare for broadcasting the update.</li>
+</ul>
+</li>
+<li><strong>Server-to-Client Events (Updates/Notifications):</strong>
+<ul>
+<li>After processing an action or when an automated event occurs (e.g., a timer elapses), the backend service instructs the <code>EventsGateway</code> to broadcast an update event to connected clients. For instance, after starting a timer, the gateway might emit a <code>matchTimerStateChanged</code> event or a more general <code>matchControlUpdate</code> event.</li>
+<li>This event is broadcasted, often to a specific room (e.g., <code>match_123_updates</code>) or to all connected clients if it's a global update. The payload of this event contains the new state or data (e.g., the current timer value, the new match status).</li>
+</ul>
+</li>
+<li><strong>Frontend Receives and Processes Updates:</strong>
+<ul>
+<li>The <code>useWebSocket</code> hook or components using it on the frontend listen for these server-emitted events (e.g., <code>matchTimerStateChanged</code>).</li>
+<li>Upon receiving an event, the frontend updates its local state. This could involve directly updating component state or, more robustly, updating the TanStack Query cache using <code>queryClient.setQueryData()</code>. This ensures that the UI reflects the latest information and remains consistent with data fetched via regular API calls.</li>
+</ul>
+</li>
+</ol>
+<h3 id="52-key-real-time-features">5.2. Key Real-time Features</h3>
+<ul>
+<li><strong>Live Match Control:</strong>
+<ul>
+<li><strong>Functionality:</strong> Tournament staff (e.g., Head Referee) can start, pause, resume, and end match timers, update match states (e.g., from <code>SCHEDULED</code> to <code>RUNNING</code> to <code>COMPLETED</code>), and potentially record penalties or other in-match events in real-time.</li>
+<li><strong><a href="http://Socket.io">Socket.io</a> Usage:</strong>
+<ul>
+<li><strong>Client Emits:</strong> <code>controlMatchAction</code> (e.g., payload: <code>{ matchId: &quot;xyz&quot;, action: &quot;startTimer&quot;, timerType: &quot;AUTO&quot; }</code>), <code>submitScoreSegment</code>.</li>
+<li><strong>Server Emits:</strong> <code>matchStateUpdated</code> (payload: <code>{ matchId: &quot;xyz&quot;, newState: &quot;RUNNING&quot;, ... }</code>), <code>timerUpdated</code> (payload: <code>{ matchId: &quot;xyz&quot;, timerType: &quot;AUTO&quot;, remainingTime: 15 }</code>), <code>scoreSegmentConfirmed</code>.</li>
+<li>The <code>MatchControl</code> and <code>MatchTimer</code> Prisma models are updated on the backend, and these changes are broadcasted.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Real-time Scoring Updates:</strong>
+<ul>
+<li><strong>Functionality:</strong> As referees input scores for different tasks or periods of a match, these scores are immediately reflected for other staff and, importantly, on audience displays.</li>
+<li><strong><a href="http://Socket.io">Socket.io</a> Usage:</strong>
+<ul>
+<li><strong>Client Emits (from referee interface):</strong> <code>updateScore</code> (payload: <code>{ matchId: &quot;xyz&quot;, alliance: &quot;RED&quot;, scoreField: &quot;autoScore&quot;, value: 20 }</code>).</li>
+<li><strong>Server Emits (to all relevant clients, including audience displays):</strong> <code>matchScoreUpdated</code> (payload: <code>{ matchId: &quot;xyz&quot;, updatedScores: { red: { autoScore: 20, total: 20 }, blue: { ... } } }</code>).</li>
+<li>The <code>MatchScores</code> Prisma model is updated on the backend.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Audience Displays:</strong>
+<ul>
+<li><strong>Functionality:</strong> Large screens show live information to the audience, including current match details, running timers, real-time scores, upcoming match schedules, and tournament rankings.</li>
+<li><strong><a href="http://Socket.io">Socket.io</a> Usage:</strong>
+<ul>
+<li>The audience display frontend client primarily listens for events broadcasted by the server.</li>
+<li><strong>Server Emits:</strong> <code>matchStateUpdated</code>, <code>timerUpdated</code>, <code>matchScoreUpdated</code>, <code>audienceDisplayStateChanged</code> (e.g., to show &quot;Next Match Starting Soon&quot;, or <code>currentRankingsUpdated</code>).</li>
+<li>The <code>AudienceDisplay</code> Prisma model on the backend might dictate the overall state of what the audience display should be showing, and changes to this model (triggered by admins or automated processes) would be broadcasted.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Team Statistics and Rankings:</strong>
+<ul>
+<li><strong>Functionality:</strong> As matches conclude and scores are finalized, team statistics (wins, losses, ranking points) and overall tournament rankings are updated and can be displayed in real-time.</li>
+<li><strong><a href="http://Socket.io">Socket.io</a> Usage:</strong>
+<ul>
+<li>After a match is completed and scores are finalized (often via a REST API call that then triggers a service), the <code>TeamStatsService</code> recalculates relevant statistics.</li>
+<li><strong>Server Emits:</strong> <code>teamStatsUpdated</code> (payload: <code>{ tournamentId: &quot;abc&quot;, teamId: &quot;team1&quot;, newStats: { ... } }</code>), <code>rankingsUpdated</code> (payload: <code>{ tournamentId: &quot;abc&quot;, stageId: &quot;swiss1&quot;, rankings: [ ... ] }</code>).</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="53-ensuring-data-consistency">5.3. Ensuring Data Consistency</h3>
+<p>While <a href="http://Socket.io">Socket.io</a> provides real-time updates, it's important to manage data consistency between these updates and the primary data store (database via Prisma) and client-side cache (TanStack Query).</p>
+<ul>
+<li><strong>Backend as Source of Truth:</strong> The NestJS backend and its Prisma-managed database remain the ultimate source of truth. Real-time events are typically broadcasted <em>after</em> the backend has successfully persisted the change.</li>
+<li><strong>Frontend Cache Updates:</strong> When the frontend receives a <a href="http://Socket.io">Socket.io</a> update, it should ideally update its TanStack Query cache. This ensures that if a component re-fetches data or if other components rely on the same query key, they all see the latest, consistent information. This prevents discrepancies between data shown via real-time updates and data fetched via initial loads or subsequent API calls.</li>
+</ul>
+<p>By carefully orchestrating events and ensuring that real-time updates correctly synchronize with the backend data and frontend cache, the Robotics Tournament Management System can provide a seamless and engaging experience for organizers, participants, and the audience.</p>
+<h2 id="6-database-schema-prisma">6. Database Schema (Prisma)</h2>
+<p>The database schema for the Robotics Tournament Management System is defined using Prisma, an open-source ORM for Node.js and TypeScript. The schema is located in <code>/backend/prisma/schema.prisma</code> and outlines all data models, their fields, relationships, and enumerations. Prisma Client, generated from this schema, provides type-safe database access throughout the NestJS backend.</p>
+<p>Below is the complete Prisma schema definition:</p>
+<pre><code class="language-prisma">// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = &quot;prisma-client-js&quot;
+  output   = &quot;../generated/prisma&quot;
+}
+
+datasource db {
+  provider = &quot;postgresql&quot;
+  url      = env(&quot;DATABASE_URL&quot;)
+}
+
+enum UserRole {
+  ADMIN
+  HEAD_REFEREE
+  ALLIANCE_REFEREE
+  COMMON
+}
+
+enum StageType {
+  SWISS
+  PLAYOFF
+  FINAL
+}
+
+enum CardType {
+  NONE
+  YELLOW
+  RED
+}
+
+enum RefereeRole {
+  HEAD_REFEREE
+  ALLIANCE_REFEREE
+}
+
+enum MatchState {
+  SCHEDULED
+  READY
+  RUNNING
+  PAUSED
+  COMPLETED
+  CANCELLED
+  ERROR
+}
+
+enum ErrorSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum ErrorStatus {
+  OPEN
+  ACKNOWLEDGED
+  RESOLVED
+  CLOSED
+}
+
+enum DisplayState {
+  STANDBY
+  STARTING_SOON
+  LIVE
+  MATCH_RESULTS
+  FINISHED
+  CANCELLED
+  ERROR
+  CUSTOM_MESSAGE
+}
+
+model User {
+  id              String           @id @default(uuid())
+  username        String           @unique
+  password        String
+  role            UserRole
+  email           String?          @unique
+  gender          Boolean?
+  DateOfBirth     DateTime?
+  phoneNumber     String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  createdBy       User?            @relation(&quot;CreatedUsers&quot;, fields: [createdById], references: [id])
+  createdById     String?
+  createdUsers    User[]           @relation(&quot;CreatedUsers&quot;)
+  tournaments     Tournament[]
+  scoredMatches   Match[]          @relation(&quot;ScoredBy&quot;)
+  allianceRefFor  AllianceScoring[] @relation(&quot;AllianceReferee&quot;)
+  matchReferees   MatchReferee[]   // New relation for match referees
+}
+
+model Tournament {
+  id           String     @id @default(uuid())
+  name         String
+  description  String?
+  startDate    DateTime
+  endDate      DateTime
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  adminId      String
+  admin        User       @relation(fields: [adminId], references: [id])
+  stages       Stage[]
+  teams        Team[]     // Added teams relationship
+  teamStats    TeamStats[] // New relation to track team statistics
+  fields       Field[]    // New relation: Tournament has many Fields
+}
+
+model Stage {
+  id           String    @id @default(uuid())
+  name         String
+  type         StageType
+  startDate    DateTime
+  endDate      DateTime
+  tournamentId String
+  tournament   Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  matches      Match[]
+  teamStats    TeamStats[] // Added relation field for TeamStats
+  teamsPerAlliance Int @default(2) // Number of teams per alliance (2v2, 3v3, etc.)
+  teamsPerMatch    Int @default(4) // Number of teams per match (all alliances)
+  schedules        Schedule[] // Add this line for relation
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Match {
+  id            String    @id @default(uuid())
+  matchNumber   Int
+  roundNumber   Int?      // The round number this match belongs to
+  status        String    @default(&quot;PENDING&quot;) // PENDING, IN_PROGRESS, COMPLETED
+  startTime     DateTime? // Full timestamp with hour-minute precision
+  scheduledTime DateTime? // New field for the scheduled time with hour-minute precision
+  endTime       DateTime? // Full timestamp with hour-minute precision
+  duration      Int?      // Duration in minutes
+  winningAlliance String?  // &quot;RED&quot; or &quot;BLUE&quot; - indicates which alliance won
+  stageId       String
+  stage         Stage     @relation(fields: [stageId], references: [id], onDelete: Cascade)
+  alliances     Alliance[]
+  scoredById    String?
+  scoredBy      User?     @relation(&quot;ScoredBy&quot;, fields: [scoredById], references: [id])
+  referees      MatchReferee[] // New relation for match referees
+  matchScores   MatchScores?
+  matchControl  MatchControl? // Optional relation to match control for display state
+  roundType     String? // e.g., &quot;QUALIFICATION&quot;, &quot;SWISS&quot;, &quot;PLAYOFF&quot;, &quot;FINAL&quot;
+  scheduleId    String?
+  schedule      Schedule? @relation(fields: [scheduleId], references: [id], onDelete: SetNull)
+  fieldId       String?
+  field         Field?     @relation(fields: [fieldId], references: [id], onDelete: SetNull)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model MatchReferee {
+  id        String      @id @default(uuid())
+  matchId   String
+  match     Match       @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User        @relation(fields: [userId], references: [id])
+  role      RefereeRole // HEAD_REFEREE or ALLIANCE_REFEREE
+  position  String?     // Optional position identifier (e.g. &quot;RED1&quot;, &quot;BLUE2&quot;)
+  createdAt DateTime    @default(now()) 
+  updatedAt DateTime    @updatedAt
+
+  @@unique([matchId, userId])
+  @@index([matchId])
+  @@index([userId])
+}
+
+model Alliance {
+  id            String    @id @default(uuid())
+  color         String    // e.g., &quot;RED&quot;, &quot;BLUE&quot;
+  score         Int       @default(0)
+  matchId       String
+  match         Match     @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  teamAlliances TeamAlliance[]
+  allianceScoring AllianceScoring?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model AllianceScoring {
+  id            String    @id @default(uuid())
+  allianceId    String    @unique
+  alliance      Alliance  @relation(fields: [allianceId], references: [id], onDelete: Cascade)
+  refereeId     String?
+  referee       User?     @relation(&quot;AllianceReferee&quot;, fields: [refereeId], references: [id])
+  scoreDetails  Json?     // Store detailed scoring information as JSON
+  card          CardType  @default(NONE)
+  notes         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Team {
+  id            String         @id @default(uuid())
+  teamNumber    String         @unique
+  name          String
+  organization  String?
+  avatar        String?        // URL to team avatar image
+  description   String?        // Team description
+  teamMembers   Json?          // Store team members as a JSON array
+  tournamentId  String?        // Optional link to tournament
+  tournament    Tournament?    @relation(fields: [tournamentId], references: [id])
+  teamAlliances TeamAlliance[]
+  teamStats     TeamStats[]    // New relation to track team statistics
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  @@index([tournamentId])
+}
+
+model TeamAlliance {
+  id          String   @id @default(uuid())
+  teamId      String
+  team        Team     @relation(fields: [teamId], references: [id])
+  allianceId  String
+  alliance    Alliance @relation(fields: [allianceId], references: [id], onDelete: Cascade)
+  stationPosition Int   @default(1)  // Station position: 1, 2, or 3 within an alliance
+  isSurrogate Boolean  @default(false) // Indicates if this is a surrogate appearance
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([teamId, allianceId])
+}
+
+model MatchScores {
+  id                String   @id @default(uuid())
+  matchId           String   @unique
+  match             Match    @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  
+  // Red Alliance Scores
+  redAutoScore      Int      @default(0)
+  redDriveScore     Int      @default(0)
+  redTotalScore     Int      @default(0)
+  
+  // Blue Alliance Scores
+  blueAutoScore     Int      @default(0)
+  blueDriveScore    Int      @default(0)
+  blueTotalScore    Int      @default(0)
+  
+  // Game Elements Scoring for Red Alliance
+  redGameElements   Json?    // Structure: [{ &quot;element&quot;: &quot;ball&quot;, &quot;count&quot;: 3, &quot;pointsEach&quot;: 20, &quot;totalPoints&quot;: 60, &quot;operation&quot;: &quot;multiply&quot; }]
+  
+  // Game Elements Scoring for Blue Alliance
+  blueGameElements  Json?    // Structure: [{ &quot;element&quot;: &quot;ball&quot;, &quot;count&quot;: 3, &quot;pointsEach&quot;: 20, &quot;totalPoints&quot;: 60, &quot;operation&quot;: &quot;multiply&quot; }]
+  
+  // Team count multipliers (applied automatically based on team count)
+  redTeamCount      Int      @default(0)  // Number of teams in red alliance (1-4)
+  redMultiplier     Float    @default(1.0) // Calculated multiplier based on team count: 1 team (x1.25), 2 teams (x1.5), 3 teams (x1.75), 4 teams (x2)
+  
+  blueTeamCount     Int      @default(0)  // Number of teams in blue alliance (1-4)
+  blueMultiplier    Float    @default(1.0) // Calculated multiplier based on team count: 1 team (x1.25), 2 teams (x1.5), 3 teams (x1.75), 4 teams (x2)
+  
+  // Additional metadata
+  scoreDetails      Json?    // Other scoring details or game-specific information
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model TeamStats {
+  id                  String   @id @default(uuid())
+  teamId              String
+  team                Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  tournamentId        String
+  tournament          Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  stageId             String?    // Adding optional stageId field for stage-specific stats
+  stage               Stage?     @relation(fields: [stageId], references: [id], onDelete: SetNull)
+  wins                Int       @default(0)
+  losses              Int       @default(0)
+  ties                Int       @default(0)
+  pointsScored        Int       @default(0)
+  pointsConceded      Int       @default(0)
+  matchesPlayed       Int       @default(0)
+  rankingPoints       Int       @default(0)
+  opponentWinPercentage Float   @default(0)
+  pointDifferential   Int       @default(0)
+  rank                Int?      // For playoff rankings
+  tiebreaker1         Float     @default(0) // First tiebreaker metric (e.g., average score)
+  tiebreaker2         Float     @default(0) // Second tiebreaker metric (e.g., strength of schedule)
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  @@unique([teamId, tournamentId])
+  @@index([teamId])
+  @@index([tournamentId])
+  @@index([stageId])
+}
+
+model Schedule {
+  id        String   @id @default(uuid())
+  stageId   String
+  stage     Stage    @relation(fields: [stageId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  matches   Match[]
+  algorithm String?  // e.g., &quot;simulated_annealing&quot;, &quot;swiss&quot;
+  quality   String?  // e.g., &quot;low&quot;, &quot;medium&quot;, &quot;high&quot;
+  params    Json?    // Store algorithm parameters
+}
+
+model Field {
+  id           String      @id @default(uuid())
+  name         String
+  location     String?
+  description  String?
+  tournamentId String
+  tournament   Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  matches      Match[]
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+
+
+model MatchControl {
+  id              String      @id @default(uuid())
+  matchId         String      @unique
+  match           Match       @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  currentState    MatchState  @default(SCHEDULED)
+  stateHistory    Json?       // Array of state transitions with timestamps
+  controlledBy    String?     // Admin who is currently controlling the match
+  lockToken       String?     // Token for locking control to prevent race conditions
+  lockTimestamp   DateTime?   // When the lock was acquired
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  matchTimers     MatchTimer[] 
+  matchErrors     MatchError[] 
+  audienceDisplay AudienceDisplay?
+}
+
+model MatchTimer {
+  id              String      @id @default(uuid())
+  matchControlId  String
+  matchControl    MatchControl @relation(fields: [matchControlId], references: [id], onDelete: Cascade)
+  timerType       String      // &quot;AUTO&quot;, &quot;TELEOP&quot;, &quot;ENDGAME&quot;, &quot;FULL_MATCH&quot;, etc.
+  duration        Int         // Total duration in seconds
+  remaining       Int         // Remaining time in seconds
+  isRunning       Boolean     @default(false)
+  startedAt       DateTime?   // When the timer was started
+  pausedAt        DateTime?   // When the timer was last paused
+  completedAt     DateTime?   // When the timer completed
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+}
+
+model MatchError {
+  id              String        @id @default(uuid())
+  matchControlId  String
+  matchControl    MatchControl  @relation(fields: [matchControlId], references: [id], onDelete: Cascade)
+  errorType       String        // &quot;ROBOT_FAILURE&quot;, &quot;FIELD_FAULT&quot;, &quot;NETWORK_ISSUE&quot;, etc.
+  description     String
+  severity        ErrorSeverity @default(MEDIUM)
+  status          ErrorStatus   @default(OPEN)
+  reportedBy      String        // User ID who reported the error
+  resolvedBy      String?       // User ID who resolved the error
+  resolvedAt      DateTime?
+  affectedAlliance String?      // &quot;RED&quot;, &quot;BLUE&quot;, or null if affects both
+  affectedTeamId  String?       // Optional reference to specific team
+  notes           String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+model AudienceDisplay {
+  id              String        @id @default(uuid())
+  matchControlId  String        @unique
+  matchControl    MatchControl  @relation(fields: [matchControlId], references: [id], onDelete: Cascade)
+  currentState    DisplayState  @default(STANDBY)
+  customMessage   String?
+  customData      Json?         // Additional display data
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+</code></pre>
+<h3 id="key-models-and-relationships">Key Models and Relationships:</h3>
+<ul>
+<li><strong><code>User</code></strong>: Represents individuals interacting with the system. It includes authentication details (<code>username</code>, <code>password</code>), roles (<code>UserRole</code> enum: ADMIN, HEAD_REFEREE, etc.), and personal information. Users can create other users, administer tournaments, score matches, and be assigned as referees.</li>
+<li><strong><code>Tournament</code></strong>: The central entity for a competition. It has a name, description, dates, and is linked to an admin <code>User</code>. A tournament comprises multiple <code>Stage</code>s, registered <code>Team</code>s, <code>TeamStats</code>, and playing <code>Field</code>s.</li>
+<li><strong><code>Stage</code></strong>: Defines a distinct phase within a tournament (e.g., SWISS, PLAYOFF, FINAL, defined by <code>StageType</code> enum). Each stage belongs to a <code>Tournament</code>, contains <code>Match</code>es, and can have specific <code>TeamStats</code> and <code>Schedule</code>s. It also defines parameters like <code>teamsPerAlliance</code> and <code>teamsPerMatch</code>.</li>
+<li><strong><code>Team</code></strong>: Represents a participating robotics team with a unique <code>teamNumber</code>, name, and organization. Teams are associated with a <code>Tournament</code> and participate in <code>Match</code>es through the <code>TeamAlliance</code> model. Their performance is tracked in <code>TeamStats</code>.</li>
+<li><strong><code>Match</code></strong>: A single contest within a <code>Stage</code>. It has a <code>matchNumber</code>, <code>roundNumber</code>, status (e.g., PENDING, COMPLETED), timings, and is linked to participating <code>Alliance</code>s. It can be scored by a <code>User</code> and have assigned <code>MatchReferee</code>s. It also links to <code>MatchScores</code>, <code>MatchControl</code>, an optional <code>Schedule</code>, and a <code>Field</code>.</li>
+<li><strong><code>MatchReferee</code></strong>: Assigns a <code>User</code> with a specific <code>RefereeRole</code> (HEAD_REFEREE, ALLIANCE_REFEREE) to a <code>Match</code>.</li>
+<li><strong><code>Alliance</code></strong>: Represents one of the competing sides in a match (e.g., &quot;RED&quot;, &quot;BLUE&quot;). It has a score and is composed of one or more teams via the <code>TeamAlliance</code> join table. It can also have specific <code>AllianceScoring</code> details.</li>
+<li><strong><code>AllianceScoring</code></strong>: Stores detailed scoring information for an alliance in a match, potentially recorded by a specific <code>User</code> (referee), including <code>scoreDetails</code> (JSON), any <code>CardType</code> issued (NONE, YELLOW, RED), and notes.</li>
+<li><strong><code>TeamAlliance</code></strong>: A join model linking a <code>Team</code> to an <code>Alliance</code> for a specific match, indicating the team's station position and whether it's a surrogate.</li>
+<li><strong><code>MatchScores</code></strong>: Captures the detailed breakdown of scores for both red and blue alliances in a <code>Match</code>, including autonomous scores, driver-controlled scores, game element details (JSON), and calculated multipliers based on team counts.</li>
+<li><strong><code>TeamStats</code></strong>: Aggregates performance statistics for a <code>Team</code> within a <code>Tournament</code> (and optionally a specific <code>Stage</code>), including wins, losses, ties, points scored/conceded, ranking points, and tiebreaker metrics.</li>
+<li><strong><code>Schedule</code></strong>: Represents a generated set of matches for a <code>Stage</code>, potentially created using a specific algorithm and parameters.</li>
+<li><strong><code>Field</code></strong>: Defines a physical playing area for matches within a <code>Tournament</code>.</li>
+<li><strong><code>MatchControl</code></strong>: Manages the real-time operational state of a <code>Match</code> (using <code>MatchState</code> enum: SCHEDULED, RUNNING, PAUSED, COMPLETED, etc.). It tracks state history, who controls the match, and is linked to <code>MatchTimer</code>s, <code>MatchError</code>s, and an <code>AudienceDisplay</code>.</li>
+<li><strong><code>MatchTimer</code></strong>: Represents various timers associated with a <code>MatchControl</code> instance (e.g., &quot;AUTO&quot;, &quot;TELEOP&quot;), tracking duration, remaining time, and running status.</li>
+<li><strong><code>MatchError</code></strong>: Logs errors or issues that occur during a match, including type, description, <code>ErrorSeverity</code>, and <code>ErrorStatus</code>.</li>
+<li><strong><code>AudienceDisplay</code></strong>: Controls the information shown on public displays for a given match, using the <code>DisplayState</code> enum (e.g., STANDBY, LIVE, MATCH_RESULTS).</li>
+</ul>
+<h3 id="enumerations-enums">Enumerations (Enums):</h3>
+<p>The schema defines several enums to represent fixed sets of values for certain fields, enhancing data integrity and readability:</p>
+<ul>
+<li><code>UserRole</code>: Defines the different roles a user can have.</li>
+<li><code>StageType</code>: Specifies the type of a tournament stage.</li>
+<li><code>CardType</code>: Represents disciplinary cards that can be issued.</li>
+<li><code>RefereeRole</code>: Differentiates between head and alliance referees.</li>
+<li><code>MatchState</code>: Tracks the various states a match can be in during its lifecycle.</li>
+<li><code>ErrorSeverity</code>: Classifies the severity of match errors.</li>
+<li><code>ErrorStatus</code>: Tracks the resolution status of match errors.</li>
+<li><code>DisplayState</code>: Defines the different states for the audience display.</li>
+</ul>
+<p>This comprehensive schema supports the complex data management and real-time operational needs of the Robotics Tournament Management System.</p>
+<h2 id="7-api-documentation-consolidated">7. API Documentation (Consolidated)</h2>
+<p>This section provides a consolidated overview of the primary RESTful API endpoints and key <a href="http://Socket.io">Socket.io</a> events used for real-time communication in the Robotics Tournament Management System. For detailed request/response DTO structures, refer to the <code>dto</code> subdirectories within each backend module (e.g., <code>/backend/src/tournaments/dto</code>).</p>
+<h3 id="71-rest-api-endpoints">7.1. REST API Endpoints</h3>
+<p>All REST API endpoints are typically prefixed (e.g., <code>/api/v1</code>). Authentication is generally handled via JWT Bearer tokens, with specific roles required for certain operations.</p>
+<p><strong>Auth Module (<code>/auth</code>)</strong></p>
+<ul>
+<li><strong><code>POST /auth/login</code></strong>
+<ul>
+<li>Description: Authenticates a user and returns a JWT.</li>
+<li>Request Body: <code>{ username, password }</code></li>
+<li>Response: <code>{ accessToken: &quot;jwt_token&quot; }</code></li>
+</ul>
+</li>
+<li><strong><code>POST /auth/register</code></strong> (Potentially admin-only or open, depending on system policy)
+<ul>
+<li>Description: Registers a new user.</li>
+<li>Request Body: <code>CreateUserDto</code> (e.g., <code>{ username, password, email, role }</code>)</li>
+<li>Response: User object (excluding password).</li>
+</ul>
+</li>
+</ul>
+<p><strong>Users Module (<code>/users</code>)</strong> (Protected, typically ADMIN access for some operations)</p>
+<ul>
+<li><strong><code>GET /users</code></strong>: Lists all users.</li>
+<li><strong><code>GET /users/:id</code></strong>: Retrieves a specific user.</li>
+<li><strong><code>POST /users</code></strong>: Creates a new user (likely ADMIN only).
+<ul>
+<li>Request Body: <code>CreateUserDto</code></li>
+</ul>
+</li>
+<li><strong><code>PATCH /users/:id</code></strong>: Updates a user.
+<ul>
+<li>Request Body: <code>UpdateUserDto</code></li>
+</ul>
+</li>
+<li><strong><code>DELETE /users/:id</code></strong>: Deletes a user (likely ADMIN only).</li>
+</ul>
+<p><strong>Tournaments Module (<code>/tournaments</code>)</strong></p>
+<ul>
+<li><strong><code>GET /tournaments</code></strong>: Lists all tournaments.</li>
+<li><strong><code>GET /tournaments/:id</code></strong>: Retrieves a specific tournament, potentially including its stages, teams, etc.</li>
+<li><strong><code>POST /tournaments</code></strong> (Protected, e.g., ADMIN role)
+<ul>
+<li>Description: Creates a new tournament.</li>
+<li>Request Body: <code>CreateTournamentDto</code> (e.g., <code>{ name, description, startDate, endDate }</code>)</li>
+<li>Response: Created tournament object.</li>
+</ul>
+</li>
+<li><strong><code>PATCH /tournaments/:id</code></strong> (Protected)
+<ul>
+<li>Description: Updates an existing tournament.</li>
+<li>Request Body: <code>UpdateTournamentDto</code></li>
+<li>Response: Updated tournament object.</li>
+</ul>
+</li>
+<li><strong><code>DELETE /tournaments/:id</code></strong> (Protected)
+<ul>
+<li>Description: Deletes a tournament.</li>
+</ul>
+</li>
+</ul>
+<p><strong>Stages Module (<code>/stages</code>)</strong> (Typically nested under tournaments, e.g., <code>/tournaments/:tournamentId/stages</code> or standalone with <code>tournamentId</code> in body/query)</p>
+<ul>
+<li><strong><code>GET /stages?tournamentId=:tournamentId</code></strong>: Lists stages for a tournament.</li>
+<li><strong><code>GET /stages/:id</code></strong>: Retrieves a specific stage.</li>
+<li><strong><code>POST /stages</code></strong> (Protected)
+<ul>
+<li>Request Body: <code>CreateStageDto</code> (e.g., <code>{ name, type, startDate, endDate, tournamentId, teamsPerAlliance, teamsPerMatch }</code>)</li>
+</ul>
+</li>
+<li><strong><code>PATCH /stages/:id</code></strong> (Protected)
+<ul>
+<li>Request Body: <code>UpdateStageDto</code></li>
+</ul>
+</li>
+</ul>
+<p><strong>Teams Module (<code>/teams</code>)</strong></p>
+<ul>
+<li><strong><code>GET /teams?tournamentId=:tournamentId</code></strong>: Lists teams for a tournament.</li>
+<li><strong><code>GET /teams/:id</code></strong>: Retrieves a specific team.</li>
+<li><strong><code>POST /teams</code></strong> (Protected)
+<ul>
+<li>Request Body: <code>CreateTeamDto</code> (e.g., <code>{ teamNumber, name, organization, tournamentId }</code>)</li>
+</ul>
+</li>
+<li><strong><code>POST /teams/import</code></strong> (Protected)
+<ul>
+<li>Description: Imports multiple teams, likely from a CSV or JSON file.</li>
+<li>Request Body: <code>ImportTeamsDto</code> (e.g., <code>{ tournamentId, teams: [...] }</code>)</li>
+</ul>
+</li>
+<li><strong><code>PATCH /teams/:id</code></strong> (Protected)
+<ul>
+<li>Request Body: <code>UpdateTeamDto</code></li>
+</ul>
+</li>
+</ul>
+<p><strong>Matches Module (<code>/matches</code>)</strong></p>
+<ul>
+<li><strong><code>GET /matches?stageId=:stageId</code></strong>: Lists matches for a stage.</li>
+<li><strong><code>GET /matches/:id</code></strong>: Retrieves a specific match, including alliances, scores, etc.</li>
+<li><strong><code>POST /matches</code></strong> (Protected, often part of match scheduling)
+<ul>
+<li>Request Body: <code>CreateMatchDto</code></li>
+</ul>
+</li>
+<li><strong><code>PATCH /matches/:id</code></strong> (Protected)
+<ul>
+<li>Description: Updates match details (e.g., status, startTime, winningAlliance).</li>
+<li>Request Body: <code>UpdateMatchDto</code></li>
+</ul>
+</li>
+</ul>
+<p><strong>Match Scheduler Module (<code>/match-scheduler</code>)</strong></p>
+<ul>
+<li><strong><code>POST /match-scheduler/schedule</code></strong> (Protected)
+<ul>
+<li>Description: Triggers the scheduling of matches for a given stage.</li>
+<li>Request Body: <code>ScheduleConfigDto</code> (e.g., <code>{ stageId, algorithm, params }</code>)</li>
+<li>Response: Newly scheduled matches or a job ID.</li>
+</ul>
+</li>
+</ul>
+<p><strong>Match Scores Module (<code>/match-scores</code>)</strong></p>
+<ul>
+<li><strong><code>GET /match-scores/:matchId</code></strong>: Retrieves the scores for a specific match.</li>
+<li><strong><code>POST /match-scores</code></strong> (Protected, e.g., Referee role)
+<ul>
+<li>Description: Submits or updates scores for a match.</li>
+<li>Request Body: <code>CreateMatchScoresDto</code> or <code>UpdateMatchScoresDto</code> (e.g., <code>{ matchId, redAutoScore, blueTotalScore, redGameElements, ... }</code>)</li>
+<li>Response: Updated match scores object.</li>
+</ul>
+</li>
+</ul>
+<p><strong>Team Stats Module (<code>/team-stats</code>)</strong></p>
+<ul>
+<li><strong><code>GET /team-stats?tournamentId=:tournamentId&amp;stageId=:stageId</code></strong>: Retrieves team statistics for a tournament or specific stage, often including rankings.</li>
+</ul>
+<h3 id="72-socketio-events">7.2. <a href="http://Socket.io">Socket.io</a> Events</h3>
+<p><a href="http://Socket.io">Socket.io</a> is used for real-time communication, primarily managed by the <code>EventsGateway</code> on the backend. Clients connect and can subscribe to events, often within specific rooms (e.g., <code>match_XYZ_updates</code>).</p>
+<p><strong>Client-to-Server Events (Examples):</strong></p>
+<ul>
+<li><strong><code>joinMatchRoom</code></strong>
+<ul>
+<li>Payload: <code>{ &quot;matchId&quot;: &quot;string&quot; }</code></li>
+<li>Description: Client requests to join a room for a specific match to receive updates.</li>
+</ul>
+</li>
+<li><strong><code>leaveMatchRoom</code></strong>
+<ul>
+<li>Payload: <code>{ &quot;matchId&quot;: &quot;string&quot; }</code></li>
+<li>Description: Client requests to leave a match room.</li>
+</ul>
+</li>
+<li><strong><code>controlMatchAction</code></strong>
+<ul>
+<li>Payload: <code>{ &quot;matchId&quot;: &quot;string&quot;, &quot;action&quot;: &quot;startTimer&quot; | &quot;pauseTimer&quot; | &quot;resetTimer&quot; | &quot;setMatchState&quot;, &quot;timerType&quot;?: &quot;AUTO&quot; | &quot;TELEOP&quot;, &quot;newState&quot;?: &quot;MatchStateEnum&quot; }</code></li>
+<li>Description: Admin/Referee sends a command to control a match.</li>
+</ul>
+</li>
+<li><strong><code>submitLiveScore</code></strong>
+<ul>
+<li>Payload: <code>{ &quot;matchId&quot;: &quot;string&quot;, &quot;alliance&quot;: &quot;RED&quot; | &quot;BLUE&quot;, &quot;scoreField&quot;: &quot;string&quot;, &quot;value&quot;: &quot;number&quot; }</code></li>
+<li>Description: Referee submits a partial or live score update.</li>
+</ul>
+</li>
+</ul>
+<p><strong>Server-to-Client Events (Examples):</strong></p>
+<ul>
+<li><strong><code>matchStateUpdated</code></strong>
+<ul>
+<li>Payload: <code>{ &quot;matchId&quot;: &quot;string&quot;, &quot;newState&quot;: &quot;MatchStateEnum&quot;, &quot;matchData&quot;: { ...full match object or relevant parts... } }</code></li>
+<li>Description: Broadcasts changes to a match's state (e.g., SCHEDULED, RUNNING, PAUSED, COMPLETED).</li>
+</ul>
+</li>
+<li><strong><code>timerUpdated</code></strong>
+<ul>
+<li>Payload: <code>{ &quot;matchId&quot;: &quot;string&quot;, &quot;timerType&quot;: &quot;AUTO&quot; | &quot;TELEOP&quot;, &quot;remainingTime&quot;: &quot;number&quot;, &quot;isRunning&quot;: &quot;boolean&quot; }</code></li>
+<li>Description: Broadcasts updates to a match timer.</li>
+</ul>
+</li>
+<li><strong><code>matchScoreUpdated</code></strong>
+<ul>
+<li>Payload: <code>{ &quot;matchId&quot;: &quot;string&quot;, &quot;scores&quot;: { ...MatchScores object... } }</code></li>
+<li>Description: Broadcasts updates to the scores of a match.</li>
+</ul>
+</li>
+<li><strong><code>audienceDisplayUpdated</code></strong>
+<ul>
+<li>Payload: <code>{ &quot;matchId&quot;: &quot;string&quot;, &quot;displayState&quot;: &quot;DisplayStateEnum&quot;, &quot;customMessage&quot;?: &quot;string&quot;, &quot;data&quot;?: { ... } }</code></li>
+<li>Description: Updates the audience display for a specific match.</li>
+</ul>
+</li>
+<li><strong><code>teamStatsUpdated</code></strong>
+<ul>
+<li>Payload: <code>{ &quot;tournamentId&quot;: &quot;string&quot;, &quot;teamId&quot;?: &quot;string&quot;, &quot;stats&quot;: [ ...TeamStats objects... ] }</code></li>
+<li>Description: Broadcasts updates to team statistics or rankings.</li>
+</ul>
+</li>
+<li><strong><code>newNotification</code></strong>
+<ul>
+<li>Payload: <code>{ &quot;message&quot;: &quot;string&quot;, &quot;type&quot;: &quot;info&quot; | &quot;warning&quot; | &quot;error&quot; }</code></li>
+<li>Description: Sends a general notification to clients.</li>
+</ul>
+</li>
+</ul>
+<p>This API documentation provides a high-level overview. For precise details on DTOs, specific error codes, and exact event payloads, developers should refer to the backend source code, particularly the controller files, DTO definitions, and the <code>EventsGateway</code> implementation.</p>
+<h2 id="8-deployment">8. Deployment</h2>
+<p>While the provided repository does not contain specific Dockerfiles, <code>docker-compose.yml</code>, or CI/CD workflow configurations (e.g., GitHub Actions workflows), this section outlines general strategies for deploying the Next.js frontend and NestJS backend.</p>
+<h3 id="81-frontend-nextjs">8.1. Frontend (Next.js)</h3>
+<p>The Next.js frontend can be deployed using several methods:</p>
+<ul>
+<li><strong>Vercel:</strong> As the creators of Next.js, Vercel offers seamless deployment. Connecting the GitHub repository to a Vercel project typically enables automatic builds and deployments on every push to the main branch. Vercel handles optimizations like static generation, serverless functions, and CDN distribution.</li>
+<li><strong>Netlify:</strong> Similar to Vercel, Netlify provides excellent support for Next.js applications with continuous deployment from a Git repository.</li>
+<li><strong>Node.js Server:</strong> The Next.js application can be built using <code>npm run build</code> (or <code>pnpm build</code>) and then started using <code>npm run start</code> (or <code>pnpm start</code>) on a traditional Node.js server (e.g., an EC2 instance, a DigitalOcean droplet, or a PaaS like Heroku). A process manager like PM2 is recommended to keep the application running.</li>
+<li><strong>Containers (Docker):</strong> Although no Dockerfile is provided, one could be created to containerize the Next.js application. This would involve building the application and then running the Node.js server that serves the built application. The container could then be deployed to services like AWS ECS, EKS, Google Kubernetes Engine (GKE), or Azure Kubernetes Service (AKS).</li>
+</ul>
+<p>Key considerations for frontend deployment:</p>
+<ul>
+<li><strong>Environment Variables:</strong> Ensure that environment variables required by the frontend (e.g., <code>NEXT_PUBLIC_API_URL</code> for the backend endpoint, <code>NEXT_PUBLIC_SOCKET_URL</code> for the WebSocket server) are correctly configured in the deployment environment.</li>
+</ul>
+<h3 id="82-backend-nestjs">8.2. Backend (NestJS)</h3>
+<p>The NestJS backend can also be deployed in various ways:</p>
+<ul>
+<li><strong>Node.js Server:</strong> Similar to Next.js, the NestJS application can be built (<code>npm run build</code> or <code>pnpm build</code>) and run (<code>npm run start:prod</code> or <code>pnpm start:prod</code>) on a Node.js server. PM2 is highly recommended for managing the process.</li>
+<li><strong>Containers (Docker):</strong> A Dockerfile can be created to containerize the NestJS application. This typically involves copying the <code>package.json</code>, <code>dist</code> folder (after building), and <code>node_modules</code> (or installing them within the container) and then running the application. This container can be deployed to various container orchestration platforms.</li>
+<li><strong>Serverless Functions:</strong> Parts of a NestJS application can be deployed as serverless functions (e.g., AWS Lambda, Google Cloud Functions), though this often requires specific architectural considerations.</li>
+<li><strong>PaaS (Platform as a Service):</strong> Platforms like Heroku, Render, or <a href="http://Fly.io">Fly.io</a> can host NestJS applications, often simplifying the deployment process.</li>
+</ul>
+<p>Key considerations for backend deployment:</p>
+<ul>
+<li><strong>Database:</strong> The chosen database (PostgreSQL as per <code>schema.prisma</code>) needs to be accessible from the deployed backend. This could be a managed database service (e.g., AWS RDS, Google Cloud SQL, ElephantSQL) or a self-hosted instance.</li>
+<li><strong>Environment Variables:</strong> Critical environment variables must be set in the deployment environment, including:
+<ul>
+<li><code>DATABASE_URL</code>: The connection string for the Prisma database.</li>
+<li><code>JWT_SECRET</code>: The secret key for signing and verifying JSON Web Tokens.</li>
+<li><code>PORT</code>: The port the NestJS application should listen on (often provided by the hosting environment).</li>
+<li>Any other API keys or configuration values.</li>
+</ul>
+</li>
+<li><strong>Prisma Migrations:</strong> Before running the application in a new environment, Prisma migrations (<code>npx prisma migrate deploy</code> or <code>pnpm prisma migrate deploy</code>) must be applied to set up the database schema.</li>
+<li><strong>CORS:</strong> Ensure Cross-Origin Resource Sharing (CORS) is correctly configured in the NestJS application (<code>app.enableCors()</code> in <code>main.ts</code>) to allow requests from the deployed frontend domain.</li>
+</ul>
+<h3 id="83-general-considerations">8.3. General Considerations</h3>
+<ul>
+<li><strong>Domain Names and SSL/TLS:</strong> Configure appropriate domain names for both frontend and backend, and ensure SSL/TLS certificates are set up for HTTPS communication.</li>
+<li><strong>Logging and Monitoring:</strong> Implement logging and monitoring solutions to track application health and diagnose issues in production.</li>
+</ul>
+<h2 id="9-conclusion">9. Conclusion</h2>
+<p>This document has provided a comprehensive technical overview of the Robotics Tournament Management System, detailing its full-stack architecture. It covers the Next.js frontend with TanStack Query for state management, Shadcn UI for components, and <a href="http://Socket.io">Socket.io</a> for client-side real-time communication. The NestJS backend, with its modular structure, Prisma for database interaction, RESTful APIs, and <a href="http://Socket.io">Socket.io</a> server for real-time event handling, has also been thoroughly described.</p>
+<p>The integration of these technologies facilitates a robust platform for managing robotics tournaments, offering features from tournament creation and team registration to real-time match control, live scoring, and audience displays. The detailed breakdown of the data model via the Prisma schema and the explanation of real-time data flows aim to provide software engineers with a clear understanding of the system's inner workings, supporting ongoing development and maintenance.</p>
+<h2 id="10-references">10. References</h2>
+<ul>
+<li><strong>Primary Source Code Repository:</strong> <a href="https://github.com/khanhthanhdev/robotics_manage">https://github.com/khanhthanhdev/robotics_manage</a></li>
+<li><strong>Next.js Documentation:</strong> <a href="https://nextjs.org/docs">https://nextjs.org/docs</a></li>
+<li><strong>NestJS Documentation:</strong> <a href="https://docs.nestjs.com/">https://docs.nestjs.com/</a></li>
+<li><strong>TanStack Query Documentation:</strong> <a href="https://tanstack.com/query/latest/docs/react/overview">https://tanstack.com/query/latest/docs/react/overview</a></li>
+<li><strong>Shadcn UI:</strong> <a href="https://ui.shadcn.com/">https://ui.shadcn.com/</a></li>
+<li><strong>Prisma Documentation:</strong> <a href="https://www.prisma.io/docs/">https://www.prisma.io/docs/</a></li>
+<li><strong><a href="http://Socket.io">Socket.io</a> Documentation:</strong> <a href="https://socket.io/docs/v4/">https://socket.io/docs/v4/</a></li>
+</ul>
+
+            
+            
+        </body>
+        </html>

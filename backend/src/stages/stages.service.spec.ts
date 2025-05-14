@@ -1,38 +1,42 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { StagesService } from './stages.service';
 import { PrismaService } from '../prisma.service';
+import { mockDeep, DeepMockProxy } from 'jest-mock-extended';
+import { StageType } from '../utils/prisma-types';
 
 describe('StagesService', () => {
   let service: StagesService;
-  let prisma: any;
-
-  const mockPrismaService = {
-    stage: {
-      create: jest.fn(),
-      findMany: jest.fn(),
-      findUnique: jest.fn(),
-      update: jest.fn(),
-      delete: jest.fn(),
-    },
-  };
+  let prisma: DeepMockProxy<PrismaService>;
 
   beforeEach(async () => {
+    prisma = mockDeep<PrismaService>();
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         StagesService,
-        { provide: PrismaService, useValue: mockPrismaService },
+        { provide: PrismaService, useValue: prisma },
       ],
     }).compile();
-
     service = module.get<StagesService>(StagesService);
-    prisma = mockPrismaService;
     jest.clearAllMocks();
   });
 
   describe('create', () => {
     it('should create a stage', async () => {
-      const dto = { name: 'Stage 1', type: 'QUALIFICATION', startDate: '2025-05-13', endDate: '2025-05-14', tournamentId: 't1' };
-      prisma.stage.create.mockResolvedValue({ id: 's1', ...dto });
+      const now = new Date();
+      const stage = {
+        id: 's1',
+        name: 'Stage 1',
+        type: StageType.SWISS,
+        startDate: new Date('2025-05-13'),
+        endDate: new Date('2025-05-14'),
+        tournamentId: 't1',
+        teamsPerAlliance: 2,
+        teamsPerMatch: 4,
+        createdAt: now,
+        updatedAt: now,
+      };
+      const dto = { name: 'Stage 1', type: StageType.SWISS, startDate: '2025-05-13', endDate: '2025-05-14', tournamentId: 't1' };
+      prisma.stage.create.mockResolvedValue(stage);
       const result = await service.create(dto as any);
       expect(result).toHaveProperty('id', 's1');
       expect(prisma.stage.create).toHaveBeenCalledWith({
@@ -53,7 +57,20 @@ describe('StagesService', () => {
 
   describe('findAll', () => {
     it('should return all stages', async () => {
-      prisma.stage.findMany.mockResolvedValue([{ id: 's1' }]);
+      const now = new Date();
+      const stage = {
+        id: 's1',
+        name: 'Stage 1',
+        type: StageType.SWISS,
+        startDate: now,
+        endDate: now,
+        tournamentId: 't1',
+        teamsPerAlliance: 2,
+        teamsPerMatch: 4,
+        createdAt: now,
+        updatedAt: now,
+      };
+      prisma.stage.findMany.mockResolvedValue([stage]);
       const result = await service.findAll();
       expect(Array.isArray(result)).toBe(true);
       expect(result[0]).toHaveProperty('id', 's1');
@@ -71,7 +88,20 @@ describe('StagesService', () => {
 
   describe('findOne', () => {
     it('should return a stage by id', async () => {
-      prisma.stage.findUnique.mockResolvedValue({ id: 's1' });
+      const now = new Date();
+      const stage = {
+        id: 's1',
+        name: 'Stage 1',
+        type: StageType.SWISS,
+        startDate: now,
+        endDate: now,
+        tournamentId: 't1',
+        teamsPerAlliance: 2,
+        teamsPerMatch: 4,
+        createdAt: now,
+        updatedAt: now,
+      };
+      prisma.stage.findUnique.mockResolvedValue(stage);
       const result = await service.findOne('s1');
       expect(result).toHaveProperty('id', 's1');
     });
@@ -88,7 +118,20 @@ describe('StagesService', () => {
 
   describe('update', () => {
     it('should update a stage', async () => {
-      prisma.stage.update.mockResolvedValue({ id: 's1', name: 'Updated' });
+      const now = new Date();
+      const stage = {
+        id: 's1',
+        name: 'Updated',
+        type: StageType.SWISS,
+        startDate: now,
+        endDate: now,
+        tournamentId: 't1',
+        teamsPerAlliance: 2,
+        teamsPerMatch: 4,
+        createdAt: now,
+        updatedAt: now,
+      };
+      prisma.stage.update.mockResolvedValue(stage);
       const result = await service.update('s1', { name: 'Updated' } as any);
       expect(result).toHaveProperty('id', 's1');
       expect(prisma.stage.update).toHaveBeenCalledWith({
@@ -104,7 +147,20 @@ describe('StagesService', () => {
 
   describe('remove', () => {
     it('should delete a stage', async () => {
-      prisma.stage.delete.mockResolvedValue({ id: 's1' });
+      const now = new Date();
+      const stage = {
+        id: 's1',
+        name: 'Stage 1',
+        type: StageType.SWISS,
+        startDate: now,
+        endDate: now,
+        tournamentId: 't1',
+        teamsPerAlliance: 2,
+        teamsPerMatch: 4,
+        createdAt: now,
+        updatedAt: now,
+      };
+      prisma.stage.delete.mockResolvedValue(stage);
       const result = await service.remove('s1');
       expect(result).toHaveProperty('id', 's1');
       expect(prisma.stage.delete).toHaveBeenCalledWith({ where: { id: 's1' } });

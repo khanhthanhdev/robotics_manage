@@ -1,0 +1,47 @@
+# Robotics Tournament Management System - Technical Documentation Todo
+
+This document outlines the tasks to create the technical and API documentation for the Robotics Tournament Management System.
+
+- [x] **1. Introduction**
+    - [x] Define System Purpose and Scope (reuse user-provided information)
+- [x] **2. Overall Application Architecture**
+    - [x] Provide a high-level overview of the full-stack application.
+    - [x] Diagram (if possible, or describe) the interaction between frontend, backend, and database.
+- [x] **3. Frontend Architecture (Next.js)**
+    - [x] Describe the frontend folder structure.
+    - [x] Identify and explain key Next.js components, pages, and layouts.
+    - [x] **3.1. State Management with TanStack Query**
+        - [x] Explain how TanStack Query is used for data fetching, caching, and synchronization.
+        - [x] Provide examples of query and mutation usage.
+    - [x] **3.2. UI Components with Shadcn**
+        - [x] Describe the use of Shadcn for UI components.
+        - [x] Mention any customization or theming.
+    - [x] **3.3. Real-time Communication (Socket.io Client)**
+        - [x] Detail the Socket.io client setup and integration.
+        - [x] List key events listened to and emitted by the client.
+- [x] **4. Backend Architecture (NestJS)**
+    - [x] Describe the backend folder structure.
+    - [x] Identify and explain key NestJS modules (e.g., Auth, Tournament, Match, Team), controllers, and services.
+    - [x] **4.1. Data Modeling with Prisma**
+        - [x] Detail the Prisma schema (models, relations, enums).
+        - [x] Explain how Prisma Client is used for database interactions.
+    - [x] **4.2. API Endpoints**
+        - [x] List and describe major REST API endpoints (routes, methods, request/response payloads).
+        - [x] Mention authentication/authorization mechanisms if any.
+    - [x] **4.3. Real-time Communication (Socket.io Server)**
+        - [x] Detail the Socket.io gateway setup in NestJS.
+        - [x] List key events handled and emitted by the server.
+- [x] **5. Real-time Features and Integration**
+    - [x] Provide a detailed explanation of how Socket.io facilitates real-time features (e.g., match control, live scoring, audience displays).
+    - [x] Describe the data flow for these real-time interactions between frontend and backend.
+- [x] **6. Database Schema**
+    - [x] Present the detailed Prisma schema (can be extracted from `schema.prisma`).
+- [x] **7. API Documentation (Consolidated)**
+    - [x] Summarize key API endpoints with request/response examples (can refer to details in section 4.2).
+    - [x] Include details on Socket.io events and their payloads for real-time APIs.
+- [x] **8. Deployment (Optional - if info available)**
+    - [x] Briefly describe the deployment strategy or setup if discernible from the repository.
+- [x] **9. Conclusion**
+    - [x] Summarize the document.
+- [x] **10. References**
+    - [x] Link to the GitHub repository.

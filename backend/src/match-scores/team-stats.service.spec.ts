@@ -1,21 +1,14 @@
 import { TeamStatsService } from './team-stats.service';
+import { mockDeep, DeepMockProxy } from 'jest-mock-extended';
+import { PrismaService } from '../prisma.service';
 
 describe('TeamStatsService', () => {
   let service: TeamStatsService;
-  let prisma: any;
-
-  const mockPrismaService = {
-    match: {
-      findMany: jest.fn(),
-    },
-    teamStats: {
-      upsert: jest.fn(),
-    },
-  };
+  let prisma: DeepMockProxy<PrismaService>;
 
   beforeEach(() => {
-    service = new TeamStatsService(mockPrismaService as any);
-    prisma = mockPrismaService;
+    prisma = mockDeep<PrismaService>();
+    service = new TeamStatsService(prisma as any);
     jest.clearAllMocks();
   });
 
@@ -27,12 +20,11 @@ describe('TeamStatsService', () => {
 
   it('should handle no matches found', async () => {
     prisma.match.findMany.mockResolvedValue([]);
-    prisma.teamStats.upsert.mockResolvedValue({});
-    const match = { stage: { tournament: { id: 'tournament1' } } };
+    prisma.teamStats.upsert.mockResolvedValue({} as any);
+    const match = { stage: { tournament: { id: 'tournament1' } } } as any;
     await expect(service.recalculateTeamStats(match, ['t1', 't2'])).resolves.toBeUndefined();
     expect(prisma.match.findMany).toHaveBeenCalled();
-    // No upsert should be called since no matches
-    expect(prisma.teamStats.upsert).toHaveBeenCalledTimes(2); // still called for each team with 0 matches
+    expect(prisma.teamStats.upsert).toHaveBeenCalledTimes(2);
   });
 
   it('should recalculate stats for teams with wins/losses/ties', async () => {
@@ -44,6 +36,7 @@ describe('TeamStatsService', () => {
           { color: 'BLUE', teamAlliances: [{ teamId: 't2' }] },
         ],
         winningAlliance: 'RED',
+        status: 'COMPLETED',
       },
       {
         id: 'm2',
@@ -52,14 +45,14 @@ describe('TeamStatsService', () => {
           { color: 'BLUE', teamAlliances: [{ teamId: 't2' }] },
         ],
         winningAlliance: 'TIE',
+        status: 'COMPLETED',
       },
-    ]);
-    prisma.teamStats.upsert.mockResolvedValue({});
-    const match = { stage: { tournament: { id: 'tournament1' } } };
+    ] as any);
+    prisma.teamStats.upsert.mockResolvedValue({} as any);
+    const match = { stage: { tournament: { id: 'tournament1' } } } as any;
     await expect(service.recalculateTeamStats(match, ['t1', 't2'])).resolves.toBeUndefined();
     expect(prisma.match.findMany).toHaveBeenCalled();
     expect(prisma.teamStats.upsert).toHaveBeenCalledTimes(2);
-    // Check upsert args for correct stats
     const upsertCalls = prisma.teamStats.upsert.mock.calls;
     expect(upsertCalls[0][0].create).toMatchObject({ teamId: 't1', wins: 1, ties: 1, losses: 0, matchesPlayed: 2 });
     expect(upsertCalls[1][0].create).toMatchObject({ teamId: 't2', wins: 0, ties: 1, losses: 1, matchesPlayed: 2 });
@@ -75,9 +68,9 @@ describe('TeamStatsService', () => {
         ],
         winningAlliance: 'RED',
       },
-    ]);
+    ] as any);
     prisma.teamStats.upsert.mockRejectedValueOnce(new Error('DB error'));
-    const match = { stage: { tournament: { id: 'tournament1' } } };
+    const match = { stage: { tournament: { id: 'tournament1' } } } as any;
     await expect(service.recalculateTeamStats(match, ['t1', 't2'])).rejects.toThrow('DB error');
   });
 
@@ -90,9 +83,9 @@ describe('TeamStatsService', () => {
         ],
         winningAlliance: 'RED',
       },
-    ]);
-    prisma.teamStats.upsert.mockResolvedValue({});
-    const match = { stage: { tournament: { id: 'tournament1' } } };
+    ] as any);
+    prisma.teamStats.upsert.mockResolvedValue({} as any);
+    const match = { stage: { tournament: { id: 'tournament1' } } } as any;
     await service.recalculateTeamStats(match, ['t1']);
     expect(prisma.teamStats.upsert).toHaveBeenCalledWith({
       where: { teamId_tournamentId: { teamId: 't1', tournamentId: 'tournament1' } },

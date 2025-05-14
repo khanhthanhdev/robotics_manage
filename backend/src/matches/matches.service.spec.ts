@@ -5,44 +5,25 @@ import { MatchesService } from './matches.service';
 import { MatchesController } from './matches.controller';
 import { PrismaService } from '../prisma.service';
 import { MatchScoresService } from '../match-scores/match-scores.service';
-
-// Mock dependencies
-const mockMatchScoresService = {
-  initializeForMatch: jest.fn().mockResolvedValue(undefined),
-};
-
-const mockPrismaService = {
-  match: {
-    create: jest.fn(),
-    findMany: jest.fn(),
-    findUnique: jest.fn(),
-    update: jest.fn(),
-    delete: jest.fn(),
-  },
-  alliance: {
-    create: jest.fn(),
-    update: jest.fn(),
-  },
-  teamAlliance: {
-    create: jest.fn(),
-  },
-  allianceScoring: {
-    create: jest.fn(),
-    update: jest.fn(),
-  },
-};
+import { mockDeep, DeepMockProxy } from 'jest-mock-extended';
 
 describe('MatchesController', () => {
   let app: INestApplication;
   let matchesService: MatchesService;
+  let prisma: DeepMockProxy<PrismaService>;
+  let matchScoresService: DeepMockProxy<MatchScoresService>;
 
   beforeAll(async () => {
+    prisma = mockDeep<PrismaService>();
+    matchScoresService = mockDeep<MatchScoresService>();
+    matchScoresService.initializeForMatch.mockResolvedValue(undefined);
+
     const moduleRef: TestingModule = await Test.createTestingModule({
       controllers: [MatchesController],
       providers: [
         MatchesService,
-        { provide: PrismaService, useValue: mockPrismaService },
-        { provide: MatchScoresService, useValue: mockMatchScoresService },
+        { provide: PrismaService, useValue: prisma },
+        { provide: MatchScoresService, useValue: matchScoresService },
       ],
     }).compile();
 
@@ -62,11 +43,11 @@ describe('MatchesController', () => {
 
   describe('create', () => {
     it('should create a match and alliances', async () => {
-      mockPrismaService.match.create.mockResolvedValue({ id: 'match1' });
-      mockPrismaService.alliance.create.mockResolvedValue({ id: 'alliance1' });
-      mockPrismaService.teamAlliance.create.mockResolvedValue({});
-      mockPrismaService.allianceScoring.create.mockResolvedValue({});
-      mockPrismaService.match.findUnique.mockResolvedValue({ id: 'match1', alliances: [] });
+      prisma.match.create.mockResolvedValue({ id: 'match1', alliances: [] } as any);
+      prisma.alliance.create.mockResolvedValue({ id: 'alliance1' } as any);
+      prisma.teamAlliance.create.mockResolvedValue({} as any);
+      prisma.allianceScoring.create.mockResolvedValue({} as any);
+      prisma.match.findUnique.mockResolvedValue({ id: 'match1', alliances: [] } as any);
 
       const dto = {
         matchNumber: 1,
@@ -80,15 +61,15 @@ describe('MatchesController', () => {
 
       const result = await matchesService.create(dto as any);
       expect(result).toHaveProperty('id', 'match1');
-      expect(mockPrismaService.match.create).toHaveBeenCalled();
-      expect(mockPrismaService.alliance.create).toHaveBeenCalledTimes(2);
-      expect(mockMatchScoresService.initializeForMatch).toHaveBeenCalledWith('match1');
+      expect(prisma.match.create).toHaveBeenCalled();
+      expect(prisma.alliance.create).toHaveBeenCalledTimes(2);
+      expect(matchScoresService.initializeForMatch).toHaveBeenCalledWith('match1');
     });
   });
 
   describe('findAll', () => {
     it('should return all matches', async () => {
-      mockPrismaService.match.findMany.mockResolvedValue([{ id: 'match1' }]);
+      prisma.match.findMany.mockResolvedValue([{ id: 'match1' } as any]);
       const result = await matchesService.findAll();
       expect(Array.isArray(result)).toBe(true);
       expect(result[0]).toHaveProperty('id', 'match1');
@@ -97,7 +78,7 @@ describe('MatchesController', () => {
 
   describe('findOne', () => {
     it('should return a match by id', async () => {
-      mockPrismaService.match.findUnique.mockResolvedValue({ id: 'match1' });
+      prisma.match.findUnique.mockResolvedValue({ id: 'match1' } as any);
       const result = await matchesService.findOne('match1');
       expect(result).toHaveProperty('id', 'match1');
     });
@@ -105,19 +86,19 @@ describe('MatchesController', () => {
 
   describe('update', () => {
     it('should update a match', async () => {
-      mockPrismaService.match.update.mockResolvedValue({ id: 'match1', alliances: [] });
+      prisma.match.update.mockResolvedValue({ id: 'match1', alliances: [] } as any);
       const result = await matchesService.update('match1', { matchNumber: 2 } as any);
       expect(result).toHaveProperty('id', 'match1');
-      expect(mockPrismaService.match.update).toHaveBeenCalled();
+      expect(prisma.match.update).toHaveBeenCalled();
     });
   });
 
   describe('remove', () => {
     it('should delete a match', async () => {
-      mockPrismaService.match.delete.mockResolvedValue({ id: 'match1' });
+      prisma.match.delete.mockResolvedValue({ id: 'match1' } as any);
       const result = await matchesService.remove('match1');
       expect(result).toHaveProperty('id', 'match1');
-      expect(mockPrismaService.match.delete).toHaveBeenCalledWith({ where: { id: 'match1' } });
+      expect(prisma.match.delete).toHaveBeenCalledWith({ where: { id: 'match1' } });
     });
   });
 });
