@@ -1,40 +1,43 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TournamentsService } from './tournaments.service';
 import { PrismaService } from '../prisma.service';
+import { mockDeep, DeepMockProxy } from 'jest-mock-extended';
 
 describe('TournamentsService', () => {
   let service: TournamentsService;
-  let prisma: any;
-
-  const mockPrismaService = {
-    tournament: {
-      create: jest.fn(),
-      findMany: jest.fn(),
-      findUnique: jest.fn(),
-      update: jest.fn(),
-      delete: jest.fn(),
-    },
-  };
+  let prisma: DeepMockProxy<PrismaService>;
 
   beforeEach(async () => {
+    prisma = mockDeep<PrismaService>();
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         TournamentsService,
-        { provide: PrismaService, useValue: mockPrismaService },
+        { provide: PrismaService, useValue: prisma },
       ],
     }).compile();
 
     service = module.get<TournamentsService>(TournamentsService);
-    prisma = mockPrismaService;
     jest.clearAllMocks();
   });
 
   describe('create', () => {
     it('should create a tournament', async () => {
       const dto = { name: 'Tournament 1', description: "Test tournament using jest", location: 'City', startDate: '2025-05-13', endDate: '2025-05-14', adminId: 'admin1' };
-      prisma.tournament.create.mockResolvedValue({ id: 't1', ...dto });
+      const now = new Date();
+      const tournament = {
+        id: 't1',
+        name: dto.name,
+        description: dto.description,
+        startDate: new Date(dto.startDate),
+        endDate: new Date(dto.endDate),
+        createdAt: now,
+        updatedAt: now,
+        adminId: dto.adminId,
+      };
+      prisma.tournament.create.mockResolvedValue(tournament);
       const result = await service.create(dto as any);
-      expect(result).toHaveProperty('id', 't1');      expect(prisma.tournament.create).toHaveBeenCalledWith({
+      expect(result).toHaveProperty('id', 't1');
+      expect(prisma.tournament.create).toHaveBeenCalledWith({
         data: {
           name: dto.name,
           description: dto.description,
@@ -52,7 +55,18 @@ describe('TournamentsService', () => {
 
   describe('findAll', () => {
     it('should return all tournaments', async () => {
-      prisma.tournament.findMany.mockResolvedValue([{ id: 't1' }]);
+      const now = new Date();
+      const tournament = {
+        id: 't1',
+        name: 'Tournament 1',
+        description: 'desc',
+        startDate: now,
+        endDate: now,
+        createdAt: now,
+        updatedAt: now,
+        adminId: 'admin1',
+      };
+      prisma.tournament.findMany.mockResolvedValue([tournament]);
       const result = await service.findAll();
       expect(Array.isArray(result)).toBe(true);
       expect(result[0]).toHaveProperty('id', 't1');
@@ -70,7 +84,18 @@ describe('TournamentsService', () => {
 
   describe('findOne', () => {
     it('should return a tournament by id', async () => {
-      prisma.tournament.findUnique.mockResolvedValue({ id: 't1' });
+      const now = new Date();
+      const tournament = {
+        id: 't1',
+        name: 'Tournament 1',
+        description: 'desc',
+        startDate: now,
+        endDate: now,
+        createdAt: now,
+        updatedAt: now,
+        adminId: 'admin1',
+      };
+      prisma.tournament.findUnique.mockResolvedValue(tournament);
       const result = await service.findOne('t1');
       expect(result).toHaveProperty('id', 't1');
     });
@@ -87,7 +112,18 @@ describe('TournamentsService', () => {
 
   describe('update', () => {
     it('should update a tournament', async () => {
-      prisma.tournament.update.mockResolvedValue({ id: 't1', name: 'Updated' });
+      const now = new Date();
+      const tournament = {
+        id: 't1',
+        name: 'Updated',
+        description: 'desc',
+        startDate: now,
+        endDate: now,
+        createdAt: now,
+        updatedAt: now,
+        adminId: 'admin1',
+      };
+      prisma.tournament.update.mockResolvedValue(tournament);
       const result = await service.update('t1', { name: 'Updated' } as any);
       expect(result).toHaveProperty('id', 't1');
       expect(prisma.tournament.update).toHaveBeenCalledWith({
@@ -103,7 +139,18 @@ describe('TournamentsService', () => {
 
   describe('remove', () => {
     it('should delete a tournament', async () => {
-      prisma.tournament.delete.mockResolvedValue({ id: 't1' });
+      const now = new Date();
+      const tournament = {
+        id: 't1',
+        name: 'Tournament 1',
+        description: 'desc',
+        startDate: now,
+        endDate: now,
+        createdAt: now,
+        updatedAt: now,
+        adminId: 'admin1',
+      };
+      prisma.tournament.delete.mockResolvedValue(tournament);
       const result = await service.remove('t1');
       expect(result).toHaveProperty('id', 't1');
       expect(prisma.tournament.delete).toHaveBeenCalledWith({ where: { id: 't1' } });
