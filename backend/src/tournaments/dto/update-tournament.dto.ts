@@ -9,6 +9,7 @@ export const UpdateTournamentSchema = CreateTournamentSchema.innerType().partial
     path: ['endDate'],
   }
 );
+// numberOfFields is now included as an optional property via CreateTournamentSchema.partial()
 
 // Create a DTO class from the Zod schema
 export class UpdateTournamentDto extends createZodDto(UpdateTournamentSchema) {}

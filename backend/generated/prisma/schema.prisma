@@ -94,19 +94,20 @@ model User {
 }
 
 model Tournament {
-  id          String      @id @default(uuid())
-  name        String
-  description String?
-  startDate   DateTime
-  endDate     DateTime
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  adminId     String
-  admin       User        @relation(fields: [adminId], references: [id])
-  stages      Stage[]
-  teams       Team[] // Added teams relationship
-  teamStats   TeamStats[] // New relation to track team statistics
-  fields      Field[] // New relation: Tournament has many Fields
+  id             String      @id @default(uuid())
+  name           String
+  description    String?
+  startDate      DateTime
+  endDate        DateTime
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  adminId        String
+  admin          User        @relation(fields: [adminId], references: [id])
+  stages         Stage[]
+  teams          Team[] // Added teams relationship
+  teamStats      TeamStats[] // New relation to track team statistics
+  fields         Field[] // New relation: Tournament has many Fields
+  numberOfFields Int         @default(1)
 }
 
 model Stage {
@@ -149,6 +150,7 @@ model Match {
   schedule        Schedule?      @relation(fields: [scheduleId], references: [id], onDelete: SetNull)
   fieldId         String?
   field           Field?         @relation(fields: [fieldId], references: [id], onDelete: SetNull)
+  fieldNumber     Int?
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
 }
@@ -303,6 +305,7 @@ model Schedule {
 model Field {
   id           String     @id @default(uuid())
   name         String
+  number       Int
   location     String?
   description  String?
   tournamentId String
@@ -310,6 +313,8 @@ model Field {
   matches      Match[]
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
+
+  @@unique([tournamentId, number])
 }
 
 model MatchControl {

@@ -571,8 +571,8 @@ export namespace Prisma {
   export import Exact = $Public.Exact
 
   /**
-   * Prisma Client JS version: 6.7.0
-   * Query Engine version: 3cff47a7f5d65c3ea74883f1d736e41d68ce91ed
+   * Prisma Client JS version: 6.6.0
+   * Query Engine version: f676762280b54cd07c770017ed3711ddde35f37a
    */
   export type PrismaVersion = {
     client: string
@@ -4134,8 +4134,18 @@ export namespace Prisma {
 
   export type AggregateTournament = {
     _count: TournamentCountAggregateOutputType | null
+    _avg: TournamentAvgAggregateOutputType | null
+    _sum: TournamentSumAggregateOutputType | null
     _min: TournamentMinAggregateOutputType | null
     _max: TournamentMaxAggregateOutputType | null
+  }
+
+  export type TournamentAvgAggregateOutputType = {
+    numberOfFields: number | null
+  }
+
+  export type TournamentSumAggregateOutputType = {
+    numberOfFields: number | null
   }
 
   export type TournamentMinAggregateOutputType = {
@@ -4147,6 +4157,7 @@ export namespace Prisma {
     createdAt: Date | null
     updatedAt: Date | null
     adminId: string | null
+    numberOfFields: number | null
   }
 
   export type TournamentMaxAggregateOutputType = {
@@ -4158,6 +4169,7 @@ export namespace Prisma {
     createdAt: Date | null
     updatedAt: Date | null
     adminId: string | null
+    numberOfFields: number | null
   }
 
   export type TournamentCountAggregateOutputType = {
@@ -4169,9 +4181,18 @@ export namespace Prisma {
     createdAt: number
     updatedAt: number
     adminId: number
+    numberOfFields: number
     _all: number
   }
 
+
+  export type TournamentAvgAggregateInputType = {
+    numberOfFields?: true
+  }
+
+  export type TournamentSumAggregateInputType = {
+    numberOfFields?: true
+  }
 
   export type TournamentMinAggregateInputType = {
     id?: true
@@ -4182,6 +4203,7 @@ export namespace Prisma {
     createdAt?: true
     updatedAt?: true
     adminId?: true
+    numberOfFields?: true
   }
 
   export type TournamentMaxAggregateInputType = {
@@ -4193,6 +4215,7 @@ export namespace Prisma {
     createdAt?: true
     updatedAt?: true
     adminId?: true
+    numberOfFields?: true
   }
 
   export type TournamentCountAggregateInputType = {
@@ -4204,6 +4227,7 @@ export namespace Prisma {
     createdAt?: true
     updatedAt?: true
     adminId?: true
+    numberOfFields?: true
     _all?: true
   }
 
@@ -4245,6 +4269,18 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
+     * Select which fields to average
+    **/
+    _avg?: TournamentAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: TournamentSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: TournamentMinAggregateInputType
@@ -4275,6 +4311,8 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: TournamentCountAggregateInputType | true
+    _avg?: TournamentAvgAggregateInputType
+    _sum?: TournamentSumAggregateInputType
     _min?: TournamentMinAggregateInputType
     _max?: TournamentMaxAggregateInputType
   }
@@ -4288,7 +4326,10 @@ export namespace Prisma {
     createdAt: Date
     updatedAt: Date
     adminId: string
+    numberOfFields: number
     _count: TournamentCountAggregateOutputType | null
+    _avg: TournamentAvgAggregateOutputType | null
+    _sum: TournamentSumAggregateOutputType | null
     _min: TournamentMinAggregateOutputType | null
     _max: TournamentMaxAggregateOutputType | null
   }
@@ -4316,6 +4357,7 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     adminId?: boolean
+    numberOfFields?: boolean
     admin?: boolean | UserDefaultArgs<ExtArgs>
     stages?: boolean | Tournament$stagesArgs<ExtArgs>
     teams?: boolean | Tournament$teamsArgs<ExtArgs>
@@ -4333,6 +4375,7 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     adminId?: boolean
+    numberOfFields?: boolean
     admin?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["tournament"]>
 
@@ -4345,6 +4388,7 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     adminId?: boolean
+    numberOfFields?: boolean
     admin?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["tournament"]>
 
@@ -4357,9 +4401,10 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     adminId?: boolean
+    numberOfFields?: boolean
   }
 
-  export type TournamentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "startDate" | "endDate" | "createdAt" | "updatedAt" | "adminId", ExtArgs["result"]["tournament"]>
+  export type TournamentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "startDate" | "endDate" | "createdAt" | "updatedAt" | "adminId" | "numberOfFields", ExtArgs["result"]["tournament"]>
   export type TournamentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     admin?: boolean | UserDefaultArgs<ExtArgs>
     stages?: boolean | Tournament$stagesArgs<ExtArgs>
@@ -4393,6 +4438,7 @@ export namespace Prisma {
       createdAt: Date
       updatedAt: Date
       adminId: string
+      numberOfFields: number
     }, ExtArgs["result"]["tournament"]>
     composites: {}
   }
@@ -4829,6 +4875,7 @@ export namespace Prisma {
     readonly createdAt: FieldRef<"Tournament", 'DateTime'>
     readonly updatedAt: FieldRef<"Tournament", 'DateTime'>
     readonly adminId: FieldRef<"Tournament", 'String'>
+    readonly numberOfFields: FieldRef<"Tournament", 'Int'>
   }
     
 
@@ -6602,12 +6649,14 @@ export namespace Prisma {
     matchNumber: number | null
     roundNumber: number | null
     duration: number | null
+    fieldNumber: number | null
   }
 
   export type MatchSumAggregateOutputType = {
     matchNumber: number | null
     roundNumber: number | null
     duration: number | null
+    fieldNumber: number | null
   }
 
   export type MatchMinAggregateOutputType = {
@@ -6625,6 +6674,7 @@ export namespace Prisma {
     roundType: string | null
     scheduleId: string | null
     fieldId: string | null
+    fieldNumber: number | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -6644,6 +6694,7 @@ export namespace Prisma {
     roundType: string | null
     scheduleId: string | null
     fieldId: string | null
+    fieldNumber: number | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -6663,6 +6714,7 @@ export namespace Prisma {
     roundType: number
     scheduleId: number
     fieldId: number
+    fieldNumber: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -6673,12 +6725,14 @@ export namespace Prisma {
     matchNumber?: true
     roundNumber?: true
     duration?: true
+    fieldNumber?: true
   }
 
   export type MatchSumAggregateInputType = {
     matchNumber?: true
     roundNumber?: true
     duration?: true
+    fieldNumber?: true
   }
 
   export type MatchMinAggregateInputType = {
@@ -6696,6 +6750,7 @@ export namespace Prisma {
     roundType?: true
     scheduleId?: true
     fieldId?: true
+    fieldNumber?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -6715,6 +6770,7 @@ export namespace Prisma {
     roundType?: true
     scheduleId?: true
     fieldId?: true
+    fieldNumber?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -6734,6 +6790,7 @@ export namespace Prisma {
     roundType?: true
     scheduleId?: true
     fieldId?: true
+    fieldNumber?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -6840,6 +6897,7 @@ export namespace Prisma {
     roundType: string | null
     scheduleId: string | null
     fieldId: string | null
+    fieldNumber: number | null
     createdAt: Date
     updatedAt: Date
     _count: MatchCountAggregateOutputType | null
@@ -6878,6 +6936,7 @@ export namespace Prisma {
     roundType?: boolean
     scheduleId?: boolean
     fieldId?: boolean
+    fieldNumber?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     stage?: boolean | StageDefaultArgs<ExtArgs>
@@ -6906,6 +6965,7 @@ export namespace Prisma {
     roundType?: boolean
     scheduleId?: boolean
     fieldId?: boolean
+    fieldNumber?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     stage?: boolean | StageDefaultArgs<ExtArgs>
@@ -6929,6 +6989,7 @@ export namespace Prisma {
     roundType?: boolean
     scheduleId?: boolean
     fieldId?: boolean
+    fieldNumber?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     stage?: boolean | StageDefaultArgs<ExtArgs>
@@ -6952,11 +7013,12 @@ export namespace Prisma {
     roundType?: boolean
     scheduleId?: boolean
     fieldId?: boolean
+    fieldNumber?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type MatchOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "matchNumber" | "roundNumber" | "status" | "startTime" | "scheduledTime" | "endTime" | "duration" | "winningAlliance" | "stageId" | "scoredById" | "roundType" | "scheduleId" | "fieldId" | "createdAt" | "updatedAt", ExtArgs["result"]["match"]>
+  export type MatchOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "matchNumber" | "roundNumber" | "status" | "startTime" | "scheduledTime" | "endTime" | "duration" | "winningAlliance" | "stageId" | "scoredById" | "roundType" | "scheduleId" | "fieldId" | "fieldNumber" | "createdAt" | "updatedAt", ExtArgs["result"]["match"]>
   export type MatchInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     stage?: boolean | StageDefaultArgs<ExtArgs>
     alliances?: boolean | Match$alliancesArgs<ExtArgs>
@@ -7008,6 +7070,7 @@ export namespace Prisma {
       roundType: string | null
       scheduleId: string | null
       fieldId: string | null
+      fieldNumber: number | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["match"]>
@@ -7455,6 +7518,7 @@ export namespace Prisma {
     readonly roundType: FieldRef<"Match", 'String'>
     readonly scheduleId: FieldRef<"Match", 'String'>
     readonly fieldId: FieldRef<"Match", 'String'>
+    readonly fieldNumber: FieldRef<"Match", 'Int'>
     readonly createdAt: FieldRef<"Match", 'DateTime'>
     readonly updatedAt: FieldRef<"Match", 'DateTime'>
   }
@@ -17421,13 +17485,24 @@ export namespace Prisma {
 
   export type AggregateField = {
     _count: FieldCountAggregateOutputType | null
+    _avg: FieldAvgAggregateOutputType | null
+    _sum: FieldSumAggregateOutputType | null
     _min: FieldMinAggregateOutputType | null
     _max: FieldMaxAggregateOutputType | null
+  }
+
+  export type FieldAvgAggregateOutputType = {
+    number: number | null
+  }
+
+  export type FieldSumAggregateOutputType = {
+    number: number | null
   }
 
   export type FieldMinAggregateOutputType = {
     id: string | null
     name: string | null
+    number: number | null
     location: string | null
     description: string | null
     tournamentId: string | null
@@ -17438,6 +17513,7 @@ export namespace Prisma {
   export type FieldMaxAggregateOutputType = {
     id: string | null
     name: string | null
+    number: number | null
     location: string | null
     description: string | null
     tournamentId: string | null
@@ -17448,6 +17524,7 @@ export namespace Prisma {
   export type FieldCountAggregateOutputType = {
     id: number
     name: number
+    number: number
     location: number
     description: number
     tournamentId: number
@@ -17457,9 +17534,18 @@ export namespace Prisma {
   }
 
 
+  export type FieldAvgAggregateInputType = {
+    number?: true
+  }
+
+  export type FieldSumAggregateInputType = {
+    number?: true
+  }
+
   export type FieldMinAggregateInputType = {
     id?: true
     name?: true
+    number?: true
     location?: true
     description?: true
     tournamentId?: true
@@ -17470,6 +17556,7 @@ export namespace Prisma {
   export type FieldMaxAggregateInputType = {
     id?: true
     name?: true
+    number?: true
     location?: true
     description?: true
     tournamentId?: true
@@ -17480,6 +17567,7 @@ export namespace Prisma {
   export type FieldCountAggregateInputType = {
     id?: true
     name?: true
+    number?: true
     location?: true
     description?: true
     tournamentId?: true
@@ -17526,6 +17614,18 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
+     * Select which fields to average
+    **/
+    _avg?: FieldAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: FieldSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: FieldMinAggregateInputType
@@ -17556,6 +17656,8 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: FieldCountAggregateInputType | true
+    _avg?: FieldAvgAggregateInputType
+    _sum?: FieldSumAggregateInputType
     _min?: FieldMinAggregateInputType
     _max?: FieldMaxAggregateInputType
   }
@@ -17563,12 +17665,15 @@ export namespace Prisma {
   export type FieldGroupByOutputType = {
     id: string
     name: string
+    number: number
     location: string | null
     description: string | null
     tournamentId: string
     createdAt: Date
     updatedAt: Date
     _count: FieldCountAggregateOutputType | null
+    _avg: FieldAvgAggregateOutputType | null
+    _sum: FieldSumAggregateOutputType | null
     _min: FieldMinAggregateOutputType | null
     _max: FieldMaxAggregateOutputType | null
   }
@@ -17590,6 +17695,7 @@ export namespace Prisma {
   export type FieldSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
+    number?: boolean
     location?: boolean
     description?: boolean
     tournamentId?: boolean
@@ -17603,6 +17709,7 @@ export namespace Prisma {
   export type FieldSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
+    number?: boolean
     location?: boolean
     description?: boolean
     tournamentId?: boolean
@@ -17614,6 +17721,7 @@ export namespace Prisma {
   export type FieldSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
+    number?: boolean
     location?: boolean
     description?: boolean
     tournamentId?: boolean
@@ -17625,6 +17733,7 @@ export namespace Prisma {
   export type FieldSelectScalar = {
     id?: boolean
     name?: boolean
+    number?: boolean
     location?: boolean
     description?: boolean
     tournamentId?: boolean
@@ -17632,7 +17741,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type FieldOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "location" | "description" | "tournamentId" | "createdAt" | "updatedAt", ExtArgs["result"]["field"]>
+  export type FieldOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "number" | "location" | "description" | "tournamentId" | "createdAt" | "updatedAt", ExtArgs["result"]["field"]>
   export type FieldInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     tournament?: boolean | TournamentDefaultArgs<ExtArgs>
     matches?: boolean | Field$matchesArgs<ExtArgs>
@@ -17654,6 +17763,7 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       name: string
+      number: number
       location: string | null
       description: string | null
       tournamentId: string
@@ -18086,6 +18196,7 @@ export namespace Prisma {
   interface FieldFieldRefs {
     readonly id: FieldRef<"Field", 'String'>
     readonly name: FieldRef<"Field", 'String'>
+    readonly number: FieldRef<"Field", 'Int'>
     readonly location: FieldRef<"Field", 'String'>
     readonly description: FieldRef<"Field", 'String'>
     readonly tournamentId: FieldRef<"Field", 'String'>
@@ -23184,7 +23295,8 @@ export namespace Prisma {
     endDate: 'endDate',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
-    adminId: 'adminId'
+    adminId: 'adminId',
+    numberOfFields: 'numberOfFields'
   };
 
   export type TournamentScalarFieldEnum = (typeof TournamentScalarFieldEnum)[keyof typeof TournamentScalarFieldEnum]
@@ -23221,6 +23333,7 @@ export namespace Prisma {
     roundType: 'roundType',
     scheduleId: 'scheduleId',
     fieldId: 'fieldId',
+    fieldNumber: 'fieldNumber',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -23358,6 +23471,7 @@ export namespace Prisma {
   export const FieldScalarFieldEnum: {
     id: 'id',
     name: 'name',
+    number: 'number',
     location: 'location',
     description: 'description',
     tournamentId: 'tournamentId',
@@ -23529,20 +23643,6 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'StageType'
-   */
-  export type EnumStageTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StageType'>
-    
-
-
-  /**
-   * Reference to a field of type 'StageType[]'
-   */
-  export type ListEnumStageTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StageType[]'>
-    
-
-
-  /**
    * Reference to a field of type 'Int'
    */
   export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
@@ -23553,6 +23653,20 @@ export namespace Prisma {
    * Reference to a field of type 'Int[]'
    */
   export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'StageType'
+   */
+  export type EnumStageTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StageType'>
+    
+
+
+  /**
+   * Reference to a field of type 'StageType[]'
+   */
+  export type ListEnumStageTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StageType[]'>
     
 
 
@@ -23783,6 +23897,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Tournament"> | Date | string
     updatedAt?: DateTimeFilter<"Tournament"> | Date | string
     adminId?: StringFilter<"Tournament"> | string
+    numberOfFields?: IntFilter<"Tournament"> | number
     admin?: XOR<UserScalarRelationFilter, UserWhereInput>
     stages?: StageListRelationFilter
     teams?: TeamListRelationFilter
@@ -23799,6 +23914,7 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     adminId?: SortOrder
+    numberOfFields?: SortOrder
     admin?: UserOrderByWithRelationInput
     stages?: StageOrderByRelationAggregateInput
     teams?: TeamOrderByRelationAggregateInput
@@ -23818,6 +23934,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Tournament"> | Date | string
     updatedAt?: DateTimeFilter<"Tournament"> | Date | string
     adminId?: StringFilter<"Tournament"> | string
+    numberOfFields?: IntFilter<"Tournament"> | number
     admin?: XOR<UserScalarRelationFilter, UserWhereInput>
     stages?: StageListRelationFilter
     teams?: TeamListRelationFilter
@@ -23834,9 +23951,12 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     adminId?: SortOrder
+    numberOfFields?: SortOrder
     _count?: TournamentCountOrderByAggregateInput
+    _avg?: TournamentAvgOrderByAggregateInput
     _max?: TournamentMaxOrderByAggregateInput
     _min?: TournamentMinOrderByAggregateInput
+    _sum?: TournamentSumOrderByAggregateInput
   }
 
   export type TournamentScalarWhereWithAggregatesInput = {
@@ -23851,6 +23971,7 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"Tournament"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Tournament"> | Date | string
     adminId?: StringWithAggregatesFilter<"Tournament"> | string
+    numberOfFields?: IntWithAggregatesFilter<"Tournament"> | number
   }
 
   export type StageWhereInput = {
@@ -23962,6 +24083,7 @@ export namespace Prisma {
     roundType?: StringNullableFilter<"Match"> | string | null
     scheduleId?: StringNullableFilter<"Match"> | string | null
     fieldId?: StringNullableFilter<"Match"> | string | null
+    fieldNumber?: IntNullableFilter<"Match"> | number | null
     createdAt?: DateTimeFilter<"Match"> | Date | string
     updatedAt?: DateTimeFilter<"Match"> | Date | string
     stage?: XOR<StageScalarRelationFilter, StageWhereInput>
@@ -23989,6 +24111,7 @@ export namespace Prisma {
     roundType?: SortOrderInput | SortOrder
     scheduleId?: SortOrderInput | SortOrder
     fieldId?: SortOrderInput | SortOrder
+    fieldNumber?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     stage?: StageOrderByWithRelationInput
@@ -24019,6 +24142,7 @@ export namespace Prisma {
     roundType?: StringNullableFilter<"Match"> | string | null
     scheduleId?: StringNullableFilter<"Match"> | string | null
     fieldId?: StringNullableFilter<"Match"> | string | null
+    fieldNumber?: IntNullableFilter<"Match"> | number | null
     createdAt?: DateTimeFilter<"Match"> | Date | string
     updatedAt?: DateTimeFilter<"Match"> | Date | string
     stage?: XOR<StageScalarRelationFilter, StageWhereInput>
@@ -24046,6 +24170,7 @@ export namespace Prisma {
     roundType?: SortOrderInput | SortOrder
     scheduleId?: SortOrderInput | SortOrder
     fieldId?: SortOrderInput | SortOrder
+    fieldNumber?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: MatchCountOrderByAggregateInput
@@ -24073,6 +24198,7 @@ export namespace Prisma {
     roundType?: StringNullableWithAggregatesFilter<"Match"> | string | null
     scheduleId?: StringNullableWithAggregatesFilter<"Match"> | string | null
     fieldId?: StringNullableWithAggregatesFilter<"Match"> | string | null
+    fieldNumber?: IntNullableWithAggregatesFilter<"Match"> | number | null
     createdAt?: DateTimeWithAggregatesFilter<"Match"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Match"> | Date | string
   }
@@ -24759,6 +24885,7 @@ export namespace Prisma {
     NOT?: FieldWhereInput | FieldWhereInput[]
     id?: StringFilter<"Field"> | string
     name?: StringFilter<"Field"> | string
+    number?: IntFilter<"Field"> | number
     location?: StringNullableFilter<"Field"> | string | null
     description?: StringNullableFilter<"Field"> | string | null
     tournamentId?: StringFilter<"Field"> | string
@@ -24771,6 +24898,7 @@ export namespace Prisma {
   export type FieldOrderByWithRelationInput = {
     id?: SortOrder
     name?: SortOrder
+    number?: SortOrder
     location?: SortOrderInput | SortOrder
     description?: SortOrderInput | SortOrder
     tournamentId?: SortOrder
@@ -24782,10 +24910,12 @@ export namespace Prisma {
 
   export type FieldWhereUniqueInput = Prisma.AtLeast<{
     id?: string
+    tournamentId_number?: FieldTournamentIdNumberCompoundUniqueInput
     AND?: FieldWhereInput | FieldWhereInput[]
     OR?: FieldWhereInput[]
     NOT?: FieldWhereInput | FieldWhereInput[]
     name?: StringFilter<"Field"> | string
+    number?: IntFilter<"Field"> | number
     location?: StringNullableFilter<"Field"> | string | null
     description?: StringNullableFilter<"Field"> | string | null
     tournamentId?: StringFilter<"Field"> | string
@@ -24793,19 +24923,22 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Field"> | Date | string
     tournament?: XOR<TournamentScalarRelationFilter, TournamentWhereInput>
     matches?: MatchListRelationFilter
-  }, "id">
+  }, "id" | "tournamentId_number">
 
   export type FieldOrderByWithAggregationInput = {
     id?: SortOrder
     name?: SortOrder
+    number?: SortOrder
     location?: SortOrderInput | SortOrder
     description?: SortOrderInput | SortOrder
     tournamentId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: FieldCountOrderByAggregateInput
+    _avg?: FieldAvgOrderByAggregateInput
     _max?: FieldMaxOrderByAggregateInput
     _min?: FieldMinOrderByAggregateInput
+    _sum?: FieldSumOrderByAggregateInput
   }
 
   export type FieldScalarWhereWithAggregatesInput = {
@@ -24814,6 +24947,7 @@ export namespace Prisma {
     NOT?: FieldScalarWhereWithAggregatesInput | FieldScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Field"> | string
     name?: StringWithAggregatesFilter<"Field"> | string
+    number?: IntWithAggregatesFilter<"Field"> | number
     location?: StringNullableWithAggregatesFilter<"Field"> | string | null
     description?: StringNullableWithAggregatesFilter<"Field"> | string | null
     tournamentId?: StringWithAggregatesFilter<"Field"> | string
@@ -25282,6 +25416,7 @@ export namespace Prisma {
     endDate: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
+    numberOfFields?: number
     admin: UserCreateNestedOneWithoutTournamentsInput
     stages?: StageCreateNestedManyWithoutTournamentInput
     teams?: TeamCreateNestedManyWithoutTournamentInput
@@ -25298,6 +25433,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     adminId: string
+    numberOfFields?: number
     stages?: StageUncheckedCreateNestedManyWithoutTournamentInput
     teams?: TeamUncheckedCreateNestedManyWithoutTournamentInput
     teamStats?: TeamStatsUncheckedCreateNestedManyWithoutTournamentInput
@@ -25312,6 +25448,7 @@ export namespace Prisma {
     endDate?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    numberOfFields?: IntFieldUpdateOperationsInput | number
     admin?: UserUpdateOneRequiredWithoutTournamentsNestedInput
     stages?: StageUpdateManyWithoutTournamentNestedInput
     teams?: TeamUpdateManyWithoutTournamentNestedInput
@@ -25328,6 +25465,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     adminId?: StringFieldUpdateOperationsInput | string
+    numberOfFields?: IntFieldUpdateOperationsInput | number
     stages?: StageUncheckedUpdateManyWithoutTournamentNestedInput
     teams?: TeamUncheckedUpdateManyWithoutTournamentNestedInput
     teamStats?: TeamStatsUncheckedUpdateManyWithoutTournamentNestedInput
@@ -25343,6 +25481,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     adminId: string
+    numberOfFields?: number
   }
 
   export type TournamentUpdateManyMutationInput = {
@@ -25353,6 +25492,7 @@ export namespace Prisma {
     endDate?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    numberOfFields?: IntFieldUpdateOperationsInput | number
   }
 
   export type TournamentUncheckedUpdateManyInput = {
@@ -25364,6 +25504,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     adminId?: StringFieldUpdateOperationsInput | string
+    numberOfFields?: IntFieldUpdateOperationsInput | number
   }
 
   export type StageCreateInput = {
@@ -25479,6 +25620,7 @@ export namespace Prisma {
     duration?: number | null
     winningAlliance?: string | null
     roundType?: string | null
+    fieldNumber?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
     stage: StageCreateNestedOneWithoutMatchesInput
@@ -25506,6 +25648,7 @@ export namespace Prisma {
     roundType?: string | null
     scheduleId?: string | null
     fieldId?: string | null
+    fieldNumber?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
     alliances?: AllianceUncheckedCreateNestedManyWithoutMatchInput
@@ -25525,6 +25668,7 @@ export namespace Prisma {
     duration?: NullableIntFieldUpdateOperationsInput | number | null
     winningAlliance?: NullableStringFieldUpdateOperationsInput | string | null
     roundType?: NullableStringFieldUpdateOperationsInput | string | null
+    fieldNumber?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     stage?: StageUpdateOneRequiredWithoutMatchesNestedInput
@@ -25552,6 +25696,7 @@ export namespace Prisma {
     roundType?: NullableStringFieldUpdateOperationsInput | string | null
     scheduleId?: NullableStringFieldUpdateOperationsInput | string | null
     fieldId?: NullableStringFieldUpdateOperationsInput | string | null
+    fieldNumber?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     alliances?: AllianceUncheckedUpdateManyWithoutMatchNestedInput
@@ -25575,6 +25720,7 @@ export namespace Prisma {
     roundType?: string | null
     scheduleId?: string | null
     fieldId?: string | null
+    fieldNumber?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -25590,6 +25736,7 @@ export namespace Prisma {
     duration?: NullableIntFieldUpdateOperationsInput | number | null
     winningAlliance?: NullableStringFieldUpdateOperationsInput | string | null
     roundType?: NullableStringFieldUpdateOperationsInput | string | null
+    fieldNumber?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -25609,6 +25756,7 @@ export namespace Prisma {
     roundType?: NullableStringFieldUpdateOperationsInput | string | null
     scheduleId?: NullableStringFieldUpdateOperationsInput | string | null
     fieldId?: NullableStringFieldUpdateOperationsInput | string | null
+    fieldNumber?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -26344,6 +26492,7 @@ export namespace Prisma {
   export type FieldCreateInput = {
     id?: string
     name: string
+    number: number
     location?: string | null
     description?: string | null
     createdAt?: Date | string
@@ -26355,6 +26504,7 @@ export namespace Prisma {
   export type FieldUncheckedCreateInput = {
     id?: string
     name: string
+    number: number
     location?: string | null
     description?: string | null
     tournamentId: string
@@ -26366,6 +26516,7 @@ export namespace Prisma {
   export type FieldUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    number?: IntFieldUpdateOperationsInput | number
     location?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -26377,6 +26528,7 @@ export namespace Prisma {
   export type FieldUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    number?: IntFieldUpdateOperationsInput | number
     location?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     tournamentId?: StringFieldUpdateOperationsInput | string
@@ -26388,6 +26540,7 @@ export namespace Prisma {
   export type FieldCreateManyInput = {
     id?: string
     name: string
+    number: number
     location?: string | null
     description?: string | null
     tournamentId: string
@@ -26398,6 +26551,7 @@ export namespace Prisma {
   export type FieldUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    number?: IntFieldUpdateOperationsInput | number
     location?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -26407,6 +26561,7 @@ export namespace Prisma {
   export type FieldUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    number?: IntFieldUpdateOperationsInput | number
     location?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     tournamentId?: StringFieldUpdateOperationsInput | string
@@ -27041,6 +27196,17 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type IntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
+  }
+
   export type UserScalarRelationFilter = {
     is?: UserWhereInput
     isNot?: UserWhereInput
@@ -27095,6 +27261,11 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     adminId?: SortOrder
+    numberOfFields?: SortOrder
+  }
+
+  export type TournamentAvgOrderByAggregateInput = {
+    numberOfFields?: SortOrder
   }
 
   export type TournamentMaxOrderByAggregateInput = {
@@ -27106,6 +27277,7 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     adminId?: SortOrder
+    numberOfFields?: SortOrder
   }
 
   export type TournamentMinOrderByAggregateInput = {
@@ -27117,16 +27289,14 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     adminId?: SortOrder
+    numberOfFields?: SortOrder
   }
 
-  export type EnumStageTypeFilter<$PrismaModel = never> = {
-    equals?: $Enums.StageType | EnumStageTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.StageType[] | ListEnumStageTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.StageType[] | ListEnumStageTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumStageTypeFilter<$PrismaModel> | $Enums.StageType
+  export type TournamentSumOrderByAggregateInput = {
+    numberOfFields?: SortOrder
   }
 
-  export type IntFilter<$PrismaModel = never> = {
+  export type IntWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
     notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -27134,7 +27304,19 @@ export namespace Prisma {
     lte?: number | IntFieldRefInput<$PrismaModel>
     gt?: number | IntFieldRefInput<$PrismaModel>
     gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntFilter<$PrismaModel> | number
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type EnumStageTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.StageType | EnumStageTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.StageType[] | ListEnumStageTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.StageType[] | ListEnumStageTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumStageTypeFilter<$PrismaModel> | $Enums.StageType
   }
 
   export type TournamentScalarRelationFilter = {
@@ -27211,22 +27393,6 @@ export namespace Prisma {
     _max?: NestedEnumStageTypeFilter<$PrismaModel>
   }
 
-  export type IntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedIntFilter<$PrismaModel>
-    _min?: NestedIntFilter<$PrismaModel>
-    _max?: NestedIntFilter<$PrismaModel>
-  }
-
   export type IntNullableFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel> | null
     in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
@@ -27288,6 +27454,7 @@ export namespace Prisma {
     roundType?: SortOrder
     scheduleId?: SortOrder
     fieldId?: SortOrder
+    fieldNumber?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -27296,6 +27463,7 @@ export namespace Prisma {
     matchNumber?: SortOrder
     roundNumber?: SortOrder
     duration?: SortOrder
+    fieldNumber?: SortOrder
   }
 
   export type MatchMaxOrderByAggregateInput = {
@@ -27313,6 +27481,7 @@ export namespace Prisma {
     roundType?: SortOrder
     scheduleId?: SortOrder
     fieldId?: SortOrder
+    fieldNumber?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -27332,6 +27501,7 @@ export namespace Prisma {
     roundType?: SortOrder
     scheduleId?: SortOrder
     fieldId?: SortOrder
+    fieldNumber?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -27340,6 +27510,7 @@ export namespace Prisma {
     matchNumber?: SortOrder
     roundNumber?: SortOrder
     duration?: SortOrder
+    fieldNumber?: SortOrder
   }
 
   export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -27905,9 +28076,15 @@ export namespace Prisma {
     quality?: SortOrder
   }
 
+  export type FieldTournamentIdNumberCompoundUniqueInput = {
+    tournamentId: string
+    number: number
+  }
+
   export type FieldCountOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
+    number?: SortOrder
     location?: SortOrder
     description?: SortOrder
     tournamentId?: SortOrder
@@ -27915,9 +28092,14 @@ export namespace Prisma {
     updatedAt?: SortOrder
   }
 
+  export type FieldAvgOrderByAggregateInput = {
+    number?: SortOrder
+  }
+
   export type FieldMaxOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
+    number?: SortOrder
     location?: SortOrder
     description?: SortOrder
     tournamentId?: SortOrder
@@ -27928,11 +28110,16 @@ export namespace Prisma {
   export type FieldMinOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
+    number?: SortOrder
     location?: SortOrder
     description?: SortOrder
     tournamentId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+  }
+
+  export type FieldSumOrderByAggregateInput = {
+    number?: SortOrder
   }
 
   export type EnumMatchStateFilter<$PrismaModel = never> = {
@@ -28510,6 +28697,14 @@ export namespace Prisma {
     connect?: FieldWhereUniqueInput | FieldWhereUniqueInput[]
   }
 
+  export type IntFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
   export type UserUpdateOneRequiredWithoutTournamentsNestedInput = {
     create?: XOR<UserCreateWithoutTournamentsInput, UserUncheckedCreateWithoutTournamentsInput>
     connectOrCreate?: UserCreateOrConnectWithoutTournamentsInput
@@ -28680,14 +28875,6 @@ export namespace Prisma {
 
   export type EnumStageTypeFieldUpdateOperationsInput = {
     set?: $Enums.StageType
-  }
-
-  export type IntFieldUpdateOperationsInput = {
-    set?: number
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
   }
 
   export type TournamentUpdateOneRequiredWithoutStagesNestedInput = {
@@ -29816,23 +30003,6 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
-  export type NestedEnumStageTypeFilter<$PrismaModel = never> = {
-    equals?: $Enums.StageType | EnumStageTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.StageType[] | ListEnumStageTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.StageType[] | ListEnumStageTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumStageTypeFilter<$PrismaModel> | $Enums.StageType
-  }
-
-  export type NestedEnumStageTypeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.StageType | EnumStageTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.StageType[] | ListEnumStageTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.StageType[] | ListEnumStageTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumStageTypeWithAggregatesFilter<$PrismaModel> | $Enums.StageType
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumStageTypeFilter<$PrismaModel>
-    _max?: NestedEnumStageTypeFilter<$PrismaModel>
-  }
-
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -29858,6 +30028,23 @@ export namespace Prisma {
     gt?: number | FloatFieldRefInput<$PrismaModel>
     gte?: number | FloatFieldRefInput<$PrismaModel>
     not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
+  export type NestedEnumStageTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.StageType | EnumStageTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.StageType[] | ListEnumStageTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.StageType[] | ListEnumStageTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumStageTypeFilter<$PrismaModel> | $Enums.StageType
+  }
+
+  export type NestedEnumStageTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.StageType | EnumStageTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.StageType[] | ListEnumStageTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.StageType[] | ListEnumStageTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumStageTypeWithAggregatesFilter<$PrismaModel> | $Enums.StageType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumStageTypeFilter<$PrismaModel>
+    _max?: NestedEnumStageTypeFilter<$PrismaModel>
   }
 
   export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -30136,6 +30323,7 @@ export namespace Prisma {
     endDate: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
+    numberOfFields?: number
     stages?: StageCreateNestedManyWithoutTournamentInput
     teams?: TeamCreateNestedManyWithoutTournamentInput
     teamStats?: TeamStatsCreateNestedManyWithoutTournamentInput
@@ -30150,6 +30338,7 @@ export namespace Prisma {
     endDate: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
+    numberOfFields?: number
     stages?: StageUncheckedCreateNestedManyWithoutTournamentInput
     teams?: TeamUncheckedCreateNestedManyWithoutTournamentInput
     teamStats?: TeamStatsUncheckedCreateNestedManyWithoutTournamentInput
@@ -30177,6 +30366,7 @@ export namespace Prisma {
     duration?: number | null
     winningAlliance?: string | null
     roundType?: string | null
+    fieldNumber?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
     stage: StageCreateNestedOneWithoutMatchesInput
@@ -30202,6 +30392,7 @@ export namespace Prisma {
     roundType?: string | null
     scheduleId?: string | null
     fieldId?: string | null
+    fieldNumber?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
     alliances?: AllianceUncheckedCreateNestedManyWithoutMatchInput
@@ -30386,6 +30577,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Tournament"> | Date | string
     updatedAt?: DateTimeFilter<"Tournament"> | Date | string
     adminId?: StringFilter<"Tournament"> | string
+    numberOfFields?: IntFilter<"Tournament"> | number
   }
 
   export type MatchUpsertWithWhereUniqueWithoutScoredByInput = {
@@ -30422,6 +30614,7 @@ export namespace Prisma {
     roundType?: StringNullableFilter<"Match"> | string | null
     scheduleId?: StringNullableFilter<"Match"> | string | null
     fieldId?: StringNullableFilter<"Match"> | string | null
+    fieldNumber?: IntNullableFilter<"Match"> | number | null
     createdAt?: DateTimeFilter<"Match"> | Date | string
     updatedAt?: DateTimeFilter<"Match"> | Date | string
   }
@@ -30657,6 +30850,7 @@ export namespace Prisma {
   export type FieldCreateWithoutTournamentInput = {
     id?: string
     name: string
+    number: number
     location?: string | null
     description?: string | null
     createdAt?: Date | string
@@ -30667,6 +30861,7 @@ export namespace Prisma {
   export type FieldUncheckedCreateWithoutTournamentInput = {
     id?: string
     name: string
+    number: number
     location?: string | null
     description?: string | null
     createdAt?: Date | string
@@ -30857,6 +31052,7 @@ export namespace Prisma {
     NOT?: FieldScalarWhereInput | FieldScalarWhereInput[]
     id?: StringFilter<"Field"> | string
     name?: StringFilter<"Field"> | string
+    number?: IntFilter<"Field"> | number
     location?: StringNullableFilter<"Field"> | string | null
     description?: StringNullableFilter<"Field"> | string | null
     tournamentId?: StringFilter<"Field"> | string
@@ -30872,6 +31068,7 @@ export namespace Prisma {
     endDate: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
+    numberOfFields?: number
     admin: UserCreateNestedOneWithoutTournamentsInput
     teams?: TeamCreateNestedManyWithoutTournamentInput
     teamStats?: TeamStatsCreateNestedManyWithoutTournamentInput
@@ -30887,6 +31084,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     adminId: string
+    numberOfFields?: number
     teams?: TeamUncheckedCreateNestedManyWithoutTournamentInput
     teamStats?: TeamStatsUncheckedCreateNestedManyWithoutTournamentInput
     fields?: FieldUncheckedCreateNestedManyWithoutTournamentInput
@@ -30908,6 +31106,7 @@ export namespace Prisma {
     duration?: number | null
     winningAlliance?: string | null
     roundType?: string | null
+    fieldNumber?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
     alliances?: AllianceCreateNestedManyWithoutMatchInput
@@ -30933,6 +31132,7 @@ export namespace Prisma {
     roundType?: string | null
     scheduleId?: string | null
     fieldId?: string | null
+    fieldNumber?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
     alliances?: AllianceUncheckedCreateNestedManyWithoutMatchInput
@@ -31048,6 +31248,7 @@ export namespace Prisma {
     endDate?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    numberOfFields?: IntFieldUpdateOperationsInput | number
     admin?: UserUpdateOneRequiredWithoutTournamentsNestedInput
     teams?: TeamUpdateManyWithoutTournamentNestedInput
     teamStats?: TeamStatsUpdateManyWithoutTournamentNestedInput
@@ -31063,6 +31264,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     adminId?: StringFieldUpdateOperationsInput | string
+    numberOfFields?: IntFieldUpdateOperationsInput | number
     teams?: TeamUncheckedUpdateManyWithoutTournamentNestedInput
     teamStats?: TeamStatsUncheckedUpdateManyWithoutTournamentNestedInput
     fields?: FieldUncheckedUpdateManyWithoutTournamentNestedInput
@@ -31364,6 +31566,7 @@ export namespace Prisma {
   export type FieldCreateWithoutMatchesInput = {
     id?: string
     name: string
+    number: number
     location?: string | null
     description?: string | null
     createdAt?: Date | string
@@ -31374,6 +31577,7 @@ export namespace Prisma {
   export type FieldUncheckedCreateWithoutMatchesInput = {
     id?: string
     name: string
+    number: number
     location?: string | null
     description?: string | null
     tournamentId: string
@@ -31649,6 +31853,7 @@ export namespace Prisma {
   export type FieldUpdateWithoutMatchesInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    number?: IntFieldUpdateOperationsInput | number
     location?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -31659,6 +31864,7 @@ export namespace Prisma {
   export type FieldUncheckedUpdateWithoutMatchesInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    number?: IntFieldUpdateOperationsInput | number
     location?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     tournamentId?: StringFieldUpdateOperationsInput | string
@@ -31677,6 +31883,7 @@ export namespace Prisma {
     duration?: number | null
     winningAlliance?: string | null
     roundType?: string | null
+    fieldNumber?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
     stage: StageCreateNestedOneWithoutMatchesInput
@@ -31703,6 +31910,7 @@ export namespace Prisma {
     roundType?: string | null
     scheduleId?: string | null
     fieldId?: string | null
+    fieldNumber?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
     alliances?: AllianceUncheckedCreateNestedManyWithoutMatchInput
@@ -31778,6 +31986,7 @@ export namespace Prisma {
     duration?: NullableIntFieldUpdateOperationsInput | number | null
     winningAlliance?: NullableStringFieldUpdateOperationsInput | string | null
     roundType?: NullableStringFieldUpdateOperationsInput | string | null
+    fieldNumber?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     stage?: StageUpdateOneRequiredWithoutMatchesNestedInput
@@ -31804,6 +32013,7 @@ export namespace Prisma {
     roundType?: NullableStringFieldUpdateOperationsInput | string | null
     scheduleId?: NullableStringFieldUpdateOperationsInput | string | null
     fieldId?: NullableStringFieldUpdateOperationsInput | string | null
+    fieldNumber?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     alliances?: AllianceUncheckedUpdateManyWithoutMatchNestedInput
@@ -31869,6 +32079,7 @@ export namespace Prisma {
     duration?: number | null
     winningAlliance?: string | null
     roundType?: string | null
+    fieldNumber?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
     stage: StageCreateNestedOneWithoutMatchesInput
@@ -31895,6 +32106,7 @@ export namespace Prisma {
     roundType?: string | null
     scheduleId?: string | null
     fieldId?: string | null
+    fieldNumber?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
     referees?: MatchRefereeUncheckedCreateNestedManyWithoutMatchInput
@@ -31982,6 +32194,7 @@ export namespace Prisma {
     duration?: NullableIntFieldUpdateOperationsInput | number | null
     winningAlliance?: NullableStringFieldUpdateOperationsInput | string | null
     roundType?: NullableStringFieldUpdateOperationsInput | string | null
+    fieldNumber?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     stage?: StageUpdateOneRequiredWithoutMatchesNestedInput
@@ -32008,6 +32221,7 @@ export namespace Prisma {
     roundType?: NullableStringFieldUpdateOperationsInput | string | null
     scheduleId?: NullableStringFieldUpdateOperationsInput | string | null
     fieldId?: NullableStringFieldUpdateOperationsInput | string | null
+    fieldNumber?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     referees?: MatchRefereeUncheckedUpdateManyWithoutMatchNestedInput
@@ -32227,6 +32441,7 @@ export namespace Prisma {
     endDate: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
+    numberOfFields?: number
     admin: UserCreateNestedOneWithoutTournamentsInput
     stages?: StageCreateNestedManyWithoutTournamentInput
     teamStats?: TeamStatsCreateNestedManyWithoutTournamentInput
@@ -32242,6 +32457,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     adminId: string
+    numberOfFields?: number
     stages?: StageUncheckedCreateNestedManyWithoutTournamentInput
     teamStats?: TeamStatsUncheckedCreateNestedManyWithoutTournamentInput
     fields?: FieldUncheckedCreateNestedManyWithoutTournamentInput
@@ -32349,6 +32565,7 @@ export namespace Prisma {
     endDate?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    numberOfFields?: IntFieldUpdateOperationsInput | number
     admin?: UserUpdateOneRequiredWithoutTournamentsNestedInput
     stages?: StageUpdateManyWithoutTournamentNestedInput
     teamStats?: TeamStatsUpdateManyWithoutTournamentNestedInput
@@ -32364,6 +32581,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     adminId?: StringFieldUpdateOperationsInput | string
+    numberOfFields?: IntFieldUpdateOperationsInput | number
     stages?: StageUncheckedUpdateManyWithoutTournamentNestedInput
     teamStats?: TeamStatsUncheckedUpdateManyWithoutTournamentNestedInput
     fields?: FieldUncheckedUpdateManyWithoutTournamentNestedInput
@@ -32540,6 +32758,7 @@ export namespace Prisma {
     duration?: number | null
     winningAlliance?: string | null
     roundType?: string | null
+    fieldNumber?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
     stage: StageCreateNestedOneWithoutMatchesInput
@@ -32566,6 +32785,7 @@ export namespace Prisma {
     roundType?: string | null
     scheduleId?: string | null
     fieldId?: string | null
+    fieldNumber?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
     alliances?: AllianceUncheckedCreateNestedManyWithoutMatchInput
@@ -32600,6 +32820,7 @@ export namespace Prisma {
     duration?: NullableIntFieldUpdateOperationsInput | number | null
     winningAlliance?: NullableStringFieldUpdateOperationsInput | string | null
     roundType?: NullableStringFieldUpdateOperationsInput | string | null
+    fieldNumber?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     stage?: StageUpdateOneRequiredWithoutMatchesNestedInput
@@ -32626,6 +32847,7 @@ export namespace Prisma {
     roundType?: NullableStringFieldUpdateOperationsInput | string | null
     scheduleId?: NullableStringFieldUpdateOperationsInput | string | null
     fieldId?: NullableStringFieldUpdateOperationsInput | string | null
+    fieldNumber?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     alliances?: AllianceUncheckedUpdateManyWithoutMatchNestedInput
@@ -32674,6 +32896,7 @@ export namespace Prisma {
     endDate: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
+    numberOfFields?: number
     admin: UserCreateNestedOneWithoutTournamentsInput
     stages?: StageCreateNestedManyWithoutTournamentInput
     teams?: TeamCreateNestedManyWithoutTournamentInput
@@ -32689,6 +32912,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     adminId: string
+    numberOfFields?: number
     stages?: StageUncheckedCreateNestedManyWithoutTournamentInput
     teams?: TeamUncheckedCreateNestedManyWithoutTournamentInput
     fields?: FieldUncheckedCreateNestedManyWithoutTournamentInput
@@ -32792,6 +33016,7 @@ export namespace Prisma {
     endDate?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    numberOfFields?: IntFieldUpdateOperationsInput | number
     admin?: UserUpdateOneRequiredWithoutTournamentsNestedInput
     stages?: StageUpdateManyWithoutTournamentNestedInput
     teams?: TeamUpdateManyWithoutTournamentNestedInput
@@ -32807,6 +33032,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     adminId?: StringFieldUpdateOperationsInput | string
+    numberOfFields?: IntFieldUpdateOperationsInput | number
     stages?: StageUncheckedUpdateManyWithoutTournamentNestedInput
     teams?: TeamUncheckedUpdateManyWithoutTournamentNestedInput
     fields?: FieldUncheckedUpdateManyWithoutTournamentNestedInput
@@ -32899,6 +33125,7 @@ export namespace Prisma {
     duration?: number | null
     winningAlliance?: string | null
     roundType?: string | null
+    fieldNumber?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
     stage: StageCreateNestedOneWithoutMatchesInput
@@ -32924,6 +33151,7 @@ export namespace Prisma {
     scoredById?: string | null
     roundType?: string | null
     fieldId?: string | null
+    fieldNumber?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
     alliances?: AllianceUncheckedCreateNestedManyWithoutMatchInput
@@ -33007,6 +33235,7 @@ export namespace Prisma {
     endDate: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
+    numberOfFields?: number
     admin: UserCreateNestedOneWithoutTournamentsInput
     stages?: StageCreateNestedManyWithoutTournamentInput
     teams?: TeamCreateNestedManyWithoutTournamentInput
@@ -33022,6 +33251,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     adminId: string
+    numberOfFields?: number
     stages?: StageUncheckedCreateNestedManyWithoutTournamentInput
     teams?: TeamUncheckedCreateNestedManyWithoutTournamentInput
     teamStats?: TeamStatsUncheckedCreateNestedManyWithoutTournamentInput
@@ -33043,6 +33273,7 @@ export namespace Prisma {
     duration?: number | null
     winningAlliance?: string | null
     roundType?: string | null
+    fieldNumber?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
     stage: StageCreateNestedOneWithoutMatchesInput
@@ -33068,6 +33299,7 @@ export namespace Prisma {
     scoredById?: string | null
     roundType?: string | null
     scheduleId?: string | null
+    fieldNumber?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
     alliances?: AllianceUncheckedCreateNestedManyWithoutMatchInput
@@ -33105,6 +33337,7 @@ export namespace Prisma {
     endDate?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    numberOfFields?: IntFieldUpdateOperationsInput | number
     admin?: UserUpdateOneRequiredWithoutTournamentsNestedInput
     stages?: StageUpdateManyWithoutTournamentNestedInput
     teams?: TeamUpdateManyWithoutTournamentNestedInput
@@ -33120,6 +33353,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     adminId?: StringFieldUpdateOperationsInput | string
+    numberOfFields?: IntFieldUpdateOperationsInput | number
     stages?: StageUncheckedUpdateManyWithoutTournamentNestedInput
     teams?: TeamUncheckedUpdateManyWithoutTournamentNestedInput
     teamStats?: TeamStatsUncheckedUpdateManyWithoutTournamentNestedInput
@@ -33152,6 +33386,7 @@ export namespace Prisma {
     duration?: number | null
     winningAlliance?: string | null
     roundType?: string | null
+    fieldNumber?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
     stage: StageCreateNestedOneWithoutMatchesInput
@@ -33178,6 +33413,7 @@ export namespace Prisma {
     roundType?: string | null
     scheduleId?: string | null
     fieldId?: string | null
+    fieldNumber?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
     alliances?: AllianceUncheckedCreateNestedManyWithoutMatchInput
@@ -33313,6 +33549,7 @@ export namespace Prisma {
     duration?: NullableIntFieldUpdateOperationsInput | number | null
     winningAlliance?: NullableStringFieldUpdateOperationsInput | string | null
     roundType?: NullableStringFieldUpdateOperationsInput | string | null
+    fieldNumber?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     stage?: StageUpdateOneRequiredWithoutMatchesNestedInput
@@ -33339,6 +33576,7 @@ export namespace Prisma {
     roundType?: NullableStringFieldUpdateOperationsInput | string | null
     scheduleId?: NullableStringFieldUpdateOperationsInput | string | null
     fieldId?: NullableStringFieldUpdateOperationsInput | string | null
+    fieldNumber?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     alliances?: AllianceUncheckedUpdateManyWithoutMatchNestedInput
@@ -33681,6 +33919,7 @@ export namespace Prisma {
     endDate: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
+    numberOfFields?: number
   }
 
   export type MatchCreateManyScoredByInput = {
@@ -33697,6 +33936,7 @@ export namespace Prisma {
     roundType?: string | null
     scheduleId?: string | null
     fieldId?: string | null
+    fieldNumber?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -33777,6 +34017,7 @@ export namespace Prisma {
     endDate?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    numberOfFields?: IntFieldUpdateOperationsInput | number
     stages?: StageUpdateManyWithoutTournamentNestedInput
     teams?: TeamUpdateManyWithoutTournamentNestedInput
     teamStats?: TeamStatsUpdateManyWithoutTournamentNestedInput
@@ -33791,6 +34032,7 @@ export namespace Prisma {
     endDate?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    numberOfFields?: IntFieldUpdateOperationsInput | number
     stages?: StageUncheckedUpdateManyWithoutTournamentNestedInput
     teams?: TeamUncheckedUpdateManyWithoutTournamentNestedInput
     teamStats?: TeamStatsUncheckedUpdateManyWithoutTournamentNestedInput
@@ -33805,6 +34047,7 @@ export namespace Prisma {
     endDate?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    numberOfFields?: IntFieldUpdateOperationsInput | number
   }
 
   export type MatchUpdateWithoutScoredByInput = {
@@ -33818,6 +34061,7 @@ export namespace Prisma {
     duration?: NullableIntFieldUpdateOperationsInput | number | null
     winningAlliance?: NullableStringFieldUpdateOperationsInput | string | null
     roundType?: NullableStringFieldUpdateOperationsInput | string | null
+    fieldNumber?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     stage?: StageUpdateOneRequiredWithoutMatchesNestedInput
@@ -33843,6 +34087,7 @@ export namespace Prisma {
     roundType?: NullableStringFieldUpdateOperationsInput | string | null
     scheduleId?: NullableStringFieldUpdateOperationsInput | string | null
     fieldId?: NullableStringFieldUpdateOperationsInput | string | null
+    fieldNumber?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     alliances?: AllianceUncheckedUpdateManyWithoutMatchNestedInput
@@ -33865,6 +34110,7 @@ export namespace Prisma {
     roundType?: NullableStringFieldUpdateOperationsInput | string | null
     scheduleId?: NullableStringFieldUpdateOperationsInput | string | null
     fieldId?: NullableStringFieldUpdateOperationsInput | string | null
+    fieldNumber?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -33973,6 +34219,7 @@ export namespace Prisma {
   export type FieldCreateManyTournamentInput = {
     id?: string
     name: string
+    number: number
     location?: string | null
     description?: string | null
     createdAt?: Date | string
@@ -34124,6 +34371,7 @@ export namespace Prisma {
   export type FieldUpdateWithoutTournamentInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    number?: IntFieldUpdateOperationsInput | number
     location?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -34134,6 +34382,7 @@ export namespace Prisma {
   export type FieldUncheckedUpdateWithoutTournamentInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    number?: IntFieldUpdateOperationsInput | number
     location?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -34144,6 +34393,7 @@ export namespace Prisma {
   export type FieldUncheckedUpdateManyWithoutTournamentInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    number?: IntFieldUpdateOperationsInput | number
     location?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -34164,6 +34414,7 @@ export namespace Prisma {
     roundType?: string | null
     scheduleId?: string | null
     fieldId?: string | null
+    fieldNumber?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -34207,6 +34458,7 @@ export namespace Prisma {
     duration?: NullableIntFieldUpdateOperationsInput | number | null
     winningAlliance?: NullableStringFieldUpdateOperationsInput | string | null
     roundType?: NullableStringFieldUpdateOperationsInput | string | null
+    fieldNumber?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     alliances?: AllianceUpdateManyWithoutMatchNestedInput
@@ -34232,6 +34484,7 @@ export namespace Prisma {
     roundType?: NullableStringFieldUpdateOperationsInput | string | null
     scheduleId?: NullableStringFieldUpdateOperationsInput | string | null
     fieldId?: NullableStringFieldUpdateOperationsInput | string | null
+    fieldNumber?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     alliances?: AllianceUncheckedUpdateManyWithoutMatchNestedInput
@@ -34254,6 +34507,7 @@ export namespace Prisma {
     roundType?: NullableStringFieldUpdateOperationsInput | string | null
     scheduleId?: NullableStringFieldUpdateOperationsInput | string | null
     fieldId?: NullableStringFieldUpdateOperationsInput | string | null
+    fieldNumber?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -34582,6 +34836,7 @@ export namespace Prisma {
     scoredById?: string | null
     roundType?: string | null
     fieldId?: string | null
+    fieldNumber?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -34597,6 +34852,7 @@ export namespace Prisma {
     duration?: NullableIntFieldUpdateOperationsInput | number | null
     winningAlliance?: NullableStringFieldUpdateOperationsInput | string | null
     roundType?: NullableStringFieldUpdateOperationsInput | string | null
+    fieldNumber?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     stage?: StageUpdateOneRequiredWithoutMatchesNestedInput
@@ -34622,6 +34878,7 @@ export namespace Prisma {
     scoredById?: NullableStringFieldUpdateOperationsInput | string | null
     roundType?: NullableStringFieldUpdateOperationsInput | string | null
     fieldId?: NullableStringFieldUpdateOperationsInput | string | null
+    fieldNumber?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     alliances?: AllianceUncheckedUpdateManyWithoutMatchNestedInput
@@ -34644,6 +34901,7 @@ export namespace Prisma {
     scoredById?: NullableStringFieldUpdateOperationsInput | string | null
     roundType?: NullableStringFieldUpdateOperationsInput | string | null
     fieldId?: NullableStringFieldUpdateOperationsInput | string | null
+    fieldNumber?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -34662,6 +34920,7 @@ export namespace Prisma {
     scoredById?: string | null
     roundType?: string | null
     scheduleId?: string | null
+    fieldNumber?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -34677,6 +34936,7 @@ export namespace Prisma {
     duration?: NullableIntFieldUpdateOperationsInput | number | null
     winningAlliance?: NullableStringFieldUpdateOperationsInput | string | null
     roundType?: NullableStringFieldUpdateOperationsInput | string | null
+    fieldNumber?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     stage?: StageUpdateOneRequiredWithoutMatchesNestedInput
@@ -34702,6 +34962,7 @@ export namespace Prisma {
     scoredById?: NullableStringFieldUpdateOperationsInput | string | null
     roundType?: NullableStringFieldUpdateOperationsInput | string | null
     scheduleId?: NullableStringFieldUpdateOperationsInput | string | null
+    fieldNumber?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     alliances?: AllianceUncheckedUpdateManyWithoutMatchNestedInput
@@ -34724,6 +34985,7 @@ export namespace Prisma {
     scoredById?: NullableStringFieldUpdateOperationsInput | string | null
     roundType?: NullableStringFieldUpdateOperationsInput | string | null
     scheduleId?: NullableStringFieldUpdateOperationsInput | string | null
+    fieldNumber?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

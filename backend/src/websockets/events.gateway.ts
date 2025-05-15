@@ -315,4 +315,34 @@ export class EventsGateway
   public hasActiveTimer(tournamentId: string): boolean {
     return this.activeTimers.has(tournamentId);
   }
+
+  // --- FIELD-SPECIFIC ROOMS ---
+
+  // Join a field-specific room
+  @SubscribeMessage('joinFieldRoom')
+  handleJoinFieldRoom(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: { fieldId: string }
+  ): void {
+    const { fieldId } = data;
+    client.join(`field_${fieldId}`);
+    this.logger.log(`Client ${client.id} joined field room: field_${fieldId}`);
+  }
+
+  // Leave a field-specific room
+  @SubscribeMessage('leaveFieldRoom')
+  handleLeaveFieldRoom(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: { fieldId: string }
+  ): void {
+    const { fieldId } = data;
+    client.leave(`field_${fieldId}`);
+    this.logger.log(`Client ${client.id} left field room: field_${fieldId}`);
+  }
+
+  // Emit to a field-specific room (for use by services)
+  public emitToField(fieldId: string, event: string, payload: any): void {
+    this.server.to(`field_${fieldId}`).emit(event, payload);
+    this.logger.log(`Broadcasted ${event} to field_${fieldId}: ${JSON.stringify(payload)}`);
+  }
 }

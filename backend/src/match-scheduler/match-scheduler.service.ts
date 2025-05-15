@@ -297,10 +297,11 @@ export class MatchSchedulerService {
       include: {
         tournament: {
           include: {
-            teams: true
-          }
-        }
-      }
+            teams: true,
+            fields: true, // Fetch fields for the tournament
+          },
+        },
+      },
     });
     
     if (!stage) {
@@ -309,6 +310,14 @@ export class MatchSchedulerService {
     
     const teams = stage.tournament.teams;
     const numTeams = teams.length;
+    const fields = stage.tournament.fields;
+    if (!fields || fields.length === 0) {
+      throw new Error('No fields found for this tournament.');
+    }
+    // Shuffle fields for random assignment
+    const shuffledFields = [...fields].sort(() => Math.random() - 0.5);
+    // Track how many matches are assigned to each field
+    const fieldAssignmentCounts = new Array(shuffledFields.length).fill(0);
     
     if (numTeams < this.TEAMS_PER_MATCH) {
       throw new Error(`Not enough teams (${numTeams}) to create a schedule. Minimum required: ${this.TEAMS_PER_MATCH}`);
@@ -352,7 +361,16 @@ export class MatchSchedulerService {
       const redTeamIds = match.redAlliance.map(id => teamIdMap.get(id));
       const blueTeamIds = match.blueAlliance.map(id => teamIdMap.get(id));
       
-      // Create match in database with proper alliances and teams
+      // Find the field with the fewest matches assigned (random tie-break)
+      let minCount = Math.min(...fieldAssignmentCounts);
+      let candidateIndexes = fieldAssignmentCounts
+        .map((count, idx) => (count === minCount ? idx : -1))
+        .filter(idx => idx !== -1);
+      let chosenIdx = candidateIndexes[Math.floor(Math.random() * candidateIndexes.length)];
+      let chosenField = shuffledFields[chosenIdx];
+      fieldAssignmentCounts[chosenIdx]++;
+      
+      // Create match in database with proper alliances, fieldId, and fieldNumber
       const dbMatch = await this.prisma.match.create({
         data: {
           stageId,
@@ -360,6 +378,8 @@ export class MatchSchedulerService {
           roundNumber: 1, // All qualification matches are in round 1
           scheduledTime: new Date(Date.now() + ((matchNumber - 1) * 6 * 60 * 1000)), // Schedule 6 minutes apart
           status: 'PENDING',
+          fieldId: chosenField.id,
+          fieldNumber: chosenField.number,
           alliances: {
             create: [
               {
@@ -369,10 +389,10 @@ export class MatchSchedulerService {
                     stationPosition: idx + 1,
                     isSurrogate: match.surrogates?.includes(match.redAlliance[idx]) || false,
                     team: {
-                      connect: { id: teamId }
-                    }
-                  }))
-                }
+                      connect: { id: teamId },
+                    },
+                  })),
+                },
               },
               {
                 color: 'BLUE',
@@ -381,30 +401,30 @@ export class MatchSchedulerService {
                     stationPosition: idx + 1,
                     isSurrogate: match.surrogates?.includes(match.blueAlliance[idx]) || false,
                     team: {
-                      connect: { id: teamId }
-                    }
-                  }))
-                }
-              }
-            ]
-          }
+                      connect: { id: teamId },
+                    },
+                  })),
+                },
+              },
+            ],
+          },
         },
         include: {
           stage: {
             select: {
-              name: true
-            }
+              name: true,
+            },
           },
           alliances: {
             include: {
               teamAlliances: {
                 include: {
-                  team: true
-                }
-              }
-            }
-          }
-        }
+                  team: true,
+                },
+              },
+            },
+          },
+        },
       });
       
       // Create initial match score record
@@ -828,7 +848,8 @@ export class MatchSchedulerService {
       include: {
         tournament: {
           include: {
-            teams: true
+            teams: true,
+            fields: true, // Fetch fields for the tournament
           }
         }
       }
@@ -843,6 +864,14 @@ export class MatchSchedulerService {
     }
 
     console.log(`Generating Swiss round for stage ${stageId} and tournamentId ${stage.tournament.id}`);
+    
+    // Field assignment logic
+    const fields = stage.tournament.fields;
+    if (!fields || fields.length === 0) {
+      throw new Error('No fields found for this tournament.');
+    }
+    const shuffledFields = [...fields].sort(() => Math.random() - 0.5);
+    const fieldAssignmentCounts = new Array(shuffledFields.length).fill(0);
     
     // Try to get team stats for this stage first, if none exist, get them for the tournament
     let teamStats = await this.prisma.teamStats.findMany({
@@ -983,6 +1012,15 @@ export class MatchSchedulerService {
       redTeams.forEach(ts => paired.add(ts.teamId));
       blueTeams.forEach(ts => paired.add(ts.teamId));
       
+      // Find the field with the fewest matches assigned (random tie-break)
+      let minCount = Math.min(...fieldAssignmentCounts);
+      let candidateIndexes = fieldAssignmentCounts
+        .map((count, idx) => (count === minCount ? idx : -1))
+        .filter(idx => idx !== -1);
+      let chosenIdx = candidateIndexes[Math.floor(Math.random() * candidateIndexes.length)];
+      let chosenField = shuffledFields[chosenIdx];
+      fieldAssignmentCounts[chosenIdx]++;
+      
       // Create the match
       const dbMatch = await this.prisma.match.create({
         data: {
@@ -991,6 +1029,8 @@ export class MatchSchedulerService {
           roundNumber: nextRoundNumber,
           scheduledTime: new Date(Date.now() + ((matchNumber - 1) * 6 * 60 * 1000)), // Schedule 6 minutes apart
           status: 'PENDING',
+          fieldId: chosenField.id,
+          fieldNumber: chosenField.number,
           alliances: {
             create: [
               {
@@ -1323,7 +1363,7 @@ export class MatchSchedulerService {
               }
             }
           }
-        }
+        },
       },
       orderBy: [
         { roundNumber: 'desc' },

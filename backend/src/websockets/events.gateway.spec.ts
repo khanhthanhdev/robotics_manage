@@ -35,6 +35,19 @@ describe('EventsGateway', () => {
     expect(mockClient.leave).toHaveBeenCalledWith('t1');
   });
 
+  it('should join and leave field-specific rooms', () => {
+    gateway.handleJoinFieldRoom(mockClient, { fieldId: 'fieldA' });
+    expect(mockClient.join).toHaveBeenCalledWith('field_fieldA');
+    gateway.handleLeaveFieldRoom(mockClient, { fieldId: 'fieldA' });
+    expect(mockClient.leave).toHaveBeenCalledWith('field_fieldA');
+  });
+
+  it('should emit to field-specific room using emitToField', () => {
+    gateway.emitToField('fieldA', 'match_update', { foo: 123 });
+    expect(mockServer.to).toHaveBeenCalledWith('field_fieldA');
+    expect(mockServer.to().emit).toHaveBeenCalledWith('match_update', { foo: 123 });
+  });
+
   it('should emit display_mode_change on join if settings exist', () => {
     const settings = { tournamentId: 't1', displayMode: 'match', updatedAt: Date.now() };
     (gateway as any).audienceDisplaySettings.set('t1', settings as any);

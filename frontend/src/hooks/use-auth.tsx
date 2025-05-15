@@ -26,7 +26,7 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // API base URL - update to correct server port
-const API_BASE_URL = 'http://localhost:5000/api';
+const NEXT_PUBLIC_API_URL= 'http://localhost:5000/api';
 
 // Auth provider component
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -36,7 +36,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const { data, error, isLoading, refetch } = useQuery({
     queryKey: ['currentUser'],
     queryFn: async () => {
-      const response = await fetch(`${API_BASE_URL}/auth/check-auth`, {
+      const response = await fetch(`${NEXT_PUBLIC_API_URL}/auth/check-auth`, {
         credentials: 'include',
       });
       if (!response.ok) {
@@ -59,7 +59,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const register = async (username: string, password: string, email?: string) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/register`, {
+      const response = await fetch(`${NEXT_PUBLIC_API_URL}/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password, email }),
@@ -84,7 +84,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Login function
   const login = async (username: string, password: string) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/login`, {
+      const response = await fetch(`${NEXT_PUBLIC_API_URL}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
@@ -107,7 +107,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   
   // Logout function
   const logout = async () => {
-    await fetch(`${API_BASE_URL}/auth/logout`, {
+    await fetch(`${NEXT_PUBLIC_API_URL}/auth/logout`, {
       method: 'POST',
       credentials: 'include',
     });

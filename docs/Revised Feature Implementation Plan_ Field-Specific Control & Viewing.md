@@ -1,0 +1,180 @@
+# Revised Feature Implementation Plan: Field-Specific Control & Viewing
+
+This document outlines the tasks to implement the Field-Specific Control and Viewing feature, with the `SINGLE_ALLIANCE` match type feature removed. All WebSocket communication will be based on field-specific rooms.
+
+- [x] **1. Clarify and Confirm Revised Feature Requirements**
+    - [x] User confirmed requirements for Field-Specific Control/Viewing:
+        - [x] `Tournament` model to have `numberOfFields` property.
+        - [x] Fields are numbered (Field 1, Field 2, etc.). `Field` entities will be created based on `numberOfFields`.
+        - [x] `Match` schema to include `fieldId` (linking to `Field` entity) and `fieldNumber` (integer).
+        - [x] Match scheduler to auto-assign `fieldId` and `fieldNumber` to matches, aiming for random but equal distribution across fields.
+        - [x] Admin and Audience UIs to use dropdowns for field selection (e.g., "Field 1", "Field 2").
+        - [x] WebSocket communication to use field-specific rooms.
+
+- [x] **2. Analyze Impact on Database and Architecture (Field-Specific Focus)**
+    - [x] **Prisma Schema Modifications:**
+        - [x] `Tournament` model: Add `numberOfFields: Int @default(1)`.
+        - [x] `Field` model: 
+            - [x] Ensure it has `id: String @id @default(cuid())`, `tournamentId: String`, `tournament: Tournament @relation(fields: [tournamentId], references: [id])`, `number: Int` (e.g., 1, 2, 3).
+            - [x] Add a unique constraint for `tournamentId` and `number`.
+        - [x] `Match` model: Add `fieldId: String?`, `field: Field? @relation(fields: [fieldId], references: [id], onDelete: SetNull)`, and `fieldNumber: Int?`.
+    - [x] **Backend (NestJS) Architectural Adjustments:**
+        - [x] `TournamentsService`: When `numberOfFields` is set/updated for a tournament, logic to automatically create/manage the corresponding `Field` entities (Field 1, Field 2, ... Field N).
+        - [x] `FieldsService` (or part of `TournamentsService`): Logic to retrieve fields for a tournament.
+        - [x] `MatchesModule` (Service, Controller):
+            - [x] Modify `create` and `update` methods to handle `fieldId` and `fieldNumber`.
+            - [x] Add logic to `findAll` (or create new method) to filter matches by `fieldId` or `fieldNumber`.
+        - [x] `MatchSchedulerService`:
+            - [x] Implement logic to randomly assign `fieldId` and `fieldNumber` to generated matches, ensuring an approximately equal distribution of matches per field for a given tournament/stage.
+        - [x] `WebsocketsGateway` (`events.gateway.ts`):
+            - [x] Implement field-specific rooms (e.g., `field_{fieldId}_updates`).
+            - [x] All relevant events (match start, score update, timer update, field status) should be emitted to the specific field room.
+        - [x] Adherence to SOLID principles in all new/modified services and modules.
+    - [x] **Frontend (Next.js) Architectural Adjustments:**
+        - [x] UI for admins to set/view `numberOfFields` for a tournament.
+        - [x] UI updates for field selection (dropdowns listing "Field 1", "Field 2", etc.) in admin control (`/control-match`) and audience display (`/audience-display`).
+        - [x] Match creation/editing forms: UI to assign/view `fieldNumber` for a match (might be auto-assigned and read-only, or manually adjustable by admin).
+        - [x] TanStack Query hooks for fetching matches filtered by `fieldId` or `fieldNumber`.
+        - [x] WebSocket handling to subscribe to field-specific rooms based on user selection.
+        - [x] Updates to `api-client.ts` and TypeScript types for `Tournament` (with `numberOfFields`), `Field` (with `number`), and `Match` (with `fieldId`, `fieldNumber`).
+        - [x] Adherence to SOLID principles in frontend changes.
+
+- [x] **3. Plan Backend Updates (Field-Specific Focus)**
+    - [x] **`TournamentsService` Updates:**
+        - [x] Method to handle `Field` entity creation/deletion when `numberOfFields` on a `Tournament` is updated. 
+            - [x] If `numberOfFields` increases, create new `Field` records with incrementing `number` for that `tournamentId`.
+            - [x] If `numberOfFields` decreases, decide on a strategy for existing `Field` records and matches assigned to them (e.g., soft delete fields, disassociate matches, prevent decrease if matches are assigned, or re-assign matches). For now, assume prevention or careful admin action is required, and focus on creation.
+            - [x] This logic could be triggered in the `update` method of `TournamentsService` after a tournament's `numberOfFields` is changed.
+        - [x] Method in `FieldsService` (or `TournamentsService`) to list `Field` entities for a given `tournamentId` (e.g., `getFieldsByTournament(tournamentId: string)`).
+    - [x] **`MatchesService` & `MatchesController` Updates:**
+        - [x] `matches.service.ts`:
+            - [x] `create` method: No direct `fieldId`/`fieldNumber` input from user during manual match creation. These will be assigned by the scheduler or potentially an admin tool later.
+            - [x] `update` method: Allow admin to manually assign/change `fieldId` (and consequently `fieldNumber`) for a match. Ensure `fieldNumber` is derived from the selected `Field` entity's `number`.
+            - [x] `findAll` (or new `findAllByTournament`): Modify to accept an optional `fieldId` or `fieldNumber` query parameter to filter matches.
+        - [x] `matches.controller.ts`:
+            - [x] Update `GET /matches` (or equivalent) endpoint to accept `fieldId` or `fieldNumber` as an optional query parameter.
+            - [x] Update `UpdateMatchDto` to include optional `fieldId`.
+    - [x] **`MatchSchedulerService` Updates:**
+        - [x] Modify scheduling algorithms (e.g., round-robin, Swiss pairing) to incorporate field assignment.
+        - [x] When generating matches for a stage, retrieve the `numberOfFields` for the tournament (or specific fields assigned to the stage, if that complexity is added later).
+        - [x] Implement logic to distribute matches across available `Field` entities (identified by `fieldId` and `fieldNumber`) as evenly as possible. The user specified "random assign match (make the number of match in fields equally)". This means a random field should be chosen, but with a bias towards fields with fewer matches currently assigned to maintain balance.
+        - [x] Persist the assigned `fieldId` and `fieldNumber` when creating `Match` records.
+    - [x] **API Endpoint Design:**
+        - [x] `TournamentsController`: `PATCH /tournaments/:id` to update `numberOfFields`.
+        - [x] `FieldsController` (or `TournamentsController`): `GET /tournaments/:tournamentId/fields` to list fields for a tournament.
+        - [x] `MatchesController`: `GET /matches?tournamentId=X&fieldId=Y` (or `fieldNumber=Z`) for filtering. `PATCH /matches/:id` to allow admin to update `fieldId`.
+    - [x] **General Backend Considerations:**
+        - [x] **Authentication & Authorization:** Ensure new/modified endpoints (e.g., updating `numberOfFields`, manually assigning field to match) are protected by appropriate guards (Admin role).
+        - [x] **Validation:** Use DTOs and `ValidationPipe` for all incoming data (e.g., `UpdateTournamentDto` for `numberOfFields`).
+        - [x] **SOLID Principles:** 
+            - [x] `TournamentsService` handles tournament-level concerns including managing its associated fields. 
+            - [x] `MatchSchedulerService` focuses on match generation and field assignment logic. 
+            - [x] `MatchesService` handles CRUD and querying of matches, including by field.
+
+- [x] **4. Plan Frontend Updates (Field-Specific Focus)**
+    - [x] **Tournament Settings UI (Admin):**
+        - [x] In the tournament editing/creation form, add an input field (e.g., number input) for `numberOfFields`.
+        - [x] Display the current `numberOfFields` in the tournament details view.
+        - [x] TanStack Query mutation (`useUpdateTournament`) to update the tournament with the new `numberOfFields`.
+    - [x] **Field Selection UI (Dropdowns):**
+        - [x] Create a reusable `FieldSelectDropdown` component (e.g., using Shadcn `Select`).
+            - [x] Props: `tournamentId`, `selectedFieldId`, `onFieldSelect` callback.
+            - [x] Fetches `Field` entities for the given `tournamentId` (e.g., using a new `useTournamentFields` TanStack Query hook that calls `GET /tournaments/:tournamentId/fields`).
+            - [x] Displays options like "All Fields" (optional, if applicable for the context), "Field 1", "Field 2", ..., "Field N" (based on `Field.number`). The value passed to `onFieldSelect` should be the `Field.id`.
+        - [x] **Admin Control Page (`/control-match`):**
+            - [x] Integrate `FieldSelectDropdown`.
+            - [x] Store the selected `fieldId` in local component state or URL query parameter.
+            - [x] When a field is selected, re-fetch the match list using `useMatches` hook, passing the selected `fieldId` as a filter parameter.
+        - [x] **Audience Display Page (`/audience-display`):**
+            - [x] Integrate `FieldSelectDropdown`.
+            - [x] Store the selected `fieldId`.
+            - [x] When a field is selected, the page should update to show information for that field (e.g., active match, upcoming matches for that field). This will involve filtering WebSocket events or fetching field-specific data.
+    - [x] **Match Display & Assignment UI:**
+        - [x] **Match Lists (Admin & Public):** Display `fieldNumber` (e.g., "Field X") for each match if assigned.
+        - [x] **Match Detail View:** Display the assigned `fieldNumber`.
+        - [x] **Admin Match Editing Form:**
+            - [x] Add a dropdown (could reuse `FieldSelectDropdown` or a simpler one listing field numbers/IDs for the tournament) to allow an admin to manually assign or change the `fieldId` for a match.
+            - [x] The `fieldNumber` would be derived from the selected `Field` entity and displayed.
+            - [x] TanStack Query mutation (`useUpdateMatch`) to update the match with the new `fieldId`.
+    - [x] **State Management (TanStack Query):**
+        - [x] New query hook: `useTournamentFields(tournamentId)` to fetch fields for a tournament.
+        - [x] Update `useMatches(tournamentId, fieldId?)` hook to accept an optional `fieldId` for filtering.
+        - [x] Ensure query keys are structured to allow for proper caching and invalidation when fields or field assignments change.
+    - [x] **WebSocket Integration (`useWebSocket.ts` or component-level):**
+        - [x] When a user selects a field on `/audience-display` or `/control-match`:
+            - [x] If a previous field-specific room was joined, emit an event to the server to leave that room (e.g., `leaveFieldRoom({ fieldId: oldFieldId })`).
+            - [x] Emit an event to join the new field-specific room (e.g., `joinFieldRoom({ fieldId: newFieldId })`).
+        - [x] Listen to events broadcast to the joined field-specific room (e.g., `activeMatchOnFieldUpdate`, `fieldScoreUpdate`).
+        - [x] Update TanStack Query cache or local state based on received field-specific WebSocket events.
+    - [x] **General Frontend Considerations:**
+        - [x] Update `api-client.ts` with functions for `GET /tournaments/:tournamentId/fields` and ensure `PATCH /matches/:id` can send `fieldId`.
+        - [x] Update TypeScript types (`types.ts`) for `Tournament` (with `numberOfFields`), `Field` (with `number`, `id`), and `Match` (with `fieldId`, `fieldNumber`).
+        - [x] Ensure all new UI components are responsive and follow SOLID principles (e.g., `FieldSelectDropdown` is reusable and has a single responsibility).
+
+- [x] **5. Plan WebSocket (Socket.io) Implementation (Field-Specific Rooms)**
+    - [x] **Backend (`EventsGateway` in `events.gateway.ts`) Strategy:**
+        - [x] **Room Naming Convention:** `field_{fieldId}`. Each client (admin control, audience display) will join the room corresponding to the `Field` entity's ID they are interested in.
+        - [x] **Joining/Leaving Rooms:**
+            - [x] Client emits `joinFieldRoom` with `{ fieldId: string }` payload. Server joins the client's socket to `field_{fieldId}`.
+            - [x] Client emits `leaveFieldRoom` with `{ fieldId: string }` payload. Server removes the client's socket from `field_{fieldId}`.
+            - [x] Handle cases where a client might switch fields (leave old room, join new room).
+        - [x] **Event Definitions (Server Emits to `field_{fieldId}` room):**
+            - [x] `activeMatchUpdate`: Payload: `{ fieldId: string, matchId: string | null, matchData?: Match }`. Sent when a match becomes active on the field, or when the field becomes idle. `matchData` includes all necessary details for display (teams, score, state, fieldNumber).
+            - [x] `matchScoreUpdate`: Payload: `{ fieldId: string, matchId: string, scores: object }`. Sent when scores for the active match on this field are updated. `scores` object contains detailed score breakdown.
+            - [x] `matchTimerUpdate`: Payload: `{ fieldId: string, matchId: string, timerState: object }`. Sent for real-time timer updates for the active match on this field.
+            - [x] `matchStateUpdate`: Payload: `{ fieldId: string, matchId: string, state: MatchState }`. Sent when the state of the active match on this field changes (e.g., `PENDING`, `IN_PROGRESS`, `COMPLETED`).
+        - [x] **Triggering Events from Services:**
+            - [x] `MatchesService` (or a dedicated `MatchControlService`): When a match is started on a field, or its state changes, or it's assigned/unassigned from a field, it will inject `EventsGateway` and call methods to emit `activeMatchUpdate` and `matchStateUpdate` to the relevant `field_{fieldId}` room.
+            - [x] `MatchScoresService`: After scores are updated and saved for a match, it will trigger `EventsGateway` to emit `matchScoreUpdate` to the `field_{fieldId}` room where the match is active.
+            - [x] Timer service (if centralized): Will trigger `EventsGateway` to emit `matchTimerUpdate`.
+        - [x] **Authentication/Authorization:**
+            - [x] WebSocket connections should be authenticated (e.g., JWT passed during handshake, validated by a `WsAuthGuard` on the gateway or on specific message handlers).
+            - [x] Authorization for joining rooms can be minimal if field data is public, but emitting control-like events (if any were to be added via WebSockets) would require admin role checks.
+    - [x] **Frontend (Next.js Client) Strategy:**
+        - [x] **Socket Connection & Hook (`useWebSocket.ts` or similar):**
+            - [x] Establish and manage the Socket.io connection.
+            - [x] Provide functions to emit `joinFieldRoom` and `leaveFieldRoom`.
+        - [x] **Component-Level Subscription & Handling:**
+            - [x] **Audience Display Page (`/audience-display`):**
+                - [x] When a user selects a field from the dropdown (e.g., "Field 1" which maps to a `fieldId`), call the hook to `leaveFieldRoom` (if previously joined to another) and `joinFieldRoom` for the new `fieldId`.
+                - [x] Subscribe to `activeMatchUpdate`, `matchScoreUpdate`, `matchTimerUpdate`, `matchStateUpdate` for the joined room.
+                - [x] On receiving events, update the displayed match information (e.g., using local state or by updating TanStack Query cache for the active match on that field).
+            - [x] **Admin Control Page (`/control-match`):**
+                - [x] Similar to audience display, join/leave field rooms based on admin's field selection.
+                - [x] Subscribe to the same events to monitor the status of the controlled field and its active match.
+                - [x] Use received data to update UI elements showing current scores, timer, match state for the selected field.
+        - [x] **State Management (TanStack Query Integration):**
+            - [x] When WebSocket events are received, use `queryClient.setQueryData` to update relevant TanStack Query caches. For example:
+                - [x] `activeMatchUpdate` could update a query like `['activeMatch', fieldId]`.
+                - [x] `matchScoreUpdate`, `matchTimerUpdate`, `matchStateUpdate` could update the cache for a specific match query `['match', matchId]` if that match is currently active and being displayed.
+            - [x] This keeps the frontend state consistent with real-time updates and leverages TanStack Query's caching and re-fetching capabilities.
+    - [x] **SOLID Principles & Best Practices:**
+        - [x] **SRP:** `EventsGateway` handles WebSocket connections and event broadcasting. Services handle business logic and trigger events. Frontend hooks encapsulate WebSocket interaction logic.
+        - [x] **OCP:** Event handlers and service interactions designed to be extensible. New field-specific events can be added without overhauling the entire system.
+        - [x] **Clear Event Contracts:** Maintain well-defined event names and payload structures (shared TypeScript types between backend/frontend are highly recommended).
+        - [x] **Efficient Room Usage:** Field-specific rooms ensure that clients only receive data relevant to the field they are viewing, minimizing unnecessary data transfer.
+
+- [x] **6. Update Documentation Plan (Field-Specific Focus)**
+    - [x] **Identify Sections in Existing Technical Documentation for Updates:**
+        - [x] `Overall Application Architecture`: Briefly mention the new field management system and how matches are associated with specific numbered fields.
+        - [x] `Frontend Architecture (Next.js)`:
+            - [x] `Folder Structure`: Note any new components for field selection dropdowns or admin UI for `numberOfFields`.
+            - [x] `State Management with TanStack Query`: Add examples for `useTournamentFields` and updated `useMatches` (with field filtering).
+            - [x] `UI Components with Shadcn`: Describe the new `FieldSelectDropdown` and its usage.
+            - [x] `Real-time Communication (Socket.io Client)`: Detail client-side subscription to `field_{fieldId}` rooms and handling of new field-specific events (`activeMatchUpdate`, `matchScoreUpdate`, etc.). Refer to the detailed WebSocket plan (Step 5).
+        - [x] `Backend Architecture (NestJS)`:
+            - [x] `Folder Structure`: Describe changes in `TournamentsModule`, `MatchesModule`, `MatchSchedulerModule` related to field handling.
+            - [x] `Data Modeling with Prisma`: Reflect changes to `Tournament` (`numberOfFields`), new `Field` model, and `Match` model (`fieldId`, `fieldNumber`). Include the updated `schema.prisma` snippet.
+            - [x] `API Endpoints (REST)`: Document new/updated endpoints: `PATCH /tournaments/:id` (for `numberOfFields`), `GET /tournaments/:tournamentId/fields`, `GET /matches` (with field filters), `PATCH /matches/:id` (for admin field assignment).
+            - [x] `Real-time Communication (Socket.io Server)`: Update `EventsGateway` description for field-specific rooms (`field_{fieldId}`) and new events. Refer to the detailed WebSocket plan (Step 5).
+        - [x] `Real-time Features and Integration (Socket.io)`: Revise data flow descriptions to incorporate field-specific rooms and events. Refer to the detailed WebSocket plan (Step 5).
+        - [x] `Database Schema (Prisma)`: Present the fully updated `schema.prisma` content reflecting all field-related changes.
+        - [x] `API Documentation (Consolidated)`: Add all new/updated REST endpoints and Socket.io events (names, payloads, room strategy) related to fields. Refer to the detailed WebSocket plan (Step 5).
+    - [x] **Plan for Documenting New Feature Usage:**
+        - [x] How admins set `numberOfFields` for a tournament.
+        - [x] How fields are automatically created and numbered.
+        - [x] How the match scheduler assigns matches to fields.
+        - [x] How admins can manually assign/change a match's field.
+        - [x] How admins select a field in the `/control-match` page to filter/control matches.
+        - [x] How users select a field in the `/audience-display` page.
+        - [x] Detail the WebSocket events and room structure for field-specific updates.
