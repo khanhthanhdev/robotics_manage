@@ -74,221 +74,159 @@ export interface AnnouncementData {
 
 export type EventCallback<T> = (data: T) => void;
 
-// Define the WebSocket service class
-class WebSocketService {
+// Define a type for all event names
+export type WebSocketEvent =
+  | 'display_mode_change'
+  | 'match_update'
+  | 'score_update'
+  | 'timer_update'
+  | 'match_state_change'
+  | 'announcement';
+
+// SOLID: Interface for WebSocket connection strategy
+interface IWebSocketConnection {
+  connect(url?: string): void;
+  disconnect(): void;
+  isConnectedToServer(): boolean;
+}
+
+// SOLID: Interface for event emitter/listener
+interface IWebSocketEventManager {
+  on<T>(eventName: WebSocketEvent, callback: EventCallback<T>): () => void;
+  off(eventName: WebSocketEvent): void;
+  emit<T>(eventName: WebSocketEvent, data: T): void;
+}
+
+// SOLID: Concrete implementation for Socket.IO
+class SocketIOConnection implements IWebSocketConnection, IWebSocketEventManager {
   private socket: Socket | null = null;
   private isConnected = false;
-  private reconnectTimer: NodeJS.Timeout | null = null;
+  private initialized = false;
+  private eventListeners: { [eventName: string]: Array<EventCallback<any>> } = {};
   private currentTournamentId: string | null = null;
-  private readonly RECONNECT_INTERVAL = 5000; // 5 seconds
 
-  // Store event listeners
-  private eventListeners: {
-    [eventName: string]: Array<EventCallback<any>>;
-  } = {};
-
-  // Connect to the WebSocket server
   connect(url: string = process.env.NEXT_PUBLIC_WS_URL || 'http://localhost:5000'): void {
-    if (this.socket) {
-      return;
-    }
-
+    if (this.socket) return;
     this.socket = io(url, {
-      reconnectionAttempts: 5,
-      reconnectionDelay: 1000,
-      autoConnect: true,
       transports: ['websocket'],
+      autoConnect: true,
+      reconnection: true,
+      reconnectionAttempts: Infinity,
+      reconnectionDelay: 1000,
     });
-
     this.socket.on('connect', () => {
       this.isConnected = true;
-      console.log('WebSocket connected');
-      
-      // Rejoin tournament room if there was one
       if (this.currentTournamentId) {
         this.joinTournament(this.currentTournamentId);
       }
-      
-      // Clear reconnect timer if it exists
-      if (this.reconnectTimer) {
-        clearInterval(this.reconnectTimer);
-        this.reconnectTimer = null;
-      }
     });
-
     this.socket.on('disconnect', () => {
       this.isConnected = false;
-      console.log('WebSocket disconnected');
-      
-      // Set up reconnect timer if not already active
-      if (!this.reconnectTimer) {
-        this.reconnectTimer = setInterval(() => {
-          if (!this.isConnected && this.socket) {
-            this.socket.connect();
-          }
-        }, this.RECONNECT_INTERVAL);
-      }
     });
-
-    this.socket.on('connect_error', (error) => {
-      console.error('WebSocket connect error:', error);
-    });
-    
-    // Set up listeners for our standard events
-    this.setupEventListeners();
+    if (!this.initialized) {
+      this.initialized = true;
+      this.setupEventListeners();
+    }
   }
 
-  // Set up standard event listeners
-  private setupEventListeners(): void {
-    if (!this.socket) return;
-    
-    const events = [
-      'match_update',
-      'score_update',
-      'timer_update',
-      'match_state_change',
-      'display_mode_change',
-      'announcement',
-    ];
-    
-    events.forEach(eventName => {
-      this.socket?.on(eventName, (data: any) => {
-        // Call all registered callbacks for this event
-        const callbacks = this.eventListeners[eventName] || [];
-        callbacks.forEach(callback => callback(data));
-        
-        // Debug log
-        console.log(`Received ${eventName}:`, data);
-      });
-    });
-  }
-
-  // Disconnect from the WebSocket server
   disconnect(): void {
     if (this.socket) {
       this.socket.disconnect();
       this.socket = null;
       this.isConnected = false;
-      
-      if (this.reconnectTimer) {
-        clearInterval(this.reconnectTimer);
-        this.reconnectTimer = null;
-      }
     }
   }
 
-  // Join a tournament room
+  isConnectedToServer(): boolean {
+    return this.isConnected;
+  }
+
+  on<T>(eventName: WebSocketEvent, callback: EventCallback<T>): () => void {
+    if (!this.eventListeners[eventName]) {
+      this.eventListeners[eventName] = [];
+    }
+    this.eventListeners[eventName].push(callback);
+    return () => {
+      this.eventListeners[eventName] = this.eventListeners[eventName].filter(cb => cb !== callback);
+    };
+  }
+
+  off(eventName: WebSocketEvent): void {
+    this.eventListeners[eventName] = [];
+  }
+
+  emit<T>(eventName: WebSocketEvent, data: T): void {
+    if (!this.socket || !this.isConnected) return;
+    this.socket.emit(eventName, data);
+  }
+
+  private setupEventListeners(): void {
+    if (!this.socket) return;
+    const events: WebSocketEvent[] = [
+      'display_mode_change',
+      'match_update',
+      'score_update',
+      'timer_update',
+      'match_state_change',
+      'announcement',
+    ];
+    events.forEach(eventName => {
+      this.socket!.off(eventName);
+      this.socket!.on(eventName, (data: any) => {
+        (this.eventListeners[eventName] || []).forEach(cb => cb(data));
+      });
+    });
+  }
+
+  // Room join/leave
   joinTournament(tournamentId: string): void {
     if (!this.socket || !this.isConnected) {
       this.currentTournamentId = tournamentId;
       return;
     }
-    
     this.socket.emit('join_tournament', { tournamentId });
     this.currentTournamentId = tournamentId;
-    console.log(`Joined tournament room: ${tournamentId}`);
   }
 
-  // Leave a tournament room
   leaveTournament(tournamentId: string): void {
     if (!this.socket || !this.isConnected) return;
-    
     this.socket.emit('leave_tournament', { tournamentId });
-    
     if (this.currentTournamentId === tournamentId) {
       this.currentTournamentId = null;
     }
-    
-    console.log(`Left tournament room: ${tournamentId}`);
   }
 
-  // Send a match update
-  sendMatchUpdate(matchData: MatchData): void {
-    if (!this.socket || !this.isConnected) return;
-    this.socket.emit('match_update', matchData);
-  }
-
-  // Send a score update
-  sendScoreUpdate(scoreData: ScoreData): void {
-    if (!this.socket || !this.isConnected) return;
-    this.socket.emit('score_update', scoreData);
-  }
-
-  // Send a match state change
-  sendMatchStateChange(stateData: MatchStateData): void {
-    if (!this.socket || !this.isConnected) return;
-    this.socket.emit('match_state_change', stateData);
-  }
-
-  // Send a display mode change
-  sendDisplayModeChange(displaySettings: AudienceDisplaySettings): void {
-    if (!this.socket || !this.isConnected) return;
-    this.socket.emit('display_mode_change', {
-      ...displaySettings,
-      updatedAt: Date.now(),
-    });
-  }
-
-  // Send an announcement
-  sendAnnouncement(announcementData: AnnouncementData): void {
-    if (!this.socket || !this.isConnected) return;
-    this.socket.emit('announcement', announcementData);
-  }
-
-  // Start a timer
-  startTimer(timerData: TimerData): void {
-    if (!this.socket || !this.isConnected) return;
-    this.socket.emit('start_timer', {
-      ...timerData,
-      startedAt: Date.now(),
-      isRunning: true,
-    });
-  }
-
-  // Pause a timer
-  pauseTimer(timerData: TimerData): void {
-    if (!this.socket || !this.isConnected) return;
-    this.socket.emit('pause_timer', timerData);
-  }
-
-  // Reset a timer
-  resetTimer(timerData: TimerData): void {
-    if (!this.socket || !this.isConnected) return;
-    this.socket.emit('reset_timer', timerData);
-  }
-
-  // Add an event listener
-  on<T>(eventName: string, callback: EventCallback<T>): () => void {
-    if (!this.eventListeners[eventName]) {
-      this.eventListeners[eventName] = [];
-    }
-    
-    this.eventListeners[eventName].push(callback);
-    
-    // Return a function to remove this specific listener
-    return () => {
-      this.eventListeners[eventName] = this.eventListeners[eventName].filter(
-        cb => cb !== callback
-      );
-    };
-  }
-
-  // Remove all event listeners for a specific event
-  off(eventName: string): void {
-    this.eventListeners[eventName] = [];
-  }
-
-  // Get connection status
-  isConnectedToServer(): boolean {
-    return this.isConnected;
-  }
-  
-  // Get current tournament ID
   getCurrentTournamentId(): string | null {
     return this.currentTournamentId;
   }
 }
 
-// Create a singleton instance
-const webSocketService = new WebSocketService();
+// SOLID: WebSocketService as a facade
+class WebSocketService {
+  private connection: IWebSocketConnection & IWebSocketEventManager;
+  constructor(connection: IWebSocketConnection & IWebSocketEventManager) {
+    this.connection = connection;
+  }
+  connect(url?: string) { this.connection.connect(url); }
+  disconnect() { this.connection.disconnect(); }
+  isConnectedToServer() { return this.connection.isConnectedToServer(); }
+  on<T>(eventName: WebSocketEvent, callback: EventCallback<T>) { return this.connection.on(eventName, callback); }
+  off(eventName: WebSocketEvent) { this.connection.off(eventName); }
+  emit<T>(eventName: WebSocketEvent, data: T) { this.connection.emit(eventName, data); }
+  joinTournament(tournamentId: string) { (this.connection as any).joinTournament(tournamentId); }
+  leaveTournament(tournamentId: string) { (this.connection as any).leaveTournament(tournamentId); }
+  getCurrentTournamentId() { return (this.connection as any).getCurrentTournamentId(); }
+  // Convenience methods for emitting specific events
+  sendMatchUpdate(matchData: MatchData) { this.emit('match_update', matchData); }
+  sendScoreUpdate(scoreData: ScoreData) { this.emit('score_update', scoreData); }
+  sendMatchStateChange(stateData: MatchStateData) { this.emit('match_state_change', stateData); }
+  sendDisplayModeChange(displaySettings: AudienceDisplaySettings) { this.emit('display_mode_change', { ...displaySettings, updatedAt: Date.now() }); }
+  sendAnnouncement(announcementData: AnnouncementData) { this.emit('announcement', announcementData); }
+  startTimer(timerData: TimerData) { this.emit('timer_update', { ...timerData, startedAt: Date.now(), isRunning: true }); }
+  pauseTimer(timerData: TimerData) { this.emit('timer_update', { ...timerData, isRunning: false }); }
+  resetTimer(timerData: TimerData) { this.emit('timer_update', { ...timerData, isRunning: false, remaining: timerData.duration }); }
+}
+
+// Singleton instance
+const webSocketService = new WebSocketService(new SocketIOConnection());
 export default webSocketService;

@@ -116,7 +116,7 @@ export default function ScoreControl({
     if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
     debounceTimeout.current = setTimeout(() => {
       handleUpdateScores();
-    }, 200); // 200ms debounce
+    }, 100); // 200ms debounce
   };
 
   useEffect(() => {

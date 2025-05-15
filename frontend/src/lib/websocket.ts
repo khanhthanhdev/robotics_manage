@@ -43,7 +43,7 @@ class WebSocketService implements IWebSocketService {
   public connect(url?: string): void {
     if (!this.socket) {
       // Get the backend URL from environment variables or use a default
-      const backendUrl = url || process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001';
+      const backendUrl = url || process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
 
       this.socket = io(backendUrl, {
         reconnection: true,
