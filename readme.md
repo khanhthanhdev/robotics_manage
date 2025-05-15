@@ -5,8 +5,7 @@ A comprehensive solution for managing robotics tournaments, including team manag
 ## Documentation
 
 For detailed documentation, refer to the docs directory or visit:
-https://deepwiki.com/khanhthanhdev/robotics_manage/3.2-websocket-service
-
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/khanhthanhdev/robotics_manage)
 ## System Requirements
 
 - Node.js (v18 or higher)
