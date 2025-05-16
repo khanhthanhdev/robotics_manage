@@ -124,4 +124,42 @@ describe('EventsGateway', () => {
     expect(gateway.hasActiveTimer('t1')).toBe(true);
     jest.useRealTimers();
   });
+
+  it('should emit match, score, timer, and match state updates to field-specific room if fieldId is present', () => {
+    const payload = { fieldId: 'fieldA', tournamentId: 't1', foo: 42 };
+    gateway.handleMatchUpdate(mockClient, payload);
+    expect(mockServer.to).toHaveBeenCalledWith('field_fieldA');
+    expect(mockServer.to().emit).toHaveBeenCalledWith('match_update', payload);
+
+    gateway.handleScoreUpdate(mockClient, payload);
+    expect(mockServer.to).toHaveBeenCalledWith('field_fieldA');
+    expect(mockServer.to().emit).toHaveBeenCalledWith('score_update', payload);
+
+    gateway.handleTimerUpdate(mockClient, payload);
+    expect(mockServer.to).toHaveBeenCalledWith('field_fieldA');
+    expect(mockServer.to().emit).toHaveBeenCalledWith('timer_update', payload);
+
+    gateway.handleMatchStateChange(mockClient, payload);
+    expect(mockServer.to).toHaveBeenCalledWith('field_fieldA');
+    expect(mockServer.to().emit).toHaveBeenCalledWith('match_state_change', payload);
+  });
+
+  it('should fallback to tournament room if only tournamentId is present', () => {
+    const payload = { tournamentId: 't1', foo: 99 };
+    gateway.handleMatchUpdate(mockClient, payload);
+    expect(mockClient.to).toHaveBeenCalledWith('t1');
+    expect(mockClient.to().emit).toHaveBeenCalledWith('match_update', payload);
+
+    gateway.handleScoreUpdate(mockClient, payload);
+    expect(mockClient.to).toHaveBeenCalledWith('t1');
+    expect(mockClient.to().emit).toHaveBeenCalledWith('score_update', payload);
+
+    gateway.handleTimerUpdate(mockClient, payload);
+    expect(mockClient.to).toHaveBeenCalledWith('t1');
+    expect(mockClient.to().emit).toHaveBeenCalledWith('timer_update', payload);
+
+    gateway.handleMatchStateChange(mockClient, payload);
+    expect(mockClient.to).toHaveBeenCalledWith('t1');
+    expect(mockClient.to().emit).toHaveBeenCalledWith('match_state_change', payload);
+  });
 });

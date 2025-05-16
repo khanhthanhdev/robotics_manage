@@ -8,6 +8,7 @@ export interface TimerData {
   startedAt?: number;
   pausedAt?: number;
   tournamentId: string;
+  fieldId?: string; // Optional field ID for field-specific timer updates
 }
 
 export interface MatchData {
@@ -63,12 +64,14 @@ export interface AudienceDisplaySettings {
   showTeams?: boolean;
   message?: string;
   tournamentId: string;
+  fieldId?: string;
   updatedAt: number;
 }
 
 export interface AnnouncementData {
   message: string;
   tournamentId: string;
+  fieldId?: string; // Optional field ID for field-specific announcements
   duration?: number; // How long to show the announcement (in ms)
 }
 

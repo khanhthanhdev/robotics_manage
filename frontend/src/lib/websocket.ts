@@ -18,6 +18,8 @@ export interface IWebSocketService {
   pauseTimer(data: any): void;
   resetTimer(data: any): void;
   sendAnnouncement(data: any): void;
+  joinFieldRoom(fieldId: string): void;
+  leaveFieldRoom(fieldId: string): void;
 }
 
 
@@ -184,6 +186,14 @@ class WebSocketService implements IWebSocketService {
 
   public sendAnnouncement(data: any): void {
     this.emit('announcement', data);
+  }
+
+  public joinFieldRoom(fieldId: string): void {
+    this.emit('joinFieldRoom', { fieldId });
+  }
+
+  public leaveFieldRoom(fieldId: string): void {
+    this.emit('leaveFieldRoom', { fieldId });
   }
 }
 

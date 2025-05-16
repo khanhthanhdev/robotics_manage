@@ -154,6 +154,7 @@ export default function TournamentsPage() {
                   <TableHead className="text-gray-300 font-semibold text-sm">Description</TableHead>
                   <TableHead className="text-gray-300 font-semibold text-sm">Start Date</TableHead>
                   <TableHead className="text-gray-300 font-semibold text-sm">End Date</TableHead>
+                  <TableHead className="text-gray-300 font-semibold text-sm">Fields</TableHead>
                   <TableHead className="text-gray-300 font-semibold text-sm">Admin</TableHead>
                   <TableHead className="text-right text-gray-300 font-semibold text-sm">Actions</TableHead>
                 </TableRow>
@@ -165,6 +166,7 @@ export default function TournamentsPage() {
                     <TableCell className="text-gray-400 max-w-xs truncate" title={tournament.description}>{tournament.description}</TableCell>
                     <TableCell className="text-gray-300">{formatDate(tournament.startDate)}</TableCell>
                     <TableCell className="text-gray-300">{formatDate(tournament.endDate)}</TableCell>
+                    <TableCell className="text-gray-300 text-center">{tournament.numberOfFields ?? 1}</TableCell>
                     <TableCell className="text-gray-300">{tournament.admin?.username || '-'}</TableCell>
                     <TableCell className="text-right space-x-1">
                       <Button

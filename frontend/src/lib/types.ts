@@ -16,3 +16,19 @@ export enum UserRole {
   ALLIANCE_REFEREE = "ALLIANCE_REFEREE"
 }
 
+export interface Tournament {
+  id: string;
+  name: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  adminId: string;
+  createdAt: string;
+  updatedAt: string;
+  admin?: {
+    id: string;
+    username: string;
+  };
+  numberOfFields?: number;
+}
+

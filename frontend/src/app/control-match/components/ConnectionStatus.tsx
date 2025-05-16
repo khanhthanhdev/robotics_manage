@@ -7,13 +7,12 @@ import {
 } from "@/components/ui/card";
 
 
-
 interface ConnectionStatusProps {
-
-    isConnected: boolean;
-    
-    tournamentId: string | null;
-  }
+  isConnected: boolean;
+  tournamentId: string | null;
+  selectedFieldId?: string | null;
+  onFieldSelect?: (fieldId: string | null) => void;
+}
 
 /**
  * ConnectionStatus component displays the current connection state
@@ -21,7 +20,9 @@ interface ConnectionStatusProps {
  */
 const ConnectionStatus: React.FC<ConnectionStatusProps> = ({
   isConnected,
-  tournamentId
+  tournamentId,
+  selectedFieldId,
+  onFieldSelect,
 }) => {
   return (
     <Card>
@@ -43,6 +44,12 @@ const ConnectionStatus: React.FC<ConnectionStatusProps> = ({
             <span className="text-sm text-muted-foreground">
               Tournament ID: {tournamentId}
             </span>
+          </div>
+        )}
+        {onFieldSelect && (
+          <div className="mt-2">
+            <span className="text-sm text-muted-foreground">Field: </span>
+            <span className="text-sm font-semibold">{selectedFieldId || 'All Fields'}</span>
           </div>
         )}
       </CardContent>

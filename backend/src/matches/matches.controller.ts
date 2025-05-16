@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
 import { MatchesService } from './matches.service';
 import { CreateMatchDto } from './dto/create-match.dto';
 import { UpdateMatchDto, UpdateAllianceDto, UpdateAllianceScoringDto } from './dto/update-match.dto';
@@ -19,8 +19,10 @@ export class MatchesController {
   }
 
   @Get()
-  findAll() {
-    return this.matchesService.findAll();
+  findAll(@Query('fieldId') fieldId?: string, @Query('fieldNumber') fieldNumber?: string) {
+    // Convert fieldNumber to number if present
+    const numFieldNumber = fieldNumber !== undefined ? Number(fieldNumber) : undefined;
+    return this.matchesService.findAll({ fieldId, fieldNumber: numFieldNumber });
   }
 
   @Get(':id')

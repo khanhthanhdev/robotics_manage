@@ -52,7 +52,7 @@ This document outlines the tasks to implement the Field-Specific Control and Vie
             - [x] `update` method: Allow admin to manually assign/change `fieldId` (and consequently `fieldNumber`) for a match. Ensure `fieldNumber` is derived from the selected `Field` entity's `number`.
             - [x] `findAll` (or new `findAllByTournament`): Modify to accept an optional `fieldId` or `fieldNumber` query parameter to filter matches.
         - [x] `matches.controller.ts`:
-            - [x] Update `GET /matches` (or equivalent) endpoint to accept `fieldId` or `fieldNumber` as an optional query parameter.
+            - [x] Update `GET /matches` (or equivalent) endpoint to accept `fieldId` or `fieldNumber` as an optional query parameter. 
             - [x] Update `UpdateMatchDto` to include optional `fieldId`.
     - [x] **`MatchSchedulerService` Updates:**
         - [x] Modify scheduling algorithms (e.g., round-robin, Swiss pairing) to incorporate field assignment.

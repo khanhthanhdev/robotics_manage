@@ -106,15 +106,26 @@ export function useWebSocket(options: UseWebSocketOptions = {}, ws: IWebSocketSe
       return;
     }
     ws.resetTimer({ ...timerData, tournamentId: currentTournament });
-  }, [currentTournament, ws]);
-  // Announcement functions
-  const sendAnnouncement = useCallback((message: string, duration?: number) => {
+  }, [currentTournament, ws]);  // Announcement functions
+  const sendAnnouncement = useCallback((message: string, duration?: number, fieldId?: string) => {
     if (!currentTournament) {
       console.error('No tournament ID available for sendAnnouncement');
       return;
     }
-    ws.sendAnnouncement({ message, duration, tournamentId: currentTournament });
+    ws.sendAnnouncement({ 
+      message, 
+      duration, 
+      tournamentId: currentTournament,
+      fieldId // Include fieldId if provided
+    });
   }, [currentTournament, ws]);
+  // Field room join/leave for field-specific context
+  const joinFieldRoom = useCallback((fieldId: string) => {
+    ws.joinFieldRoom(fieldId);
+  }, [ws]);
+  const leaveFieldRoom = useCallback((fieldId: string) => {
+    ws.leaveFieldRoom(fieldId);
+  }, [ws]);
 
   // Setup connection tracking
   useEffect(() => {
@@ -123,10 +134,9 @@ export function useWebSocket(options: UseWebSocketOptions = {}, ws: IWebSocketSe
     };
     const intervalId = setInterval(checkConnectionStatus, 1000);
     if (autoConnect) connect();
-    if (tournamentId) joinTournament(tournamentId);
     checkConnectionStatus();
     return () => { clearInterval(intervalId); };
-  }, [autoConnect, connect, tournamentId, joinTournament, ws]);
+  }, [autoConnect, connect, ws]);
 
   return {
     isConnected,
@@ -145,5 +155,7 @@ export function useWebSocket(options: UseWebSocketOptions = {}, ws: IWebSocketSe
     pauseTimer,
     resetTimer,
     sendAnnouncement,
+    joinFieldRoom,
+    leaveFieldRoom,
   };
 }

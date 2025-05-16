@@ -3,8 +3,14 @@ import { MatchResponse, MatchScores } from "@/hooks/use-matches";
 import { MatchStatus } from "@/lib/types";
 
 export class MatchService {
-  static async getAllMatches(): Promise<MatchResponse[]> {
-    return apiClient.get<MatchResponse[]>("/matches");
+  static async getAllMatches(filter?: { fieldId?: string | null }): Promise<MatchResponse[]> {
+    let url = "/matches";
+    if (filter?.fieldId) {
+      const params = new URLSearchParams();
+      params.append("fieldId", filter.fieldId);
+      url += `?${params.toString()}`;
+    }
+    return apiClient.get<MatchResponse[]>(url);
   }
 
   static async getMatchesByStage(stageId: string): Promise<MatchResponse[]> {

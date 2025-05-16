@@ -16,6 +16,7 @@ export interface Tournament {
   adminId: string;
   createdAt: string;
   updatedAt: string;
+  numberOfFields?: number;
   admin?: {
     id: string;
     username: string;

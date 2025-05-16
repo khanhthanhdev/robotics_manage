@@ -91,6 +91,35 @@ describe('MatchesController', () => {
       expect(result).toHaveProperty('id', 'match1');
       expect(prisma.match.update).toHaveBeenCalled();
     });
+
+    it('should update fieldId and set fieldNumber from Field', async () => {
+      prisma.field.findUnique.mockResolvedValue({ number: 42 } as any);
+      prisma.match.update.mockResolvedValue({ id: 'match1', fieldId: 'field1', fieldNumber: 42, alliances: [] } as any);
+      const result = await matchesService.update('match1', { fieldId: 'field1' } as any);
+      expect(prisma.field.findUnique).toHaveBeenCalledWith({ where: { id: 'field1' }, select: { number: true } });
+      expect(prisma.match.update).toHaveBeenCalledWith({
+        where: { id: 'match1' },
+        data: { fieldId: 'field1', fieldNumber: 42 },
+        include: { alliances: true },
+      });
+      expect(result).toHaveProperty('fieldNumber', 42);
+    });
+
+    it('should update fieldNumber directly if provided', async () => {
+      prisma.match.update.mockResolvedValue({ id: 'match1', fieldNumber: 99, alliances: [] } as any);
+      const result = await matchesService.update('match1', { fieldNumber: 99 } as any);
+      expect(prisma.match.update).toHaveBeenCalledWith({
+        where: { id: 'match1' },
+        data: { fieldNumber: 99 },
+        include: { alliances: true },
+      });
+      expect(result).toHaveProperty('fieldNumber', 99);
+    });
+
+    it('should throw if fieldId is not found', async () => {
+      prisma.field.findUnique.mockResolvedValue(null);
+      await expect(matchesService.update('match1', { fieldId: 'badid' } as any)).rejects.toThrow('Field not found');
+    });
   });
 
   describe('remove', () => {

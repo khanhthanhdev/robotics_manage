@@ -21,6 +21,8 @@ export const UpdateMatchSchema = z.object({
   status: z.enum(['PENDING', 'IN_PROGRESS', 'COMPLETED']).optional(),
   startTime: z.coerce.date().optional(),
   endTime: z.coerce.date().optional(),
+  fieldId: z.string().uuid('Field ID must be a valid UUID').optional(),
+  fieldNumber: z.number().int().optional(),
   scoredById: z.string().uuid('Scorer ID must be a valid UUID').optional(),
 }).refine(data => !data.startTime || !data.endTime || data.startTime <= data.endTime, {
   message: 'End time must be after start time',

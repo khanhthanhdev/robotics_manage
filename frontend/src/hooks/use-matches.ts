@@ -116,14 +116,16 @@ export interface MatchScores {
 }
 
 /**
- * Hook to fetch all matches
+ * Hook to fetch all matches, optionally filtered by fieldId
  */
-export function useMatches() {
+export function useMatches(filter?: { fieldId?: string | null }) {
   return useQuery({
-    queryKey: QueryKeys.matches.all(),
+    queryKey: filter?.fieldId
+      ? [...QueryKeys.matches.all(), { fieldId: filter.fieldId }]
+      : QueryKeys.matches.all(),
     queryFn: async () => {
       try {
-        return await MatchService.getAllMatches();
+        return await MatchService.getAllMatches(filter);
       } catch (error: any) {
         toast.error("Failed to fetch matches");
         throw error;

@@ -12,11 +12,14 @@ import {
 } from "@/hooks/use-matches";
 import { MatchStatus } from "@/lib/types";
 import { useWebSocket } from "@/hooks/useWebSocket";
+import { useTournaments } from "@/hooks/use-tournaments";
 import { Card } from "@/components/ui/card";
-// Import the extracted ConnectionStatus component
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import ConnectionStatus from "./components/ConnectionStatus";
 import { toast } from "sonner";
 import MatchControlTabs from "./components/MatchControlTabs";
+import FieldSelectDropdown from "@/components/fields/FieldSelectDropdown";
+import { ExtendedAudienceDisplaySettings } from "@/lib/websocket-service-extensions";
 
 // Convert game elements from object format to array format
 const objectToArrayGameElements = (
@@ -83,12 +86,19 @@ const arrayToObjectGameElements = (
 
 // Client component using WebSockets
 export default function ControlMatchPage() {
-  // Get tournament ID from query params or use a default for demo
-  const tournamentId =
-    typeof window !== "undefined"
-      ? new URLSearchParams(window.location.search).get("tournamentId") ||
-        "demo-tournament"
-      : "demo-tournament";
+  // Tournament selection state
+  const { data: tournaments = [], isLoading: tournamentsLoading } = useTournaments();
+  const [selectedTournamentId, setSelectedTournamentId] = useState<string>("");
+
+  // Set default tournamentId on load (first available or demo)
+  useEffect(() => {
+    if (!tournamentsLoading && tournaments.length > 0 && !selectedTournamentId) {
+      setSelectedTournamentId(tournaments[0].id);
+    }
+  }, [tournaments, tournamentsLoading, selectedTournamentId]);
+
+  // Use selectedTournamentId for all tournament-specific logic
+  const tournamentId = selectedTournamentId || "demo-tournament";
 
   // React Query client for cache manipulation
   const queryClient = useQueryClient();
@@ -102,9 +112,13 @@ export default function ControlMatchPage() {
   const [showTeams, setShowTeams] = React.useState<boolean>(true);
   const [announcementMessage, setAnnouncementMessage] =
     React.useState<string>("");
+  // Add state for selected field
+  const [selectedFieldId, setSelectedFieldId] = useState<string | null>(null);
 
-  // Fetch matches using React Query
-  const { data: matchesData = [], isLoading: isLoadingMatches } = useMatches();
+  // Fetch matches using React Query, filtered by selectedFieldId
+  const { data: matchesData = [], isLoading: isLoadingMatches } = useMatches({
+    fieldId: selectedFieldId,
+  });
 
   // Fetch all match scores at once for the matches list
   const {
@@ -168,6 +182,9 @@ export default function ControlMatchPage() {
   const createMatchScores = useCreateMatchScores();
   const updateMatchScores = useUpdateMatchScores();
 
+  // Get the match status update mutation
+  const updateMatchStatus = useUpdateMatchStatus();
+
   // Helper function to extract red teams from alliances
   const getRedTeams = (match?: any) => {
     if (!match?.alliances) return [];
@@ -191,11 +208,11 @@ export default function ControlMatchPage() {
       (ta: any) => ta.team?.teamNumber || ta.team?.name || "Unknown"
     );
   };
-
-  // Connect to WebSocket with the tournament ID
+  // Connect to WebSocket with the tournament ID and auto-connect
   const {
     isConnected,
     currentTournament,
+    joinTournament,
     changeDisplayMode,
     startTimer,
     pauseTimer,
@@ -205,7 +222,31 @@ export default function ControlMatchPage() {
     sendMatchStateChange,
     sendScoreUpdate,
     subscribe,
-  } = useWebSocket({ tournamentId });
+    joinFieldRoom,
+    leaveFieldRoom,
+  } = useWebSocket({ tournamentId, autoConnect: true });
+  // Join tournament and field rooms on mount
+  useEffect(() => {
+    if (!tournamentId) return;
+    
+    // Join tournament room first
+    joinTournament(tournamentId);
+    console.log(`Joining tournament: ${tournamentId}`);
+    
+    // Then join field room if selected
+    if (selectedFieldId) {
+      joinFieldRoom(selectedFieldId);
+      console.log(`Joining field room: ${selectedFieldId} in tournament: ${tournamentId}`);
+    }
+    
+    // On unmount, leave the field room
+    return () => {
+      if (selectedFieldId) {
+        leaveFieldRoom(selectedFieldId);
+        console.log(`Leaving field room: ${selectedFieldId}`);
+      }
+    };
+  }, [tournamentId, selectedFieldId, joinTournament, joinFieldRoom, leaveFieldRoom]);
 
   // UI state for timer controls
   const [timerDuration, setTimerDuration] = React.useState<number>(150000); // 2:30 in ms
@@ -227,12 +268,17 @@ export default function ControlMatchPage() {
   useEffect(() => {
     setTimerRemaining(timerDuration);
   }, [timerDuration]);
-
   // Listen for timer updates from WebSocket
   useEffect(() => {
     // Handler for timer updates from WebSocket
     const handleTimerUpdate = (data: any) => {
       console.log("Timer update received:", data);
+      
+      // Filter messages by fieldId if we're in a specific field room
+      if (selectedFieldId && data.fieldId && data.fieldId !== selectedFieldId) {
+        console.log(`Ignoring timer update for different field: ${data.fieldId}`);
+        return;
+      }
 
       // Update local timer state from the websocket data
       if (data) {
@@ -248,14 +294,13 @@ export default function ControlMatchPage() {
     return () => {
       if (unsubscribe) unsubscribe();
     };
-  }, [subscribe]);
+  }, [subscribe, selectedFieldId]);
 
   // Subscribe to WebSocket score updates and update React Query cache
   useEffect(() => {
-    if (!selectedMatchId) return;
-
-    const handleScoreUpdate = (data: {
+    if (!selectedMatchId) return;    const handleScoreUpdate = (data: {
       matchId: string;
+      fieldId?: string;
       redAutoScore?: number;
       redDriveScore?: number;
       redTotalScore?: number;
@@ -264,7 +309,15 @@ export default function ControlMatchPage() {
       blueTotalScore?: number;
       [key: string]: any;
     }) => {
+      // Filter messages by fieldId if we're in a specific field room
+      if (selectedFieldId && data.fieldId && data.fieldId !== selectedFieldId) {
+        console.log(`Ignoring score update for different field: ${data.fieldId}`);
+        return;
+      }
+      
       if (data.matchId === selectedMatchId) {
+        console.log("Score update received for selected match:", data);
+        
         // Update the React Query cache directly
         queryClient.setQueryData(
           ["match-scores", selectedMatchId],
@@ -286,6 +339,92 @@ export default function ControlMatchPage() {
       if (unsubscribe) unsubscribe();
     };
   }, [selectedMatchId, subscribe, queryClient, refetchScores]);
+
+  // State for tracking active match from WebSocket
+  const [activeMatch, setActiveMatch] = useState<any>(null);
+  
+  // Listen for match updates from WebSocket
+  useEffect(() => {
+    const handleMatchUpdate = (data: any) => {
+      console.log("Match update received:", data);
+      
+      // Filter messages by fieldId if we're in a specific field room
+      if (selectedFieldId && data.fieldId && data.fieldId !== selectedFieldId) {
+        console.log(`Ignoring match update for different field: ${data.fieldId}`);
+        return;
+      }
+      
+      setActiveMatch(data);
+      
+      // Auto-select this match if we don't have one selected yet
+      if (!selectedMatchId && data.id) {
+        setSelectedMatchId(data.id);
+      }
+      
+      // If this is the currently selected match, update the cache
+      if (data.id === selectedMatchId) {
+        queryClient.setQueryData(
+          ["match", selectedMatchId],
+          (oldData: Record<string, any> | undefined) => {
+            if (!oldData) return data;
+            
+            return {
+              ...oldData,
+              ...data,
+            };
+          }
+        );
+      }
+    };
+    
+    // Subscribe to match updates
+    const unsubscribe = subscribe("match_update", handleMatchUpdate);
+    
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, [subscribe, selectedMatchId, queryClient, selectedFieldId]);
+
+  // State for tracking match state from WebSocket
+  const [matchState, setMatchState] = useState<any>(null);
+  
+  // Listen for match state changes from WebSocket
+  useEffect(() => {
+    const handleMatchStateChange = (data: any) => {
+      console.log("Match state change received:", data);
+      
+      // Filter messages by fieldId if we're in a specific field room
+      if (selectedFieldId && data.fieldId && data.fieldId !== selectedFieldId) {
+        console.log(`Ignoring match state update for different field: ${data.fieldId}`);
+        return;
+      }
+      
+      setMatchState(data);
+      
+      // Update the selected match if it's the same match
+      if (data.matchId === selectedMatchId) {
+        // Update match query cache with new status
+        queryClient.setQueryData(
+          ["match", selectedMatchId],
+          (oldData: Record<string, any> | undefined) => {
+            if (!oldData) return oldData;
+            
+            return {
+              ...oldData,
+              status: data.status || oldData.status,
+            };
+          }
+        );
+      }
+    };
+    
+    // Subscribe to match state changes
+    const unsubscribe = subscribe("match_state_change", handleMatchStateChange);
+    
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, [subscribe, selectedMatchId, queryClient, selectedFieldId]);
 
   // UI state for score controls
   const [redAutoScore, setRedAutoScore] = React.useState<number>(0);
@@ -368,15 +507,18 @@ export default function ControlMatchPage() {
       setBlueGameElements([]);
       setScoreDetails({});
     }
-  }, [matchScores, isLoadingScores, selectedMatchId]);
-
-  // Handle selecting a match
+  }, [matchScores, isLoadingScores, selectedMatchId]);  // Handle selecting a match
   const handleSelectMatch = (match: {
     id: string;
     matchNumber: string | number;
+    fieldId?: string;
   }) => {
     setSelectedMatchId(match.id);
-
+    // If match has a fieldId, use it
+    if (match.fieldId) {
+      setSelectedFieldId(match.fieldId);
+    }
+    
     // Automatically update display settings to show the selected match
     changeDisplayMode({
       displayMode: "match",
@@ -385,9 +527,9 @@ export default function ControlMatchPage() {
       showScores,
       showTeams,
       tournamentId,
+      fieldId: match.fieldId || selectedFieldId || undefined,
     });
   };
-
   // Handle display mode change
   const handleDisplayModeChange = () => {
     changeDisplayMode({
@@ -397,26 +539,26 @@ export default function ControlMatchPage() {
       showScores,
       showTeams,
       tournamentId: currentTournament!,
+      fieldId: selectedFieldId || undefined,
     });
   };
 
   // Handle timer controls
   const handleStartTimer = () => {
-    // If timer is already running, do nothing
-    if (timerIsRunning) return;    // If timerRemaining is 0, reset to duration
+    if (timerIsRunning) return;
     const startTime = timerRemaining > 0 ? timerRemaining : timerDuration;
     startTimer({
       duration: timerDuration,
       remaining: startTime,
-    });
+      fieldId: selectedFieldId,
+    } as any);
     setTimerIsRunning(true);
     sendMatchStateChange({
       matchId: selectedMatchId,
       status: "IN_PROGRESS",
       currentPeriod: matchPeriod as any,
-    });
-    
-    // Also update the match status in the database
+      fieldId: selectedFieldId,
+    } as any);
     updateMatchStatus.mutate({ 
       matchId: selectedMatchId, 
       status: MatchStatus.IN_PROGRESS 
@@ -424,29 +566,30 @@ export default function ControlMatchPage() {
   };
 
   const handlePauseTimer = () => {
-    // Only pause, do not reset
     pauseTimer({
       duration: timerDuration,
       remaining: timerRemaining,
       isRunning: false,
-    });
+      fieldId: selectedFieldId,
+    } as any);
     setTimerIsRunning(false);
   };
 
-  const handleResetTimer = () => {    resetTimer({
+  const handleResetTimer = () => {
+    resetTimer({
       duration: timerDuration,
       remaining: timerDuration,
       isRunning: false,
-    });
+      fieldId: selectedFieldId,
+    } as any);
     setTimerRemaining(timerDuration);
     setTimerIsRunning(false);
     sendMatchStateChange({
       matchId: selectedMatchId,
       status: "PENDING",
       currentPeriod: null,
-    });
-    
-    // Also update the match status in the database
+      fieldId: selectedFieldId,
+    } as any);
     updateMatchStatus.mutate({ 
       matchId: selectedMatchId, 
       status: MatchStatus.PENDING 
@@ -456,12 +599,8 @@ export default function ControlMatchPage() {
   // Handle score updates
   const handleUpdateScores = () => {
     if (!selectedMatchId) return;
-
-    // Convert game elements arrays to object format for API compatibility
     const redGameElementsObj = arrayToObjectGameElements(redGameElements);
     const blueGameElementsObj = arrayToObjectGameElements(blueGameElements);
-
-    // Create data for React Query mutations (using arrays for game elements)
     const mutationData = {
       matchId: selectedMatchId,
       redAutoScore,
@@ -470,16 +609,14 @@ export default function ControlMatchPage() {
       blueAutoScore,
       blueDriveScore,
       blueTotalScore,
-      redGameElements, // Keep as array for mutations
-      blueGameElements, // Keep as array for mutations
+      redGameElements,
+      blueGameElements,
       redTeamCount,
       redMultiplier,
       blueTeamCount,
       blueMultiplier,
       scoreDetails,
     };
-
-    // Create data for WebSocket (using objects for game elements)
     const wsScoreData = {
       matchId: selectedMatchId,
       redAutoScore,
@@ -488,55 +625,43 @@ export default function ControlMatchPage() {
       blueAutoScore,
       blueDriveScore,
       blueTotalScore,
-      redGameElements: redGameElementsObj, // Use object format for WebSocket
-      blueGameElements: blueGameElementsObj, // Use object format for WebSocket
+      redGameElements: redGameElementsObj,
+      blueGameElements: blueGameElementsObj,
       redTeamCount,
       redMultiplier,
       blueTeamCount,
       blueMultiplier,
       scoreDetails,
+      fieldId: selectedFieldId,
     };
-
     if (matchScores?.id) {
-      // Update existing scores
       updateMatchScores.mutate({
         id: matchScores.id,
-        ...mutationData, // Use array format for mutations
+        ...mutationData,
       });
     } else {
-      // Create new scores
-      createMatchScores.mutate(mutationData); // Use array format for mutations
+      createMatchScores.mutate(mutationData);
     }
+    sendScoreUpdate(wsScoreData as any);
+  };
 
-    // Send the WebSocket update with object format
-    sendScoreUpdate(wsScoreData);
-  };  // Get the match status update mutation
-  const updateMatchStatus = useUpdateMatchStatus();
-  
   // Handle submitting final scores and completing the match
   const handleSubmitScores = () => {
-    // First update the scores
     handleUpdateScores();
-
-    // Then mark the match as completed via both WebSocket and API
     sendMatchStateChange({
       matchId: selectedMatchId,
       status: "COMPLETED",
       currentPeriod: null,
-    });
-    
-    // Update the match status in database as well
+      fieldId: selectedFieldId,
+    } as any);
     updateMatchStatus.mutate({ 
       matchId: selectedMatchId, 
       status: MatchStatus.COMPLETED 
     });
-
-    // Show toast notification
     toast.success("Match Completed", {
       description: `Final score: Red ${redTotalScore} - Blue ${blueTotalScore}`,
     });
   };
-
   // Handle sending an announcement
   const handleSendAnnouncement = () => {
     if (announcementMessage.trim()) {
@@ -547,6 +672,7 @@ export default function ControlMatchPage() {
         displayMode: "announcement",
         message: announcementMessage.trim(),
         tournamentId: currentTournament!,
+        fieldId: selectedFieldId || undefined,
       });
 
       // Clear input after sending
@@ -741,15 +867,78 @@ export default function ControlMatchPage() {
     }
   };
 
+  // Track connection status and attempts
+  const [connectionAttempts, setConnectionAttempts] = useState<number>(0);
+  const [connectionError, setConnectionError] = useState<string | null>(null);
+  
+  // Update connection error message based on connection status
+  useEffect(() => {
+    if (!isConnected) {
+      const attemptMessage = connectionAttempts > 0 ? ` (Attempt ${connectionAttempts + 1})` : '';
+      setConnectionError(`WebSocket connection not established${attemptMessage}. Ensure the server is running.`);
+      
+      // Increment connection attempts and retry after delay
+      const timeoutId = setTimeout(() => {
+        setConnectionAttempts(prev => prev + 1);
+      }, 5000);
+      
+      return () => clearTimeout(timeoutId);
+    } else {
+      setConnectionError(null);
+      setConnectionAttempts(0);
+    }
+  }, [isConnected, connectionAttempts]);
+
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Match Control Panel</h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+      {/* Tournament selection dropdown */}
+      <div className="mb-4">
+        <label className="block text-sm font-medium mb-1">Tournament</label>
+        <Select
+          value={selectedTournamentId}
+          onValueChange={setSelectedTournamentId}
+          disabled={tournamentsLoading || tournaments.length === 0}
+        >
+          <SelectTrigger className="w-full max-w-xs">
+            <SelectValue placeholder="Select a tournament" />
+          </SelectTrigger>
+          <SelectContent>
+            {tournaments.map((t) => (
+              <SelectItem key={t.id} value={t.id}>
+                {t.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Field selection dropdown (per tournament) */}
+      <div className="mb-4">
+        <FieldSelectDropdown
+          tournamentId={tournamentId}
+          selectedFieldId={selectedFieldId}
+          onFieldSelect={setSelectedFieldId}
+          showAllFieldsOption={true}
+        />
+      </div>      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <ConnectionStatus
           isConnected={isConnected}
-          tournamentId={currentTournament}
+          tournamentId={tournamentId}
+          selectedFieldId={selectedFieldId}
+          onFieldSelect={setSelectedFieldId}
         />
+        
+        {/* Field indicator */}
+        {selectedFieldId && (
+          <div className="flex items-center mb-2">
+            <span className="inline-flex items-center px-2 py-1 rounded-md bg-blue-100 text-blue-800 text-xs font-medium mr-2">
+              <span className="w-2 h-2 rounded-full bg-blue-500 mr-1"></span>
+              Field Mode Active: Field #{selectedFieldId}
+            </span>
+          </div>
+        )}
 
         {selectedMatch && (
           <Card className="p-4">

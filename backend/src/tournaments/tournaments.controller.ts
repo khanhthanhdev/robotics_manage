@@ -28,6 +28,11 @@ export class TournamentsController {
     return this.tournamentsService.findOne(id);
   }
 
+  @Get(':id/fields')
+  getFieldsByTournament(@Param('id') id: string) {
+    return this.tournamentsService.getFieldsByTournament(id);
+  }
+
   @Patch(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)

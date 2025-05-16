@@ -67,8 +67,16 @@ export class MatchesService {
     return alliance;
   }
 
-  findAll() {
+  /**
+   * Find all matches, optionally filtered by fieldId or fieldNumber
+   */
+  findAll(params?: { fieldId?: string; fieldNumber?: number }) {
+    const { fieldId, fieldNumber } = params || {};
+    const where: any = {};
+    if (fieldId) where.fieldId = fieldId;
+    if (fieldNumber !== undefined) where.fieldNumber = fieldNumber;
     return this.prisma.match.findMany({
+      where,
       include: {
         stage: {
           include: {
@@ -126,7 +134,7 @@ export class MatchesService {
     });
   }
 
-  update(id: string, updateMatchDto: UpdateMatchDto) {
+  update(id: string, updateMatchDto: UpdateMatchDto & { fieldId?: string; fieldNumber?: number }) {
     const data: any = {};
     
     if (updateMatchDto.matchNumber !== undefined) {
@@ -152,7 +160,31 @@ export class MatchesService {
     if (updateMatchDto.scoredById) {
       data.scoredById = updateMatchDto.scoredById;
     }
-    
+
+    // Handle fieldId and fieldNumber
+    if (updateMatchDto.fieldId) {
+      data.fieldId = updateMatchDto.fieldId;
+      // Fetch the field and set fieldNumber
+      return this.prisma.field.findUnique({
+        where: { id: updateMatchDto.fieldId },
+        select: { number: true },
+      }).then(field => {
+        if (!field) throw new Error('Field not found');
+        data.fieldNumber = field.number;
+        return this.prisma.match.update({
+          where: { id },
+          data,
+          include: {
+            alliances: true,
+          },
+        });
+      });
+    }
+    // Allow direct fieldNumber update (if provided, but not recommended)
+    if (updateMatchDto.fieldNumber !== undefined) {
+      data.fieldNumber = updateMatchDto.fieldNumber;
+    }
+
     return this.prisma.match.update({
       where: { id },
       data,

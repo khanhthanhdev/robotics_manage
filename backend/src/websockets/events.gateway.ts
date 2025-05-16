@@ -19,6 +19,7 @@ interface TimerData {
   startedAt?: number;
   pausedAt?: number;
   tournamentId: string;
+  fieldId?: string;
 }
 
 interface MatchData {
@@ -26,6 +27,7 @@ interface MatchData {
   matchNumber: number;
   status: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED';
   tournamentId: string;
+  fieldId?: string;
   // Other match properties
 }
 
@@ -38,6 +40,7 @@ interface ScoreData {
   blueDriveScore: number;
   blueTotalScore: number;
   tournamentId: string;
+  fieldId?: string;
   // Other score properties
 }
 
@@ -46,6 +49,7 @@ interface MatchStateData {
   status: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED';
   currentPeriod?: 'auto' | 'teleop' | 'endgame' | null;
   tournamentId: string;
+  fieldId?: string;
 }
 
 interface AudienceDisplaySettings {
@@ -62,6 +66,7 @@ interface AudienceDisplaySettings {
 interface AnnouncementData {
   message: string;
   tournamentId: string;
+  fieldId?: string; // Optional field ID for field-specific announcements
   duration?: number; // How long to show the announcement (in ms)
 }
 
@@ -127,46 +132,84 @@ export class EventsGateway
     client.leave(tournamentId);
     this.logger.log(`Client ${client.id} left room: ${tournamentId}`);
   }
-
   // Handle match updates (control panel -> audience display)
   @SubscribeMessage('match_update')
   handleMatchUpdate(
     @ConnectedSocket() client: Socket,
-    @MessageBody() payload: MatchData
+    @MessageBody() payload: any // Accept any to allow fieldId
   ): void {
     this.logger.log(`Match update received: ${JSON.stringify(payload)}`);
-    // Broadcast to all clients in the tournament room except the sender
-    client.to(payload.tournamentId).emit('match_update', payload);
+    if (payload.fieldId) {
+      // Use emitToField for field-specific updates
+      this.emitToField(payload.fieldId, 'match_update', payload);
+      
+      // Also emit to tournament for history/archiving
+      if (payload.tournamentId) {
+        this.server.to(payload.tournamentId).emit('match_update', payload);
+      }
+    } else if (payload.tournamentId) {
+      // fallback for legacy clients
+      client.to(payload.tournamentId).emit('match_update', payload);
+    }
   }
 
   // Handle score updates (control panel -> audience display)
   @SubscribeMessage('score_update')
   handleScoreUpdate(
     @ConnectedSocket() client: Socket,
-    @MessageBody() payload: ScoreData
+    @MessageBody() payload: any
   ): void {
     this.logger.log(`Score update received: ${JSON.stringify(payload)}`);
-    client.to(payload.tournamentId).emit('score_update', payload);
+    if (payload.fieldId) {
+      // Use emitToField for field-specific updates
+      this.emitToField(payload.fieldId, 'score_update', payload);
+      
+      // Also emit to tournament for history/archiving
+      if (payload.tournamentId) {
+        this.server.to(payload.tournamentId).emit('score_update', payload);
+      }
+    } else if (payload.tournamentId) {
+      client.to(payload.tournamentId).emit('score_update', payload);
+    }
   }
 
   // Handle timer updates (control panel -> audience display)
   @SubscribeMessage('timer_update')
   handleTimerUpdate(
     @ConnectedSocket() client: Socket,
-    @MessageBody() payload: TimerData
+    @MessageBody() payload: any
   ): void {
     this.logger.log(`Timer update received: ${JSON.stringify(payload)}`);
-    client.to(payload.tournamentId).emit('timer_update', payload);
+    if (payload.fieldId) {
+      // Use emitToField for field-specific updates
+      this.emitToField(payload.fieldId, 'timer_update', payload);
+      
+      // Also emit to tournament for history/archiving
+      if (payload.tournamentId) {
+        this.server.to(payload.tournamentId).emit('timer_update', payload);
+      }
+    } else if (payload.tournamentId) {
+      client.to(payload.tournamentId).emit('timer_update', payload);
+    }
   }
-
   // Handle match state changes (control panel -> audience display)
   @SubscribeMessage('match_state_change')
   handleMatchStateChange(
     @ConnectedSocket() client: Socket,
-    @MessageBody() payload: MatchStateData
+    @MessageBody() payload: any
   ): void {
     this.logger.log(`Match state change received: ${JSON.stringify(payload)}`);
-    client.to(payload.tournamentId).emit('match_state_change', payload);
+    if (payload.fieldId) {
+      // Use emitToField for field-specific updates
+      this.emitToField(payload.fieldId, 'match_state_change', payload);
+      
+      // Also emit to tournament for history/archiving
+      if (payload.tournamentId) {
+        this.server.to(payload.tournamentId).emit('match_state_change', payload);
+      }
+    } else if (payload.tournamentId) {
+      client.to(payload.tournamentId).emit('match_state_change', payload);
+    }
   }
   
   // Handle display mode changes (control panel -> audience display)
@@ -183,15 +226,29 @@ export class EventsGateway
     // Broadcast to all clients in the tournament room including the sender
     this.server.to(payload.tournamentId).emit('display_mode_change', payload);
   }
-  
-  // Handle announcements (control panel -> audience display)
+    // Handle announcements (control panel -> audience display)
   @SubscribeMessage('announcement')
   handleAnnouncement(
     @ConnectedSocket() client: Socket,
     @MessageBody() payload: AnnouncementData
   ): void {
     this.logger.log(`Announcement received: ${JSON.stringify(payload)}`);
-    client.to(payload.tournamentId).emit('announcement', payload);
+    
+    // If fieldId is provided, emit to that specific field, otherwise broadcast to tournament
+    if (payload.fieldId) {
+      // Create a unique room ID for this field
+      const fieldRoomId = `field:${payload.fieldId}`;
+      this.logger.log(`Sending field-specific announcement to ${fieldRoomId}`);
+      
+      // Emit to field-specific room
+      this.server.to(fieldRoomId).emit('announcement', payload);
+      
+      // Also emit to tournament for archiving/history purposes
+      this.server.to(payload.tournamentId).emit('announcement', payload);
+    } else {
+      // Broadcast to all clients in the tournament room including the sender
+      client.to(payload.tournamentId).emit('announcement', payload);
+    }
   }
   
   // Start a timer for a match (control panel)
@@ -317,7 +374,6 @@ export class EventsGateway
   }
 
   // --- FIELD-SPECIFIC ROOMS ---
-
   // Join a field-specific room
   @SubscribeMessage('joinFieldRoom')
   handleJoinFieldRoom(
@@ -325,8 +381,9 @@ export class EventsGateway
     @MessageBody() data: { fieldId: string }
   ): void {
     const { fieldId } = data;
-    client.join(`field_${fieldId}`);
-    this.logger.log(`Client ${client.id} joined field room: field_${fieldId}`);
+    const fieldRoomId = `field:${fieldId}`;
+    client.join(fieldRoomId);
+    this.logger.log(`Client ${client.id} joined field room: ${fieldRoomId}`);
   }
 
   // Leave a field-specific room
@@ -336,13 +393,15 @@ export class EventsGateway
     @MessageBody() data: { fieldId: string }
   ): void {
     const { fieldId } = data;
-    client.leave(`field_${fieldId}`);
-    this.logger.log(`Client ${client.id} left field room: field_${fieldId}`);
+    const fieldRoomId = `field:${fieldId}`;
+    client.leave(fieldRoomId);
+    this.logger.log(`Client ${client.id} left field room: ${fieldRoomId}`);
   }
 
   // Emit to a field-specific room (for use by services)
   public emitToField(fieldId: string, event: string, payload: any): void {
-    this.server.to(`field_${fieldId}`).emit(event, payload);
-    this.logger.log(`Broadcasted ${event} to field_${fieldId}: ${JSON.stringify(payload)}`);
+    const fieldRoomId = `field:${fieldId}`;
+    this.server.to(fieldRoomId).emit(event, payload);
+    this.logger.log(`Broadcasted ${event} to ${fieldRoomId}: ${JSON.stringify(payload)}`);
   }
 }
