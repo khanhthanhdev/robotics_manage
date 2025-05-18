@@ -93,4 +93,45 @@ describe('TeamStatsService', () => {
       update: expect.objectContaining({ wins: expect.any(Number), losses: expect.any(Number), ties: expect.any(Number), matchesPlayed: expect.any(Number) }),
     });
   });
+
+  it('should update existing team stats with new match results', async () => {
+    // Simulate existing stats for t1 (1 win, 0 loss, 0 tie, 1 match played)
+    prisma.match.findMany.mockResolvedValue([
+      {
+        id: 'm1',
+        alliances: [
+          { color: 'RED', teamAlliances: [{ teamId: 't1' }] },
+          { color: 'BLUE', teamAlliances: [{ teamId: 't2' }] },
+        ],
+        winningAlliance: 'RED',
+        status: 'COMPLETED',
+      },
+      {
+        id: 'm2',
+        alliances: [
+          { color: 'RED', teamAlliances: [{ teamId: 't1' }] },
+          { color: 'BLUE', teamAlliances: [{ teamId: 't2' }] },
+        ],
+        winningAlliance: 'BLUE',
+        status: 'COMPLETED',
+      },
+    ] as any);
+    prisma.teamStats.upsert.mockResolvedValue({} as any);
+    const match = { stage: { tournament: { id: 'tournament1' } } } as any;
+    await service.recalculateTeamStats(match, ['t1', 't2']);
+    expect(prisma.teamStats.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { teamId_tournamentId: { teamId: 't1', tournamentId: 'tournament1' } },
+        create: expect.objectContaining({ teamId: 't1', wins: 1, losses: 1, ties: 0, matchesPlayed: 2 }),
+        update: expect.objectContaining({ wins: 1, losses: 1, ties: 0, matchesPlayed: 2 }),
+      })
+    );
+    expect(prisma.teamStats.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { teamId_tournamentId: { teamId: 't2', tournamentId: 'tournament1' } },
+        create: expect.objectContaining({ teamId: 't2', wins: 1, losses: 1, ties: 0, matchesPlayed: 2 }),
+        update: expect.objectContaining({ wins: 1, losses: 1, ties: 0, matchesPlayed: 2 }),
+      })
+    );
+  });
 });

@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 const navigationItems = [
   { name: "Tournaments", href: "/tournaments" },
   { name: "Stages", href: "/stages" },
+  { name: "Teams", href: "/teams" },
   { name: "Matches", href: "/matches" },
   { name: "Match Control", href: "/control-match" },
   { name: "Audience Display", href: "/audience-display" },

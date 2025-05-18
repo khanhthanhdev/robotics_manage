@@ -1,4 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
+import {
+  useReactTable,
+  getCoreRowModel,
+  getSortedRowModel,
+  getFilteredRowModel,
+  flexRender,
+  ColumnDef,
+  SortingState,
+  ColumnFiltersState,
+} from '@tanstack/react-table';
 
 // Define Schedule interface
 export interface Match {
@@ -129,6 +139,62 @@ const SwissFormat: React.FC<{ rounds: { [roundNumber: number]: Match[] } }> = ({
   </div>
 );
 
+// Table columns for matches
+const getMatchColumns = (teamFilter: string): ColumnDef<Match, any>[] => [
+  {
+    accessorKey: 'matchNumber',
+    header: 'Match #',
+    cell: info => info.getValue(),
+    enableSorting: true,
+    filterFn: (row, columnId, filterValue) => {
+      if (!filterValue) return true;
+      return String(row.getValue(columnId)).includes(filterValue);
+    },
+  },
+  {
+    accessorKey: 'scheduledTime',
+    header: 'Time',
+    cell: info => formatTime(info.getValue()),
+    enableSorting: true,
+  },
+  {
+    accessorKey: 'redAlliance',
+    header: 'Red Alliance',
+    cell: info => getTeams(info.row.original, 'RED').join(', '),
+    enableSorting: false,
+    filterFn: (row, columnId, filterValue) => {
+      if (!filterValue) return true;
+      return getTeams(row.original, 'RED').join(', ').toLowerCase().includes(filterValue.toLowerCase());
+    },
+  },
+  {
+    accessorKey: 'blueAlliance',
+    header: 'Blue Alliance',
+    cell: info => getTeams(info.row.original, 'BLUE').join(', '),
+    enableSorting: false,
+    filterFn: (row, columnId, filterValue) => {
+      if (!filterValue) return true;
+      return getTeams(row.original, 'BLUE').join(', ').toLowerCase().includes(filterValue.toLowerCase());
+    },
+  },
+  {
+    accessorKey: 'winningAlliance',
+    header: 'Result',
+    cell: info => info.getValue() || '-',
+    enableSorting: true,
+  },
+  {
+    accessorKey: 'status',
+    header: 'Status',
+    cell: info => info.getValue().replace('_', ' '),
+    enableSorting: true,
+    filterFn: (row, columnId, filterValue) => {
+      if (!filterValue) return true;
+      return row.getValue(columnId) === filterValue;
+    },
+  },
+];
+
 export const ScheduleDisplay: React.FC<ScheduleDisplayProps> = ({ 
   matches, 
   isLoading,
@@ -148,6 +214,60 @@ export const ScheduleDisplay: React.FC<ScheduleDisplayProps> = ({
   // State to track which tab is active
   const [activeStageId, setActiveStageId] = useState<string | null>(null);
   
+  // Table state for sorting/filtering
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [teamFilter, setTeamFilter] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
+
+  // Prepare table data
+  const tableData = useMemo(() => {
+    return matches.map(m => ({
+      ...m,
+      redAlliance: getTeams(m, 'RED').join(', '),
+      blueAlliance: getTeams(m, 'BLUE').join(', ')
+    }));
+  }, [matches]);
+
+  const columns = useMemo(() => getMatchColumns(teamFilter), [teamFilter]);
+
+  const table = useReactTable({
+    data: tableData,
+    columns,
+    state: { sorting, columnFilters },
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    debugTable: false,
+  });
+
+  useEffect(() => {
+    // Filter by status
+    if (statusFilter) {
+      setColumnFilters((prev) => [
+        ...prev.filter(f => f.id !== 'status'),
+        { id: 'status', value: statusFilter }
+      ]);
+    } else {
+      setColumnFilters((prev) => prev.filter(f => f.id !== 'status'));
+    }
+  }, [statusFilter]);
+
+  useEffect(() => {
+    // Filter by team name/number (red or blue alliance)
+    if (teamFilter) {
+      setColumnFilters((prev) => [
+        ...prev.filter(f => f.id !== 'redAlliance' && f.id !== 'blueAlliance'),
+        { id: 'redAlliance', value: teamFilter },
+        { id: 'blueAlliance', value: teamFilter },
+      ]);
+    } else {
+      setColumnFilters((prev) => prev.filter(f => f.id !== 'redAlliance' && f.id !== 'blueAlliance'));
+    }
+  }, [teamFilter]);
+
   useEffect(() => {
     if (matches && matches.length > 0) {
       const grouped: {
@@ -283,62 +403,81 @@ export const ScheduleDisplay: React.FC<ScheduleDisplayProps> = ({
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-900 via-indigo-800 to-purple-900 shadow-xl text-white p-8 text-center rounded-b-3xl border-b-4 border-blue-400 relative">
         <h2 className="text-5xl font-extrabold tracking-tight drop-shadow-lg mb-2 animate-fade-in">Match Schedule</h2>
-        <p className="text-lg text-blue-200 font-medium animate-fade-in-slow">Tournament ID: <span className="font-bold text-yellow-300">{tournamentId}</span></p>
-        <div className="absolute right-8 top-8 flex items-center space-x-2">
-          <span className="inline-block w-3 h-3 rounded-full bg-green-400 animate-pulse"></span>
-          <span className="text-xs text-green-200 font-semibold">Live</span>
+        <p className="text-lg text-blue-200 font-medium animate-fade-in-slow">Tournament ID: {tournamentId}</p>
+        <div className="absolute right-8 top-8 flex items-center space-x-2"></div>
+      </div>
+      {/* Filters */}
+      <div className="flex flex-wrap gap-4 items-end p-4 bg-white border-b border-blue-100">
+        <div>
+          <label className="block text-xs text-gray-400 mb-1">Team Name/Number</label>
+          <input
+            value={teamFilter}
+            onChange={e => setTeamFilter(e.target.value)}
+            placeholder="Search by team name or number"
+            className="w-40 px-2 py-1 rounded border border-blue-200"
+          />
+        </div>
+        <div>
+          <label className="block text-xs text-gray-400 mb-1">Status</label>
+          <select
+            value={statusFilter}
+            onChange={e => setStatusFilter(e.target.value)}
+            className="w-32 px-2 py-1 rounded border border-blue-200"
+          >
+            <option value="">All</option>
+            <option value="PENDING">Pending</option>
+            <option value="IN_PROGRESS">In Progress</option>
+            <option value="COMPLETED">Completed</option>
+          </select>
         </div>
       </div>
-      {/* Content */}
+      {/* Table */}
       <div className="flex-1 p-8 overflow-auto bg-gradient-to-b from-gray-50 to-blue-50">
-        {isLoading ? (
-          <div className="flex flex-col justify-center items-center h-64 animate-pulse">
-            <div className="text-2xl text-blue-400 font-bold mb-2">Loading schedule...</div>
-            <div className="w-32 h-2 bg-blue-200 rounded-full animate-pulse"></div>
-          </div>
-        ) : matches.length > 0 ? (
-          <div className="space-y-8">
-            {/* Stage Tabs */}
-            {Object.keys(groupedMatches).length > 1 && (
-              <div className="flex border-b border-blue-200 mb-6">
-                {Object.keys(groupedMatches).map(stageId => (
-                  <button
-                    key={stageId}
-                    className={`px-6 py-3 font-bold text-lg border-b-4 transition-colors focus:outline-none ${activeStageId === stageId ? 'border-yellow-400 text-blue-900 bg-yellow-100 shadow' : 'border-transparent text-blue-500 hover:text-blue-700 hover:bg-blue-100'}`}
-                    onClick={() => setActiveStageId(stageId)}
-                  >
-                    {groupedMatches[stageId].stageName}
-                  </button>
-                ))}
-              </div>
-            )}
-            {/* Stage Content */}
-            {activeStageId && groupedMatches[activeStageId] && (
-              <div>
-                {groupedMatches[activeStageId].stageType === 'PLAYOFF' ? (
-                  renderEliminationBracket(
-                    matches.filter(m => m.stage?.id === activeStageId),
-                    groupedMatches[activeStageId].stageType
-                  )
-                ) : groupedMatches[activeStageId].stageType === 'FINAL' ? (
-                  <MatchesTable matches={matches.filter(m => m.stage?.id === activeStageId)} />
-                ) : groupedMatches[activeStageId].stageType === 'SWISS' ? (
-                  <SwissFormat rounds={groupedMatches[activeStageId].rounds} />
-                ) : (
-                  <MatchesTable matches={matches.filter(m => m.stage?.id === activeStageId)} />
-                )}
-              </div>
-            )}
-          </div>
-        ) : (
-          <div className="flex flex-col items-center justify-center h-64 bg-white rounded-2xl shadow-xl p-12 border-2 border-blue-100 animate-fade-in">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-20 w-20 text-blue-200 mb-6 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-            <div className="text-2xl font-bold text-blue-400 mb-2">No matches scheduled</div>
-            <p className="text-blue-300 mt-2">The match schedule for this tournament is not available yet.</p>
-          </div>
-        )}
+        <div className="overflow-hidden shadow-lg rounded-lg border border-blue-100 bg-white">
+          <table className="min-w-full divide-y divide-blue-100">
+            <thead className="bg-gray-800 text-white">
+              {table.getHeaderGroups().map(headerGroup => (
+                <tr key={headerGroup.id}>
+                  {headerGroup.headers.map(header => (
+                    <th
+                      key={header.id}
+                      className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider cursor-pointer select-none"
+                      onClick={header.column.getToggleSortingHandler()}
+                    >
+                      <div className="flex items-center">
+                        {flexRender(header.column.columnDef.header, header.getContext())}
+                        <span className="ml-1 inline-block w-3 text-center">
+                          {header.column.getIsSorted() === 'asc' ? '▲' : header.column.getIsSorted() === 'desc' ? '▼' : <span className="opacity-0">▲</span>}
+                        </span>
+                      </div>
+                    </th>
+                  ))}
+                </tr>
+              ))}
+            </thead>
+            <tbody className="bg-white divide-y divide-blue-50">
+              {isLoading ? (
+                <tr>
+                  <td colSpan={table.getAllLeafColumns().length} className="text-center text-blue-400 py-8">Loading matches...</td>
+                </tr>
+              ) : table.getRowModel().rows.length === 0 ? (
+                <tr>
+                  <td colSpan={table.getAllLeafColumns().length} className="text-center text-blue-400 py-8">No matches found.</td>
+                </tr>
+              ) : (
+                table.getRowModel().rows.map(row => (
+                  <tr key={row.id} className="hover:bg-blue-50 transition-colors">
+                    {row.getVisibleCells().map(cell => (
+                      <td key={cell.id} className="px-4 py-3 whitespace-nowrap text-blue-900">
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </td>
+                    ))}
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

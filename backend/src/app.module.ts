@@ -12,6 +12,7 @@ import { AuthModule } from './auth/auth.module';
 import { AuthService } from './auth/auth.service';
 import { PrismaService } from './prisma.service';
 import { EventsGateway } from './websockets/events.gateway';
+import { TeamStatsApiModule } from './match-scores/team-stats-api.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { EventsGateway } from './websockets/events.gateway';
     MatchesModule,
     MatchScoresModule,
     MatchSchedulerModule,
+    TeamStatsApiModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService, EventsGateway],

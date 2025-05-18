@@ -16,6 +16,7 @@ import { FieldNotFound } from "../../components/FieldNotFound";
 import { LoadingDisplay } from "../../components/LoadingDisplay";
 import { MatchDisplay } from "../../components/MatchDisplay";
 import { useMatchesByTournament } from "../../components/useMatchesByTournament";
+import { SwissRankingsDisplay } from "../../components/SwissRankingsDisplay";
 
 export default function LiveFieldDisplayPage() {
   const router = useRouter();
@@ -84,6 +85,20 @@ export default function LiveFieldDisplayPage() {
   // Fetch match schedule for the tournament
   const { data: matches = [], isLoading: isLoadingMatches } =
     useMatchesByTournament(tournamentId);
+
+  // Rankings state
+  const [rankings, setRankings] = useState<any[]>([]);
+  const [isLoadingRankings, setIsLoadingRankings] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (!tournamentId) return;
+    setIsLoadingRankings(true);
+    apiClient
+      .get(`/team-stats/leaderboard/${tournamentId}`)
+      .then((data) => setRankings(data.rankings || []))
+      .catch(() => setRankings([]))
+      .finally(() => setIsLoadingRankings(false));
+  }, [tournamentId]);
 
   // WebSocket connection and state
   const {
@@ -689,11 +704,8 @@ export default function LiveFieldDisplayPage() {
 
       case "rankings":
         return (
-          <div key={contentKey} className="text-center p-8">
-            <h1 className="text-3xl font-bold text-blue-800 mb-4">
-              Tournament Rankings
-            </h1>
-            <p className="text-xl">Rankings display is coming soon...</p>
+          <div key={contentKey} className="p-0 md:p-4">
+            <SwissRankingsDisplay rankings={Array.isArray(rankings) ? rankings : []} isLoading={isLoadingRankings} />
             <DebugInfo />
           </div>
         );

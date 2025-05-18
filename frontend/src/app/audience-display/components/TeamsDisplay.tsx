@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card } from '@/components/ui/card';
+import { useReactTable, getCoreRowModel, getSortedRowModel, flexRender, ColumnDef, SortingState } from '@tanstack/react-table';
 
 // Define Team interface
 export interface Team {
@@ -15,72 +15,142 @@ interface TeamsDisplayProps {
   isLoading: boolean;
 }
 
+const columns: ColumnDef<Team>[] = [
+  {
+    accessorKey: 'teamNumber',
+    header: () => <span className="text-slate-300">Team #</span>,
+    cell: info => {
+      const value = info.getValue() as string | undefined;
+      return (
+        <div className="flex items-center">
+          <div className="flex-shrink-0 h-10 w-10 flex items-center justify-center rounded-full bg-blue-100 text-blue-700 font-bold text-sm border border-blue-200 shadow-sm">
+            {value || '—'}
+          </div>
+        </div>
+      );
+    },
+    size: 100,
+    meta: { responsiveClass: 'pl-6' }, // Add padding for the first cell
+  },
+  {
+    accessorKey: 'name',
+    header: () => <span className="text-slate-300">Team Name</span>,
+    cell: info => {
+      const value = info.getValue() as string | undefined;
+      return <div className="text-sm font-medium text-slate-900">{value}</div>;
+    },
+    size: 220,
+    meta: { responsiveClass: '' },
+  },
+  {
+    accessorKey: 'organization',
+    header: () => <span className="text-slate-300">Organization</span>,
+    cell: info => {
+      const value = info.getValue() as string | undefined;
+      return <div className="text-sm text-slate-600">{value || '—'}</div>;
+    },
+    size: 200,
+    meta: { responsiveClass: 'hidden md:table-cell' },
+  },
+  {
+    accessorKey: 'location',
+    header: () => <span className="text-slate-300">Location</span>,
+    cell: info => {
+      const value = info.getValue() as string | undefined;
+      return <div className="text-sm text-slate-600">{value || '—'}</div>;
+    },
+    size: 180,
+    meta: { responsiveClass: 'hidden lg:table-cell pr-6' }, // Add padding for the last cell
+  },
+];
+
 export const TeamsDisplay: React.FC<TeamsDisplayProps> = ({ teams, isLoading }) => {
+  const [sorting, setSorting] = React.useState<SortingState>([{ id: 'teamNumber', desc: false }]);
+
+  const table = useReactTable({
+    data: teams,
+    columns,
+    state: { sorting },
+    onSortingChange: setSorting,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    columnResizeMode: 'onChange',
+    debugTable: false,
+  });
+
   return (
-    <div className="flex flex-col h-full">
-      {/* Teams Header */}
-      <div className="bg-gradient-to-r from-blue-900 via-indigo-800 to-purple-900 shadow-xl text-white p-8 text-center rounded-b-3xl border-b-4 border-blue-400 relative animate-fade-in">
-        <h2 className="text-5xl font-extrabold tracking-tight drop-shadow-lg mb-2">Tournament Teams</h2>
-        <p className="mt-2 text-blue-200 text-lg font-semibold animate-fade-in-slow">
-          <span className="text-yellow-300 text-2xl font-bold">{teams.length}</span> {teams.length === 1 ? 'team' : 'teams'} registered
-        </p>
-        <div className="absolute right-8 top-8 flex items-center space-x-2">
-          <span className="inline-block w-3 h-3 rounded-full bg-green-400 animate-pulse"></span>
-          <span className="text-xs text-green-200 font-semibold">Live</span>
+    <div className="flex flex-col h-full bg-slate-100">
+      {/* Teams Page Header */}
+      <div className="bg-slate-800 shadow-lg text-white p-6 md:p-8 rounded-b-xl animate-fade-in">
+        <div className="max-w-7xl mx-auto flex justify-between items-center">
+            <div className="text-center w-full">
+            <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-1">Tournament Teams</h1>
+            <p className="text-sm md:text-base text-slate-300 animate-fade-in-slow">
+              <span className="text-sky-400 font-semibold">{teams.length}</span> {teams.length === 1 ? 'team' : 'teams'} registered
+            </p>
+            </div>
+          <div className="flex items-center space-x-2">
+            <span className="inline-block w-3 h-3 rounded-full bg-green-500 animate-pulse shadow-md"></span>
+            <span className="text-xs text-green-300 font-semibold uppercase">Live</span>
+          </div>
         </div>
       </div>
-      {/* Teams List Table */}
-      <div className="flex-1 p-8 overflow-auto bg-gradient-to-b from-gray-50 to-blue-50">
+
+      {/* Teams List Table Area */}
+      <div className="flex-1 p-4 md:p-6 lg:p-8 overflow-auto">
         {isLoading ? (
-          <div className="flex flex-col justify-center items-center h-64 animate-pulse">
-            <div className="text-2xl text-blue-400 font-bold mb-2">Loading teams...</div>
-            <div className="w-32 h-2 bg-blue-200 rounded-full animate-pulse"></div>
+          <div className="flex flex-col justify-center items-center h-full min-h-[300px] bg-white rounded-xl shadow-lg p-8 animate-pulse">
+            <div className="text-xl text-slate-500 font-semibold mb-3">Loading teams...</div>
+            {/* Simple spinner or loading bar */}
+            <div className="w-16 h-16 border-4 border-sky-500 border-dashed rounded-full animate-spin"></div>
           </div>
         ) : teams.length > 0 ? (
-          <div className="overflow-hidden shadow-2xl rounded-2xl border-2 border-blue-100 animate-fade-in">
-            <table className="min-w-full bg-white divide-y divide-blue-100">
-              <thead className="bg-gradient-to-r from-blue-800 to-indigo-900 text-white">
-                <tr>
-                  <th className="px-6 py-4 text-left text-lg font-bold uppercase tracking-wider">Team #</th>
-                  <th className="px-6 py-4 text-left text-lg font-bold uppercase tracking-wider">Team Name</th>
-                  <th className="px-6 py-4 text-left text-lg font-bold uppercase tracking-wider hidden md:table-cell">Organization</th>
-                  <th className="px-6 py-4 text-left text-lg font-bold uppercase tracking-wider hidden lg:table-cell">Location</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-blue-50">
-                {teams.map((team, index) => (
-                  <tr 
-                    key={team.id} 
-                    className={`${index % 2 === 0 ? 'bg-white' : 'bg-blue-50'} hover:bg-yellow-50 transition-colors animate-fade-in`}
-                  >
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <div className="flex-shrink-0 h-12 w-12 flex items-center justify-center rounded-full bg-gradient-to-br from-yellow-200 to-blue-200 text-blue-900 font-extrabold text-xl border-2 border-yellow-400 shadow">
-                          {team.teamNumber || '—'}
+          <div className="bg-white rounded-xl shadow-lg overflow-hidden animate-fade-in">
+            <table className="min-w-full divide-y divide-slate-200">
+              <thead className="bg-slate-700">
+                {table.getHeaderGroups().map(headerGroup => (
+                  <tr key={headerGroup.id}>
+                    {headerGroup.headers.map(header => (
+                      <th
+                        key={header.id}
+                        className={`px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider ${(header.column.columnDef.meta as any)?.responsiveClass || ''} cursor-pointer select-none whitespace-nowrap`}
+                        onClick={header.column.getToggleSortingHandler()}
+                        style={{ width: header.getSize() }}
+                      >
+                        <div className="flex items-center text-slate-300">
+                          {flexRender(header.column.columnDef.header, header.getContext())}
+                          <span className="ml-1.5 inline-block w-4 text-center">
+                            {header.column.getIsSorted() === 'asc' ? '▲' : header.column.getIsSorted() === 'desc' ? '▼' : <span className="opacity-30">▲</span>}
+                          </span>
                         </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="text-lg font-bold text-blue-900">{team.name}</div>
-                    </td>
-                    <td className="px-6 py-4 hidden md:table-cell">
-                      <div className="text-md text-blue-700 font-semibold">{team.organization || '—'}</div>
-                    </td>
-                    <td className="px-6 py-4 hidden lg:table-cell">
-                      <div className="text-md text-blue-700 font-semibold">{team.location || '—'}</div>
-                    </td>
+                      </th>
+                    ))}
+                  </tr>
+                ))}
+              </thead>
+              <tbody className="bg-white divide-y divide-slate-200">
+                {table.getRowModel().rows.map((row, rowIndex) => (
+                  <tr key={row.id} className={`${rowIndex % 2 === 0 ? 'bg-white' : 'bg-slate-50/50'} hover:bg-sky-50/70 transition-colors duration-150`}>
+                    {row.getVisibleCells().map(cell => (
+                      <td
+                        key={cell.id}
+                        className={`px-5 py-4 whitespace-nowrap ${(cell.column.columnDef.meta as any)?.responsiveClass || ''}`}
+                      >
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </td>
+                    ))}
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center h-64 bg-white rounded-2xl shadow-xl p-12 border-2 border-blue-100 animate-fade-in">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-20 w-20 text-blue-200 mb-6 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+          <div className="flex flex-col items-center justify-center h-full min-h-[300px] bg-white rounded-xl shadow-lg p-12 text-center animate-fade-in">
+            <svg className="w-16 h-16 text-slate-300 mb-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zM12 12.75a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
             </svg>
-            <div className="text-2xl font-bold text-blue-400 mb-2">No teams available</div>
-            <p className="text-blue-300 mt-2">No teams have been registered for this tournament yet.</p>
+            <h3 className="text-xl font-semibold text-slate-700 mb-2">No Teams Available</h3>
+            <p className="text-sm text-slate-500">Teams registered for the tournament will appear here.</p>
           </div>
         )}
       </div>
