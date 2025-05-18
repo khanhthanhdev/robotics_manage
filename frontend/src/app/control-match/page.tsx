@@ -13,13 +13,14 @@ import {
 import { MatchStatus } from "@/lib/types";
 import { useWebSocket } from "@/hooks/useWebSocket";
 import { useTournaments } from "@/hooks/use-tournaments";
+import { MatchData } from "@/lib/websocket-service";
 import { Card } from "@/components/ui/card";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import ConnectionStatus from "./components/ConnectionStatus";
 import { toast } from "sonner";
 import MatchControlTabs from "./components/MatchControlTabs";
 import FieldSelectDropdown from "@/components/fields/FieldSelectDropdown";
-import { ExtendedAudienceDisplaySettings } from "@/lib/websocket-service-extensions";
+
 
 // Convert game elements from object format to array format
 const objectToArrayGameElements = (
@@ -528,7 +529,34 @@ export default function ControlMatchPage() {
       showTeams,
       tournamentId,
       fieldId: match.fieldId || selectedFieldId || undefined,
-    });
+    });    // Also send a match_update event to synchronize match data with audience display
+    // This ensures the audience display has the complete match details
+    if (selectedMatch) {
+      // Create properly typed match data
+      const matchData: Omit<MatchData, 'tournamentId'> = {
+        id: match.id,
+        matchNumber: typeof match.matchNumber === 'string' ? parseInt(match.matchNumber, 10) : match.matchNumber,
+        status: selectedMatch.status
+      };
+      
+      // Extract team information for both alliances
+      const redTeams = getRedTeams(selectedMatch).map((teamNumber: string | number) => ({ 
+        name: teamNumber 
+      }));
+      
+      const blueTeams = getBlueTeams(selectedMatch).map((teamNumber: string | number) => ({ 
+        name: teamNumber 
+      }));
+      
+      // Send match update with additional field data and team information
+      sendMatchUpdate({
+        ...matchData,
+        fieldId: match.fieldId || selectedFieldId || undefined,
+        redTeams,
+        blueTeams,
+        scheduledTime: selectedMatch.scheduledTime,
+      } as any);
+    }
   };
   // Handle display mode change
   const handleDisplayModeChange = () => {

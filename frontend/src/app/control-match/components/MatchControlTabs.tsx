@@ -49,16 +49,15 @@ interface MatchControlTabsProps {
   handleStartTimer: () => void;
   handlePauseTimer: () => void;
   handleResetTimer: () => void;
-  
-  // Score Control props
+    // Score Control props
   redAutoScore: number;
-  setRedAutoScore: (score: number) => void;
+  setRedAutoScore: React.Dispatch<React.SetStateAction<number>>;
   redDriveScore: number;
-  setRedDriveScore: (score: number) => void;
+  setRedDriveScore: React.Dispatch<React.SetStateAction<number>>;
   blueAutoScore: number;
-  setBlueAutoScore: (score: number) => void;
+  setBlueAutoScore: React.Dispatch<React.SetStateAction<number>>;
   blueDriveScore: number;
-  setBlueDriveScore: (score: number) => void;
+  setBlueDriveScore: React.Dispatch<React.SetStateAction<number>>;
   redTotalScore: number;
   blueTotalScore: number;
   redGameElements: any[];
