@@ -828,18 +828,3 @@ export default function LiveFieldDisplayPage() {
     </div>
   );
 }
-
-// Add CSS for text-shadow to improve scoreboard visibility
-const styles = `
-  .text-shadow-xl {
-    text-shadow: 0 0 10px rgba(255,255,255,0.5), 0 0 20px rgba(255,255,255,0.3);
-  }
-`;
-
-// Inject styles into the document head
-if (typeof document !== "undefined") {
-  const styleSheet = document.createElement("style");
-  styleSheet.type = "text/css";
-  styleSheet.innerText = styles;
-  document.head.appendChild(styleSheet);
-}

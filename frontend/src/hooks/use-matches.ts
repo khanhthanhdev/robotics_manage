@@ -2,8 +2,8 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { useRef } from "react";
 
-import { apiClient } from "@/lib/api-client";
 import { QueryKeys } from "@/lib/query-keys";
 import { MatchStatus } from "@/lib/types";
 import { MatchService } from "@/lib/match-service";
@@ -296,7 +296,9 @@ export function useCreateMatchScores() {
  */
 export function useUpdateMatchScores() {
   const queryClient = useQueryClient();
-  return useMutation({
+  const debounceRef = useRef<NodeJS.Timeout | null>(null);
+  const lastArgsRef = useRef<any>(null);
+  const mutation = useMutation({
     mutationFn: async (data: {
       id: string;
       matchId?: string;
@@ -327,15 +329,41 @@ export function useUpdateMatchScores() {
         throw error;
       }
     },
+    // We'll handle toast in the debounced trigger, not here
     onSuccess: (data) => {
       if (data?.matchId) {
         queryClient.invalidateQueries({ queryKey: QueryKeys.matchScores.byMatch(data.matchId) });
         queryClient.invalidateQueries({ queryKey: QueryKeys.matches.byId(data.matchId) });
-        toast.success("Match scores updated successfully");
+        // toast will be handled in debounced trigger
       }
     },
     onError: (error: any) => {
       toast.error(`Failed to update match scores: ${error.message}`);
     },
   });
+
+  // Debounced trigger for mutation
+  const debouncedUpdate = (args: any) => {
+    lastArgsRef.current = args;
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(async () => {
+      try {
+        const result = await mutation.mutateAsync(lastArgsRef.current);
+        if (result?.matchId) {
+          toast.success("Match scores updated successfully");
+        }
+      } catch (error: any) {
+        // Error toast is already handled in onError
+      }
+    }, 10); // 200ms debounce
+  };
+
+  // Return a similar API as useMutation, but with debounced mutate
+  return {
+    ...mutation,
+    mutate: debouncedUpdate,
+    debouncedMutate: debouncedUpdate, // explicit
+    // For advanced use, expose the original mutateAsync
+    mutateAsync: mutation.mutateAsync,
+  };
 }

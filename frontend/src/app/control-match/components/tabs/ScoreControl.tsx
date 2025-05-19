@@ -116,7 +116,7 @@ export default function ScoreControl({
     if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
     debounceTimeout.current = setTimeout(() => {
       handleUpdateScores();
-    }, 100); // 200ms debounce
+    }, 100); // 100ms debounce
   };
 
   useEffect(() => {
@@ -226,7 +226,7 @@ export default function ScoreControl({
                       size="icon"
                       variant="outline" 
                       className="bg-red-800 text-red-100 rounded-r-none border-red-600"
-                      onClick={() => setRedAutoScore((prev: number) => Math.max(0, prev - 5))}
+                      onClick={() => { setRedAutoScore((prev: number) => Math.max(0, prev - 5)); debouncedUpdateScores(); }}
                     >
                       -
                     </Button>
@@ -237,6 +237,7 @@ export default function ScoreControl({
                       onChange={(e) => {
                         const val = e.target.value === '' ? 0 : parseInt(e.target.value);
                         setRedAutoScore(isNaN(val) ? 0 : val);
+                        debouncedUpdateScores();
                       }}
                       onBlur={debouncedUpdateScores}
                       className="text-center border-red-600 bg-red-900 text-red-100 rounded-none"
@@ -245,7 +246,7 @@ export default function ScoreControl({
                       size="icon"
                       variant="outline" 
                       className="bg-red-800 text-red-100 rounded-l-none border-red-600"
-                      onClick={() => setRedAutoScore((prev: number) => prev + 5)}
+                      onClick={() => { setRedAutoScore((prev: number) => prev + 5); debouncedUpdateScores(); }}
                     >
                       +
                     </Button>
@@ -258,7 +259,7 @@ export default function ScoreControl({
                       size="icon"
                       variant="outline" 
                       className="bg-red-800 text-red-100 rounded-r-none border-red-600"
-                      onClick={() => setRedDriveScore((prev: number) => Math.max(0, prev - 5))}
+                      onClick={() => { setRedDriveScore((prev: number) => Math.max(0, prev - 5)); debouncedUpdateScores(); }}
                     >
                       -
                     </Button>
@@ -269,6 +270,7 @@ export default function ScoreControl({
                       onChange={(e) => {
                         const val = e.target.value === '' ? 0 : parseInt(e.target.value);
                         setRedDriveScore(isNaN(val) ? 0 : val);
+                        debouncedUpdateScores();
                       }}
                       onBlur={debouncedUpdateScores}
                       className="text-center border-red-600 bg-red-900 text-red-100 rounded-none"
@@ -277,7 +279,7 @@ export default function ScoreControl({
                       size="icon"
                       variant="outline" 
                       className="bg-red-800 text-red-100 rounded-l-none border-red-600"
-                      onClick={() => setRedDriveScore((prev: number) => prev + 5)}
+                      onClick={() => { setRedDriveScore((prev: number) => prev + 5); debouncedUpdateScores(); }}
                     >
                       +
                     </Button>
@@ -545,7 +547,7 @@ export default function ScoreControl({
                       size="icon"
                       variant="outline" 
                       className="bg-blue-800 text-blue-100 rounded-r-none border-blue-600"
-                      onClick={() => setBlueAutoScore((prev: number) => Math.max(0, prev - 5))}
+                      onClick={() => { setBlueAutoScore((prev: number) => Math.max(0, prev - 5)); debouncedUpdateScores(); }}
                     >
                       -
                     </Button>
@@ -556,6 +558,7 @@ export default function ScoreControl({
                       onChange={(e) => {
                         const val = e.target.value === '' ? 0 : parseInt(e.target.value);
                         setBlueAutoScore(isNaN(val) ? 0 : val);
+                        debouncedUpdateScores();
                       }}
                       onBlur={debouncedUpdateScores}
                       className="text-center border-blue-600 bg-blue-900 text-blue-100 rounded-none"
@@ -564,7 +567,7 @@ export default function ScoreControl({
                       size="icon"
                       variant="outline" 
                       className="bg-blue-800 text-blue-100 rounded-l-none border-blue-600"
-                      onClick={() => setBlueAutoScore((prev: number) => prev + 5)}
+                      onClick={() => { setBlueAutoScore((prev: number) => prev + 5); debouncedUpdateScores(); }}
                     >
                       +
                     </Button>
@@ -577,7 +580,7 @@ export default function ScoreControl({
                       size="icon"
                       variant="outline" 
                       className="bg-blue-800 text-blue-100 rounded-r-none border-blue-600"
-                      onClick={() => setBlueDriveScore((prev: number) => Math.max(0, prev - 5))}
+                      onClick={() => { setBlueDriveScore((prev: number) => Math.max(0, prev - 5)); debouncedUpdateScores(); }}
                     >
                       -
                     </Button>
@@ -588,6 +591,7 @@ export default function ScoreControl({
                       onChange={(e) => {
                         const val = e.target.value === '' ? 0 : parseInt(e.target.value);
                         setBlueDriveScore(isNaN(val) ? 0 : val);
+                        debouncedUpdateScores();
                       }}
                       onBlur={debouncedUpdateScores}
                       className="text-center border-blue-600 bg-blue-900 text-blue-100 rounded-none"
@@ -596,7 +600,7 @@ export default function ScoreControl({
                       size="icon"
                       variant="outline" 
                       className="bg-blue-800 text-blue-100 rounded-l-none border-blue-600"
-                      onClick={() => setBlueDriveScore((prev: number) => prev + 5)}
+                      onClick={() => { setBlueDriveScore((prev: number) => prev + 5); debouncedUpdateScores() }}
                     >
                       +
                     </Button>
