@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { createZodDto } from 'nestjs-zod';
-import { CardType } from '../../utils/prisma-types';
+import { CardType, MatchType } from '../../utils/prisma-types';
 
 // Define the Alliance update schema
 export const UpdateAllianceSchema = z.object({
@@ -24,6 +24,7 @@ export const UpdateMatchSchema = z.object({
   fieldId: z.string().uuid('Field ID must be a valid UUID').optional(),
   fieldNumber: z.number().int().optional(),
   scoredById: z.string().uuid('Scorer ID must be a valid UUID').optional(),
+  matchType: z.nativeEnum(MatchType).optional(), // Add matchType as enum
 }).refine(data => !data.startTime || !data.endTime || data.startTime <= data.endTime, {
   message: 'End time must be after start time',
   path: ['endTime'],

@@ -159,7 +159,7 @@ model Match {
   matchType     MatchType  @default(FULL) // Type of match: FULL, TELEOP_ENDGAME
   matchDuration Int?       // Duration of the match in seconds (overrides default if set)
   createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  updatedAt     DateTime  @updatedAt 
 }
 
 model MatchReferee {

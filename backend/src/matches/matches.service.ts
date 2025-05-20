@@ -12,7 +12,7 @@ export class MatchesService {
   ) {}
 
   async create(createMatchDto: CreateMatchDto) {
-    const { alliances, ...matchData } = createMatchDto;
+    const { alliances = [], matchType, ...matchData } = createMatchDto;
 
     // Create the match
     const match = await this.prisma.match.create({
@@ -22,11 +22,12 @@ export class MatchesService {
         startTime: matchData.startTime ? new Date(matchData.startTime) : null,
         endTime: matchData.endTime ? new Date(matchData.endTime) : null,
         stageId: matchData.stageId,
+        matchType: matchType || 'FULL', // Set matchType, default to 'FULL'
       },
     });
 
     // If alliances are provided, create them
-    if (alliances && alliances.length > 0) {
+    if (alliances && Array.isArray(alliances) && alliances.length > 0) {
       for (const allianceData of alliances) {
         await this.createAlliance(match.id, allianceData);
       }
@@ -159,6 +160,10 @@ export class MatchesService {
     
     if (updateMatchDto.scoredById) {
       data.scoredById = updateMatchDto.scoredById;
+    }
+
+    if (updateMatchDto.matchType) {
+      data.matchType = updateMatchDto.matchType;
     }
 
     // Handle fieldId and fieldNumber

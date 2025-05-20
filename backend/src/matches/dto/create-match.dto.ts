@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { createZodDto } from 'nestjs-zod';
+import { MatchType } from '../../utils/prisma-types';
 
 // Define the Alliance schema
 const CreateAllianceSchema = z.object({
@@ -15,6 +16,7 @@ export const CreateMatchSchema = z.object({
   endTime: z.coerce.date().optional(),
   stageId: z.string().uuid('Stage ID must be a valid UUID'),
   alliances: z.array(CreateAllianceSchema).optional(),
+  matchType: z.nativeEnum(MatchType).optional(), // Add matchType as enum
 }).refine(data => !data.startTime || !data.endTime || data.startTime <= data.endTime, {
   message: 'End time must be after start time',
   path: ['endTime'],

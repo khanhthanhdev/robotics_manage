@@ -21,6 +21,6 @@ export {
   AudienceDisplay,
   Field,
   TeamStats,
-  Schedule
-
+  Schedule,
+  MatchType // Add MatchType to exports
 } from '../../generated/prisma';

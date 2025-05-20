@@ -120,6 +120,17 @@ describe('MatchesController', () => {
       prisma.field.findUnique.mockResolvedValue(null);
       await expect(matchesService.update('match1', { fieldId: 'badid' } as any)).rejects.toThrow('Field not found');
     });
+
+    it('should update matchType', async () => {
+      prisma.match.update.mockResolvedValue({ id: 'match1', matchType: 'TELEOP_ENDGAME', alliances: [] } as any);
+      const result = await matchesService.update('match1', { matchType: 'TELEOP_ENDGAME' } as any);
+      expect(result).toHaveProperty('matchType', 'TELEOP_ENDGAME');
+      expect(prisma.match.update).toHaveBeenCalledWith(expect.objectContaining({
+        where: { id: 'match1' },
+        data: expect.objectContaining({ matchType: 'TELEOP_ENDGAME' }),
+        include: { alliances: true },
+      }));
+    });
   });
 
   describe('remove', () => {
