@@ -73,6 +73,11 @@ enum DisplayState {
   CUSTOM_MESSAGE
 }
 
+enum MatchType {
+  FULL         // auto + teleop + endgame (150s)
+  TELEOP_ENDGAME // teleop + endgame (120s)
+}
+
 model User {
   id              String           @id @default(uuid())
   username        String           @unique
@@ -151,6 +156,8 @@ model Match {
   fieldId       String?
   field         Field?     @relation(fields: [fieldId], references: [id], onDelete: SetNull)
   fieldNumber   Int?
+  matchType     MatchType  @default(FULL) // Type of match: FULL, TELEOP_ENDGAME
+  matchDuration Int?       // Duration of the match in seconds (overrides default if set)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 }
@@ -300,6 +307,7 @@ model Schedule {
   algorithm String?  // e.g., "simulated_annealing", "swiss"
   quality   String?  // e.g., "low", "medium", "high"
   params    Json?    // Store algorithm parameters
+
 }
 
 model Field {

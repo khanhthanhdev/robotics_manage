@@ -185,6 +185,14 @@ export const DisplayState: {
 
 export type DisplayState = (typeof DisplayState)[keyof typeof DisplayState]
 
+
+export const MatchType: {
+  FULL: 'FULL',
+  TELEOP_ENDGAME: 'TELEOP_ENDGAME'
+};
+
+export type MatchType = (typeof MatchType)[keyof typeof MatchType]
+
 }
 
 export type UserRole = $Enums.UserRole
@@ -218,6 +226,10 @@ export const ErrorStatus: typeof $Enums.ErrorStatus
 export type DisplayState = $Enums.DisplayState
 
 export const DisplayState: typeof $Enums.DisplayState
+
+export type MatchType = $Enums.MatchType
+
+export const MatchType: typeof $Enums.MatchType
 
 /**
  * ##  Prisma Client ʲˢ
@@ -6650,6 +6662,7 @@ export namespace Prisma {
     roundNumber: number | null
     duration: number | null
     fieldNumber: number | null
+    matchDuration: number | null
   }
 
   export type MatchSumAggregateOutputType = {
@@ -6657,6 +6670,7 @@ export namespace Prisma {
     roundNumber: number | null
     duration: number | null
     fieldNumber: number | null
+    matchDuration: number | null
   }
 
   export type MatchMinAggregateOutputType = {
@@ -6675,6 +6689,8 @@ export namespace Prisma {
     scheduleId: string | null
     fieldId: string | null
     fieldNumber: number | null
+    matchType: $Enums.MatchType | null
+    matchDuration: number | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -6695,6 +6711,8 @@ export namespace Prisma {
     scheduleId: string | null
     fieldId: string | null
     fieldNumber: number | null
+    matchType: $Enums.MatchType | null
+    matchDuration: number | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -6715,6 +6733,8 @@ export namespace Prisma {
     scheduleId: number
     fieldId: number
     fieldNumber: number
+    matchType: number
+    matchDuration: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -6726,6 +6746,7 @@ export namespace Prisma {
     roundNumber?: true
     duration?: true
     fieldNumber?: true
+    matchDuration?: true
   }
 
   export type MatchSumAggregateInputType = {
@@ -6733,6 +6754,7 @@ export namespace Prisma {
     roundNumber?: true
     duration?: true
     fieldNumber?: true
+    matchDuration?: true
   }
 
   export type MatchMinAggregateInputType = {
@@ -6751,6 +6773,8 @@ export namespace Prisma {
     scheduleId?: true
     fieldId?: true
     fieldNumber?: true
+    matchType?: true
+    matchDuration?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -6771,6 +6795,8 @@ export namespace Prisma {
     scheduleId?: true
     fieldId?: true
     fieldNumber?: true
+    matchType?: true
+    matchDuration?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -6791,6 +6817,8 @@ export namespace Prisma {
     scheduleId?: true
     fieldId?: true
     fieldNumber?: true
+    matchType?: true
+    matchDuration?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -6898,6 +6926,8 @@ export namespace Prisma {
     scheduleId: string | null
     fieldId: string | null
     fieldNumber: number | null
+    matchType: $Enums.MatchType
+    matchDuration: number | null
     createdAt: Date
     updatedAt: Date
     _count: MatchCountAggregateOutputType | null
@@ -6937,6 +6967,8 @@ export namespace Prisma {
     scheduleId?: boolean
     fieldId?: boolean
     fieldNumber?: boolean
+    matchType?: boolean
+    matchDuration?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     stage?: boolean | StageDefaultArgs<ExtArgs>
@@ -6966,6 +6998,8 @@ export namespace Prisma {
     scheduleId?: boolean
     fieldId?: boolean
     fieldNumber?: boolean
+    matchType?: boolean
+    matchDuration?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     stage?: boolean | StageDefaultArgs<ExtArgs>
@@ -6990,6 +7024,8 @@ export namespace Prisma {
     scheduleId?: boolean
     fieldId?: boolean
     fieldNumber?: boolean
+    matchType?: boolean
+    matchDuration?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     stage?: boolean | StageDefaultArgs<ExtArgs>
@@ -7014,11 +7050,13 @@ export namespace Prisma {
     scheduleId?: boolean
     fieldId?: boolean
     fieldNumber?: boolean
+    matchType?: boolean
+    matchDuration?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type MatchOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "matchNumber" | "roundNumber" | "status" | "startTime" | "scheduledTime" | "endTime" | "duration" | "winningAlliance" | "stageId" | "scoredById" | "roundType" | "scheduleId" | "fieldId" | "fieldNumber" | "createdAt" | "updatedAt", ExtArgs["result"]["match"]>
+  export type MatchOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "matchNumber" | "roundNumber" | "status" | "startTime" | "scheduledTime" | "endTime" | "duration" | "winningAlliance" | "stageId" | "scoredById" | "roundType" | "scheduleId" | "fieldId" | "fieldNumber" | "matchType" | "matchDuration" | "createdAt" | "updatedAt", ExtArgs["result"]["match"]>
   export type MatchInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     stage?: boolean | StageDefaultArgs<ExtArgs>
     alliances?: boolean | Match$alliancesArgs<ExtArgs>
@@ -7071,6 +7109,8 @@ export namespace Prisma {
       scheduleId: string | null
       fieldId: string | null
       fieldNumber: number | null
+      matchType: $Enums.MatchType
+      matchDuration: number | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["match"]>
@@ -7519,6 +7559,8 @@ export namespace Prisma {
     readonly scheduleId: FieldRef<"Match", 'String'>
     readonly fieldId: FieldRef<"Match", 'String'>
     readonly fieldNumber: FieldRef<"Match", 'Int'>
+    readonly matchType: FieldRef<"Match", 'MatchType'>
+    readonly matchDuration: FieldRef<"Match", 'Int'>
     readonly createdAt: FieldRef<"Match", 'DateTime'>
     readonly updatedAt: FieldRef<"Match", 'DateTime'>
   }
@@ -23334,6 +23376,8 @@ export namespace Prisma {
     scheduleId: 'scheduleId',
     fieldId: 'fieldId',
     fieldNumber: 'fieldNumber',
+    matchType: 'matchType',
+    matchDuration: 'matchDuration',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -23667,6 +23711,20 @@ export namespace Prisma {
    * Reference to a field of type 'StageType[]'
    */
   export type ListEnumStageTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StageType[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'MatchType'
+   */
+  export type EnumMatchTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MatchType'>
+    
+
+
+  /**
+   * Reference to a field of type 'MatchType[]'
+   */
+  export type ListEnumMatchTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MatchType[]'>
     
 
 
@@ -24084,6 +24142,8 @@ export namespace Prisma {
     scheduleId?: StringNullableFilter<"Match"> | string | null
     fieldId?: StringNullableFilter<"Match"> | string | null
     fieldNumber?: IntNullableFilter<"Match"> | number | null
+    matchType?: EnumMatchTypeFilter<"Match"> | $Enums.MatchType
+    matchDuration?: IntNullableFilter<"Match"> | number | null
     createdAt?: DateTimeFilter<"Match"> | Date | string
     updatedAt?: DateTimeFilter<"Match"> | Date | string
     stage?: XOR<StageScalarRelationFilter, StageWhereInput>
@@ -24112,6 +24172,8 @@ export namespace Prisma {
     scheduleId?: SortOrderInput | SortOrder
     fieldId?: SortOrderInput | SortOrder
     fieldNumber?: SortOrderInput | SortOrder
+    matchType?: SortOrder
+    matchDuration?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     stage?: StageOrderByWithRelationInput
@@ -24143,6 +24205,8 @@ export namespace Prisma {
     scheduleId?: StringNullableFilter<"Match"> | string | null
     fieldId?: StringNullableFilter<"Match"> | string | null
     fieldNumber?: IntNullableFilter<"Match"> | number | null
+    matchType?: EnumMatchTypeFilter<"Match"> | $Enums.MatchType
+    matchDuration?: IntNullableFilter<"Match"> | number | null
     createdAt?: DateTimeFilter<"Match"> | Date | string
     updatedAt?: DateTimeFilter<"Match"> | Date | string
     stage?: XOR<StageScalarRelationFilter, StageWhereInput>
@@ -24171,6 +24235,8 @@ export namespace Prisma {
     scheduleId?: SortOrderInput | SortOrder
     fieldId?: SortOrderInput | SortOrder
     fieldNumber?: SortOrderInput | SortOrder
+    matchType?: SortOrder
+    matchDuration?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: MatchCountOrderByAggregateInput
@@ -24199,6 +24265,8 @@ export namespace Prisma {
     scheduleId?: StringNullableWithAggregatesFilter<"Match"> | string | null
     fieldId?: StringNullableWithAggregatesFilter<"Match"> | string | null
     fieldNumber?: IntNullableWithAggregatesFilter<"Match"> | number | null
+    matchType?: EnumMatchTypeWithAggregatesFilter<"Match"> | $Enums.MatchType
+    matchDuration?: IntNullableWithAggregatesFilter<"Match"> | number | null
     createdAt?: DateTimeWithAggregatesFilter<"Match"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Match"> | Date | string
   }
@@ -25621,6 +25689,8 @@ export namespace Prisma {
     winningAlliance?: string | null
     roundType?: string | null
     fieldNumber?: number | null
+    matchType?: $Enums.MatchType
+    matchDuration?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
     stage: StageCreateNestedOneWithoutMatchesInput
@@ -25649,6 +25719,8 @@ export namespace Prisma {
     scheduleId?: string | null
     fieldId?: string | null
     fieldNumber?: number | null
+    matchType?: $Enums.MatchType
+    matchDuration?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
     alliances?: AllianceUncheckedCreateNestedManyWithoutMatchInput
@@ -25669,6 +25741,8 @@ export namespace Prisma {
     winningAlliance?: NullableStringFieldUpdateOperationsInput | string | null
     roundType?: NullableStringFieldUpdateOperationsInput | string | null
     fieldNumber?: NullableIntFieldUpdateOperationsInput | number | null
+    matchType?: EnumMatchTypeFieldUpdateOperationsInput | $Enums.MatchType
+    matchDuration?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     stage?: StageUpdateOneRequiredWithoutMatchesNestedInput
@@ -25697,6 +25771,8 @@ export namespace Prisma {
     scheduleId?: NullableStringFieldUpdateOperationsInput | string | null
     fieldId?: NullableStringFieldUpdateOperationsInput | string | null
     fieldNumber?: NullableIntFieldUpdateOperationsInput | number | null
+    matchType?: EnumMatchTypeFieldUpdateOperationsInput | $Enums.MatchType
+    matchDuration?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     alliances?: AllianceUncheckedUpdateManyWithoutMatchNestedInput
@@ -25721,6 +25797,8 @@ export namespace Prisma {
     scheduleId?: string | null
     fieldId?: string | null
     fieldNumber?: number | null
+    matchType?: $Enums.MatchType
+    matchDuration?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -25737,6 +25815,8 @@ export namespace Prisma {
     winningAlliance?: NullableStringFieldUpdateOperationsInput | string | null
     roundType?: NullableStringFieldUpdateOperationsInput | string | null
     fieldNumber?: NullableIntFieldUpdateOperationsInput | number | null
+    matchType?: EnumMatchTypeFieldUpdateOperationsInput | $Enums.MatchType
+    matchDuration?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -25757,6 +25837,8 @@ export namespace Prisma {
     scheduleId?: NullableStringFieldUpdateOperationsInput | string | null
     fieldId?: NullableStringFieldUpdateOperationsInput | string | null
     fieldNumber?: NullableIntFieldUpdateOperationsInput | number | null
+    matchType?: EnumMatchTypeFieldUpdateOperationsInput | $Enums.MatchType
+    matchDuration?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -27404,6 +27486,13 @@ export namespace Prisma {
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
+  export type EnumMatchTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.MatchType | EnumMatchTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.MatchType[] | ListEnumMatchTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.MatchType[] | ListEnumMatchTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumMatchTypeFilter<$PrismaModel> | $Enums.MatchType
+  }
+
   export type StageScalarRelationFilter = {
     is?: StageWhereInput
     isNot?: StageWhereInput
@@ -27455,6 +27544,8 @@ export namespace Prisma {
     scheduleId?: SortOrder
     fieldId?: SortOrder
     fieldNumber?: SortOrder
+    matchType?: SortOrder
+    matchDuration?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -27464,6 +27555,7 @@ export namespace Prisma {
     roundNumber?: SortOrder
     duration?: SortOrder
     fieldNumber?: SortOrder
+    matchDuration?: SortOrder
   }
 
   export type MatchMaxOrderByAggregateInput = {
@@ -27482,6 +27574,8 @@ export namespace Prisma {
     scheduleId?: SortOrder
     fieldId?: SortOrder
     fieldNumber?: SortOrder
+    matchType?: SortOrder
+    matchDuration?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -27502,6 +27596,8 @@ export namespace Prisma {
     scheduleId?: SortOrder
     fieldId?: SortOrder
     fieldNumber?: SortOrder
+    matchType?: SortOrder
+    matchDuration?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -27511,6 +27607,7 @@ export namespace Prisma {
     roundNumber?: SortOrder
     duration?: SortOrder
     fieldNumber?: SortOrder
+    matchDuration?: SortOrder
   }
 
   export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -27527,6 +27624,16 @@ export namespace Prisma {
     _sum?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedIntNullableFilter<$PrismaModel>
     _max?: NestedIntNullableFilter<$PrismaModel>
+  }
+
+  export type EnumMatchTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.MatchType | EnumMatchTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.MatchType[] | ListEnumMatchTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.MatchType[] | ListEnumMatchTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumMatchTypeWithAggregatesFilter<$PrismaModel> | $Enums.MatchType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumMatchTypeFilter<$PrismaModel>
+    _max?: NestedEnumMatchTypeFilter<$PrismaModel>
   }
 
   export type EnumRefereeRoleFilter<$PrismaModel = never> = {
@@ -29053,6 +29160,10 @@ export namespace Prisma {
     divide?: number
   }
 
+  export type EnumMatchTypeFieldUpdateOperationsInput = {
+    set?: $Enums.MatchType
+  }
+
   export type StageUpdateOneRequiredWithoutMatchesNestedInput = {
     create?: XOR<StageCreateWithoutMatchesInput, StageUncheckedCreateWithoutMatchesInput>
     connectOrCreate?: StageCreateOrConnectWithoutMatchesInput
@@ -30047,6 +30158,13 @@ export namespace Prisma {
     _max?: NestedEnumStageTypeFilter<$PrismaModel>
   }
 
+  export type NestedEnumMatchTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.MatchType | EnumMatchTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.MatchType[] | ListEnumMatchTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.MatchType[] | ListEnumMatchTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumMatchTypeFilter<$PrismaModel> | $Enums.MatchType
+  }
+
   export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel> | null
     in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
@@ -30072,6 +30190,16 @@ export namespace Prisma {
     gt?: number | FloatFieldRefInput<$PrismaModel>
     gte?: number | FloatFieldRefInput<$PrismaModel>
     not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type NestedEnumMatchTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.MatchType | EnumMatchTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.MatchType[] | ListEnumMatchTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.MatchType[] | ListEnumMatchTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumMatchTypeWithAggregatesFilter<$PrismaModel> | $Enums.MatchType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumMatchTypeFilter<$PrismaModel>
+    _max?: NestedEnumMatchTypeFilter<$PrismaModel>
   }
 
   export type NestedEnumRefereeRoleFilter<$PrismaModel = never> = {
@@ -30367,6 +30495,8 @@ export namespace Prisma {
     winningAlliance?: string | null
     roundType?: string | null
     fieldNumber?: number | null
+    matchType?: $Enums.MatchType
+    matchDuration?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
     stage: StageCreateNestedOneWithoutMatchesInput
@@ -30393,6 +30523,8 @@ export namespace Prisma {
     scheduleId?: string | null
     fieldId?: string | null
     fieldNumber?: number | null
+    matchType?: $Enums.MatchType
+    matchDuration?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
     alliances?: AllianceUncheckedCreateNestedManyWithoutMatchInput
@@ -30615,6 +30747,8 @@ export namespace Prisma {
     scheduleId?: StringNullableFilter<"Match"> | string | null
     fieldId?: StringNullableFilter<"Match"> | string | null
     fieldNumber?: IntNullableFilter<"Match"> | number | null
+    matchType?: EnumMatchTypeFilter<"Match"> | $Enums.MatchType
+    matchDuration?: IntNullableFilter<"Match"> | number | null
     createdAt?: DateTimeFilter<"Match"> | Date | string
     updatedAt?: DateTimeFilter<"Match"> | Date | string
   }
@@ -31107,6 +31241,8 @@ export namespace Prisma {
     winningAlliance?: string | null
     roundType?: string | null
     fieldNumber?: number | null
+    matchType?: $Enums.MatchType
+    matchDuration?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
     alliances?: AllianceCreateNestedManyWithoutMatchInput
@@ -31133,6 +31269,8 @@ export namespace Prisma {
     scheduleId?: string | null
     fieldId?: string | null
     fieldNumber?: number | null
+    matchType?: $Enums.MatchType
+    matchDuration?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
     alliances?: AllianceUncheckedCreateNestedManyWithoutMatchInput
@@ -31884,6 +32022,8 @@ export namespace Prisma {
     winningAlliance?: string | null
     roundType?: string | null
     fieldNumber?: number | null
+    matchType?: $Enums.MatchType
+    matchDuration?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
     stage: StageCreateNestedOneWithoutMatchesInput
@@ -31911,6 +32051,8 @@ export namespace Prisma {
     scheduleId?: string | null
     fieldId?: string | null
     fieldNumber?: number | null
+    matchType?: $Enums.MatchType
+    matchDuration?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
     alliances?: AllianceUncheckedCreateNestedManyWithoutMatchInput
@@ -31987,6 +32129,8 @@ export namespace Prisma {
     winningAlliance?: NullableStringFieldUpdateOperationsInput | string | null
     roundType?: NullableStringFieldUpdateOperationsInput | string | null
     fieldNumber?: NullableIntFieldUpdateOperationsInput | number | null
+    matchType?: EnumMatchTypeFieldUpdateOperationsInput | $Enums.MatchType
+    matchDuration?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     stage?: StageUpdateOneRequiredWithoutMatchesNestedInput
@@ -32014,6 +32158,8 @@ export namespace Prisma {
     scheduleId?: NullableStringFieldUpdateOperationsInput | string | null
     fieldId?: NullableStringFieldUpdateOperationsInput | string | null
     fieldNumber?: NullableIntFieldUpdateOperationsInput | number | null
+    matchType?: EnumMatchTypeFieldUpdateOperationsInput | $Enums.MatchType
+    matchDuration?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     alliances?: AllianceUncheckedUpdateManyWithoutMatchNestedInput
@@ -32080,6 +32226,8 @@ export namespace Prisma {
     winningAlliance?: string | null
     roundType?: string | null
     fieldNumber?: number | null
+    matchType?: $Enums.MatchType
+    matchDuration?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
     stage: StageCreateNestedOneWithoutMatchesInput
@@ -32107,6 +32255,8 @@ export namespace Prisma {
     scheduleId?: string | null
     fieldId?: string | null
     fieldNumber?: number | null
+    matchType?: $Enums.MatchType
+    matchDuration?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
     referees?: MatchRefereeUncheckedCreateNestedManyWithoutMatchInput
@@ -32195,6 +32345,8 @@ export namespace Prisma {
     winningAlliance?: NullableStringFieldUpdateOperationsInput | string | null
     roundType?: NullableStringFieldUpdateOperationsInput | string | null
     fieldNumber?: NullableIntFieldUpdateOperationsInput | number | null
+    matchType?: EnumMatchTypeFieldUpdateOperationsInput | $Enums.MatchType
+    matchDuration?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     stage?: StageUpdateOneRequiredWithoutMatchesNestedInput
@@ -32222,6 +32374,8 @@ export namespace Prisma {
     scheduleId?: NullableStringFieldUpdateOperationsInput | string | null
     fieldId?: NullableStringFieldUpdateOperationsInput | string | null
     fieldNumber?: NullableIntFieldUpdateOperationsInput | number | null
+    matchType?: EnumMatchTypeFieldUpdateOperationsInput | $Enums.MatchType
+    matchDuration?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     referees?: MatchRefereeUncheckedUpdateManyWithoutMatchNestedInput
@@ -32759,6 +32913,8 @@ export namespace Prisma {
     winningAlliance?: string | null
     roundType?: string | null
     fieldNumber?: number | null
+    matchType?: $Enums.MatchType
+    matchDuration?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
     stage: StageCreateNestedOneWithoutMatchesInput
@@ -32786,6 +32942,8 @@ export namespace Prisma {
     scheduleId?: string | null
     fieldId?: string | null
     fieldNumber?: number | null
+    matchType?: $Enums.MatchType
+    matchDuration?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
     alliances?: AllianceUncheckedCreateNestedManyWithoutMatchInput
@@ -32821,6 +32979,8 @@ export namespace Prisma {
     winningAlliance?: NullableStringFieldUpdateOperationsInput | string | null
     roundType?: NullableStringFieldUpdateOperationsInput | string | null
     fieldNumber?: NullableIntFieldUpdateOperationsInput | number | null
+    matchType?: EnumMatchTypeFieldUpdateOperationsInput | $Enums.MatchType
+    matchDuration?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     stage?: StageUpdateOneRequiredWithoutMatchesNestedInput
@@ -32848,6 +33008,8 @@ export namespace Prisma {
     scheduleId?: NullableStringFieldUpdateOperationsInput | string | null
     fieldId?: NullableStringFieldUpdateOperationsInput | string | null
     fieldNumber?: NullableIntFieldUpdateOperationsInput | number | null
+    matchType?: EnumMatchTypeFieldUpdateOperationsInput | $Enums.MatchType
+    matchDuration?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     alliances?: AllianceUncheckedUpdateManyWithoutMatchNestedInput
@@ -33126,6 +33288,8 @@ export namespace Prisma {
     winningAlliance?: string | null
     roundType?: string | null
     fieldNumber?: number | null
+    matchType?: $Enums.MatchType
+    matchDuration?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
     stage: StageCreateNestedOneWithoutMatchesInput
@@ -33152,6 +33316,8 @@ export namespace Prisma {
     roundType?: string | null
     fieldId?: string | null
     fieldNumber?: number | null
+    matchType?: $Enums.MatchType
+    matchDuration?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
     alliances?: AllianceUncheckedCreateNestedManyWithoutMatchInput
@@ -33274,6 +33440,8 @@ export namespace Prisma {
     winningAlliance?: string | null
     roundType?: string | null
     fieldNumber?: number | null
+    matchType?: $Enums.MatchType
+    matchDuration?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
     stage: StageCreateNestedOneWithoutMatchesInput
@@ -33300,6 +33468,8 @@ export namespace Prisma {
     roundType?: string | null
     scheduleId?: string | null
     fieldNumber?: number | null
+    matchType?: $Enums.MatchType
+    matchDuration?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
     alliances?: AllianceUncheckedCreateNestedManyWithoutMatchInput
@@ -33387,6 +33557,8 @@ export namespace Prisma {
     winningAlliance?: string | null
     roundType?: string | null
     fieldNumber?: number | null
+    matchType?: $Enums.MatchType
+    matchDuration?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
     stage: StageCreateNestedOneWithoutMatchesInput
@@ -33414,6 +33586,8 @@ export namespace Prisma {
     scheduleId?: string | null
     fieldId?: string | null
     fieldNumber?: number | null
+    matchType?: $Enums.MatchType
+    matchDuration?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
     alliances?: AllianceUncheckedCreateNestedManyWithoutMatchInput
@@ -33550,6 +33724,8 @@ export namespace Prisma {
     winningAlliance?: NullableStringFieldUpdateOperationsInput | string | null
     roundType?: NullableStringFieldUpdateOperationsInput | string | null
     fieldNumber?: NullableIntFieldUpdateOperationsInput | number | null
+    matchType?: EnumMatchTypeFieldUpdateOperationsInput | $Enums.MatchType
+    matchDuration?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     stage?: StageUpdateOneRequiredWithoutMatchesNestedInput
@@ -33577,6 +33753,8 @@ export namespace Prisma {
     scheduleId?: NullableStringFieldUpdateOperationsInput | string | null
     fieldId?: NullableStringFieldUpdateOperationsInput | string | null
     fieldNumber?: NullableIntFieldUpdateOperationsInput | number | null
+    matchType?: EnumMatchTypeFieldUpdateOperationsInput | $Enums.MatchType
+    matchDuration?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     alliances?: AllianceUncheckedUpdateManyWithoutMatchNestedInput
@@ -33937,6 +34115,8 @@ export namespace Prisma {
     scheduleId?: string | null
     fieldId?: string | null
     fieldNumber?: number | null
+    matchType?: $Enums.MatchType
+    matchDuration?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -34062,6 +34242,8 @@ export namespace Prisma {
     winningAlliance?: NullableStringFieldUpdateOperationsInput | string | null
     roundType?: NullableStringFieldUpdateOperationsInput | string | null
     fieldNumber?: NullableIntFieldUpdateOperationsInput | number | null
+    matchType?: EnumMatchTypeFieldUpdateOperationsInput | $Enums.MatchType
+    matchDuration?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     stage?: StageUpdateOneRequiredWithoutMatchesNestedInput
@@ -34088,6 +34270,8 @@ export namespace Prisma {
     scheduleId?: NullableStringFieldUpdateOperationsInput | string | null
     fieldId?: NullableStringFieldUpdateOperationsInput | string | null
     fieldNumber?: NullableIntFieldUpdateOperationsInput | number | null
+    matchType?: EnumMatchTypeFieldUpdateOperationsInput | $Enums.MatchType
+    matchDuration?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     alliances?: AllianceUncheckedUpdateManyWithoutMatchNestedInput
@@ -34111,6 +34295,8 @@ export namespace Prisma {
     scheduleId?: NullableStringFieldUpdateOperationsInput | string | null
     fieldId?: NullableStringFieldUpdateOperationsInput | string | null
     fieldNumber?: NullableIntFieldUpdateOperationsInput | number | null
+    matchType?: EnumMatchTypeFieldUpdateOperationsInput | $Enums.MatchType
+    matchDuration?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -34415,6 +34601,8 @@ export namespace Prisma {
     scheduleId?: string | null
     fieldId?: string | null
     fieldNumber?: number | null
+    matchType?: $Enums.MatchType
+    matchDuration?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -34459,6 +34647,8 @@ export namespace Prisma {
     winningAlliance?: NullableStringFieldUpdateOperationsInput | string | null
     roundType?: NullableStringFieldUpdateOperationsInput | string | null
     fieldNumber?: NullableIntFieldUpdateOperationsInput | number | null
+    matchType?: EnumMatchTypeFieldUpdateOperationsInput | $Enums.MatchType
+    matchDuration?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     alliances?: AllianceUpdateManyWithoutMatchNestedInput
@@ -34485,6 +34675,8 @@ export namespace Prisma {
     scheduleId?: NullableStringFieldUpdateOperationsInput | string | null
     fieldId?: NullableStringFieldUpdateOperationsInput | string | null
     fieldNumber?: NullableIntFieldUpdateOperationsInput | number | null
+    matchType?: EnumMatchTypeFieldUpdateOperationsInput | $Enums.MatchType
+    matchDuration?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     alliances?: AllianceUncheckedUpdateManyWithoutMatchNestedInput
@@ -34508,6 +34700,8 @@ export namespace Prisma {
     scheduleId?: NullableStringFieldUpdateOperationsInput | string | null
     fieldId?: NullableStringFieldUpdateOperationsInput | string | null
     fieldNumber?: NullableIntFieldUpdateOperationsInput | number | null
+    matchType?: EnumMatchTypeFieldUpdateOperationsInput | $Enums.MatchType
+    matchDuration?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -34837,6 +35031,8 @@ export namespace Prisma {
     roundType?: string | null
     fieldId?: string | null
     fieldNumber?: number | null
+    matchType?: $Enums.MatchType
+    matchDuration?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -34853,6 +35049,8 @@ export namespace Prisma {
     winningAlliance?: NullableStringFieldUpdateOperationsInput | string | null
     roundType?: NullableStringFieldUpdateOperationsInput | string | null
     fieldNumber?: NullableIntFieldUpdateOperationsInput | number | null
+    matchType?: EnumMatchTypeFieldUpdateOperationsInput | $Enums.MatchType
+    matchDuration?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     stage?: StageUpdateOneRequiredWithoutMatchesNestedInput
@@ -34879,6 +35077,8 @@ export namespace Prisma {
     roundType?: NullableStringFieldUpdateOperationsInput | string | null
     fieldId?: NullableStringFieldUpdateOperationsInput | string | null
     fieldNumber?: NullableIntFieldUpdateOperationsInput | number | null
+    matchType?: EnumMatchTypeFieldUpdateOperationsInput | $Enums.MatchType
+    matchDuration?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     alliances?: AllianceUncheckedUpdateManyWithoutMatchNestedInput
@@ -34902,6 +35102,8 @@ export namespace Prisma {
     roundType?: NullableStringFieldUpdateOperationsInput | string | null
     fieldId?: NullableStringFieldUpdateOperationsInput | string | null
     fieldNumber?: NullableIntFieldUpdateOperationsInput | number | null
+    matchType?: EnumMatchTypeFieldUpdateOperationsInput | $Enums.MatchType
+    matchDuration?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -34921,6 +35123,8 @@ export namespace Prisma {
     roundType?: string | null
     scheduleId?: string | null
     fieldNumber?: number | null
+    matchType?: $Enums.MatchType
+    matchDuration?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -34937,6 +35141,8 @@ export namespace Prisma {
     winningAlliance?: NullableStringFieldUpdateOperationsInput | string | null
     roundType?: NullableStringFieldUpdateOperationsInput | string | null
     fieldNumber?: NullableIntFieldUpdateOperationsInput | number | null
+    matchType?: EnumMatchTypeFieldUpdateOperationsInput | $Enums.MatchType
+    matchDuration?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     stage?: StageUpdateOneRequiredWithoutMatchesNestedInput
@@ -34963,6 +35169,8 @@ export namespace Prisma {
     roundType?: NullableStringFieldUpdateOperationsInput | string | null
     scheduleId?: NullableStringFieldUpdateOperationsInput | string | null
     fieldNumber?: NullableIntFieldUpdateOperationsInput | number | null
+    matchType?: EnumMatchTypeFieldUpdateOperationsInput | $Enums.MatchType
+    matchDuration?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     alliances?: AllianceUncheckedUpdateManyWithoutMatchNestedInput
@@ -34986,6 +35194,8 @@ export namespace Prisma {
     roundType?: NullableStringFieldUpdateOperationsInput | string | null
     scheduleId?: NullableStringFieldUpdateOperationsInput | string | null
     fieldNumber?: NullableIntFieldUpdateOperationsInput | number | null
+    matchType?: EnumMatchTypeFieldUpdateOperationsInput | $Enums.MatchType
+    matchDuration?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

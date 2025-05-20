@@ -172,6 +172,8 @@ exports.Prisma.MatchScalarFieldEnum = {
   scheduleId: 'scheduleId',
   fieldId: 'fieldId',
   fieldNumber: 'fieldNumber',
+  matchType: 'matchType',
+  matchDuration: 'matchDuration',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -379,6 +381,11 @@ exports.StageType = exports.$Enums.StageType = {
   SWISS: 'SWISS',
   PLAYOFF: 'PLAYOFF',
   FINAL: 'FINAL'
+};
+
+exports.MatchType = exports.$Enums.MatchType = {
+  FULL: 'FULL',
+  TELEOP_ENDGAME: 'TELEOP_ENDGAME'
 };
 
 exports.RefereeRole = exports.$Enums.RefereeRole = {
