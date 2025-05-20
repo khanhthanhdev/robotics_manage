@@ -8,6 +8,7 @@ import { PlusIcon, UploadIcon, DownloadIcon } from "lucide-react";
 import { LeaderboardTable } from "@/components/LeaderboardTable";
 import { LeaderboardFilters } from "@/components/LeaderboardFilters";
 import { teamLeaderboardColumns, TeamLeaderboardRow } from "@/components/teamLeaderboardColumns";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface Team {
   id: string;
@@ -36,6 +37,7 @@ export default function TeamsPage() {
   const [totalScoreRange, setTotalScoreRange] = useState<[number, number]>([0, 1000]);
 
   const workerRef = useRef<Worker | null>(null);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     fetchTeams();
@@ -62,9 +64,18 @@ export default function TeamsPage() {
   async function fetchTeams() {
     setLoading(true);
     setError(null);
+    // Try to get teams from cache first
+    const cached = queryClient.getQueryData<Team[]>(["teams"]);
+    if (cached && Array.isArray(cached)) {
+      setTeams(cached);
+      setLoading(false);
+      return;
+    }
     try {
       const data = await apiClient.get<Team[]>("/teams");
       setTeams(data);
+      // Prefill cache for future use
+      queryClient.setQueryData(["teams"], data);
     } catch (e: any) {
       setError(e.message || "Failed to load teams");
     } finally {
@@ -111,6 +122,8 @@ export default function TeamsPage() {
         hasHeader: true,
       });
       setImportResult(result);
+      // Invalidate cache so next fetch gets fresh data
+      queryClient.invalidateQueries({ queryKey: ["teams"] });
       fetchTeams();
     } catch (e: any) {
       setImportResult({ success: false, message: e.message });

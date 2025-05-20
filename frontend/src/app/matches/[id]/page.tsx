@@ -7,6 +7,7 @@ import { useMatch } from "@/hooks/use-matches";
 import { cn } from "@/lib/utils";
 import { MatchStatus } from "@/lib/types";
 import { format, parseISO } from "date-fns";
+import { MatchService } from "@/lib/match-service";
 
 // Components
 import { Spinner } from "@/components/ui/spinner";
@@ -28,6 +29,25 @@ export default function MatchDetailsPage() {
   const { id } = useParams();
   const { data: match, isLoading, error } = useMatch(id as string);
   const [activeTab, setActiveTab] = useState("overview");
+  const [matchScores, setMatchScores] = useState<{ redTotalScore: number; blueTotalScore: number } | null>(null);
+
+  useEffect(() => {
+    async function fetchScores() {
+      if (!match?.id) return;
+      try {
+        const score = await MatchService.getMatchScores(match.id);
+        if (score) {
+          setMatchScores({
+            redTotalScore: score.redTotalScore,
+            blueTotalScore: score.blueTotalScore,
+          });
+        }
+      } catch (e) {
+        setMatchScores(null);
+      }
+    }
+    if (match) fetchScores();
+  }, [match?.id]);
 
   if (isLoading) {
     return (
@@ -62,12 +82,14 @@ export default function MatchDetailsPage() {
   const redAlliance = match.alliances.find((a) => a.color === "RED");
   const blueAlliance = match.alliances.find((a) => a.color === "BLUE");
 
-  // Determine match result based on scores
+  // Calculate winner using matchScores if available
   let calculatedWinningAlliance: string | null = null;
-  if (typeof redAlliance?.score === "number" && typeof blueAlliance?.score === "number") {
-    if (redAlliance.score > blueAlliance.score) {
+  const redScore = matchScores ? matchScores.redTotalScore : (redAlliance?.score ?? 0);
+  const blueScore = matchScores ? matchScores.blueTotalScore : (blueAlliance?.score ?? 0);
+  if (typeof redScore === "number" && typeof blueScore === "number") {
+    if (redScore > blueScore) {
       calculatedWinningAlliance = "RED";
-    } else if (blueAlliance.score > redAlliance.score) {
+    } else if (blueScore > redScore) {
       calculatedWinningAlliance = "BLUE";
     } else {
       calculatedWinningAlliance = "TIE";
@@ -235,7 +257,7 @@ export default function MatchDetailsPage() {
                               "text-4xl font-bold",
                               calculatedWinningAlliance === "RED" ? "text-red-400" : "text-gray-300"
                             )}>
-                              {redAlliance?.score || 0}
+                              {matchScores ? matchScores.redTotalScore : (redAlliance?.score || 0)}
                             </span>
                             <span className="text-xs text-gray-400 mt-1">TOTAL POINTS</span>
                           </div>
@@ -270,9 +292,12 @@ export default function MatchDetailsPage() {
                               <div className="mt-4 text-sm text-gray-400">
                                 Score Difference:
                                 <span className="font-semibold text-white ml-1">
-                                  {Math.abs((redAlliance?.score || 0) - (blueAlliance?.score || 0))} points
+                                  {matchScores
+                                    ? Math.abs((matchScores.redTotalScore || 0) - (matchScores.blueTotalScore || 0))
+                                    : Math.abs((redAlliance?.score || 0) - (blueAlliance?.score || 0))
+                                  } points
                                 </span>
-                              </div>
+                                </div>
                               {calculatedWinningAlliance === "TIE" && (
                                 <Badge className="mt-2 bg-amber-700 text-amber-100">
                                   TIE MATCH
@@ -297,7 +322,7 @@ export default function MatchDetailsPage() {
                               "text-4xl font-bold",
                               calculatedWinningAlliance === "BLUE" ? "text-blue-400" : "text-gray-300"
                             )}>
-                              {blueAlliance?.score || 0}
+                              {matchScores ? matchScores.blueTotalScore : (blueAlliance?.score || 0)}
                             </span>
                             <span className="text-xs text-gray-400 mt-1">TOTAL POINTS</span>
                           </div>
@@ -451,6 +476,12 @@ export default function MatchDetailsPage() {
                     <span className="text-muted-foreground">Stage:</span>
                     <span className="font-medium">{match.stage.name}</span>
                   </div>
+                  {typeof match.fieldNumber !== 'undefined' && match.fieldNumber !== null && (
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Field Number:</span>
+                      <span className="font-medium">{match.fieldNumber}</span>
+                    </div>
+                  )}
                   {match.scheduledTime && (
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Scheduled:</span>
@@ -475,7 +506,6 @@ export default function MatchDetailsPage() {
                         <Trophy className="h-5 w-5 text-yellow-500" />
                         <p className="text-sm uppercase tracking-wider text-gray-300 font-medium">Winner</p>
                       </div>
-                      
                       <div className={cn(
                         "text-xl font-bold mb-3 py-1 px-3 rounded-md inline-block",
                         calculatedWinningAlliance === "RED" 
@@ -486,7 +516,6 @@ export default function MatchDetailsPage() {
                       )}>
                         {calculatedWinningAlliance === "TIE" ? "TIE MATCH" : `${calculatedWinningAlliance} ALLIANCE`}
                       </div>
-                      
                       <div className="grid grid-cols-2 gap-2 mt-3 pt-3 border-t border-gray-700/50">
                         <div className={cn(
                           "text-center p-2 rounded-md",
@@ -497,7 +526,7 @@ export default function MatchDetailsPage() {
                             "text-xl font-semibold",
                             calculatedWinningAlliance === "RED" ? "text-red-300" : "text-gray-300"
                           )}>
-                            {redAlliance?.score || 0}
+                            {redScore}
                           </p>
                         </div>
                         
@@ -510,14 +539,13 @@ export default function MatchDetailsPage() {
                             "text-xl font-semibold",
                             calculatedWinningAlliance === "BLUE" ? "text-blue-300" : "text-gray-300"
                           )}>
-                            {blueAlliance?.score || 0}
+                            {blueScore}
                           </p>
                         </div>
                       </div>
-                      
                       <div className="mt-3 text-xs text-gray-400">
                         Score Difference: <span className="font-semibold text-white">
-                          {Math.abs((redAlliance?.score || 0) - (blueAlliance?.score || 0))} points
+                          {Math.abs((redScore || 0) - (blueScore || 0))} points
                         </span>
                       </div>
                     </div>

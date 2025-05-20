@@ -51,6 +51,7 @@ import { PlusIcon, PencilIcon, TrashIcon, InfoIcon, CalendarIcon, ArrowLeftIcon,
 import StageDialog from "./stage-dialog";
 import MatchSchedulerDialog from "./match-scheduler-dialog";
 import { MatchService } from "@/lib/match-service";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function StagesPage() {
   const router = useRouter();
@@ -110,6 +111,8 @@ export default function StagesPage() {
   // Add state for match scores map
   const [matchScoresMap, setMatchScoresMap] = useState<Record<string, { redTotalScore: number, blueTotalScore: number }>>({});
 
+  const queryClient = useQueryClient();
+
   // Reset selected stage when tournament changes
   useEffect(() => {
     setSelectedStageId("");
@@ -130,7 +133,7 @@ export default function StagesPage() {
     }
   }, [user, authLoading, router]);
   
-  // Fetch match scores for all matches in the current stage
+  // Fetch match scores for all matches in the current stage, using cache if available
   useEffect(() => {
     async function fetchScores() {
       if (!filteredStageMatches || filteredStageMatches.length === 0) {
@@ -138,15 +141,39 @@ export default function StagesPage() {
         return;
       }
       const scores: Record<string, { redTotalScore: number, blueTotalScore: number }> = {};
+      const toFetch: string[] = [];
+      // Try to get scores from cache first
+      filteredStageMatches.forEach((match) => {
+        const cached = queryClient.getQueryData([
+          "matchScores",
+          "byMatch",
+          match.id
+        ]) as { redTotalScore?: number; blueTotalScore?: number } | undefined;
+        if (cached && cached.redTotalScore !== undefined && cached.blueTotalScore !== undefined) {
+          scores[match.id] = {
+            redTotalScore: cached.redTotalScore,
+            blueTotalScore: cached.blueTotalScore,
+          };
+        } else {
+          toFetch.push(match.id);
+        }
+      });
+      // Only fetch from server for those not in cache
       await Promise.all(
-        filteredStageMatches.map(async (match) => {
+        toFetch.map(async (matchId) => {
           try {
-            const score = await MatchService.getMatchScores(match.id);
+            const score = await MatchService.getMatchScores(matchId);
             if (score) {
-              scores[match.id] = {
+              scores[matchId] = {
                 redTotalScore: score.redTotalScore,
                 blueTotalScore: score.blueTotalScore,
               };
+              // Prefill cache for future use
+              queryClient.setQueryData([
+                "matchScores",
+                "byMatch",
+                matchId
+              ], score);
             }
           } catch (e) {
             // ignore errors for missing scores
@@ -156,7 +183,7 @@ export default function StagesPage() {
       setMatchScoresMap(scores);
     }
     fetchScores();
-  }, [filteredStageMatches]);
+  }, [filteredStageMatches, queryClient]);
 
   // Return null during authentication check to prevent flash of content
   if (authLoading || !user) {
