@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
-import { CreateMatchScoresDto, UpdateMatchScoresDto } from './dto';
+import { CreateMatchScoresDto, UpdateMatchScoresDto, SubmitScoreDto } from './dto';
 import { Prisma } from '@prisma/client';
 import { ScoreCalculator, IScoreCalculator } from './score-calculator';
 import { JsonFieldParser } from './json-field-parser';
@@ -513,5 +513,24 @@ export class MatchScoresService {
       console.error(`Error initializing match scores for match ${matchId}:`, error);
       throw error;
     }
+  }
+
+  /**
+   * Submits a flexible match score (ScoreConfig system)
+   */
+  async submitScore(submitScoreDto: SubmitScoreDto) {
+    // TODO: Implement flexible scoring logic using ScoreConfig system
+    // This is a stub for migration compatibility
+    return { message: 'Flexible score submission not yet implemented', data: submitScoreDto };
+  }
+
+  /**
+   * Retrieves a match score by matchId
+   * @param matchId Match ID
+   * @returns Match score details
+   */
+  async getMatchScore(matchId: string) {
+    // TODO: Implement retrieval of match score by matchId for flexible scoring
+    return { message: 'Get match score not yet implemented', matchId };
   }
 }

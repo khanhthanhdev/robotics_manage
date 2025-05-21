@@ -237,7 +237,7 @@ export class EventsGateway
     // If fieldId is provided, emit to that specific field, otherwise broadcast to tournament
     if (payload.fieldId) {
       // Create a unique room ID for this field
-      const fieldRoomId = `field:${payload.fieldId}`;
+      const fieldRoomId = `field_${payload.fieldId}`;
       this.logger.log(`Sending field-specific announcement to ${fieldRoomId}`);
       
       // Emit to field-specific room
@@ -381,7 +381,7 @@ export class EventsGateway
     @MessageBody() data: { fieldId: string }
   ): void {
     const { fieldId } = data;
-    const fieldRoomId = `field:${fieldId}`;
+    const fieldRoomId = `field_${fieldId}`;
     client.join(fieldRoomId);
     this.logger.log(`Client ${client.id} joined field room: ${fieldRoomId}`);
   }
@@ -393,14 +393,14 @@ export class EventsGateway
     @MessageBody() data: { fieldId: string }
   ): void {
     const { fieldId } = data;
-    const fieldRoomId = `field:${fieldId}`;
+    const fieldRoomId = `field_${fieldId}`;
     client.leave(fieldRoomId);
     this.logger.log(`Client ${client.id} left field room: ${fieldRoomId}`);
   }
 
   // Emit to a field-specific room (for use by services)
   public emitToField(fieldId: string, event: string, payload: any): void {
-    const fieldRoomId = `field:${fieldId}`;
+    const fieldRoomId = `field_${fieldId}`;
     this.server.to(fieldRoomId).emit(event, payload);
     this.logger.log(`Broadcasted ${event} to ${fieldRoomId}: ${JSON.stringify(payload)}`);
   }
