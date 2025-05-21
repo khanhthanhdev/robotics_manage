@@ -98,6 +98,31 @@ export type MatchError = $Result.DefaultSelection<Prisma.$MatchErrorPayload>
  * 
  */
 export type AudienceDisplay = $Result.DefaultSelection<Prisma.$AudienceDisplayPayload>
+/**
+ * Model ScoreConfig
+ * 
+ */
+export type ScoreConfig = $Result.DefaultSelection<Prisma.$ScoreConfigPayload>
+/**
+ * Model ScoreElement
+ * 
+ */
+export type ScoreElement = $Result.DefaultSelection<Prisma.$ScoreElementPayload>
+/**
+ * Model BonusCondition
+ * 
+ */
+export type BonusCondition = $Result.DefaultSelection<Prisma.$BonusConditionPayload>
+/**
+ * Model PenaltyCondition
+ * 
+ */
+export type PenaltyCondition = $Result.DefaultSelection<Prisma.$PenaltyConditionPayload>
+/**
+ * Model MatchScore
+ * 
+ */
+export type MatchScore = $Result.DefaultSelection<Prisma.$MatchScorePayload>
 
 /**
  * Enums
@@ -525,6 +550,56 @@ export class PrismaClient<
     * ```
     */
   get audienceDisplay(): Prisma.AudienceDisplayDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.scoreConfig`: Exposes CRUD operations for the **ScoreConfig** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ScoreConfigs
+    * const scoreConfigs = await prisma.scoreConfig.findMany()
+    * ```
+    */
+  get scoreConfig(): Prisma.ScoreConfigDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.scoreElement`: Exposes CRUD operations for the **ScoreElement** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ScoreElements
+    * const scoreElements = await prisma.scoreElement.findMany()
+    * ```
+    */
+  get scoreElement(): Prisma.ScoreElementDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.bonusCondition`: Exposes CRUD operations for the **BonusCondition** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more BonusConditions
+    * const bonusConditions = await prisma.bonusCondition.findMany()
+    * ```
+    */
+  get bonusCondition(): Prisma.BonusConditionDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.penaltyCondition`: Exposes CRUD operations for the **PenaltyCondition** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more PenaltyConditions
+    * const penaltyConditions = await prisma.penaltyCondition.findMany()
+    * ```
+    */
+  get penaltyCondition(): Prisma.PenaltyConditionDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.matchScore`: Exposes CRUD operations for the **MatchScore** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more MatchScores
+    * const matchScores = await prisma.matchScore.findMany()
+    * ```
+    */
+  get matchScore(): Prisma.MatchScoreDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -981,7 +1056,12 @@ export namespace Prisma {
     MatchControl: 'MatchControl',
     MatchTimer: 'MatchTimer',
     MatchError: 'MatchError',
-    AudienceDisplay: 'AudienceDisplay'
+    AudienceDisplay: 'AudienceDisplay',
+    ScoreConfig: 'ScoreConfig',
+    ScoreElement: 'ScoreElement',
+    BonusCondition: 'BonusCondition',
+    PenaltyCondition: 'PenaltyCondition',
+    MatchScore: 'MatchScore'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1000,7 +1080,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "tournament" | "stage" | "match" | "matchReferee" | "alliance" | "allianceScoring" | "team" | "teamAlliance" | "matchScores" | "teamStats" | "schedule" | "field" | "matchControl" | "matchTimer" | "matchError" | "audienceDisplay"
+      modelProps: "user" | "tournament" | "stage" | "match" | "matchReferee" | "alliance" | "allianceScoring" | "team" | "teamAlliance" | "matchScores" | "teamStats" | "schedule" | "field" | "matchControl" | "matchTimer" | "matchError" | "audienceDisplay" | "scoreConfig" | "scoreElement" | "bonusCondition" | "penaltyCondition" | "matchScore"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2262,6 +2342,376 @@ export namespace Prisma {
           }
         }
       }
+      ScoreConfig: {
+        payload: Prisma.$ScoreConfigPayload<ExtArgs>
+        fields: Prisma.ScoreConfigFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ScoreConfigFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ScoreConfigPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ScoreConfigFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ScoreConfigPayload>
+          }
+          findFirst: {
+            args: Prisma.ScoreConfigFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ScoreConfigPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ScoreConfigFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ScoreConfigPayload>
+          }
+          findMany: {
+            args: Prisma.ScoreConfigFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ScoreConfigPayload>[]
+          }
+          create: {
+            args: Prisma.ScoreConfigCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ScoreConfigPayload>
+          }
+          createMany: {
+            args: Prisma.ScoreConfigCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ScoreConfigCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ScoreConfigPayload>[]
+          }
+          delete: {
+            args: Prisma.ScoreConfigDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ScoreConfigPayload>
+          }
+          update: {
+            args: Prisma.ScoreConfigUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ScoreConfigPayload>
+          }
+          deleteMany: {
+            args: Prisma.ScoreConfigDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ScoreConfigUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ScoreConfigUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ScoreConfigPayload>[]
+          }
+          upsert: {
+            args: Prisma.ScoreConfigUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ScoreConfigPayload>
+          }
+          aggregate: {
+            args: Prisma.ScoreConfigAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateScoreConfig>
+          }
+          groupBy: {
+            args: Prisma.ScoreConfigGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ScoreConfigGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ScoreConfigCountArgs<ExtArgs>
+            result: $Utils.Optional<ScoreConfigCountAggregateOutputType> | number
+          }
+        }
+      }
+      ScoreElement: {
+        payload: Prisma.$ScoreElementPayload<ExtArgs>
+        fields: Prisma.ScoreElementFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ScoreElementFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ScoreElementPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ScoreElementFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ScoreElementPayload>
+          }
+          findFirst: {
+            args: Prisma.ScoreElementFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ScoreElementPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ScoreElementFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ScoreElementPayload>
+          }
+          findMany: {
+            args: Prisma.ScoreElementFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ScoreElementPayload>[]
+          }
+          create: {
+            args: Prisma.ScoreElementCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ScoreElementPayload>
+          }
+          createMany: {
+            args: Prisma.ScoreElementCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ScoreElementCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ScoreElementPayload>[]
+          }
+          delete: {
+            args: Prisma.ScoreElementDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ScoreElementPayload>
+          }
+          update: {
+            args: Prisma.ScoreElementUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ScoreElementPayload>
+          }
+          deleteMany: {
+            args: Prisma.ScoreElementDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ScoreElementUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ScoreElementUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ScoreElementPayload>[]
+          }
+          upsert: {
+            args: Prisma.ScoreElementUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ScoreElementPayload>
+          }
+          aggregate: {
+            args: Prisma.ScoreElementAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateScoreElement>
+          }
+          groupBy: {
+            args: Prisma.ScoreElementGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ScoreElementGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ScoreElementCountArgs<ExtArgs>
+            result: $Utils.Optional<ScoreElementCountAggregateOutputType> | number
+          }
+        }
+      }
+      BonusCondition: {
+        payload: Prisma.$BonusConditionPayload<ExtArgs>
+        fields: Prisma.BonusConditionFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.BonusConditionFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BonusConditionPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.BonusConditionFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BonusConditionPayload>
+          }
+          findFirst: {
+            args: Prisma.BonusConditionFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BonusConditionPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.BonusConditionFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BonusConditionPayload>
+          }
+          findMany: {
+            args: Prisma.BonusConditionFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BonusConditionPayload>[]
+          }
+          create: {
+            args: Prisma.BonusConditionCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BonusConditionPayload>
+          }
+          createMany: {
+            args: Prisma.BonusConditionCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.BonusConditionCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BonusConditionPayload>[]
+          }
+          delete: {
+            args: Prisma.BonusConditionDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BonusConditionPayload>
+          }
+          update: {
+            args: Prisma.BonusConditionUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BonusConditionPayload>
+          }
+          deleteMany: {
+            args: Prisma.BonusConditionDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.BonusConditionUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.BonusConditionUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BonusConditionPayload>[]
+          }
+          upsert: {
+            args: Prisma.BonusConditionUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BonusConditionPayload>
+          }
+          aggregate: {
+            args: Prisma.BonusConditionAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateBonusCondition>
+          }
+          groupBy: {
+            args: Prisma.BonusConditionGroupByArgs<ExtArgs>
+            result: $Utils.Optional<BonusConditionGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.BonusConditionCountArgs<ExtArgs>
+            result: $Utils.Optional<BonusConditionCountAggregateOutputType> | number
+          }
+        }
+      }
+      PenaltyCondition: {
+        payload: Prisma.$PenaltyConditionPayload<ExtArgs>
+        fields: Prisma.PenaltyConditionFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.PenaltyConditionFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PenaltyConditionPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.PenaltyConditionFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PenaltyConditionPayload>
+          }
+          findFirst: {
+            args: Prisma.PenaltyConditionFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PenaltyConditionPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.PenaltyConditionFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PenaltyConditionPayload>
+          }
+          findMany: {
+            args: Prisma.PenaltyConditionFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PenaltyConditionPayload>[]
+          }
+          create: {
+            args: Prisma.PenaltyConditionCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PenaltyConditionPayload>
+          }
+          createMany: {
+            args: Prisma.PenaltyConditionCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.PenaltyConditionCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PenaltyConditionPayload>[]
+          }
+          delete: {
+            args: Prisma.PenaltyConditionDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PenaltyConditionPayload>
+          }
+          update: {
+            args: Prisma.PenaltyConditionUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PenaltyConditionPayload>
+          }
+          deleteMany: {
+            args: Prisma.PenaltyConditionDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.PenaltyConditionUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.PenaltyConditionUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PenaltyConditionPayload>[]
+          }
+          upsert: {
+            args: Prisma.PenaltyConditionUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PenaltyConditionPayload>
+          }
+          aggregate: {
+            args: Prisma.PenaltyConditionAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregatePenaltyCondition>
+          }
+          groupBy: {
+            args: Prisma.PenaltyConditionGroupByArgs<ExtArgs>
+            result: $Utils.Optional<PenaltyConditionGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.PenaltyConditionCountArgs<ExtArgs>
+            result: $Utils.Optional<PenaltyConditionCountAggregateOutputType> | number
+          }
+        }
+      }
+      MatchScore: {
+        payload: Prisma.$MatchScorePayload<ExtArgs>
+        fields: Prisma.MatchScoreFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.MatchScoreFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MatchScorePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.MatchScoreFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MatchScorePayload>
+          }
+          findFirst: {
+            args: Prisma.MatchScoreFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MatchScorePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.MatchScoreFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MatchScorePayload>
+          }
+          findMany: {
+            args: Prisma.MatchScoreFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MatchScorePayload>[]
+          }
+          create: {
+            args: Prisma.MatchScoreCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MatchScorePayload>
+          }
+          createMany: {
+            args: Prisma.MatchScoreCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.MatchScoreCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MatchScorePayload>[]
+          }
+          delete: {
+            args: Prisma.MatchScoreDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MatchScorePayload>
+          }
+          update: {
+            args: Prisma.MatchScoreUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MatchScorePayload>
+          }
+          deleteMany: {
+            args: Prisma.MatchScoreDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.MatchScoreUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.MatchScoreUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MatchScorePayload>[]
+          }
+          upsert: {
+            args: Prisma.MatchScoreUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MatchScorePayload>
+          }
+          aggregate: {
+            args: Prisma.MatchScoreAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateMatchScore>
+          }
+          groupBy: {
+            args: Prisma.MatchScoreGroupByArgs<ExtArgs>
+            result: $Utils.Optional<MatchScoreGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.MatchScoreCountArgs<ExtArgs>
+            result: $Utils.Optional<MatchScoreCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -2363,6 +2813,11 @@ export namespace Prisma {
     matchTimer?: MatchTimerOmit
     matchError?: MatchErrorOmit
     audienceDisplay?: AudienceDisplayOmit
+    scoreConfig?: ScoreConfigOmit
+    scoreElement?: ScoreElementOmit
+    bonusCondition?: BonusConditionOmit
+    penaltyCondition?: PenaltyConditionOmit
+    matchScore?: MatchScoreOmit
   }
 
   /* Types for Logging */
@@ -2528,6 +2983,7 @@ export namespace Prisma {
     teams: number
     teamStats: number
     fields: number
+    scoreConfigs: number
   }
 
   export type TournamentCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2535,6 +2991,7 @@ export namespace Prisma {
     teams?: boolean | TournamentCountOutputTypeCountTeamsArgs
     teamStats?: boolean | TournamentCountOutputTypeCountTeamStatsArgs
     fields?: boolean | TournamentCountOutputTypeCountFieldsArgs
+    scoreConfigs?: boolean | TournamentCountOutputTypeCountScoreConfigsArgs
   }
 
   // Custom InputTypes
@@ -2574,6 +3031,13 @@ export namespace Prisma {
    */
   export type TournamentCountOutputTypeCountFieldsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: FieldWhereInput
+  }
+
+  /**
+   * TournamentCountOutputType without action
+   */
+  export type TournamentCountOutputTypeCountScoreConfigsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ScoreConfigWhereInput
   }
 
 
@@ -2633,11 +3097,13 @@ export namespace Prisma {
   export type MatchCountOutputType = {
     alliances: number
     referees: number
+    matchScoreRecords: number
   }
 
   export type MatchCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     alliances?: boolean | MatchCountOutputTypeCountAlliancesArgs
     referees?: boolean | MatchCountOutputTypeCountRefereesArgs
+    matchScoreRecords?: boolean | MatchCountOutputTypeCountMatchScoreRecordsArgs
   }
 
   // Custom InputTypes
@@ -2665,6 +3131,13 @@ export namespace Prisma {
     where?: MatchRefereeWhereInput
   }
 
+  /**
+   * MatchCountOutputType without action
+   */
+  export type MatchCountOutputTypeCountMatchScoreRecordsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MatchScoreWhereInput
+  }
+
 
   /**
    * Count Type AllianceCountOutputType
@@ -2672,10 +3145,12 @@ export namespace Prisma {
 
   export type AllianceCountOutputType = {
     teamAlliances: number
+    matchScores: number
   }
 
   export type AllianceCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     teamAlliances?: boolean | AllianceCountOutputTypeCountTeamAlliancesArgs
+    matchScores?: boolean | AllianceCountOutputTypeCountMatchScoresArgs
   }
 
   // Custom InputTypes
@@ -2694,6 +3169,13 @@ export namespace Prisma {
    */
   export type AllianceCountOutputTypeCountTeamAlliancesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: TeamAllianceWhereInput
+  }
+
+  /**
+   * AllianceCountOutputType without action
+   */
+  export type AllianceCountOutputTypeCountMatchScoresArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MatchScoreWhereInput
   }
 
 
@@ -2836,6 +3318,64 @@ export namespace Prisma {
    */
   export type MatchControlCountOutputTypeCountMatchErrorsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: MatchErrorWhereInput
+  }
+
+
+  /**
+   * Count Type ScoreConfigCountOutputType
+   */
+
+  export type ScoreConfigCountOutputType = {
+    scoreElements: number
+    bonusConditions: number
+    penaltyConditions: number
+    matchScores: number
+  }
+
+  export type ScoreConfigCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    scoreElements?: boolean | ScoreConfigCountOutputTypeCountScoreElementsArgs
+    bonusConditions?: boolean | ScoreConfigCountOutputTypeCountBonusConditionsArgs
+    penaltyConditions?: boolean | ScoreConfigCountOutputTypeCountPenaltyConditionsArgs
+    matchScores?: boolean | ScoreConfigCountOutputTypeCountMatchScoresArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * ScoreConfigCountOutputType without action
+   */
+  export type ScoreConfigCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ScoreConfigCountOutputType
+     */
+    select?: ScoreConfigCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * ScoreConfigCountOutputType without action
+   */
+  export type ScoreConfigCountOutputTypeCountScoreElementsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ScoreElementWhereInput
+  }
+
+  /**
+   * ScoreConfigCountOutputType without action
+   */
+  export type ScoreConfigCountOutputTypeCountBonusConditionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: BonusConditionWhereInput
+  }
+
+  /**
+   * ScoreConfigCountOutputType without action
+   */
+  export type ScoreConfigCountOutputTypeCountPenaltyConditionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PenaltyConditionWhereInput
+  }
+
+  /**
+   * ScoreConfigCountOutputType without action
+   */
+  export type ScoreConfigCountOutputTypeCountMatchScoresArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MatchScoreWhereInput
   }
 
 
@@ -4375,6 +4915,7 @@ export namespace Prisma {
     teams?: boolean | Tournament$teamsArgs<ExtArgs>
     teamStats?: boolean | Tournament$teamStatsArgs<ExtArgs>
     fields?: boolean | Tournament$fieldsArgs<ExtArgs>
+    scoreConfigs?: boolean | Tournament$scoreConfigsArgs<ExtArgs>
     _count?: boolean | TournamentCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["tournament"]>
 
@@ -4423,6 +4964,7 @@ export namespace Prisma {
     teams?: boolean | Tournament$teamsArgs<ExtArgs>
     teamStats?: boolean | Tournament$teamStatsArgs<ExtArgs>
     fields?: boolean | Tournament$fieldsArgs<ExtArgs>
+    scoreConfigs?: boolean | Tournament$scoreConfigsArgs<ExtArgs>
     _count?: boolean | TournamentCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type TournamentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4440,6 +4982,7 @@ export namespace Prisma {
       teams: Prisma.$TeamPayload<ExtArgs>[]
       teamStats: Prisma.$TeamStatsPayload<ExtArgs>[]
       fields: Prisma.$FieldPayload<ExtArgs>[]
+      scoreConfigs: Prisma.$ScoreConfigPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -4850,6 +5393,7 @@ export namespace Prisma {
     teams<T extends Tournament$teamsArgs<ExtArgs> = {}>(args?: Subset<T, Tournament$teamsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeamPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     teamStats<T extends Tournament$teamStatsArgs<ExtArgs> = {}>(args?: Subset<T, Tournament$teamStatsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeamStatsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     fields<T extends Tournament$fieldsArgs<ExtArgs> = {}>(args?: Subset<T, Tournament$fieldsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FieldPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    scoreConfigs<T extends Tournament$scoreConfigsArgs<ExtArgs> = {}>(args?: Subset<T, Tournament$scoreConfigsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ScoreConfigPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5377,6 +5921,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: FieldScalarFieldEnum | FieldScalarFieldEnum[]
+  }
+
+  /**
+   * Tournament.scoreConfigs
+   */
+  export type Tournament$scoreConfigsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ScoreConfig
+     */
+    select?: ScoreConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ScoreConfig
+     */
+    omit?: ScoreConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ScoreConfigInclude<ExtArgs> | null
+    where?: ScoreConfigWhereInput
+    orderBy?: ScoreConfigOrderByWithRelationInput | ScoreConfigOrderByWithRelationInput[]
+    cursor?: ScoreConfigWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ScoreConfigScalarFieldEnum | ScoreConfigScalarFieldEnum[]
   }
 
   /**
@@ -6979,6 +7547,7 @@ export namespace Prisma {
     matchControl?: boolean | Match$matchControlArgs<ExtArgs>
     schedule?: boolean | Match$scheduleArgs<ExtArgs>
     field?: boolean | Match$fieldArgs<ExtArgs>
+    matchScoreRecords?: boolean | Match$matchScoreRecordsArgs<ExtArgs>
     _count?: boolean | MatchCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["match"]>
 
@@ -7066,6 +7635,7 @@ export namespace Prisma {
     matchControl?: boolean | Match$matchControlArgs<ExtArgs>
     schedule?: boolean | Match$scheduleArgs<ExtArgs>
     field?: boolean | Match$fieldArgs<ExtArgs>
+    matchScoreRecords?: boolean | Match$matchScoreRecordsArgs<ExtArgs>
     _count?: boolean | MatchCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type MatchIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -7092,6 +7662,7 @@ export namespace Prisma {
       matchControl: Prisma.$MatchControlPayload<ExtArgs> | null
       schedule: Prisma.$SchedulePayload<ExtArgs> | null
       field: Prisma.$FieldPayload<ExtArgs> | null
+      matchScoreRecords: Prisma.$MatchScorePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -7515,6 +8086,7 @@ export namespace Prisma {
     matchControl<T extends Match$matchControlArgs<ExtArgs> = {}>(args?: Subset<T, Match$matchControlArgs<ExtArgs>>): Prisma__MatchControlClient<$Result.GetResult<Prisma.$MatchControlPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     schedule<T extends Match$scheduleArgs<ExtArgs> = {}>(args?: Subset<T, Match$scheduleArgs<ExtArgs>>): Prisma__ScheduleClient<$Result.GetResult<Prisma.$SchedulePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     field<T extends Match$fieldArgs<ExtArgs> = {}>(args?: Subset<T, Match$fieldArgs<ExtArgs>>): Prisma__FieldClient<$Result.GetResult<Prisma.$FieldPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    matchScoreRecords<T extends Match$matchScoreRecordsArgs<ExtArgs> = {}>(args?: Subset<T, Match$matchScoreRecordsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MatchScorePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -8099,6 +8671,30 @@ export namespace Prisma {
      */
     include?: FieldInclude<ExtArgs> | null
     where?: FieldWhereInput
+  }
+
+  /**
+   * Match.matchScoreRecords
+   */
+  export type Match$matchScoreRecordsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MatchScore
+     */
+    select?: MatchScoreSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MatchScore
+     */
+    omit?: MatchScoreOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MatchScoreInclude<ExtArgs> | null
+    where?: MatchScoreWhereInput
+    orderBy?: MatchScoreOrderByWithRelationInput | MatchScoreOrderByWithRelationInput[]
+    cursor?: MatchScoreWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: MatchScoreScalarFieldEnum | MatchScoreScalarFieldEnum[]
   }
 
   /**
@@ -9421,6 +10017,7 @@ export namespace Prisma {
     match?: boolean | MatchDefaultArgs<ExtArgs>
     teamAlliances?: boolean | Alliance$teamAlliancesArgs<ExtArgs>
     allianceScoring?: boolean | Alliance$allianceScoringArgs<ExtArgs>
+    matchScores?: boolean | Alliance$matchScoresArgs<ExtArgs>
     _count?: boolean | AllianceCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["alliance"]>
 
@@ -9458,6 +10055,7 @@ export namespace Prisma {
     match?: boolean | MatchDefaultArgs<ExtArgs>
     teamAlliances?: boolean | Alliance$teamAlliancesArgs<ExtArgs>
     allianceScoring?: boolean | Alliance$allianceScoringArgs<ExtArgs>
+    matchScores?: boolean | Alliance$matchScoresArgs<ExtArgs>
     _count?: boolean | AllianceCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type AllianceIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -9473,6 +10071,7 @@ export namespace Prisma {
       match: Prisma.$MatchPayload<ExtArgs>
       teamAlliances: Prisma.$TeamAlliancePayload<ExtArgs>[]
       allianceScoring: Prisma.$AllianceScoringPayload<ExtArgs> | null
+      matchScores: Prisma.$MatchScorePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -9878,6 +10477,7 @@ export namespace Prisma {
     match<T extends MatchDefaultArgs<ExtArgs> = {}>(args?: Subset<T, MatchDefaultArgs<ExtArgs>>): Prisma__MatchClient<$Result.GetResult<Prisma.$MatchPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     teamAlliances<T extends Alliance$teamAlliancesArgs<ExtArgs> = {}>(args?: Subset<T, Alliance$teamAlliancesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeamAlliancePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     allianceScoring<T extends Alliance$allianceScoringArgs<ExtArgs> = {}>(args?: Subset<T, Alliance$allianceScoringArgs<ExtArgs>>): Prisma__AllianceScoringClient<$Result.GetResult<Prisma.$AllianceScoringPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    matchScores<T extends Alliance$matchScoresArgs<ExtArgs> = {}>(args?: Subset<T, Alliance$matchScoresArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MatchScorePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -10349,6 +10949,30 @@ export namespace Prisma {
      */
     include?: AllianceScoringInclude<ExtArgs> | null
     where?: AllianceScoringWhereInput
+  }
+
+  /**
+   * Alliance.matchScores
+   */
+  export type Alliance$matchScoresArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MatchScore
+     */
+    select?: MatchScoreSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MatchScore
+     */
+    omit?: MatchScoreOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MatchScoreInclude<ExtArgs> | null
+    where?: MatchScoreWhereInput
+    orderBy?: MatchScoreOrderByWithRelationInput | MatchScoreOrderByWithRelationInput[]
+    cursor?: MatchScoreWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: MatchScoreScalarFieldEnum | MatchScoreScalarFieldEnum[]
   }
 
   /**
@@ -23299,6 +23923,5814 @@ export namespace Prisma {
 
 
   /**
+   * Model ScoreConfig
+   */
+
+  export type AggregateScoreConfig = {
+    _count: ScoreConfigCountAggregateOutputType | null
+    _min: ScoreConfigMinAggregateOutputType | null
+    _max: ScoreConfigMaxAggregateOutputType | null
+  }
+
+  export type ScoreConfigMinAggregateOutputType = {
+    id: string | null
+    tournamentId: string | null
+    name: string | null
+    description: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ScoreConfigMaxAggregateOutputType = {
+    id: string | null
+    tournamentId: string | null
+    name: string | null
+    description: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ScoreConfigCountAggregateOutputType = {
+    id: number
+    tournamentId: number
+    name: number
+    description: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type ScoreConfigMinAggregateInputType = {
+    id?: true
+    tournamentId?: true
+    name?: true
+    description?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ScoreConfigMaxAggregateInputType = {
+    id?: true
+    tournamentId?: true
+    name?: true
+    description?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ScoreConfigCountAggregateInputType = {
+    id?: true
+    tournamentId?: true
+    name?: true
+    description?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type ScoreConfigAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ScoreConfig to aggregate.
+     */
+    where?: ScoreConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ScoreConfigs to fetch.
+     */
+    orderBy?: ScoreConfigOrderByWithRelationInput | ScoreConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ScoreConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ScoreConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ScoreConfigs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ScoreConfigs
+    **/
+    _count?: true | ScoreConfigCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ScoreConfigMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ScoreConfigMaxAggregateInputType
+  }
+
+  export type GetScoreConfigAggregateType<T extends ScoreConfigAggregateArgs> = {
+        [P in keyof T & keyof AggregateScoreConfig]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateScoreConfig[P]>
+      : GetScalarType<T[P], AggregateScoreConfig[P]>
+  }
+
+
+
+
+  export type ScoreConfigGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ScoreConfigWhereInput
+    orderBy?: ScoreConfigOrderByWithAggregationInput | ScoreConfigOrderByWithAggregationInput[]
+    by: ScoreConfigScalarFieldEnum[] | ScoreConfigScalarFieldEnum
+    having?: ScoreConfigScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ScoreConfigCountAggregateInputType | true
+    _min?: ScoreConfigMinAggregateInputType
+    _max?: ScoreConfigMaxAggregateInputType
+  }
+
+  export type ScoreConfigGroupByOutputType = {
+    id: string
+    tournamentId: string
+    name: string
+    description: string | null
+    createdAt: Date
+    updatedAt: Date
+    _count: ScoreConfigCountAggregateOutputType | null
+    _min: ScoreConfigMinAggregateOutputType | null
+    _max: ScoreConfigMaxAggregateOutputType | null
+  }
+
+  type GetScoreConfigGroupByPayload<T extends ScoreConfigGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ScoreConfigGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ScoreConfigGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ScoreConfigGroupByOutputType[P]>
+            : GetScalarType<T[P], ScoreConfigGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ScoreConfigSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tournamentId?: boolean
+    name?: boolean
+    description?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    tournament?: boolean | TournamentDefaultArgs<ExtArgs>
+    scoreElements?: boolean | ScoreConfig$scoreElementsArgs<ExtArgs>
+    bonusConditions?: boolean | ScoreConfig$bonusConditionsArgs<ExtArgs>
+    penaltyConditions?: boolean | ScoreConfig$penaltyConditionsArgs<ExtArgs>
+    matchScores?: boolean | ScoreConfig$matchScoresArgs<ExtArgs>
+    _count?: boolean | ScoreConfigCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["scoreConfig"]>
+
+  export type ScoreConfigSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tournamentId?: boolean
+    name?: boolean
+    description?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    tournament?: boolean | TournamentDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["scoreConfig"]>
+
+  export type ScoreConfigSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tournamentId?: boolean
+    name?: boolean
+    description?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    tournament?: boolean | TournamentDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["scoreConfig"]>
+
+  export type ScoreConfigSelectScalar = {
+    id?: boolean
+    tournamentId?: boolean
+    name?: boolean
+    description?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type ScoreConfigOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "tournamentId" | "name" | "description" | "createdAt" | "updatedAt", ExtArgs["result"]["scoreConfig"]>
+  export type ScoreConfigInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    tournament?: boolean | TournamentDefaultArgs<ExtArgs>
+    scoreElements?: boolean | ScoreConfig$scoreElementsArgs<ExtArgs>
+    bonusConditions?: boolean | ScoreConfig$bonusConditionsArgs<ExtArgs>
+    penaltyConditions?: boolean | ScoreConfig$penaltyConditionsArgs<ExtArgs>
+    matchScores?: boolean | ScoreConfig$matchScoresArgs<ExtArgs>
+    _count?: boolean | ScoreConfigCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type ScoreConfigIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    tournament?: boolean | TournamentDefaultArgs<ExtArgs>
+  }
+  export type ScoreConfigIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    tournament?: boolean | TournamentDefaultArgs<ExtArgs>
+  }
+
+  export type $ScoreConfigPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ScoreConfig"
+    objects: {
+      tournament: Prisma.$TournamentPayload<ExtArgs>
+      scoreElements: Prisma.$ScoreElementPayload<ExtArgs>[]
+      bonusConditions: Prisma.$BonusConditionPayload<ExtArgs>[]
+      penaltyConditions: Prisma.$PenaltyConditionPayload<ExtArgs>[]
+      matchScores: Prisma.$MatchScorePayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      tournamentId: string
+      name: string
+      description: string | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["scoreConfig"]>
+    composites: {}
+  }
+
+  type ScoreConfigGetPayload<S extends boolean | null | undefined | ScoreConfigDefaultArgs> = $Result.GetResult<Prisma.$ScoreConfigPayload, S>
+
+  type ScoreConfigCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ScoreConfigFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ScoreConfigCountAggregateInputType | true
+    }
+
+  export interface ScoreConfigDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ScoreConfig'], meta: { name: 'ScoreConfig' } }
+    /**
+     * Find zero or one ScoreConfig that matches the filter.
+     * @param {ScoreConfigFindUniqueArgs} args - Arguments to find a ScoreConfig
+     * @example
+     * // Get one ScoreConfig
+     * const scoreConfig = await prisma.scoreConfig.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ScoreConfigFindUniqueArgs>(args: SelectSubset<T, ScoreConfigFindUniqueArgs<ExtArgs>>): Prisma__ScoreConfigClient<$Result.GetResult<Prisma.$ScoreConfigPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ScoreConfig that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ScoreConfigFindUniqueOrThrowArgs} args - Arguments to find a ScoreConfig
+     * @example
+     * // Get one ScoreConfig
+     * const scoreConfig = await prisma.scoreConfig.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ScoreConfigFindUniqueOrThrowArgs>(args: SelectSubset<T, ScoreConfigFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ScoreConfigClient<$Result.GetResult<Prisma.$ScoreConfigPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ScoreConfig that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ScoreConfigFindFirstArgs} args - Arguments to find a ScoreConfig
+     * @example
+     * // Get one ScoreConfig
+     * const scoreConfig = await prisma.scoreConfig.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ScoreConfigFindFirstArgs>(args?: SelectSubset<T, ScoreConfigFindFirstArgs<ExtArgs>>): Prisma__ScoreConfigClient<$Result.GetResult<Prisma.$ScoreConfigPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ScoreConfig that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ScoreConfigFindFirstOrThrowArgs} args - Arguments to find a ScoreConfig
+     * @example
+     * // Get one ScoreConfig
+     * const scoreConfig = await prisma.scoreConfig.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ScoreConfigFindFirstOrThrowArgs>(args?: SelectSubset<T, ScoreConfigFindFirstOrThrowArgs<ExtArgs>>): Prisma__ScoreConfigClient<$Result.GetResult<Prisma.$ScoreConfigPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ScoreConfigs that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ScoreConfigFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ScoreConfigs
+     * const scoreConfigs = await prisma.scoreConfig.findMany()
+     * 
+     * // Get first 10 ScoreConfigs
+     * const scoreConfigs = await prisma.scoreConfig.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const scoreConfigWithIdOnly = await prisma.scoreConfig.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ScoreConfigFindManyArgs>(args?: SelectSubset<T, ScoreConfigFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ScoreConfigPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ScoreConfig.
+     * @param {ScoreConfigCreateArgs} args - Arguments to create a ScoreConfig.
+     * @example
+     * // Create one ScoreConfig
+     * const ScoreConfig = await prisma.scoreConfig.create({
+     *   data: {
+     *     // ... data to create a ScoreConfig
+     *   }
+     * })
+     * 
+     */
+    create<T extends ScoreConfigCreateArgs>(args: SelectSubset<T, ScoreConfigCreateArgs<ExtArgs>>): Prisma__ScoreConfigClient<$Result.GetResult<Prisma.$ScoreConfigPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ScoreConfigs.
+     * @param {ScoreConfigCreateManyArgs} args - Arguments to create many ScoreConfigs.
+     * @example
+     * // Create many ScoreConfigs
+     * const scoreConfig = await prisma.scoreConfig.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ScoreConfigCreateManyArgs>(args?: SelectSubset<T, ScoreConfigCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ScoreConfigs and returns the data saved in the database.
+     * @param {ScoreConfigCreateManyAndReturnArgs} args - Arguments to create many ScoreConfigs.
+     * @example
+     * // Create many ScoreConfigs
+     * const scoreConfig = await prisma.scoreConfig.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ScoreConfigs and only return the `id`
+     * const scoreConfigWithIdOnly = await prisma.scoreConfig.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ScoreConfigCreateManyAndReturnArgs>(args?: SelectSubset<T, ScoreConfigCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ScoreConfigPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ScoreConfig.
+     * @param {ScoreConfigDeleteArgs} args - Arguments to delete one ScoreConfig.
+     * @example
+     * // Delete one ScoreConfig
+     * const ScoreConfig = await prisma.scoreConfig.delete({
+     *   where: {
+     *     // ... filter to delete one ScoreConfig
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ScoreConfigDeleteArgs>(args: SelectSubset<T, ScoreConfigDeleteArgs<ExtArgs>>): Prisma__ScoreConfigClient<$Result.GetResult<Prisma.$ScoreConfigPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ScoreConfig.
+     * @param {ScoreConfigUpdateArgs} args - Arguments to update one ScoreConfig.
+     * @example
+     * // Update one ScoreConfig
+     * const scoreConfig = await prisma.scoreConfig.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ScoreConfigUpdateArgs>(args: SelectSubset<T, ScoreConfigUpdateArgs<ExtArgs>>): Prisma__ScoreConfigClient<$Result.GetResult<Prisma.$ScoreConfigPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ScoreConfigs.
+     * @param {ScoreConfigDeleteManyArgs} args - Arguments to filter ScoreConfigs to delete.
+     * @example
+     * // Delete a few ScoreConfigs
+     * const { count } = await prisma.scoreConfig.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ScoreConfigDeleteManyArgs>(args?: SelectSubset<T, ScoreConfigDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ScoreConfigs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ScoreConfigUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ScoreConfigs
+     * const scoreConfig = await prisma.scoreConfig.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ScoreConfigUpdateManyArgs>(args: SelectSubset<T, ScoreConfigUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ScoreConfigs and returns the data updated in the database.
+     * @param {ScoreConfigUpdateManyAndReturnArgs} args - Arguments to update many ScoreConfigs.
+     * @example
+     * // Update many ScoreConfigs
+     * const scoreConfig = await prisma.scoreConfig.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ScoreConfigs and only return the `id`
+     * const scoreConfigWithIdOnly = await prisma.scoreConfig.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ScoreConfigUpdateManyAndReturnArgs>(args: SelectSubset<T, ScoreConfigUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ScoreConfigPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ScoreConfig.
+     * @param {ScoreConfigUpsertArgs} args - Arguments to update or create a ScoreConfig.
+     * @example
+     * // Update or create a ScoreConfig
+     * const scoreConfig = await prisma.scoreConfig.upsert({
+     *   create: {
+     *     // ... data to create a ScoreConfig
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ScoreConfig we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ScoreConfigUpsertArgs>(args: SelectSubset<T, ScoreConfigUpsertArgs<ExtArgs>>): Prisma__ScoreConfigClient<$Result.GetResult<Prisma.$ScoreConfigPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ScoreConfigs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ScoreConfigCountArgs} args - Arguments to filter ScoreConfigs to count.
+     * @example
+     * // Count the number of ScoreConfigs
+     * const count = await prisma.scoreConfig.count({
+     *   where: {
+     *     // ... the filter for the ScoreConfigs we want to count
+     *   }
+     * })
+    **/
+    count<T extends ScoreConfigCountArgs>(
+      args?: Subset<T, ScoreConfigCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ScoreConfigCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ScoreConfig.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ScoreConfigAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ScoreConfigAggregateArgs>(args: Subset<T, ScoreConfigAggregateArgs>): Prisma.PrismaPromise<GetScoreConfigAggregateType<T>>
+
+    /**
+     * Group by ScoreConfig.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ScoreConfigGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ScoreConfigGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ScoreConfigGroupByArgs['orderBy'] }
+        : { orderBy?: ScoreConfigGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ScoreConfigGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetScoreConfigGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ScoreConfig model
+   */
+  readonly fields: ScoreConfigFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ScoreConfig.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ScoreConfigClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    tournament<T extends TournamentDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TournamentDefaultArgs<ExtArgs>>): Prisma__TournamentClient<$Result.GetResult<Prisma.$TournamentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    scoreElements<T extends ScoreConfig$scoreElementsArgs<ExtArgs> = {}>(args?: Subset<T, ScoreConfig$scoreElementsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ScoreElementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    bonusConditions<T extends ScoreConfig$bonusConditionsArgs<ExtArgs> = {}>(args?: Subset<T, ScoreConfig$bonusConditionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BonusConditionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    penaltyConditions<T extends ScoreConfig$penaltyConditionsArgs<ExtArgs> = {}>(args?: Subset<T, ScoreConfig$penaltyConditionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PenaltyConditionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    matchScores<T extends ScoreConfig$matchScoresArgs<ExtArgs> = {}>(args?: Subset<T, ScoreConfig$matchScoresArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MatchScorePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ScoreConfig model
+   */
+  interface ScoreConfigFieldRefs {
+    readonly id: FieldRef<"ScoreConfig", 'String'>
+    readonly tournamentId: FieldRef<"ScoreConfig", 'String'>
+    readonly name: FieldRef<"ScoreConfig", 'String'>
+    readonly description: FieldRef<"ScoreConfig", 'String'>
+    readonly createdAt: FieldRef<"ScoreConfig", 'DateTime'>
+    readonly updatedAt: FieldRef<"ScoreConfig", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ScoreConfig findUnique
+   */
+  export type ScoreConfigFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ScoreConfig
+     */
+    select?: ScoreConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ScoreConfig
+     */
+    omit?: ScoreConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ScoreConfigInclude<ExtArgs> | null
+    /**
+     * Filter, which ScoreConfig to fetch.
+     */
+    where: ScoreConfigWhereUniqueInput
+  }
+
+  /**
+   * ScoreConfig findUniqueOrThrow
+   */
+  export type ScoreConfigFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ScoreConfig
+     */
+    select?: ScoreConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ScoreConfig
+     */
+    omit?: ScoreConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ScoreConfigInclude<ExtArgs> | null
+    /**
+     * Filter, which ScoreConfig to fetch.
+     */
+    where: ScoreConfigWhereUniqueInput
+  }
+
+  /**
+   * ScoreConfig findFirst
+   */
+  export type ScoreConfigFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ScoreConfig
+     */
+    select?: ScoreConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ScoreConfig
+     */
+    omit?: ScoreConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ScoreConfigInclude<ExtArgs> | null
+    /**
+     * Filter, which ScoreConfig to fetch.
+     */
+    where?: ScoreConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ScoreConfigs to fetch.
+     */
+    orderBy?: ScoreConfigOrderByWithRelationInput | ScoreConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ScoreConfigs.
+     */
+    cursor?: ScoreConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ScoreConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ScoreConfigs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ScoreConfigs.
+     */
+    distinct?: ScoreConfigScalarFieldEnum | ScoreConfigScalarFieldEnum[]
+  }
+
+  /**
+   * ScoreConfig findFirstOrThrow
+   */
+  export type ScoreConfigFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ScoreConfig
+     */
+    select?: ScoreConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ScoreConfig
+     */
+    omit?: ScoreConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ScoreConfigInclude<ExtArgs> | null
+    /**
+     * Filter, which ScoreConfig to fetch.
+     */
+    where?: ScoreConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ScoreConfigs to fetch.
+     */
+    orderBy?: ScoreConfigOrderByWithRelationInput | ScoreConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ScoreConfigs.
+     */
+    cursor?: ScoreConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ScoreConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ScoreConfigs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ScoreConfigs.
+     */
+    distinct?: ScoreConfigScalarFieldEnum | ScoreConfigScalarFieldEnum[]
+  }
+
+  /**
+   * ScoreConfig findMany
+   */
+  export type ScoreConfigFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ScoreConfig
+     */
+    select?: ScoreConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ScoreConfig
+     */
+    omit?: ScoreConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ScoreConfigInclude<ExtArgs> | null
+    /**
+     * Filter, which ScoreConfigs to fetch.
+     */
+    where?: ScoreConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ScoreConfigs to fetch.
+     */
+    orderBy?: ScoreConfigOrderByWithRelationInput | ScoreConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ScoreConfigs.
+     */
+    cursor?: ScoreConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ScoreConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ScoreConfigs.
+     */
+    skip?: number
+    distinct?: ScoreConfigScalarFieldEnum | ScoreConfigScalarFieldEnum[]
+  }
+
+  /**
+   * ScoreConfig create
+   */
+  export type ScoreConfigCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ScoreConfig
+     */
+    select?: ScoreConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ScoreConfig
+     */
+    omit?: ScoreConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ScoreConfigInclude<ExtArgs> | null
+    /**
+     * The data needed to create a ScoreConfig.
+     */
+    data: XOR<ScoreConfigCreateInput, ScoreConfigUncheckedCreateInput>
+  }
+
+  /**
+   * ScoreConfig createMany
+   */
+  export type ScoreConfigCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ScoreConfigs.
+     */
+    data: ScoreConfigCreateManyInput | ScoreConfigCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ScoreConfig createManyAndReturn
+   */
+  export type ScoreConfigCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ScoreConfig
+     */
+    select?: ScoreConfigSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ScoreConfig
+     */
+    omit?: ScoreConfigOmit<ExtArgs> | null
+    /**
+     * The data used to create many ScoreConfigs.
+     */
+    data: ScoreConfigCreateManyInput | ScoreConfigCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ScoreConfigIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ScoreConfig update
+   */
+  export type ScoreConfigUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ScoreConfig
+     */
+    select?: ScoreConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ScoreConfig
+     */
+    omit?: ScoreConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ScoreConfigInclude<ExtArgs> | null
+    /**
+     * The data needed to update a ScoreConfig.
+     */
+    data: XOR<ScoreConfigUpdateInput, ScoreConfigUncheckedUpdateInput>
+    /**
+     * Choose, which ScoreConfig to update.
+     */
+    where: ScoreConfigWhereUniqueInput
+  }
+
+  /**
+   * ScoreConfig updateMany
+   */
+  export type ScoreConfigUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ScoreConfigs.
+     */
+    data: XOR<ScoreConfigUpdateManyMutationInput, ScoreConfigUncheckedUpdateManyInput>
+    /**
+     * Filter which ScoreConfigs to update
+     */
+    where?: ScoreConfigWhereInput
+    /**
+     * Limit how many ScoreConfigs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ScoreConfig updateManyAndReturn
+   */
+  export type ScoreConfigUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ScoreConfig
+     */
+    select?: ScoreConfigSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ScoreConfig
+     */
+    omit?: ScoreConfigOmit<ExtArgs> | null
+    /**
+     * The data used to update ScoreConfigs.
+     */
+    data: XOR<ScoreConfigUpdateManyMutationInput, ScoreConfigUncheckedUpdateManyInput>
+    /**
+     * Filter which ScoreConfigs to update
+     */
+    where?: ScoreConfigWhereInput
+    /**
+     * Limit how many ScoreConfigs to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ScoreConfigIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ScoreConfig upsert
+   */
+  export type ScoreConfigUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ScoreConfig
+     */
+    select?: ScoreConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ScoreConfig
+     */
+    omit?: ScoreConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ScoreConfigInclude<ExtArgs> | null
+    /**
+     * The filter to search for the ScoreConfig to update in case it exists.
+     */
+    where: ScoreConfigWhereUniqueInput
+    /**
+     * In case the ScoreConfig found by the `where` argument doesn't exist, create a new ScoreConfig with this data.
+     */
+    create: XOR<ScoreConfigCreateInput, ScoreConfigUncheckedCreateInput>
+    /**
+     * In case the ScoreConfig was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ScoreConfigUpdateInput, ScoreConfigUncheckedUpdateInput>
+  }
+
+  /**
+   * ScoreConfig delete
+   */
+  export type ScoreConfigDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ScoreConfig
+     */
+    select?: ScoreConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ScoreConfig
+     */
+    omit?: ScoreConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ScoreConfigInclude<ExtArgs> | null
+    /**
+     * Filter which ScoreConfig to delete.
+     */
+    where: ScoreConfigWhereUniqueInput
+  }
+
+  /**
+   * ScoreConfig deleteMany
+   */
+  export type ScoreConfigDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ScoreConfigs to delete
+     */
+    where?: ScoreConfigWhereInput
+    /**
+     * Limit how many ScoreConfigs to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ScoreConfig.scoreElements
+   */
+  export type ScoreConfig$scoreElementsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ScoreElement
+     */
+    select?: ScoreElementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ScoreElement
+     */
+    omit?: ScoreElementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ScoreElementInclude<ExtArgs> | null
+    where?: ScoreElementWhereInput
+    orderBy?: ScoreElementOrderByWithRelationInput | ScoreElementOrderByWithRelationInput[]
+    cursor?: ScoreElementWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ScoreElementScalarFieldEnum | ScoreElementScalarFieldEnum[]
+  }
+
+  /**
+   * ScoreConfig.bonusConditions
+   */
+  export type ScoreConfig$bonusConditionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BonusCondition
+     */
+    select?: BonusConditionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BonusCondition
+     */
+    omit?: BonusConditionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BonusConditionInclude<ExtArgs> | null
+    where?: BonusConditionWhereInput
+    orderBy?: BonusConditionOrderByWithRelationInput | BonusConditionOrderByWithRelationInput[]
+    cursor?: BonusConditionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: BonusConditionScalarFieldEnum | BonusConditionScalarFieldEnum[]
+  }
+
+  /**
+   * ScoreConfig.penaltyConditions
+   */
+  export type ScoreConfig$penaltyConditionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PenaltyCondition
+     */
+    select?: PenaltyConditionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PenaltyCondition
+     */
+    omit?: PenaltyConditionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PenaltyConditionInclude<ExtArgs> | null
+    where?: PenaltyConditionWhereInput
+    orderBy?: PenaltyConditionOrderByWithRelationInput | PenaltyConditionOrderByWithRelationInput[]
+    cursor?: PenaltyConditionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: PenaltyConditionScalarFieldEnum | PenaltyConditionScalarFieldEnum[]
+  }
+
+  /**
+   * ScoreConfig.matchScores
+   */
+  export type ScoreConfig$matchScoresArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MatchScore
+     */
+    select?: MatchScoreSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MatchScore
+     */
+    omit?: MatchScoreOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MatchScoreInclude<ExtArgs> | null
+    where?: MatchScoreWhereInput
+    orderBy?: MatchScoreOrderByWithRelationInput | MatchScoreOrderByWithRelationInput[]
+    cursor?: MatchScoreWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: MatchScoreScalarFieldEnum | MatchScoreScalarFieldEnum[]
+  }
+
+  /**
+   * ScoreConfig without action
+   */
+  export type ScoreConfigDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ScoreConfig
+     */
+    select?: ScoreConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ScoreConfig
+     */
+    omit?: ScoreConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ScoreConfigInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model ScoreElement
+   */
+
+  export type AggregateScoreElement = {
+    _count: ScoreElementCountAggregateOutputType | null
+    _avg: ScoreElementAvgAggregateOutputType | null
+    _sum: ScoreElementSumAggregateOutputType | null
+    _min: ScoreElementMinAggregateOutputType | null
+    _max: ScoreElementMaxAggregateOutputType | null
+  }
+
+  export type ScoreElementAvgAggregateOutputType = {
+    pointsPerUnit: number | null
+    maxUnits: number | null
+    displayOrder: number | null
+  }
+
+  export type ScoreElementSumAggregateOutputType = {
+    pointsPerUnit: number | null
+    maxUnits: number | null
+    displayOrder: number | null
+  }
+
+  export type ScoreElementMinAggregateOutputType = {
+    id: string | null
+    scoreConfigId: string | null
+    name: string | null
+    code: string | null
+    description: string | null
+    pointsPerUnit: number | null
+    maxUnits: number | null
+    category: string | null
+    elementType: string | null
+    displayOrder: number | null
+    icon: string | null
+    color: string | null
+  }
+
+  export type ScoreElementMaxAggregateOutputType = {
+    id: string | null
+    scoreConfigId: string | null
+    name: string | null
+    code: string | null
+    description: string | null
+    pointsPerUnit: number | null
+    maxUnits: number | null
+    category: string | null
+    elementType: string | null
+    displayOrder: number | null
+    icon: string | null
+    color: string | null
+  }
+
+  export type ScoreElementCountAggregateOutputType = {
+    id: number
+    scoreConfigId: number
+    name: number
+    code: number
+    description: number
+    pointsPerUnit: number
+    maxUnits: number
+    category: number
+    elementType: number
+    displayOrder: number
+    icon: number
+    color: number
+    _all: number
+  }
+
+
+  export type ScoreElementAvgAggregateInputType = {
+    pointsPerUnit?: true
+    maxUnits?: true
+    displayOrder?: true
+  }
+
+  export type ScoreElementSumAggregateInputType = {
+    pointsPerUnit?: true
+    maxUnits?: true
+    displayOrder?: true
+  }
+
+  export type ScoreElementMinAggregateInputType = {
+    id?: true
+    scoreConfigId?: true
+    name?: true
+    code?: true
+    description?: true
+    pointsPerUnit?: true
+    maxUnits?: true
+    category?: true
+    elementType?: true
+    displayOrder?: true
+    icon?: true
+    color?: true
+  }
+
+  export type ScoreElementMaxAggregateInputType = {
+    id?: true
+    scoreConfigId?: true
+    name?: true
+    code?: true
+    description?: true
+    pointsPerUnit?: true
+    maxUnits?: true
+    category?: true
+    elementType?: true
+    displayOrder?: true
+    icon?: true
+    color?: true
+  }
+
+  export type ScoreElementCountAggregateInputType = {
+    id?: true
+    scoreConfigId?: true
+    name?: true
+    code?: true
+    description?: true
+    pointsPerUnit?: true
+    maxUnits?: true
+    category?: true
+    elementType?: true
+    displayOrder?: true
+    icon?: true
+    color?: true
+    _all?: true
+  }
+
+  export type ScoreElementAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ScoreElement to aggregate.
+     */
+    where?: ScoreElementWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ScoreElements to fetch.
+     */
+    orderBy?: ScoreElementOrderByWithRelationInput | ScoreElementOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ScoreElementWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ScoreElements from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ScoreElements.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ScoreElements
+    **/
+    _count?: true | ScoreElementCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: ScoreElementAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ScoreElementSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ScoreElementMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ScoreElementMaxAggregateInputType
+  }
+
+  export type GetScoreElementAggregateType<T extends ScoreElementAggregateArgs> = {
+        [P in keyof T & keyof AggregateScoreElement]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateScoreElement[P]>
+      : GetScalarType<T[P], AggregateScoreElement[P]>
+  }
+
+
+
+
+  export type ScoreElementGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ScoreElementWhereInput
+    orderBy?: ScoreElementOrderByWithAggregationInput | ScoreElementOrderByWithAggregationInput[]
+    by: ScoreElementScalarFieldEnum[] | ScoreElementScalarFieldEnum
+    having?: ScoreElementScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ScoreElementCountAggregateInputType | true
+    _avg?: ScoreElementAvgAggregateInputType
+    _sum?: ScoreElementSumAggregateInputType
+    _min?: ScoreElementMinAggregateInputType
+    _max?: ScoreElementMaxAggregateInputType
+  }
+
+  export type ScoreElementGroupByOutputType = {
+    id: string
+    scoreConfigId: string
+    name: string
+    code: string
+    description: string | null
+    pointsPerUnit: number
+    maxUnits: number | null
+    category: string | null
+    elementType: string
+    displayOrder: number
+    icon: string | null
+    color: string | null
+    _count: ScoreElementCountAggregateOutputType | null
+    _avg: ScoreElementAvgAggregateOutputType | null
+    _sum: ScoreElementSumAggregateOutputType | null
+    _min: ScoreElementMinAggregateOutputType | null
+    _max: ScoreElementMaxAggregateOutputType | null
+  }
+
+  type GetScoreElementGroupByPayload<T extends ScoreElementGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ScoreElementGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ScoreElementGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ScoreElementGroupByOutputType[P]>
+            : GetScalarType<T[P], ScoreElementGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ScoreElementSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    scoreConfigId?: boolean
+    name?: boolean
+    code?: boolean
+    description?: boolean
+    pointsPerUnit?: boolean
+    maxUnits?: boolean
+    category?: boolean
+    elementType?: boolean
+    displayOrder?: boolean
+    icon?: boolean
+    color?: boolean
+    scoreConfig?: boolean | ScoreConfigDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["scoreElement"]>
+
+  export type ScoreElementSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    scoreConfigId?: boolean
+    name?: boolean
+    code?: boolean
+    description?: boolean
+    pointsPerUnit?: boolean
+    maxUnits?: boolean
+    category?: boolean
+    elementType?: boolean
+    displayOrder?: boolean
+    icon?: boolean
+    color?: boolean
+    scoreConfig?: boolean | ScoreConfigDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["scoreElement"]>
+
+  export type ScoreElementSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    scoreConfigId?: boolean
+    name?: boolean
+    code?: boolean
+    description?: boolean
+    pointsPerUnit?: boolean
+    maxUnits?: boolean
+    category?: boolean
+    elementType?: boolean
+    displayOrder?: boolean
+    icon?: boolean
+    color?: boolean
+    scoreConfig?: boolean | ScoreConfigDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["scoreElement"]>
+
+  export type ScoreElementSelectScalar = {
+    id?: boolean
+    scoreConfigId?: boolean
+    name?: boolean
+    code?: boolean
+    description?: boolean
+    pointsPerUnit?: boolean
+    maxUnits?: boolean
+    category?: boolean
+    elementType?: boolean
+    displayOrder?: boolean
+    icon?: boolean
+    color?: boolean
+  }
+
+  export type ScoreElementOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "scoreConfigId" | "name" | "code" | "description" | "pointsPerUnit" | "maxUnits" | "category" | "elementType" | "displayOrder" | "icon" | "color", ExtArgs["result"]["scoreElement"]>
+  export type ScoreElementInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    scoreConfig?: boolean | ScoreConfigDefaultArgs<ExtArgs>
+  }
+  export type ScoreElementIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    scoreConfig?: boolean | ScoreConfigDefaultArgs<ExtArgs>
+  }
+  export type ScoreElementIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    scoreConfig?: boolean | ScoreConfigDefaultArgs<ExtArgs>
+  }
+
+  export type $ScoreElementPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ScoreElement"
+    objects: {
+      scoreConfig: Prisma.$ScoreConfigPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      scoreConfigId: string
+      name: string
+      code: string
+      description: string | null
+      pointsPerUnit: number
+      maxUnits: number | null
+      category: string | null
+      elementType: string
+      displayOrder: number
+      icon: string | null
+      color: string | null
+    }, ExtArgs["result"]["scoreElement"]>
+    composites: {}
+  }
+
+  type ScoreElementGetPayload<S extends boolean | null | undefined | ScoreElementDefaultArgs> = $Result.GetResult<Prisma.$ScoreElementPayload, S>
+
+  type ScoreElementCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ScoreElementFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ScoreElementCountAggregateInputType | true
+    }
+
+  export interface ScoreElementDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ScoreElement'], meta: { name: 'ScoreElement' } }
+    /**
+     * Find zero or one ScoreElement that matches the filter.
+     * @param {ScoreElementFindUniqueArgs} args - Arguments to find a ScoreElement
+     * @example
+     * // Get one ScoreElement
+     * const scoreElement = await prisma.scoreElement.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ScoreElementFindUniqueArgs>(args: SelectSubset<T, ScoreElementFindUniqueArgs<ExtArgs>>): Prisma__ScoreElementClient<$Result.GetResult<Prisma.$ScoreElementPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ScoreElement that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ScoreElementFindUniqueOrThrowArgs} args - Arguments to find a ScoreElement
+     * @example
+     * // Get one ScoreElement
+     * const scoreElement = await prisma.scoreElement.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ScoreElementFindUniqueOrThrowArgs>(args: SelectSubset<T, ScoreElementFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ScoreElementClient<$Result.GetResult<Prisma.$ScoreElementPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ScoreElement that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ScoreElementFindFirstArgs} args - Arguments to find a ScoreElement
+     * @example
+     * // Get one ScoreElement
+     * const scoreElement = await prisma.scoreElement.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ScoreElementFindFirstArgs>(args?: SelectSubset<T, ScoreElementFindFirstArgs<ExtArgs>>): Prisma__ScoreElementClient<$Result.GetResult<Prisma.$ScoreElementPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ScoreElement that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ScoreElementFindFirstOrThrowArgs} args - Arguments to find a ScoreElement
+     * @example
+     * // Get one ScoreElement
+     * const scoreElement = await prisma.scoreElement.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ScoreElementFindFirstOrThrowArgs>(args?: SelectSubset<T, ScoreElementFindFirstOrThrowArgs<ExtArgs>>): Prisma__ScoreElementClient<$Result.GetResult<Prisma.$ScoreElementPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ScoreElements that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ScoreElementFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ScoreElements
+     * const scoreElements = await prisma.scoreElement.findMany()
+     * 
+     * // Get first 10 ScoreElements
+     * const scoreElements = await prisma.scoreElement.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const scoreElementWithIdOnly = await prisma.scoreElement.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ScoreElementFindManyArgs>(args?: SelectSubset<T, ScoreElementFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ScoreElementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ScoreElement.
+     * @param {ScoreElementCreateArgs} args - Arguments to create a ScoreElement.
+     * @example
+     * // Create one ScoreElement
+     * const ScoreElement = await prisma.scoreElement.create({
+     *   data: {
+     *     // ... data to create a ScoreElement
+     *   }
+     * })
+     * 
+     */
+    create<T extends ScoreElementCreateArgs>(args: SelectSubset<T, ScoreElementCreateArgs<ExtArgs>>): Prisma__ScoreElementClient<$Result.GetResult<Prisma.$ScoreElementPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ScoreElements.
+     * @param {ScoreElementCreateManyArgs} args - Arguments to create many ScoreElements.
+     * @example
+     * // Create many ScoreElements
+     * const scoreElement = await prisma.scoreElement.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ScoreElementCreateManyArgs>(args?: SelectSubset<T, ScoreElementCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ScoreElements and returns the data saved in the database.
+     * @param {ScoreElementCreateManyAndReturnArgs} args - Arguments to create many ScoreElements.
+     * @example
+     * // Create many ScoreElements
+     * const scoreElement = await prisma.scoreElement.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ScoreElements and only return the `id`
+     * const scoreElementWithIdOnly = await prisma.scoreElement.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ScoreElementCreateManyAndReturnArgs>(args?: SelectSubset<T, ScoreElementCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ScoreElementPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ScoreElement.
+     * @param {ScoreElementDeleteArgs} args - Arguments to delete one ScoreElement.
+     * @example
+     * // Delete one ScoreElement
+     * const ScoreElement = await prisma.scoreElement.delete({
+     *   where: {
+     *     // ... filter to delete one ScoreElement
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ScoreElementDeleteArgs>(args: SelectSubset<T, ScoreElementDeleteArgs<ExtArgs>>): Prisma__ScoreElementClient<$Result.GetResult<Prisma.$ScoreElementPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ScoreElement.
+     * @param {ScoreElementUpdateArgs} args - Arguments to update one ScoreElement.
+     * @example
+     * // Update one ScoreElement
+     * const scoreElement = await prisma.scoreElement.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ScoreElementUpdateArgs>(args: SelectSubset<T, ScoreElementUpdateArgs<ExtArgs>>): Prisma__ScoreElementClient<$Result.GetResult<Prisma.$ScoreElementPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ScoreElements.
+     * @param {ScoreElementDeleteManyArgs} args - Arguments to filter ScoreElements to delete.
+     * @example
+     * // Delete a few ScoreElements
+     * const { count } = await prisma.scoreElement.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ScoreElementDeleteManyArgs>(args?: SelectSubset<T, ScoreElementDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ScoreElements.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ScoreElementUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ScoreElements
+     * const scoreElement = await prisma.scoreElement.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ScoreElementUpdateManyArgs>(args: SelectSubset<T, ScoreElementUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ScoreElements and returns the data updated in the database.
+     * @param {ScoreElementUpdateManyAndReturnArgs} args - Arguments to update many ScoreElements.
+     * @example
+     * // Update many ScoreElements
+     * const scoreElement = await prisma.scoreElement.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ScoreElements and only return the `id`
+     * const scoreElementWithIdOnly = await prisma.scoreElement.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ScoreElementUpdateManyAndReturnArgs>(args: SelectSubset<T, ScoreElementUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ScoreElementPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ScoreElement.
+     * @param {ScoreElementUpsertArgs} args - Arguments to update or create a ScoreElement.
+     * @example
+     * // Update or create a ScoreElement
+     * const scoreElement = await prisma.scoreElement.upsert({
+     *   create: {
+     *     // ... data to create a ScoreElement
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ScoreElement we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ScoreElementUpsertArgs>(args: SelectSubset<T, ScoreElementUpsertArgs<ExtArgs>>): Prisma__ScoreElementClient<$Result.GetResult<Prisma.$ScoreElementPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ScoreElements.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ScoreElementCountArgs} args - Arguments to filter ScoreElements to count.
+     * @example
+     * // Count the number of ScoreElements
+     * const count = await prisma.scoreElement.count({
+     *   where: {
+     *     // ... the filter for the ScoreElements we want to count
+     *   }
+     * })
+    **/
+    count<T extends ScoreElementCountArgs>(
+      args?: Subset<T, ScoreElementCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ScoreElementCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ScoreElement.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ScoreElementAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ScoreElementAggregateArgs>(args: Subset<T, ScoreElementAggregateArgs>): Prisma.PrismaPromise<GetScoreElementAggregateType<T>>
+
+    /**
+     * Group by ScoreElement.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ScoreElementGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ScoreElementGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ScoreElementGroupByArgs['orderBy'] }
+        : { orderBy?: ScoreElementGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ScoreElementGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetScoreElementGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ScoreElement model
+   */
+  readonly fields: ScoreElementFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ScoreElement.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ScoreElementClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    scoreConfig<T extends ScoreConfigDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ScoreConfigDefaultArgs<ExtArgs>>): Prisma__ScoreConfigClient<$Result.GetResult<Prisma.$ScoreConfigPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ScoreElement model
+   */
+  interface ScoreElementFieldRefs {
+    readonly id: FieldRef<"ScoreElement", 'String'>
+    readonly scoreConfigId: FieldRef<"ScoreElement", 'String'>
+    readonly name: FieldRef<"ScoreElement", 'String'>
+    readonly code: FieldRef<"ScoreElement", 'String'>
+    readonly description: FieldRef<"ScoreElement", 'String'>
+    readonly pointsPerUnit: FieldRef<"ScoreElement", 'Int'>
+    readonly maxUnits: FieldRef<"ScoreElement", 'Int'>
+    readonly category: FieldRef<"ScoreElement", 'String'>
+    readonly elementType: FieldRef<"ScoreElement", 'String'>
+    readonly displayOrder: FieldRef<"ScoreElement", 'Int'>
+    readonly icon: FieldRef<"ScoreElement", 'String'>
+    readonly color: FieldRef<"ScoreElement", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ScoreElement findUnique
+   */
+  export type ScoreElementFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ScoreElement
+     */
+    select?: ScoreElementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ScoreElement
+     */
+    omit?: ScoreElementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ScoreElementInclude<ExtArgs> | null
+    /**
+     * Filter, which ScoreElement to fetch.
+     */
+    where: ScoreElementWhereUniqueInput
+  }
+
+  /**
+   * ScoreElement findUniqueOrThrow
+   */
+  export type ScoreElementFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ScoreElement
+     */
+    select?: ScoreElementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ScoreElement
+     */
+    omit?: ScoreElementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ScoreElementInclude<ExtArgs> | null
+    /**
+     * Filter, which ScoreElement to fetch.
+     */
+    where: ScoreElementWhereUniqueInput
+  }
+
+  /**
+   * ScoreElement findFirst
+   */
+  export type ScoreElementFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ScoreElement
+     */
+    select?: ScoreElementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ScoreElement
+     */
+    omit?: ScoreElementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ScoreElementInclude<ExtArgs> | null
+    /**
+     * Filter, which ScoreElement to fetch.
+     */
+    where?: ScoreElementWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ScoreElements to fetch.
+     */
+    orderBy?: ScoreElementOrderByWithRelationInput | ScoreElementOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ScoreElements.
+     */
+    cursor?: ScoreElementWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ScoreElements from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ScoreElements.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ScoreElements.
+     */
+    distinct?: ScoreElementScalarFieldEnum | ScoreElementScalarFieldEnum[]
+  }
+
+  /**
+   * ScoreElement findFirstOrThrow
+   */
+  export type ScoreElementFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ScoreElement
+     */
+    select?: ScoreElementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ScoreElement
+     */
+    omit?: ScoreElementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ScoreElementInclude<ExtArgs> | null
+    /**
+     * Filter, which ScoreElement to fetch.
+     */
+    where?: ScoreElementWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ScoreElements to fetch.
+     */
+    orderBy?: ScoreElementOrderByWithRelationInput | ScoreElementOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ScoreElements.
+     */
+    cursor?: ScoreElementWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ScoreElements from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ScoreElements.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ScoreElements.
+     */
+    distinct?: ScoreElementScalarFieldEnum | ScoreElementScalarFieldEnum[]
+  }
+
+  /**
+   * ScoreElement findMany
+   */
+  export type ScoreElementFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ScoreElement
+     */
+    select?: ScoreElementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ScoreElement
+     */
+    omit?: ScoreElementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ScoreElementInclude<ExtArgs> | null
+    /**
+     * Filter, which ScoreElements to fetch.
+     */
+    where?: ScoreElementWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ScoreElements to fetch.
+     */
+    orderBy?: ScoreElementOrderByWithRelationInput | ScoreElementOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ScoreElements.
+     */
+    cursor?: ScoreElementWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ScoreElements from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ScoreElements.
+     */
+    skip?: number
+    distinct?: ScoreElementScalarFieldEnum | ScoreElementScalarFieldEnum[]
+  }
+
+  /**
+   * ScoreElement create
+   */
+  export type ScoreElementCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ScoreElement
+     */
+    select?: ScoreElementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ScoreElement
+     */
+    omit?: ScoreElementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ScoreElementInclude<ExtArgs> | null
+    /**
+     * The data needed to create a ScoreElement.
+     */
+    data: XOR<ScoreElementCreateInput, ScoreElementUncheckedCreateInput>
+  }
+
+  /**
+   * ScoreElement createMany
+   */
+  export type ScoreElementCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ScoreElements.
+     */
+    data: ScoreElementCreateManyInput | ScoreElementCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ScoreElement createManyAndReturn
+   */
+  export type ScoreElementCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ScoreElement
+     */
+    select?: ScoreElementSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ScoreElement
+     */
+    omit?: ScoreElementOmit<ExtArgs> | null
+    /**
+     * The data used to create many ScoreElements.
+     */
+    data: ScoreElementCreateManyInput | ScoreElementCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ScoreElementIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ScoreElement update
+   */
+  export type ScoreElementUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ScoreElement
+     */
+    select?: ScoreElementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ScoreElement
+     */
+    omit?: ScoreElementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ScoreElementInclude<ExtArgs> | null
+    /**
+     * The data needed to update a ScoreElement.
+     */
+    data: XOR<ScoreElementUpdateInput, ScoreElementUncheckedUpdateInput>
+    /**
+     * Choose, which ScoreElement to update.
+     */
+    where: ScoreElementWhereUniqueInput
+  }
+
+  /**
+   * ScoreElement updateMany
+   */
+  export type ScoreElementUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ScoreElements.
+     */
+    data: XOR<ScoreElementUpdateManyMutationInput, ScoreElementUncheckedUpdateManyInput>
+    /**
+     * Filter which ScoreElements to update
+     */
+    where?: ScoreElementWhereInput
+    /**
+     * Limit how many ScoreElements to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ScoreElement updateManyAndReturn
+   */
+  export type ScoreElementUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ScoreElement
+     */
+    select?: ScoreElementSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ScoreElement
+     */
+    omit?: ScoreElementOmit<ExtArgs> | null
+    /**
+     * The data used to update ScoreElements.
+     */
+    data: XOR<ScoreElementUpdateManyMutationInput, ScoreElementUncheckedUpdateManyInput>
+    /**
+     * Filter which ScoreElements to update
+     */
+    where?: ScoreElementWhereInput
+    /**
+     * Limit how many ScoreElements to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ScoreElementIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ScoreElement upsert
+   */
+  export type ScoreElementUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ScoreElement
+     */
+    select?: ScoreElementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ScoreElement
+     */
+    omit?: ScoreElementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ScoreElementInclude<ExtArgs> | null
+    /**
+     * The filter to search for the ScoreElement to update in case it exists.
+     */
+    where: ScoreElementWhereUniqueInput
+    /**
+     * In case the ScoreElement found by the `where` argument doesn't exist, create a new ScoreElement with this data.
+     */
+    create: XOR<ScoreElementCreateInput, ScoreElementUncheckedCreateInput>
+    /**
+     * In case the ScoreElement was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ScoreElementUpdateInput, ScoreElementUncheckedUpdateInput>
+  }
+
+  /**
+   * ScoreElement delete
+   */
+  export type ScoreElementDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ScoreElement
+     */
+    select?: ScoreElementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ScoreElement
+     */
+    omit?: ScoreElementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ScoreElementInclude<ExtArgs> | null
+    /**
+     * Filter which ScoreElement to delete.
+     */
+    where: ScoreElementWhereUniqueInput
+  }
+
+  /**
+   * ScoreElement deleteMany
+   */
+  export type ScoreElementDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ScoreElements to delete
+     */
+    where?: ScoreElementWhereInput
+    /**
+     * Limit how many ScoreElements to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ScoreElement without action
+   */
+  export type ScoreElementDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ScoreElement
+     */
+    select?: ScoreElementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ScoreElement
+     */
+    omit?: ScoreElementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ScoreElementInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model BonusCondition
+   */
+
+  export type AggregateBonusCondition = {
+    _count: BonusConditionCountAggregateOutputType | null
+    _avg: BonusConditionAvgAggregateOutputType | null
+    _sum: BonusConditionSumAggregateOutputType | null
+    _min: BonusConditionMinAggregateOutputType | null
+    _max: BonusConditionMaxAggregateOutputType | null
+  }
+
+  export type BonusConditionAvgAggregateOutputType = {
+    bonusPoints: number | null
+    displayOrder: number | null
+  }
+
+  export type BonusConditionSumAggregateOutputType = {
+    bonusPoints: number | null
+    displayOrder: number | null
+  }
+
+  export type BonusConditionMinAggregateOutputType = {
+    id: string | null
+    scoreConfigId: string | null
+    name: string | null
+    code: string | null
+    description: string | null
+    bonusPoints: number | null
+    displayOrder: number | null
+  }
+
+  export type BonusConditionMaxAggregateOutputType = {
+    id: string | null
+    scoreConfigId: string | null
+    name: string | null
+    code: string | null
+    description: string | null
+    bonusPoints: number | null
+    displayOrder: number | null
+  }
+
+  export type BonusConditionCountAggregateOutputType = {
+    id: number
+    scoreConfigId: number
+    name: number
+    code: number
+    description: number
+    bonusPoints: number
+    condition: number
+    displayOrder: number
+    _all: number
+  }
+
+
+  export type BonusConditionAvgAggregateInputType = {
+    bonusPoints?: true
+    displayOrder?: true
+  }
+
+  export type BonusConditionSumAggregateInputType = {
+    bonusPoints?: true
+    displayOrder?: true
+  }
+
+  export type BonusConditionMinAggregateInputType = {
+    id?: true
+    scoreConfigId?: true
+    name?: true
+    code?: true
+    description?: true
+    bonusPoints?: true
+    displayOrder?: true
+  }
+
+  export type BonusConditionMaxAggregateInputType = {
+    id?: true
+    scoreConfigId?: true
+    name?: true
+    code?: true
+    description?: true
+    bonusPoints?: true
+    displayOrder?: true
+  }
+
+  export type BonusConditionCountAggregateInputType = {
+    id?: true
+    scoreConfigId?: true
+    name?: true
+    code?: true
+    description?: true
+    bonusPoints?: true
+    condition?: true
+    displayOrder?: true
+    _all?: true
+  }
+
+  export type BonusConditionAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which BonusCondition to aggregate.
+     */
+    where?: BonusConditionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BonusConditions to fetch.
+     */
+    orderBy?: BonusConditionOrderByWithRelationInput | BonusConditionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: BonusConditionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BonusConditions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BonusConditions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned BonusConditions
+    **/
+    _count?: true | BonusConditionCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: BonusConditionAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: BonusConditionSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: BonusConditionMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: BonusConditionMaxAggregateInputType
+  }
+
+  export type GetBonusConditionAggregateType<T extends BonusConditionAggregateArgs> = {
+        [P in keyof T & keyof AggregateBonusCondition]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateBonusCondition[P]>
+      : GetScalarType<T[P], AggregateBonusCondition[P]>
+  }
+
+
+
+
+  export type BonusConditionGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: BonusConditionWhereInput
+    orderBy?: BonusConditionOrderByWithAggregationInput | BonusConditionOrderByWithAggregationInput[]
+    by: BonusConditionScalarFieldEnum[] | BonusConditionScalarFieldEnum
+    having?: BonusConditionScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: BonusConditionCountAggregateInputType | true
+    _avg?: BonusConditionAvgAggregateInputType
+    _sum?: BonusConditionSumAggregateInputType
+    _min?: BonusConditionMinAggregateInputType
+    _max?: BonusConditionMaxAggregateInputType
+  }
+
+  export type BonusConditionGroupByOutputType = {
+    id: string
+    scoreConfigId: string
+    name: string
+    code: string
+    description: string | null
+    bonusPoints: number
+    condition: JsonValue
+    displayOrder: number
+    _count: BonusConditionCountAggregateOutputType | null
+    _avg: BonusConditionAvgAggregateOutputType | null
+    _sum: BonusConditionSumAggregateOutputType | null
+    _min: BonusConditionMinAggregateOutputType | null
+    _max: BonusConditionMaxAggregateOutputType | null
+  }
+
+  type GetBonusConditionGroupByPayload<T extends BonusConditionGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<BonusConditionGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof BonusConditionGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], BonusConditionGroupByOutputType[P]>
+            : GetScalarType<T[P], BonusConditionGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type BonusConditionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    scoreConfigId?: boolean
+    name?: boolean
+    code?: boolean
+    description?: boolean
+    bonusPoints?: boolean
+    condition?: boolean
+    displayOrder?: boolean
+    scoreConfig?: boolean | ScoreConfigDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["bonusCondition"]>
+
+  export type BonusConditionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    scoreConfigId?: boolean
+    name?: boolean
+    code?: boolean
+    description?: boolean
+    bonusPoints?: boolean
+    condition?: boolean
+    displayOrder?: boolean
+    scoreConfig?: boolean | ScoreConfigDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["bonusCondition"]>
+
+  export type BonusConditionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    scoreConfigId?: boolean
+    name?: boolean
+    code?: boolean
+    description?: boolean
+    bonusPoints?: boolean
+    condition?: boolean
+    displayOrder?: boolean
+    scoreConfig?: boolean | ScoreConfigDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["bonusCondition"]>
+
+  export type BonusConditionSelectScalar = {
+    id?: boolean
+    scoreConfigId?: boolean
+    name?: boolean
+    code?: boolean
+    description?: boolean
+    bonusPoints?: boolean
+    condition?: boolean
+    displayOrder?: boolean
+  }
+
+  export type BonusConditionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "scoreConfigId" | "name" | "code" | "description" | "bonusPoints" | "condition" | "displayOrder", ExtArgs["result"]["bonusCondition"]>
+  export type BonusConditionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    scoreConfig?: boolean | ScoreConfigDefaultArgs<ExtArgs>
+  }
+  export type BonusConditionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    scoreConfig?: boolean | ScoreConfigDefaultArgs<ExtArgs>
+  }
+  export type BonusConditionIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    scoreConfig?: boolean | ScoreConfigDefaultArgs<ExtArgs>
+  }
+
+  export type $BonusConditionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "BonusCondition"
+    objects: {
+      scoreConfig: Prisma.$ScoreConfigPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      scoreConfigId: string
+      name: string
+      code: string
+      description: string | null
+      bonusPoints: number
+      condition: Prisma.JsonValue
+      displayOrder: number
+    }, ExtArgs["result"]["bonusCondition"]>
+    composites: {}
+  }
+
+  type BonusConditionGetPayload<S extends boolean | null | undefined | BonusConditionDefaultArgs> = $Result.GetResult<Prisma.$BonusConditionPayload, S>
+
+  type BonusConditionCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<BonusConditionFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: BonusConditionCountAggregateInputType | true
+    }
+
+  export interface BonusConditionDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['BonusCondition'], meta: { name: 'BonusCondition' } }
+    /**
+     * Find zero or one BonusCondition that matches the filter.
+     * @param {BonusConditionFindUniqueArgs} args - Arguments to find a BonusCondition
+     * @example
+     * // Get one BonusCondition
+     * const bonusCondition = await prisma.bonusCondition.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends BonusConditionFindUniqueArgs>(args: SelectSubset<T, BonusConditionFindUniqueArgs<ExtArgs>>): Prisma__BonusConditionClient<$Result.GetResult<Prisma.$BonusConditionPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one BonusCondition that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {BonusConditionFindUniqueOrThrowArgs} args - Arguments to find a BonusCondition
+     * @example
+     * // Get one BonusCondition
+     * const bonusCondition = await prisma.bonusCondition.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends BonusConditionFindUniqueOrThrowArgs>(args: SelectSubset<T, BonusConditionFindUniqueOrThrowArgs<ExtArgs>>): Prisma__BonusConditionClient<$Result.GetResult<Prisma.$BonusConditionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first BonusCondition that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BonusConditionFindFirstArgs} args - Arguments to find a BonusCondition
+     * @example
+     * // Get one BonusCondition
+     * const bonusCondition = await prisma.bonusCondition.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends BonusConditionFindFirstArgs>(args?: SelectSubset<T, BonusConditionFindFirstArgs<ExtArgs>>): Prisma__BonusConditionClient<$Result.GetResult<Prisma.$BonusConditionPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first BonusCondition that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BonusConditionFindFirstOrThrowArgs} args - Arguments to find a BonusCondition
+     * @example
+     * // Get one BonusCondition
+     * const bonusCondition = await prisma.bonusCondition.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends BonusConditionFindFirstOrThrowArgs>(args?: SelectSubset<T, BonusConditionFindFirstOrThrowArgs<ExtArgs>>): Prisma__BonusConditionClient<$Result.GetResult<Prisma.$BonusConditionPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more BonusConditions that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BonusConditionFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all BonusConditions
+     * const bonusConditions = await prisma.bonusCondition.findMany()
+     * 
+     * // Get first 10 BonusConditions
+     * const bonusConditions = await prisma.bonusCondition.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const bonusConditionWithIdOnly = await prisma.bonusCondition.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends BonusConditionFindManyArgs>(args?: SelectSubset<T, BonusConditionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BonusConditionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a BonusCondition.
+     * @param {BonusConditionCreateArgs} args - Arguments to create a BonusCondition.
+     * @example
+     * // Create one BonusCondition
+     * const BonusCondition = await prisma.bonusCondition.create({
+     *   data: {
+     *     // ... data to create a BonusCondition
+     *   }
+     * })
+     * 
+     */
+    create<T extends BonusConditionCreateArgs>(args: SelectSubset<T, BonusConditionCreateArgs<ExtArgs>>): Prisma__BonusConditionClient<$Result.GetResult<Prisma.$BonusConditionPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many BonusConditions.
+     * @param {BonusConditionCreateManyArgs} args - Arguments to create many BonusConditions.
+     * @example
+     * // Create many BonusConditions
+     * const bonusCondition = await prisma.bonusCondition.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends BonusConditionCreateManyArgs>(args?: SelectSubset<T, BonusConditionCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many BonusConditions and returns the data saved in the database.
+     * @param {BonusConditionCreateManyAndReturnArgs} args - Arguments to create many BonusConditions.
+     * @example
+     * // Create many BonusConditions
+     * const bonusCondition = await prisma.bonusCondition.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many BonusConditions and only return the `id`
+     * const bonusConditionWithIdOnly = await prisma.bonusCondition.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends BonusConditionCreateManyAndReturnArgs>(args?: SelectSubset<T, BonusConditionCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BonusConditionPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a BonusCondition.
+     * @param {BonusConditionDeleteArgs} args - Arguments to delete one BonusCondition.
+     * @example
+     * // Delete one BonusCondition
+     * const BonusCondition = await prisma.bonusCondition.delete({
+     *   where: {
+     *     // ... filter to delete one BonusCondition
+     *   }
+     * })
+     * 
+     */
+    delete<T extends BonusConditionDeleteArgs>(args: SelectSubset<T, BonusConditionDeleteArgs<ExtArgs>>): Prisma__BonusConditionClient<$Result.GetResult<Prisma.$BonusConditionPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one BonusCondition.
+     * @param {BonusConditionUpdateArgs} args - Arguments to update one BonusCondition.
+     * @example
+     * // Update one BonusCondition
+     * const bonusCondition = await prisma.bonusCondition.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends BonusConditionUpdateArgs>(args: SelectSubset<T, BonusConditionUpdateArgs<ExtArgs>>): Prisma__BonusConditionClient<$Result.GetResult<Prisma.$BonusConditionPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more BonusConditions.
+     * @param {BonusConditionDeleteManyArgs} args - Arguments to filter BonusConditions to delete.
+     * @example
+     * // Delete a few BonusConditions
+     * const { count } = await prisma.bonusCondition.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends BonusConditionDeleteManyArgs>(args?: SelectSubset<T, BonusConditionDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more BonusConditions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BonusConditionUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many BonusConditions
+     * const bonusCondition = await prisma.bonusCondition.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends BonusConditionUpdateManyArgs>(args: SelectSubset<T, BonusConditionUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more BonusConditions and returns the data updated in the database.
+     * @param {BonusConditionUpdateManyAndReturnArgs} args - Arguments to update many BonusConditions.
+     * @example
+     * // Update many BonusConditions
+     * const bonusCondition = await prisma.bonusCondition.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more BonusConditions and only return the `id`
+     * const bonusConditionWithIdOnly = await prisma.bonusCondition.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends BonusConditionUpdateManyAndReturnArgs>(args: SelectSubset<T, BonusConditionUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BonusConditionPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one BonusCondition.
+     * @param {BonusConditionUpsertArgs} args - Arguments to update or create a BonusCondition.
+     * @example
+     * // Update or create a BonusCondition
+     * const bonusCondition = await prisma.bonusCondition.upsert({
+     *   create: {
+     *     // ... data to create a BonusCondition
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the BonusCondition we want to update
+     *   }
+     * })
+     */
+    upsert<T extends BonusConditionUpsertArgs>(args: SelectSubset<T, BonusConditionUpsertArgs<ExtArgs>>): Prisma__BonusConditionClient<$Result.GetResult<Prisma.$BonusConditionPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of BonusConditions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BonusConditionCountArgs} args - Arguments to filter BonusConditions to count.
+     * @example
+     * // Count the number of BonusConditions
+     * const count = await prisma.bonusCondition.count({
+     *   where: {
+     *     // ... the filter for the BonusConditions we want to count
+     *   }
+     * })
+    **/
+    count<T extends BonusConditionCountArgs>(
+      args?: Subset<T, BonusConditionCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], BonusConditionCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a BonusCondition.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BonusConditionAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends BonusConditionAggregateArgs>(args: Subset<T, BonusConditionAggregateArgs>): Prisma.PrismaPromise<GetBonusConditionAggregateType<T>>
+
+    /**
+     * Group by BonusCondition.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BonusConditionGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends BonusConditionGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: BonusConditionGroupByArgs['orderBy'] }
+        : { orderBy?: BonusConditionGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, BonusConditionGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetBonusConditionGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the BonusCondition model
+   */
+  readonly fields: BonusConditionFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for BonusCondition.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__BonusConditionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    scoreConfig<T extends ScoreConfigDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ScoreConfigDefaultArgs<ExtArgs>>): Prisma__ScoreConfigClient<$Result.GetResult<Prisma.$ScoreConfigPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the BonusCondition model
+   */
+  interface BonusConditionFieldRefs {
+    readonly id: FieldRef<"BonusCondition", 'String'>
+    readonly scoreConfigId: FieldRef<"BonusCondition", 'String'>
+    readonly name: FieldRef<"BonusCondition", 'String'>
+    readonly code: FieldRef<"BonusCondition", 'String'>
+    readonly description: FieldRef<"BonusCondition", 'String'>
+    readonly bonusPoints: FieldRef<"BonusCondition", 'Int'>
+    readonly condition: FieldRef<"BonusCondition", 'Json'>
+    readonly displayOrder: FieldRef<"BonusCondition", 'Int'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * BonusCondition findUnique
+   */
+  export type BonusConditionFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BonusCondition
+     */
+    select?: BonusConditionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BonusCondition
+     */
+    omit?: BonusConditionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BonusConditionInclude<ExtArgs> | null
+    /**
+     * Filter, which BonusCondition to fetch.
+     */
+    where: BonusConditionWhereUniqueInput
+  }
+
+  /**
+   * BonusCondition findUniqueOrThrow
+   */
+  export type BonusConditionFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BonusCondition
+     */
+    select?: BonusConditionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BonusCondition
+     */
+    omit?: BonusConditionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BonusConditionInclude<ExtArgs> | null
+    /**
+     * Filter, which BonusCondition to fetch.
+     */
+    where: BonusConditionWhereUniqueInput
+  }
+
+  /**
+   * BonusCondition findFirst
+   */
+  export type BonusConditionFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BonusCondition
+     */
+    select?: BonusConditionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BonusCondition
+     */
+    omit?: BonusConditionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BonusConditionInclude<ExtArgs> | null
+    /**
+     * Filter, which BonusCondition to fetch.
+     */
+    where?: BonusConditionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BonusConditions to fetch.
+     */
+    orderBy?: BonusConditionOrderByWithRelationInput | BonusConditionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for BonusConditions.
+     */
+    cursor?: BonusConditionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BonusConditions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BonusConditions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of BonusConditions.
+     */
+    distinct?: BonusConditionScalarFieldEnum | BonusConditionScalarFieldEnum[]
+  }
+
+  /**
+   * BonusCondition findFirstOrThrow
+   */
+  export type BonusConditionFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BonusCondition
+     */
+    select?: BonusConditionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BonusCondition
+     */
+    omit?: BonusConditionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BonusConditionInclude<ExtArgs> | null
+    /**
+     * Filter, which BonusCondition to fetch.
+     */
+    where?: BonusConditionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BonusConditions to fetch.
+     */
+    orderBy?: BonusConditionOrderByWithRelationInput | BonusConditionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for BonusConditions.
+     */
+    cursor?: BonusConditionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BonusConditions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BonusConditions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of BonusConditions.
+     */
+    distinct?: BonusConditionScalarFieldEnum | BonusConditionScalarFieldEnum[]
+  }
+
+  /**
+   * BonusCondition findMany
+   */
+  export type BonusConditionFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BonusCondition
+     */
+    select?: BonusConditionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BonusCondition
+     */
+    omit?: BonusConditionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BonusConditionInclude<ExtArgs> | null
+    /**
+     * Filter, which BonusConditions to fetch.
+     */
+    where?: BonusConditionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BonusConditions to fetch.
+     */
+    orderBy?: BonusConditionOrderByWithRelationInput | BonusConditionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing BonusConditions.
+     */
+    cursor?: BonusConditionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BonusConditions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BonusConditions.
+     */
+    skip?: number
+    distinct?: BonusConditionScalarFieldEnum | BonusConditionScalarFieldEnum[]
+  }
+
+  /**
+   * BonusCondition create
+   */
+  export type BonusConditionCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BonusCondition
+     */
+    select?: BonusConditionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BonusCondition
+     */
+    omit?: BonusConditionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BonusConditionInclude<ExtArgs> | null
+    /**
+     * The data needed to create a BonusCondition.
+     */
+    data: XOR<BonusConditionCreateInput, BonusConditionUncheckedCreateInput>
+  }
+
+  /**
+   * BonusCondition createMany
+   */
+  export type BonusConditionCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many BonusConditions.
+     */
+    data: BonusConditionCreateManyInput | BonusConditionCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * BonusCondition createManyAndReturn
+   */
+  export type BonusConditionCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BonusCondition
+     */
+    select?: BonusConditionSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the BonusCondition
+     */
+    omit?: BonusConditionOmit<ExtArgs> | null
+    /**
+     * The data used to create many BonusConditions.
+     */
+    data: BonusConditionCreateManyInput | BonusConditionCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BonusConditionIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * BonusCondition update
+   */
+  export type BonusConditionUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BonusCondition
+     */
+    select?: BonusConditionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BonusCondition
+     */
+    omit?: BonusConditionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BonusConditionInclude<ExtArgs> | null
+    /**
+     * The data needed to update a BonusCondition.
+     */
+    data: XOR<BonusConditionUpdateInput, BonusConditionUncheckedUpdateInput>
+    /**
+     * Choose, which BonusCondition to update.
+     */
+    where: BonusConditionWhereUniqueInput
+  }
+
+  /**
+   * BonusCondition updateMany
+   */
+  export type BonusConditionUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update BonusConditions.
+     */
+    data: XOR<BonusConditionUpdateManyMutationInput, BonusConditionUncheckedUpdateManyInput>
+    /**
+     * Filter which BonusConditions to update
+     */
+    where?: BonusConditionWhereInput
+    /**
+     * Limit how many BonusConditions to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * BonusCondition updateManyAndReturn
+   */
+  export type BonusConditionUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BonusCondition
+     */
+    select?: BonusConditionSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the BonusCondition
+     */
+    omit?: BonusConditionOmit<ExtArgs> | null
+    /**
+     * The data used to update BonusConditions.
+     */
+    data: XOR<BonusConditionUpdateManyMutationInput, BonusConditionUncheckedUpdateManyInput>
+    /**
+     * Filter which BonusConditions to update
+     */
+    where?: BonusConditionWhereInput
+    /**
+     * Limit how many BonusConditions to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BonusConditionIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * BonusCondition upsert
+   */
+  export type BonusConditionUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BonusCondition
+     */
+    select?: BonusConditionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BonusCondition
+     */
+    omit?: BonusConditionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BonusConditionInclude<ExtArgs> | null
+    /**
+     * The filter to search for the BonusCondition to update in case it exists.
+     */
+    where: BonusConditionWhereUniqueInput
+    /**
+     * In case the BonusCondition found by the `where` argument doesn't exist, create a new BonusCondition with this data.
+     */
+    create: XOR<BonusConditionCreateInput, BonusConditionUncheckedCreateInput>
+    /**
+     * In case the BonusCondition was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<BonusConditionUpdateInput, BonusConditionUncheckedUpdateInput>
+  }
+
+  /**
+   * BonusCondition delete
+   */
+  export type BonusConditionDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BonusCondition
+     */
+    select?: BonusConditionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BonusCondition
+     */
+    omit?: BonusConditionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BonusConditionInclude<ExtArgs> | null
+    /**
+     * Filter which BonusCondition to delete.
+     */
+    where: BonusConditionWhereUniqueInput
+  }
+
+  /**
+   * BonusCondition deleteMany
+   */
+  export type BonusConditionDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which BonusConditions to delete
+     */
+    where?: BonusConditionWhereInput
+    /**
+     * Limit how many BonusConditions to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * BonusCondition without action
+   */
+  export type BonusConditionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BonusCondition
+     */
+    select?: BonusConditionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BonusCondition
+     */
+    omit?: BonusConditionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BonusConditionInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model PenaltyCondition
+   */
+
+  export type AggregatePenaltyCondition = {
+    _count: PenaltyConditionCountAggregateOutputType | null
+    _avg: PenaltyConditionAvgAggregateOutputType | null
+    _sum: PenaltyConditionSumAggregateOutputType | null
+    _min: PenaltyConditionMinAggregateOutputType | null
+    _max: PenaltyConditionMaxAggregateOutputType | null
+  }
+
+  export type PenaltyConditionAvgAggregateOutputType = {
+    penaltyPoints: number | null
+    displayOrder: number | null
+  }
+
+  export type PenaltyConditionSumAggregateOutputType = {
+    penaltyPoints: number | null
+    displayOrder: number | null
+  }
+
+  export type PenaltyConditionMinAggregateOutputType = {
+    id: string | null
+    scoreConfigId: string | null
+    name: string | null
+    code: string | null
+    description: string | null
+    penaltyPoints: number | null
+    displayOrder: number | null
+  }
+
+  export type PenaltyConditionMaxAggregateOutputType = {
+    id: string | null
+    scoreConfigId: string | null
+    name: string | null
+    code: string | null
+    description: string | null
+    penaltyPoints: number | null
+    displayOrder: number | null
+  }
+
+  export type PenaltyConditionCountAggregateOutputType = {
+    id: number
+    scoreConfigId: number
+    name: number
+    code: number
+    description: number
+    penaltyPoints: number
+    condition: number
+    displayOrder: number
+    _all: number
+  }
+
+
+  export type PenaltyConditionAvgAggregateInputType = {
+    penaltyPoints?: true
+    displayOrder?: true
+  }
+
+  export type PenaltyConditionSumAggregateInputType = {
+    penaltyPoints?: true
+    displayOrder?: true
+  }
+
+  export type PenaltyConditionMinAggregateInputType = {
+    id?: true
+    scoreConfigId?: true
+    name?: true
+    code?: true
+    description?: true
+    penaltyPoints?: true
+    displayOrder?: true
+  }
+
+  export type PenaltyConditionMaxAggregateInputType = {
+    id?: true
+    scoreConfigId?: true
+    name?: true
+    code?: true
+    description?: true
+    penaltyPoints?: true
+    displayOrder?: true
+  }
+
+  export type PenaltyConditionCountAggregateInputType = {
+    id?: true
+    scoreConfigId?: true
+    name?: true
+    code?: true
+    description?: true
+    penaltyPoints?: true
+    condition?: true
+    displayOrder?: true
+    _all?: true
+  }
+
+  export type PenaltyConditionAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PenaltyCondition to aggregate.
+     */
+    where?: PenaltyConditionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PenaltyConditions to fetch.
+     */
+    orderBy?: PenaltyConditionOrderByWithRelationInput | PenaltyConditionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: PenaltyConditionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PenaltyConditions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PenaltyConditions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned PenaltyConditions
+    **/
+    _count?: true | PenaltyConditionCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: PenaltyConditionAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: PenaltyConditionSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: PenaltyConditionMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: PenaltyConditionMaxAggregateInputType
+  }
+
+  export type GetPenaltyConditionAggregateType<T extends PenaltyConditionAggregateArgs> = {
+        [P in keyof T & keyof AggregatePenaltyCondition]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregatePenaltyCondition[P]>
+      : GetScalarType<T[P], AggregatePenaltyCondition[P]>
+  }
+
+
+
+
+  export type PenaltyConditionGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PenaltyConditionWhereInput
+    orderBy?: PenaltyConditionOrderByWithAggregationInput | PenaltyConditionOrderByWithAggregationInput[]
+    by: PenaltyConditionScalarFieldEnum[] | PenaltyConditionScalarFieldEnum
+    having?: PenaltyConditionScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: PenaltyConditionCountAggregateInputType | true
+    _avg?: PenaltyConditionAvgAggregateInputType
+    _sum?: PenaltyConditionSumAggregateInputType
+    _min?: PenaltyConditionMinAggregateInputType
+    _max?: PenaltyConditionMaxAggregateInputType
+  }
+
+  export type PenaltyConditionGroupByOutputType = {
+    id: string
+    scoreConfigId: string
+    name: string
+    code: string
+    description: string | null
+    penaltyPoints: number
+    condition: JsonValue
+    displayOrder: number
+    _count: PenaltyConditionCountAggregateOutputType | null
+    _avg: PenaltyConditionAvgAggregateOutputType | null
+    _sum: PenaltyConditionSumAggregateOutputType | null
+    _min: PenaltyConditionMinAggregateOutputType | null
+    _max: PenaltyConditionMaxAggregateOutputType | null
+  }
+
+  type GetPenaltyConditionGroupByPayload<T extends PenaltyConditionGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<PenaltyConditionGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof PenaltyConditionGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], PenaltyConditionGroupByOutputType[P]>
+            : GetScalarType<T[P], PenaltyConditionGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type PenaltyConditionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    scoreConfigId?: boolean
+    name?: boolean
+    code?: boolean
+    description?: boolean
+    penaltyPoints?: boolean
+    condition?: boolean
+    displayOrder?: boolean
+    scoreConfig?: boolean | ScoreConfigDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["penaltyCondition"]>
+
+  export type PenaltyConditionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    scoreConfigId?: boolean
+    name?: boolean
+    code?: boolean
+    description?: boolean
+    penaltyPoints?: boolean
+    condition?: boolean
+    displayOrder?: boolean
+    scoreConfig?: boolean | ScoreConfigDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["penaltyCondition"]>
+
+  export type PenaltyConditionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    scoreConfigId?: boolean
+    name?: boolean
+    code?: boolean
+    description?: boolean
+    penaltyPoints?: boolean
+    condition?: boolean
+    displayOrder?: boolean
+    scoreConfig?: boolean | ScoreConfigDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["penaltyCondition"]>
+
+  export type PenaltyConditionSelectScalar = {
+    id?: boolean
+    scoreConfigId?: boolean
+    name?: boolean
+    code?: boolean
+    description?: boolean
+    penaltyPoints?: boolean
+    condition?: boolean
+    displayOrder?: boolean
+  }
+
+  export type PenaltyConditionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "scoreConfigId" | "name" | "code" | "description" | "penaltyPoints" | "condition" | "displayOrder", ExtArgs["result"]["penaltyCondition"]>
+  export type PenaltyConditionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    scoreConfig?: boolean | ScoreConfigDefaultArgs<ExtArgs>
+  }
+  export type PenaltyConditionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    scoreConfig?: boolean | ScoreConfigDefaultArgs<ExtArgs>
+  }
+  export type PenaltyConditionIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    scoreConfig?: boolean | ScoreConfigDefaultArgs<ExtArgs>
+  }
+
+  export type $PenaltyConditionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "PenaltyCondition"
+    objects: {
+      scoreConfig: Prisma.$ScoreConfigPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      scoreConfigId: string
+      name: string
+      code: string
+      description: string | null
+      penaltyPoints: number
+      condition: Prisma.JsonValue
+      displayOrder: number
+    }, ExtArgs["result"]["penaltyCondition"]>
+    composites: {}
+  }
+
+  type PenaltyConditionGetPayload<S extends boolean | null | undefined | PenaltyConditionDefaultArgs> = $Result.GetResult<Prisma.$PenaltyConditionPayload, S>
+
+  type PenaltyConditionCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<PenaltyConditionFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: PenaltyConditionCountAggregateInputType | true
+    }
+
+  export interface PenaltyConditionDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['PenaltyCondition'], meta: { name: 'PenaltyCondition' } }
+    /**
+     * Find zero or one PenaltyCondition that matches the filter.
+     * @param {PenaltyConditionFindUniqueArgs} args - Arguments to find a PenaltyCondition
+     * @example
+     * // Get one PenaltyCondition
+     * const penaltyCondition = await prisma.penaltyCondition.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends PenaltyConditionFindUniqueArgs>(args: SelectSubset<T, PenaltyConditionFindUniqueArgs<ExtArgs>>): Prisma__PenaltyConditionClient<$Result.GetResult<Prisma.$PenaltyConditionPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one PenaltyCondition that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {PenaltyConditionFindUniqueOrThrowArgs} args - Arguments to find a PenaltyCondition
+     * @example
+     * // Get one PenaltyCondition
+     * const penaltyCondition = await prisma.penaltyCondition.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends PenaltyConditionFindUniqueOrThrowArgs>(args: SelectSubset<T, PenaltyConditionFindUniqueOrThrowArgs<ExtArgs>>): Prisma__PenaltyConditionClient<$Result.GetResult<Prisma.$PenaltyConditionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PenaltyCondition that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PenaltyConditionFindFirstArgs} args - Arguments to find a PenaltyCondition
+     * @example
+     * // Get one PenaltyCondition
+     * const penaltyCondition = await prisma.penaltyCondition.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends PenaltyConditionFindFirstArgs>(args?: SelectSubset<T, PenaltyConditionFindFirstArgs<ExtArgs>>): Prisma__PenaltyConditionClient<$Result.GetResult<Prisma.$PenaltyConditionPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PenaltyCondition that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PenaltyConditionFindFirstOrThrowArgs} args - Arguments to find a PenaltyCondition
+     * @example
+     * // Get one PenaltyCondition
+     * const penaltyCondition = await prisma.penaltyCondition.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends PenaltyConditionFindFirstOrThrowArgs>(args?: SelectSubset<T, PenaltyConditionFindFirstOrThrowArgs<ExtArgs>>): Prisma__PenaltyConditionClient<$Result.GetResult<Prisma.$PenaltyConditionPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more PenaltyConditions that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PenaltyConditionFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all PenaltyConditions
+     * const penaltyConditions = await prisma.penaltyCondition.findMany()
+     * 
+     * // Get first 10 PenaltyConditions
+     * const penaltyConditions = await prisma.penaltyCondition.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const penaltyConditionWithIdOnly = await prisma.penaltyCondition.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends PenaltyConditionFindManyArgs>(args?: SelectSubset<T, PenaltyConditionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PenaltyConditionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a PenaltyCondition.
+     * @param {PenaltyConditionCreateArgs} args - Arguments to create a PenaltyCondition.
+     * @example
+     * // Create one PenaltyCondition
+     * const PenaltyCondition = await prisma.penaltyCondition.create({
+     *   data: {
+     *     // ... data to create a PenaltyCondition
+     *   }
+     * })
+     * 
+     */
+    create<T extends PenaltyConditionCreateArgs>(args: SelectSubset<T, PenaltyConditionCreateArgs<ExtArgs>>): Prisma__PenaltyConditionClient<$Result.GetResult<Prisma.$PenaltyConditionPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many PenaltyConditions.
+     * @param {PenaltyConditionCreateManyArgs} args - Arguments to create many PenaltyConditions.
+     * @example
+     * // Create many PenaltyConditions
+     * const penaltyCondition = await prisma.penaltyCondition.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends PenaltyConditionCreateManyArgs>(args?: SelectSubset<T, PenaltyConditionCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many PenaltyConditions and returns the data saved in the database.
+     * @param {PenaltyConditionCreateManyAndReturnArgs} args - Arguments to create many PenaltyConditions.
+     * @example
+     * // Create many PenaltyConditions
+     * const penaltyCondition = await prisma.penaltyCondition.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many PenaltyConditions and only return the `id`
+     * const penaltyConditionWithIdOnly = await prisma.penaltyCondition.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends PenaltyConditionCreateManyAndReturnArgs>(args?: SelectSubset<T, PenaltyConditionCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PenaltyConditionPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a PenaltyCondition.
+     * @param {PenaltyConditionDeleteArgs} args - Arguments to delete one PenaltyCondition.
+     * @example
+     * // Delete one PenaltyCondition
+     * const PenaltyCondition = await prisma.penaltyCondition.delete({
+     *   where: {
+     *     // ... filter to delete one PenaltyCondition
+     *   }
+     * })
+     * 
+     */
+    delete<T extends PenaltyConditionDeleteArgs>(args: SelectSubset<T, PenaltyConditionDeleteArgs<ExtArgs>>): Prisma__PenaltyConditionClient<$Result.GetResult<Prisma.$PenaltyConditionPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one PenaltyCondition.
+     * @param {PenaltyConditionUpdateArgs} args - Arguments to update one PenaltyCondition.
+     * @example
+     * // Update one PenaltyCondition
+     * const penaltyCondition = await prisma.penaltyCondition.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends PenaltyConditionUpdateArgs>(args: SelectSubset<T, PenaltyConditionUpdateArgs<ExtArgs>>): Prisma__PenaltyConditionClient<$Result.GetResult<Prisma.$PenaltyConditionPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more PenaltyConditions.
+     * @param {PenaltyConditionDeleteManyArgs} args - Arguments to filter PenaltyConditions to delete.
+     * @example
+     * // Delete a few PenaltyConditions
+     * const { count } = await prisma.penaltyCondition.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends PenaltyConditionDeleteManyArgs>(args?: SelectSubset<T, PenaltyConditionDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PenaltyConditions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PenaltyConditionUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many PenaltyConditions
+     * const penaltyCondition = await prisma.penaltyCondition.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends PenaltyConditionUpdateManyArgs>(args: SelectSubset<T, PenaltyConditionUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PenaltyConditions and returns the data updated in the database.
+     * @param {PenaltyConditionUpdateManyAndReturnArgs} args - Arguments to update many PenaltyConditions.
+     * @example
+     * // Update many PenaltyConditions
+     * const penaltyCondition = await prisma.penaltyCondition.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more PenaltyConditions and only return the `id`
+     * const penaltyConditionWithIdOnly = await prisma.penaltyCondition.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends PenaltyConditionUpdateManyAndReturnArgs>(args: SelectSubset<T, PenaltyConditionUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PenaltyConditionPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one PenaltyCondition.
+     * @param {PenaltyConditionUpsertArgs} args - Arguments to update or create a PenaltyCondition.
+     * @example
+     * // Update or create a PenaltyCondition
+     * const penaltyCondition = await prisma.penaltyCondition.upsert({
+     *   create: {
+     *     // ... data to create a PenaltyCondition
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the PenaltyCondition we want to update
+     *   }
+     * })
+     */
+    upsert<T extends PenaltyConditionUpsertArgs>(args: SelectSubset<T, PenaltyConditionUpsertArgs<ExtArgs>>): Prisma__PenaltyConditionClient<$Result.GetResult<Prisma.$PenaltyConditionPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of PenaltyConditions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PenaltyConditionCountArgs} args - Arguments to filter PenaltyConditions to count.
+     * @example
+     * // Count the number of PenaltyConditions
+     * const count = await prisma.penaltyCondition.count({
+     *   where: {
+     *     // ... the filter for the PenaltyConditions we want to count
+     *   }
+     * })
+    **/
+    count<T extends PenaltyConditionCountArgs>(
+      args?: Subset<T, PenaltyConditionCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], PenaltyConditionCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a PenaltyCondition.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PenaltyConditionAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends PenaltyConditionAggregateArgs>(args: Subset<T, PenaltyConditionAggregateArgs>): Prisma.PrismaPromise<GetPenaltyConditionAggregateType<T>>
+
+    /**
+     * Group by PenaltyCondition.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PenaltyConditionGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends PenaltyConditionGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: PenaltyConditionGroupByArgs['orderBy'] }
+        : { orderBy?: PenaltyConditionGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, PenaltyConditionGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetPenaltyConditionGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the PenaltyCondition model
+   */
+  readonly fields: PenaltyConditionFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for PenaltyCondition.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__PenaltyConditionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    scoreConfig<T extends ScoreConfigDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ScoreConfigDefaultArgs<ExtArgs>>): Prisma__ScoreConfigClient<$Result.GetResult<Prisma.$ScoreConfigPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the PenaltyCondition model
+   */
+  interface PenaltyConditionFieldRefs {
+    readonly id: FieldRef<"PenaltyCondition", 'String'>
+    readonly scoreConfigId: FieldRef<"PenaltyCondition", 'String'>
+    readonly name: FieldRef<"PenaltyCondition", 'String'>
+    readonly code: FieldRef<"PenaltyCondition", 'String'>
+    readonly description: FieldRef<"PenaltyCondition", 'String'>
+    readonly penaltyPoints: FieldRef<"PenaltyCondition", 'Int'>
+    readonly condition: FieldRef<"PenaltyCondition", 'Json'>
+    readonly displayOrder: FieldRef<"PenaltyCondition", 'Int'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * PenaltyCondition findUnique
+   */
+  export type PenaltyConditionFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PenaltyCondition
+     */
+    select?: PenaltyConditionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PenaltyCondition
+     */
+    omit?: PenaltyConditionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PenaltyConditionInclude<ExtArgs> | null
+    /**
+     * Filter, which PenaltyCondition to fetch.
+     */
+    where: PenaltyConditionWhereUniqueInput
+  }
+
+  /**
+   * PenaltyCondition findUniqueOrThrow
+   */
+  export type PenaltyConditionFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PenaltyCondition
+     */
+    select?: PenaltyConditionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PenaltyCondition
+     */
+    omit?: PenaltyConditionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PenaltyConditionInclude<ExtArgs> | null
+    /**
+     * Filter, which PenaltyCondition to fetch.
+     */
+    where: PenaltyConditionWhereUniqueInput
+  }
+
+  /**
+   * PenaltyCondition findFirst
+   */
+  export type PenaltyConditionFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PenaltyCondition
+     */
+    select?: PenaltyConditionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PenaltyCondition
+     */
+    omit?: PenaltyConditionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PenaltyConditionInclude<ExtArgs> | null
+    /**
+     * Filter, which PenaltyCondition to fetch.
+     */
+    where?: PenaltyConditionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PenaltyConditions to fetch.
+     */
+    orderBy?: PenaltyConditionOrderByWithRelationInput | PenaltyConditionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PenaltyConditions.
+     */
+    cursor?: PenaltyConditionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PenaltyConditions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PenaltyConditions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PenaltyConditions.
+     */
+    distinct?: PenaltyConditionScalarFieldEnum | PenaltyConditionScalarFieldEnum[]
+  }
+
+  /**
+   * PenaltyCondition findFirstOrThrow
+   */
+  export type PenaltyConditionFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PenaltyCondition
+     */
+    select?: PenaltyConditionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PenaltyCondition
+     */
+    omit?: PenaltyConditionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PenaltyConditionInclude<ExtArgs> | null
+    /**
+     * Filter, which PenaltyCondition to fetch.
+     */
+    where?: PenaltyConditionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PenaltyConditions to fetch.
+     */
+    orderBy?: PenaltyConditionOrderByWithRelationInput | PenaltyConditionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PenaltyConditions.
+     */
+    cursor?: PenaltyConditionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PenaltyConditions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PenaltyConditions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PenaltyConditions.
+     */
+    distinct?: PenaltyConditionScalarFieldEnum | PenaltyConditionScalarFieldEnum[]
+  }
+
+  /**
+   * PenaltyCondition findMany
+   */
+  export type PenaltyConditionFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PenaltyCondition
+     */
+    select?: PenaltyConditionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PenaltyCondition
+     */
+    omit?: PenaltyConditionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PenaltyConditionInclude<ExtArgs> | null
+    /**
+     * Filter, which PenaltyConditions to fetch.
+     */
+    where?: PenaltyConditionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PenaltyConditions to fetch.
+     */
+    orderBy?: PenaltyConditionOrderByWithRelationInput | PenaltyConditionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing PenaltyConditions.
+     */
+    cursor?: PenaltyConditionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PenaltyConditions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PenaltyConditions.
+     */
+    skip?: number
+    distinct?: PenaltyConditionScalarFieldEnum | PenaltyConditionScalarFieldEnum[]
+  }
+
+  /**
+   * PenaltyCondition create
+   */
+  export type PenaltyConditionCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PenaltyCondition
+     */
+    select?: PenaltyConditionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PenaltyCondition
+     */
+    omit?: PenaltyConditionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PenaltyConditionInclude<ExtArgs> | null
+    /**
+     * The data needed to create a PenaltyCondition.
+     */
+    data: XOR<PenaltyConditionCreateInput, PenaltyConditionUncheckedCreateInput>
+  }
+
+  /**
+   * PenaltyCondition createMany
+   */
+  export type PenaltyConditionCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many PenaltyConditions.
+     */
+    data: PenaltyConditionCreateManyInput | PenaltyConditionCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * PenaltyCondition createManyAndReturn
+   */
+  export type PenaltyConditionCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PenaltyCondition
+     */
+    select?: PenaltyConditionSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PenaltyCondition
+     */
+    omit?: PenaltyConditionOmit<ExtArgs> | null
+    /**
+     * The data used to create many PenaltyConditions.
+     */
+    data: PenaltyConditionCreateManyInput | PenaltyConditionCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PenaltyConditionIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * PenaltyCondition update
+   */
+  export type PenaltyConditionUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PenaltyCondition
+     */
+    select?: PenaltyConditionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PenaltyCondition
+     */
+    omit?: PenaltyConditionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PenaltyConditionInclude<ExtArgs> | null
+    /**
+     * The data needed to update a PenaltyCondition.
+     */
+    data: XOR<PenaltyConditionUpdateInput, PenaltyConditionUncheckedUpdateInput>
+    /**
+     * Choose, which PenaltyCondition to update.
+     */
+    where: PenaltyConditionWhereUniqueInput
+  }
+
+  /**
+   * PenaltyCondition updateMany
+   */
+  export type PenaltyConditionUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update PenaltyConditions.
+     */
+    data: XOR<PenaltyConditionUpdateManyMutationInput, PenaltyConditionUncheckedUpdateManyInput>
+    /**
+     * Filter which PenaltyConditions to update
+     */
+    where?: PenaltyConditionWhereInput
+    /**
+     * Limit how many PenaltyConditions to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * PenaltyCondition updateManyAndReturn
+   */
+  export type PenaltyConditionUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PenaltyCondition
+     */
+    select?: PenaltyConditionSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PenaltyCondition
+     */
+    omit?: PenaltyConditionOmit<ExtArgs> | null
+    /**
+     * The data used to update PenaltyConditions.
+     */
+    data: XOR<PenaltyConditionUpdateManyMutationInput, PenaltyConditionUncheckedUpdateManyInput>
+    /**
+     * Filter which PenaltyConditions to update
+     */
+    where?: PenaltyConditionWhereInput
+    /**
+     * Limit how many PenaltyConditions to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PenaltyConditionIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * PenaltyCondition upsert
+   */
+  export type PenaltyConditionUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PenaltyCondition
+     */
+    select?: PenaltyConditionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PenaltyCondition
+     */
+    omit?: PenaltyConditionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PenaltyConditionInclude<ExtArgs> | null
+    /**
+     * The filter to search for the PenaltyCondition to update in case it exists.
+     */
+    where: PenaltyConditionWhereUniqueInput
+    /**
+     * In case the PenaltyCondition found by the `where` argument doesn't exist, create a new PenaltyCondition with this data.
+     */
+    create: XOR<PenaltyConditionCreateInput, PenaltyConditionUncheckedCreateInput>
+    /**
+     * In case the PenaltyCondition was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<PenaltyConditionUpdateInput, PenaltyConditionUncheckedUpdateInput>
+  }
+
+  /**
+   * PenaltyCondition delete
+   */
+  export type PenaltyConditionDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PenaltyCondition
+     */
+    select?: PenaltyConditionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PenaltyCondition
+     */
+    omit?: PenaltyConditionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PenaltyConditionInclude<ExtArgs> | null
+    /**
+     * Filter which PenaltyCondition to delete.
+     */
+    where: PenaltyConditionWhereUniqueInput
+  }
+
+  /**
+   * PenaltyCondition deleteMany
+   */
+  export type PenaltyConditionDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PenaltyConditions to delete
+     */
+    where?: PenaltyConditionWhereInput
+    /**
+     * Limit how many PenaltyConditions to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * PenaltyCondition without action
+   */
+  export type PenaltyConditionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PenaltyCondition
+     */
+    select?: PenaltyConditionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PenaltyCondition
+     */
+    omit?: PenaltyConditionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PenaltyConditionInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model MatchScore
+   */
+
+  export type AggregateMatchScore = {
+    _count: MatchScoreCountAggregateOutputType | null
+    _avg: MatchScoreAvgAggregateOutputType | null
+    _sum: MatchScoreSumAggregateOutputType | null
+    _min: MatchScoreMinAggregateOutputType | null
+    _max: MatchScoreMaxAggregateOutputType | null
+  }
+
+  export type MatchScoreAvgAggregateOutputType = {
+    totalScore: number | null
+  }
+
+  export type MatchScoreSumAggregateOutputType = {
+    totalScore: number | null
+  }
+
+  export type MatchScoreMinAggregateOutputType = {
+    id: string | null
+    matchId: string | null
+    allianceId: string | null
+    scoreConfigId: string | null
+    totalScore: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type MatchScoreMaxAggregateOutputType = {
+    id: string | null
+    matchId: string | null
+    allianceId: string | null
+    scoreConfigId: string | null
+    totalScore: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type MatchScoreCountAggregateOutputType = {
+    id: number
+    matchId: number
+    allianceId: number
+    scoreConfigId: number
+    elementScores: number
+    bonusesEarned: number
+    penaltiesIncurred: number
+    calculationLog: number
+    totalScore: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type MatchScoreAvgAggregateInputType = {
+    totalScore?: true
+  }
+
+  export type MatchScoreSumAggregateInputType = {
+    totalScore?: true
+  }
+
+  export type MatchScoreMinAggregateInputType = {
+    id?: true
+    matchId?: true
+    allianceId?: true
+    scoreConfigId?: true
+    totalScore?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type MatchScoreMaxAggregateInputType = {
+    id?: true
+    matchId?: true
+    allianceId?: true
+    scoreConfigId?: true
+    totalScore?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type MatchScoreCountAggregateInputType = {
+    id?: true
+    matchId?: true
+    allianceId?: true
+    scoreConfigId?: true
+    elementScores?: true
+    bonusesEarned?: true
+    penaltiesIncurred?: true
+    calculationLog?: true
+    totalScore?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type MatchScoreAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which MatchScore to aggregate.
+     */
+    where?: MatchScoreWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MatchScores to fetch.
+     */
+    orderBy?: MatchScoreOrderByWithRelationInput | MatchScoreOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: MatchScoreWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MatchScores from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MatchScores.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned MatchScores
+    **/
+    _count?: true | MatchScoreCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: MatchScoreAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: MatchScoreSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: MatchScoreMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: MatchScoreMaxAggregateInputType
+  }
+
+  export type GetMatchScoreAggregateType<T extends MatchScoreAggregateArgs> = {
+        [P in keyof T & keyof AggregateMatchScore]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateMatchScore[P]>
+      : GetScalarType<T[P], AggregateMatchScore[P]>
+  }
+
+
+
+
+  export type MatchScoreGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MatchScoreWhereInput
+    orderBy?: MatchScoreOrderByWithAggregationInput | MatchScoreOrderByWithAggregationInput[]
+    by: MatchScoreScalarFieldEnum[] | MatchScoreScalarFieldEnum
+    having?: MatchScoreScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: MatchScoreCountAggregateInputType | true
+    _avg?: MatchScoreAvgAggregateInputType
+    _sum?: MatchScoreSumAggregateInputType
+    _min?: MatchScoreMinAggregateInputType
+    _max?: MatchScoreMaxAggregateInputType
+  }
+
+  export type MatchScoreGroupByOutputType = {
+    id: string
+    matchId: string
+    allianceId: string
+    scoreConfigId: string
+    elementScores: JsonValue
+    bonusesEarned: string[]
+    penaltiesIncurred: string[]
+    calculationLog: JsonValue | null
+    totalScore: number
+    createdAt: Date
+    updatedAt: Date
+    _count: MatchScoreCountAggregateOutputType | null
+    _avg: MatchScoreAvgAggregateOutputType | null
+    _sum: MatchScoreSumAggregateOutputType | null
+    _min: MatchScoreMinAggregateOutputType | null
+    _max: MatchScoreMaxAggregateOutputType | null
+  }
+
+  type GetMatchScoreGroupByPayload<T extends MatchScoreGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<MatchScoreGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof MatchScoreGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], MatchScoreGroupByOutputType[P]>
+            : GetScalarType<T[P], MatchScoreGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type MatchScoreSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    matchId?: boolean
+    allianceId?: boolean
+    scoreConfigId?: boolean
+    elementScores?: boolean
+    bonusesEarned?: boolean
+    penaltiesIncurred?: boolean
+    calculationLog?: boolean
+    totalScore?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    match?: boolean | MatchDefaultArgs<ExtArgs>
+    alliance?: boolean | AllianceDefaultArgs<ExtArgs>
+    scoreConfig?: boolean | ScoreConfigDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["matchScore"]>
+
+  export type MatchScoreSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    matchId?: boolean
+    allianceId?: boolean
+    scoreConfigId?: boolean
+    elementScores?: boolean
+    bonusesEarned?: boolean
+    penaltiesIncurred?: boolean
+    calculationLog?: boolean
+    totalScore?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    match?: boolean | MatchDefaultArgs<ExtArgs>
+    alliance?: boolean | AllianceDefaultArgs<ExtArgs>
+    scoreConfig?: boolean | ScoreConfigDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["matchScore"]>
+
+  export type MatchScoreSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    matchId?: boolean
+    allianceId?: boolean
+    scoreConfigId?: boolean
+    elementScores?: boolean
+    bonusesEarned?: boolean
+    penaltiesIncurred?: boolean
+    calculationLog?: boolean
+    totalScore?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    match?: boolean | MatchDefaultArgs<ExtArgs>
+    alliance?: boolean | AllianceDefaultArgs<ExtArgs>
+    scoreConfig?: boolean | ScoreConfigDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["matchScore"]>
+
+  export type MatchScoreSelectScalar = {
+    id?: boolean
+    matchId?: boolean
+    allianceId?: boolean
+    scoreConfigId?: boolean
+    elementScores?: boolean
+    bonusesEarned?: boolean
+    penaltiesIncurred?: boolean
+    calculationLog?: boolean
+    totalScore?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type MatchScoreOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "matchId" | "allianceId" | "scoreConfigId" | "elementScores" | "bonusesEarned" | "penaltiesIncurred" | "calculationLog" | "totalScore" | "createdAt" | "updatedAt", ExtArgs["result"]["matchScore"]>
+  export type MatchScoreInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    match?: boolean | MatchDefaultArgs<ExtArgs>
+    alliance?: boolean | AllianceDefaultArgs<ExtArgs>
+    scoreConfig?: boolean | ScoreConfigDefaultArgs<ExtArgs>
+  }
+  export type MatchScoreIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    match?: boolean | MatchDefaultArgs<ExtArgs>
+    alliance?: boolean | AllianceDefaultArgs<ExtArgs>
+    scoreConfig?: boolean | ScoreConfigDefaultArgs<ExtArgs>
+  }
+  export type MatchScoreIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    match?: boolean | MatchDefaultArgs<ExtArgs>
+    alliance?: boolean | AllianceDefaultArgs<ExtArgs>
+    scoreConfig?: boolean | ScoreConfigDefaultArgs<ExtArgs>
+  }
+
+  export type $MatchScorePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "MatchScore"
+    objects: {
+      match: Prisma.$MatchPayload<ExtArgs>
+      alliance: Prisma.$AlliancePayload<ExtArgs>
+      scoreConfig: Prisma.$ScoreConfigPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      matchId: string
+      allianceId: string
+      scoreConfigId: string
+      elementScores: Prisma.JsonValue
+      bonusesEarned: string[]
+      penaltiesIncurred: string[]
+      calculationLog: Prisma.JsonValue | null
+      totalScore: number
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["matchScore"]>
+    composites: {}
+  }
+
+  type MatchScoreGetPayload<S extends boolean | null | undefined | MatchScoreDefaultArgs> = $Result.GetResult<Prisma.$MatchScorePayload, S>
+
+  type MatchScoreCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<MatchScoreFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: MatchScoreCountAggregateInputType | true
+    }
+
+  export interface MatchScoreDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['MatchScore'], meta: { name: 'MatchScore' } }
+    /**
+     * Find zero or one MatchScore that matches the filter.
+     * @param {MatchScoreFindUniqueArgs} args - Arguments to find a MatchScore
+     * @example
+     * // Get one MatchScore
+     * const matchScore = await prisma.matchScore.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends MatchScoreFindUniqueArgs>(args: SelectSubset<T, MatchScoreFindUniqueArgs<ExtArgs>>): Prisma__MatchScoreClient<$Result.GetResult<Prisma.$MatchScorePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one MatchScore that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {MatchScoreFindUniqueOrThrowArgs} args - Arguments to find a MatchScore
+     * @example
+     * // Get one MatchScore
+     * const matchScore = await prisma.matchScore.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends MatchScoreFindUniqueOrThrowArgs>(args: SelectSubset<T, MatchScoreFindUniqueOrThrowArgs<ExtArgs>>): Prisma__MatchScoreClient<$Result.GetResult<Prisma.$MatchScorePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first MatchScore that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MatchScoreFindFirstArgs} args - Arguments to find a MatchScore
+     * @example
+     * // Get one MatchScore
+     * const matchScore = await prisma.matchScore.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends MatchScoreFindFirstArgs>(args?: SelectSubset<T, MatchScoreFindFirstArgs<ExtArgs>>): Prisma__MatchScoreClient<$Result.GetResult<Prisma.$MatchScorePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first MatchScore that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MatchScoreFindFirstOrThrowArgs} args - Arguments to find a MatchScore
+     * @example
+     * // Get one MatchScore
+     * const matchScore = await prisma.matchScore.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends MatchScoreFindFirstOrThrowArgs>(args?: SelectSubset<T, MatchScoreFindFirstOrThrowArgs<ExtArgs>>): Prisma__MatchScoreClient<$Result.GetResult<Prisma.$MatchScorePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more MatchScores that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MatchScoreFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all MatchScores
+     * const matchScores = await prisma.matchScore.findMany()
+     * 
+     * // Get first 10 MatchScores
+     * const matchScores = await prisma.matchScore.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const matchScoreWithIdOnly = await prisma.matchScore.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends MatchScoreFindManyArgs>(args?: SelectSubset<T, MatchScoreFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MatchScorePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a MatchScore.
+     * @param {MatchScoreCreateArgs} args - Arguments to create a MatchScore.
+     * @example
+     * // Create one MatchScore
+     * const MatchScore = await prisma.matchScore.create({
+     *   data: {
+     *     // ... data to create a MatchScore
+     *   }
+     * })
+     * 
+     */
+    create<T extends MatchScoreCreateArgs>(args: SelectSubset<T, MatchScoreCreateArgs<ExtArgs>>): Prisma__MatchScoreClient<$Result.GetResult<Prisma.$MatchScorePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many MatchScores.
+     * @param {MatchScoreCreateManyArgs} args - Arguments to create many MatchScores.
+     * @example
+     * // Create many MatchScores
+     * const matchScore = await prisma.matchScore.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends MatchScoreCreateManyArgs>(args?: SelectSubset<T, MatchScoreCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many MatchScores and returns the data saved in the database.
+     * @param {MatchScoreCreateManyAndReturnArgs} args - Arguments to create many MatchScores.
+     * @example
+     * // Create many MatchScores
+     * const matchScore = await prisma.matchScore.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many MatchScores and only return the `id`
+     * const matchScoreWithIdOnly = await prisma.matchScore.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends MatchScoreCreateManyAndReturnArgs>(args?: SelectSubset<T, MatchScoreCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MatchScorePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a MatchScore.
+     * @param {MatchScoreDeleteArgs} args - Arguments to delete one MatchScore.
+     * @example
+     * // Delete one MatchScore
+     * const MatchScore = await prisma.matchScore.delete({
+     *   where: {
+     *     // ... filter to delete one MatchScore
+     *   }
+     * })
+     * 
+     */
+    delete<T extends MatchScoreDeleteArgs>(args: SelectSubset<T, MatchScoreDeleteArgs<ExtArgs>>): Prisma__MatchScoreClient<$Result.GetResult<Prisma.$MatchScorePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one MatchScore.
+     * @param {MatchScoreUpdateArgs} args - Arguments to update one MatchScore.
+     * @example
+     * // Update one MatchScore
+     * const matchScore = await prisma.matchScore.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends MatchScoreUpdateArgs>(args: SelectSubset<T, MatchScoreUpdateArgs<ExtArgs>>): Prisma__MatchScoreClient<$Result.GetResult<Prisma.$MatchScorePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more MatchScores.
+     * @param {MatchScoreDeleteManyArgs} args - Arguments to filter MatchScores to delete.
+     * @example
+     * // Delete a few MatchScores
+     * const { count } = await prisma.matchScore.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends MatchScoreDeleteManyArgs>(args?: SelectSubset<T, MatchScoreDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more MatchScores.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MatchScoreUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many MatchScores
+     * const matchScore = await prisma.matchScore.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends MatchScoreUpdateManyArgs>(args: SelectSubset<T, MatchScoreUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more MatchScores and returns the data updated in the database.
+     * @param {MatchScoreUpdateManyAndReturnArgs} args - Arguments to update many MatchScores.
+     * @example
+     * // Update many MatchScores
+     * const matchScore = await prisma.matchScore.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more MatchScores and only return the `id`
+     * const matchScoreWithIdOnly = await prisma.matchScore.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends MatchScoreUpdateManyAndReturnArgs>(args: SelectSubset<T, MatchScoreUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MatchScorePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one MatchScore.
+     * @param {MatchScoreUpsertArgs} args - Arguments to update or create a MatchScore.
+     * @example
+     * // Update or create a MatchScore
+     * const matchScore = await prisma.matchScore.upsert({
+     *   create: {
+     *     // ... data to create a MatchScore
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the MatchScore we want to update
+     *   }
+     * })
+     */
+    upsert<T extends MatchScoreUpsertArgs>(args: SelectSubset<T, MatchScoreUpsertArgs<ExtArgs>>): Prisma__MatchScoreClient<$Result.GetResult<Prisma.$MatchScorePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of MatchScores.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MatchScoreCountArgs} args - Arguments to filter MatchScores to count.
+     * @example
+     * // Count the number of MatchScores
+     * const count = await prisma.matchScore.count({
+     *   where: {
+     *     // ... the filter for the MatchScores we want to count
+     *   }
+     * })
+    **/
+    count<T extends MatchScoreCountArgs>(
+      args?: Subset<T, MatchScoreCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], MatchScoreCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a MatchScore.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MatchScoreAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends MatchScoreAggregateArgs>(args: Subset<T, MatchScoreAggregateArgs>): Prisma.PrismaPromise<GetMatchScoreAggregateType<T>>
+
+    /**
+     * Group by MatchScore.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MatchScoreGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends MatchScoreGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: MatchScoreGroupByArgs['orderBy'] }
+        : { orderBy?: MatchScoreGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, MatchScoreGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetMatchScoreGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the MatchScore model
+   */
+  readonly fields: MatchScoreFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for MatchScore.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__MatchScoreClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    match<T extends MatchDefaultArgs<ExtArgs> = {}>(args?: Subset<T, MatchDefaultArgs<ExtArgs>>): Prisma__MatchClient<$Result.GetResult<Prisma.$MatchPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    alliance<T extends AllianceDefaultArgs<ExtArgs> = {}>(args?: Subset<T, AllianceDefaultArgs<ExtArgs>>): Prisma__AllianceClient<$Result.GetResult<Prisma.$AlliancePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    scoreConfig<T extends ScoreConfigDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ScoreConfigDefaultArgs<ExtArgs>>): Prisma__ScoreConfigClient<$Result.GetResult<Prisma.$ScoreConfigPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the MatchScore model
+   */
+  interface MatchScoreFieldRefs {
+    readonly id: FieldRef<"MatchScore", 'String'>
+    readonly matchId: FieldRef<"MatchScore", 'String'>
+    readonly allianceId: FieldRef<"MatchScore", 'String'>
+    readonly scoreConfigId: FieldRef<"MatchScore", 'String'>
+    readonly elementScores: FieldRef<"MatchScore", 'Json'>
+    readonly bonusesEarned: FieldRef<"MatchScore", 'String[]'>
+    readonly penaltiesIncurred: FieldRef<"MatchScore", 'String[]'>
+    readonly calculationLog: FieldRef<"MatchScore", 'Json'>
+    readonly totalScore: FieldRef<"MatchScore", 'Int'>
+    readonly createdAt: FieldRef<"MatchScore", 'DateTime'>
+    readonly updatedAt: FieldRef<"MatchScore", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * MatchScore findUnique
+   */
+  export type MatchScoreFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MatchScore
+     */
+    select?: MatchScoreSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MatchScore
+     */
+    omit?: MatchScoreOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MatchScoreInclude<ExtArgs> | null
+    /**
+     * Filter, which MatchScore to fetch.
+     */
+    where: MatchScoreWhereUniqueInput
+  }
+
+  /**
+   * MatchScore findUniqueOrThrow
+   */
+  export type MatchScoreFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MatchScore
+     */
+    select?: MatchScoreSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MatchScore
+     */
+    omit?: MatchScoreOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MatchScoreInclude<ExtArgs> | null
+    /**
+     * Filter, which MatchScore to fetch.
+     */
+    where: MatchScoreWhereUniqueInput
+  }
+
+  /**
+   * MatchScore findFirst
+   */
+  export type MatchScoreFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MatchScore
+     */
+    select?: MatchScoreSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MatchScore
+     */
+    omit?: MatchScoreOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MatchScoreInclude<ExtArgs> | null
+    /**
+     * Filter, which MatchScore to fetch.
+     */
+    where?: MatchScoreWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MatchScores to fetch.
+     */
+    orderBy?: MatchScoreOrderByWithRelationInput | MatchScoreOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for MatchScores.
+     */
+    cursor?: MatchScoreWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MatchScores from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MatchScores.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of MatchScores.
+     */
+    distinct?: MatchScoreScalarFieldEnum | MatchScoreScalarFieldEnum[]
+  }
+
+  /**
+   * MatchScore findFirstOrThrow
+   */
+  export type MatchScoreFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MatchScore
+     */
+    select?: MatchScoreSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MatchScore
+     */
+    omit?: MatchScoreOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MatchScoreInclude<ExtArgs> | null
+    /**
+     * Filter, which MatchScore to fetch.
+     */
+    where?: MatchScoreWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MatchScores to fetch.
+     */
+    orderBy?: MatchScoreOrderByWithRelationInput | MatchScoreOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for MatchScores.
+     */
+    cursor?: MatchScoreWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MatchScores from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MatchScores.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of MatchScores.
+     */
+    distinct?: MatchScoreScalarFieldEnum | MatchScoreScalarFieldEnum[]
+  }
+
+  /**
+   * MatchScore findMany
+   */
+  export type MatchScoreFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MatchScore
+     */
+    select?: MatchScoreSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MatchScore
+     */
+    omit?: MatchScoreOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MatchScoreInclude<ExtArgs> | null
+    /**
+     * Filter, which MatchScores to fetch.
+     */
+    where?: MatchScoreWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MatchScores to fetch.
+     */
+    orderBy?: MatchScoreOrderByWithRelationInput | MatchScoreOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing MatchScores.
+     */
+    cursor?: MatchScoreWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MatchScores from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MatchScores.
+     */
+    skip?: number
+    distinct?: MatchScoreScalarFieldEnum | MatchScoreScalarFieldEnum[]
+  }
+
+  /**
+   * MatchScore create
+   */
+  export type MatchScoreCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MatchScore
+     */
+    select?: MatchScoreSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MatchScore
+     */
+    omit?: MatchScoreOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MatchScoreInclude<ExtArgs> | null
+    /**
+     * The data needed to create a MatchScore.
+     */
+    data: XOR<MatchScoreCreateInput, MatchScoreUncheckedCreateInput>
+  }
+
+  /**
+   * MatchScore createMany
+   */
+  export type MatchScoreCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many MatchScores.
+     */
+    data: MatchScoreCreateManyInput | MatchScoreCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * MatchScore createManyAndReturn
+   */
+  export type MatchScoreCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MatchScore
+     */
+    select?: MatchScoreSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the MatchScore
+     */
+    omit?: MatchScoreOmit<ExtArgs> | null
+    /**
+     * The data used to create many MatchScores.
+     */
+    data: MatchScoreCreateManyInput | MatchScoreCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MatchScoreIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * MatchScore update
+   */
+  export type MatchScoreUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MatchScore
+     */
+    select?: MatchScoreSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MatchScore
+     */
+    omit?: MatchScoreOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MatchScoreInclude<ExtArgs> | null
+    /**
+     * The data needed to update a MatchScore.
+     */
+    data: XOR<MatchScoreUpdateInput, MatchScoreUncheckedUpdateInput>
+    /**
+     * Choose, which MatchScore to update.
+     */
+    where: MatchScoreWhereUniqueInput
+  }
+
+  /**
+   * MatchScore updateMany
+   */
+  export type MatchScoreUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update MatchScores.
+     */
+    data: XOR<MatchScoreUpdateManyMutationInput, MatchScoreUncheckedUpdateManyInput>
+    /**
+     * Filter which MatchScores to update
+     */
+    where?: MatchScoreWhereInput
+    /**
+     * Limit how many MatchScores to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * MatchScore updateManyAndReturn
+   */
+  export type MatchScoreUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MatchScore
+     */
+    select?: MatchScoreSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the MatchScore
+     */
+    omit?: MatchScoreOmit<ExtArgs> | null
+    /**
+     * The data used to update MatchScores.
+     */
+    data: XOR<MatchScoreUpdateManyMutationInput, MatchScoreUncheckedUpdateManyInput>
+    /**
+     * Filter which MatchScores to update
+     */
+    where?: MatchScoreWhereInput
+    /**
+     * Limit how many MatchScores to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MatchScoreIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * MatchScore upsert
+   */
+  export type MatchScoreUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MatchScore
+     */
+    select?: MatchScoreSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MatchScore
+     */
+    omit?: MatchScoreOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MatchScoreInclude<ExtArgs> | null
+    /**
+     * The filter to search for the MatchScore to update in case it exists.
+     */
+    where: MatchScoreWhereUniqueInput
+    /**
+     * In case the MatchScore found by the `where` argument doesn't exist, create a new MatchScore with this data.
+     */
+    create: XOR<MatchScoreCreateInput, MatchScoreUncheckedCreateInput>
+    /**
+     * In case the MatchScore was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<MatchScoreUpdateInput, MatchScoreUncheckedUpdateInput>
+  }
+
+  /**
+   * MatchScore delete
+   */
+  export type MatchScoreDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MatchScore
+     */
+    select?: MatchScoreSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MatchScore
+     */
+    omit?: MatchScoreOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MatchScoreInclude<ExtArgs> | null
+    /**
+     * Filter which MatchScore to delete.
+     */
+    where: MatchScoreWhereUniqueInput
+  }
+
+  /**
+   * MatchScore deleteMany
+   */
+  export type MatchScoreDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which MatchScores to delete
+     */
+    where?: MatchScoreWhereInput
+    /**
+     * Limit how many MatchScores to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * MatchScore without action
+   */
+  export type MatchScoreDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MatchScore
+     */
+    select?: MatchScoreSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MatchScore
+     */
+    omit?: MatchScoreOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MatchScoreInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -23591,6 +30023,81 @@ export namespace Prisma {
   export type AudienceDisplayScalarFieldEnum = (typeof AudienceDisplayScalarFieldEnum)[keyof typeof AudienceDisplayScalarFieldEnum]
 
 
+  export const ScoreConfigScalarFieldEnum: {
+    id: 'id',
+    tournamentId: 'tournamentId',
+    name: 'name',
+    description: 'description',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type ScoreConfigScalarFieldEnum = (typeof ScoreConfigScalarFieldEnum)[keyof typeof ScoreConfigScalarFieldEnum]
+
+
+  export const ScoreElementScalarFieldEnum: {
+    id: 'id',
+    scoreConfigId: 'scoreConfigId',
+    name: 'name',
+    code: 'code',
+    description: 'description',
+    pointsPerUnit: 'pointsPerUnit',
+    maxUnits: 'maxUnits',
+    category: 'category',
+    elementType: 'elementType',
+    displayOrder: 'displayOrder',
+    icon: 'icon',
+    color: 'color'
+  };
+
+  export type ScoreElementScalarFieldEnum = (typeof ScoreElementScalarFieldEnum)[keyof typeof ScoreElementScalarFieldEnum]
+
+
+  export const BonusConditionScalarFieldEnum: {
+    id: 'id',
+    scoreConfigId: 'scoreConfigId',
+    name: 'name',
+    code: 'code',
+    description: 'description',
+    bonusPoints: 'bonusPoints',
+    condition: 'condition',
+    displayOrder: 'displayOrder'
+  };
+
+  export type BonusConditionScalarFieldEnum = (typeof BonusConditionScalarFieldEnum)[keyof typeof BonusConditionScalarFieldEnum]
+
+
+  export const PenaltyConditionScalarFieldEnum: {
+    id: 'id',
+    scoreConfigId: 'scoreConfigId',
+    name: 'name',
+    code: 'code',
+    description: 'description',
+    penaltyPoints: 'penaltyPoints',
+    condition: 'condition',
+    displayOrder: 'displayOrder'
+  };
+
+  export type PenaltyConditionScalarFieldEnum = (typeof PenaltyConditionScalarFieldEnum)[keyof typeof PenaltyConditionScalarFieldEnum]
+
+
+  export const MatchScoreScalarFieldEnum: {
+    id: 'id',
+    matchId: 'matchId',
+    allianceId: 'allianceId',
+    scoreConfigId: 'scoreConfigId',
+    elementScores: 'elementScores',
+    bonusesEarned: 'bonusesEarned',
+    penaltiesIncurred: 'penaltiesIncurred',
+    calculationLog: 'calculationLog',
+    totalScore: 'totalScore',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type MatchScoreScalarFieldEnum = (typeof MatchScoreScalarFieldEnum)[keyof typeof MatchScoreScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
@@ -23605,6 +30112,13 @@ export namespace Prisma {
   };
 
   export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
+
+
+  export const JsonNullValueInput: {
+    JsonNull: typeof JsonNull
+  };
+
+  export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
 
 
   export const QueryMode: {
@@ -23961,6 +30475,7 @@ export namespace Prisma {
     teams?: TeamListRelationFilter
     teamStats?: TeamStatsListRelationFilter
     fields?: FieldListRelationFilter
+    scoreConfigs?: ScoreConfigListRelationFilter
   }
 
   export type TournamentOrderByWithRelationInput = {
@@ -23978,6 +30493,7 @@ export namespace Prisma {
     teams?: TeamOrderByRelationAggregateInput
     teamStats?: TeamStatsOrderByRelationAggregateInput
     fields?: FieldOrderByRelationAggregateInput
+    scoreConfigs?: ScoreConfigOrderByRelationAggregateInput
   }
 
   export type TournamentWhereUniqueInput = Prisma.AtLeast<{
@@ -23998,6 +30514,7 @@ export namespace Prisma {
     teams?: TeamListRelationFilter
     teamStats?: TeamStatsListRelationFilter
     fields?: FieldListRelationFilter
+    scoreConfigs?: ScoreConfigListRelationFilter
   }, "id">
 
   export type TournamentOrderByWithAggregationInput = {
@@ -24154,6 +30671,7 @@ export namespace Prisma {
     matchControl?: XOR<MatchControlNullableScalarRelationFilter, MatchControlWhereInput> | null
     schedule?: XOR<ScheduleNullableScalarRelationFilter, ScheduleWhereInput> | null
     field?: XOR<FieldNullableScalarRelationFilter, FieldWhereInput> | null
+    matchScoreRecords?: MatchScoreListRelationFilter
   }
 
   export type MatchOrderByWithRelationInput = {
@@ -24184,6 +30702,7 @@ export namespace Prisma {
     matchControl?: MatchControlOrderByWithRelationInput
     schedule?: ScheduleOrderByWithRelationInput
     field?: FieldOrderByWithRelationInput
+    matchScoreRecords?: MatchScoreOrderByRelationAggregateInput
   }
 
   export type MatchWhereUniqueInput = Prisma.AtLeast<{
@@ -24217,6 +30736,7 @@ export namespace Prisma {
     matchControl?: XOR<MatchControlNullableScalarRelationFilter, MatchControlWhereInput> | null
     schedule?: XOR<ScheduleNullableScalarRelationFilter, ScheduleWhereInput> | null
     field?: XOR<FieldNullableScalarRelationFilter, FieldWhereInput> | null
+    matchScoreRecords?: MatchScoreListRelationFilter
   }, "id">
 
   export type MatchOrderByWithAggregationInput = {
@@ -24353,6 +30873,7 @@ export namespace Prisma {
     match?: XOR<MatchScalarRelationFilter, MatchWhereInput>
     teamAlliances?: TeamAllianceListRelationFilter
     allianceScoring?: XOR<AllianceScoringNullableScalarRelationFilter, AllianceScoringWhereInput> | null
+    matchScores?: MatchScoreListRelationFilter
   }
 
   export type AllianceOrderByWithRelationInput = {
@@ -24365,6 +30886,7 @@ export namespace Prisma {
     match?: MatchOrderByWithRelationInput
     teamAlliances?: TeamAllianceOrderByRelationAggregateInput
     allianceScoring?: AllianceScoringOrderByWithRelationInput
+    matchScores?: MatchScoreOrderByRelationAggregateInput
   }
 
   export type AllianceWhereUniqueInput = Prisma.AtLeast<{
@@ -24380,6 +30902,7 @@ export namespace Prisma {
     match?: XOR<MatchScalarRelationFilter, MatchWhereInput>
     teamAlliances?: TeamAllianceListRelationFilter
     allianceScoring?: XOR<AllianceScoringNullableScalarRelationFilter, AllianceScoringWhereInput> | null
+    matchScores?: MatchScoreListRelationFilter
   }, "id">
 
   export type AllianceOrderByWithAggregationInput = {
@@ -25359,6 +31882,411 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"AudienceDisplay"> | Date | string
   }
 
+  export type ScoreConfigWhereInput = {
+    AND?: ScoreConfigWhereInput | ScoreConfigWhereInput[]
+    OR?: ScoreConfigWhereInput[]
+    NOT?: ScoreConfigWhereInput | ScoreConfigWhereInput[]
+    id?: StringFilter<"ScoreConfig"> | string
+    tournamentId?: StringFilter<"ScoreConfig"> | string
+    name?: StringFilter<"ScoreConfig"> | string
+    description?: StringNullableFilter<"ScoreConfig"> | string | null
+    createdAt?: DateTimeFilter<"ScoreConfig"> | Date | string
+    updatedAt?: DateTimeFilter<"ScoreConfig"> | Date | string
+    tournament?: XOR<TournamentScalarRelationFilter, TournamentWhereInput>
+    scoreElements?: ScoreElementListRelationFilter
+    bonusConditions?: BonusConditionListRelationFilter
+    penaltyConditions?: PenaltyConditionListRelationFilter
+    matchScores?: MatchScoreListRelationFilter
+  }
+
+  export type ScoreConfigOrderByWithRelationInput = {
+    id?: SortOrder
+    tournamentId?: SortOrder
+    name?: SortOrder
+    description?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    tournament?: TournamentOrderByWithRelationInput
+    scoreElements?: ScoreElementOrderByRelationAggregateInput
+    bonusConditions?: BonusConditionOrderByRelationAggregateInput
+    penaltyConditions?: PenaltyConditionOrderByRelationAggregateInput
+    matchScores?: MatchScoreOrderByRelationAggregateInput
+  }
+
+  export type ScoreConfigWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: ScoreConfigWhereInput | ScoreConfigWhereInput[]
+    OR?: ScoreConfigWhereInput[]
+    NOT?: ScoreConfigWhereInput | ScoreConfigWhereInput[]
+    tournamentId?: StringFilter<"ScoreConfig"> | string
+    name?: StringFilter<"ScoreConfig"> | string
+    description?: StringNullableFilter<"ScoreConfig"> | string | null
+    createdAt?: DateTimeFilter<"ScoreConfig"> | Date | string
+    updatedAt?: DateTimeFilter<"ScoreConfig"> | Date | string
+    tournament?: XOR<TournamentScalarRelationFilter, TournamentWhereInput>
+    scoreElements?: ScoreElementListRelationFilter
+    bonusConditions?: BonusConditionListRelationFilter
+    penaltyConditions?: PenaltyConditionListRelationFilter
+    matchScores?: MatchScoreListRelationFilter
+  }, "id">
+
+  export type ScoreConfigOrderByWithAggregationInput = {
+    id?: SortOrder
+    tournamentId?: SortOrder
+    name?: SortOrder
+    description?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: ScoreConfigCountOrderByAggregateInput
+    _max?: ScoreConfigMaxOrderByAggregateInput
+    _min?: ScoreConfigMinOrderByAggregateInput
+  }
+
+  export type ScoreConfigScalarWhereWithAggregatesInput = {
+    AND?: ScoreConfigScalarWhereWithAggregatesInput | ScoreConfigScalarWhereWithAggregatesInput[]
+    OR?: ScoreConfigScalarWhereWithAggregatesInput[]
+    NOT?: ScoreConfigScalarWhereWithAggregatesInput | ScoreConfigScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"ScoreConfig"> | string
+    tournamentId?: StringWithAggregatesFilter<"ScoreConfig"> | string
+    name?: StringWithAggregatesFilter<"ScoreConfig"> | string
+    description?: StringNullableWithAggregatesFilter<"ScoreConfig"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"ScoreConfig"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"ScoreConfig"> | Date | string
+  }
+
+  export type ScoreElementWhereInput = {
+    AND?: ScoreElementWhereInput | ScoreElementWhereInput[]
+    OR?: ScoreElementWhereInput[]
+    NOT?: ScoreElementWhereInput | ScoreElementWhereInput[]
+    id?: StringFilter<"ScoreElement"> | string
+    scoreConfigId?: StringFilter<"ScoreElement"> | string
+    name?: StringFilter<"ScoreElement"> | string
+    code?: StringFilter<"ScoreElement"> | string
+    description?: StringNullableFilter<"ScoreElement"> | string | null
+    pointsPerUnit?: IntFilter<"ScoreElement"> | number
+    maxUnits?: IntNullableFilter<"ScoreElement"> | number | null
+    category?: StringNullableFilter<"ScoreElement"> | string | null
+    elementType?: StringFilter<"ScoreElement"> | string
+    displayOrder?: IntFilter<"ScoreElement"> | number
+    icon?: StringNullableFilter<"ScoreElement"> | string | null
+    color?: StringNullableFilter<"ScoreElement"> | string | null
+    scoreConfig?: XOR<ScoreConfigScalarRelationFilter, ScoreConfigWhereInput>
+  }
+
+  export type ScoreElementOrderByWithRelationInput = {
+    id?: SortOrder
+    scoreConfigId?: SortOrder
+    name?: SortOrder
+    code?: SortOrder
+    description?: SortOrderInput | SortOrder
+    pointsPerUnit?: SortOrder
+    maxUnits?: SortOrderInput | SortOrder
+    category?: SortOrderInput | SortOrder
+    elementType?: SortOrder
+    displayOrder?: SortOrder
+    icon?: SortOrderInput | SortOrder
+    color?: SortOrderInput | SortOrder
+    scoreConfig?: ScoreConfigOrderByWithRelationInput
+  }
+
+  export type ScoreElementWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    scoreConfigId_code?: ScoreElementScoreConfigIdCodeCompoundUniqueInput
+    AND?: ScoreElementWhereInput | ScoreElementWhereInput[]
+    OR?: ScoreElementWhereInput[]
+    NOT?: ScoreElementWhereInput | ScoreElementWhereInput[]
+    scoreConfigId?: StringFilter<"ScoreElement"> | string
+    name?: StringFilter<"ScoreElement"> | string
+    code?: StringFilter<"ScoreElement"> | string
+    description?: StringNullableFilter<"ScoreElement"> | string | null
+    pointsPerUnit?: IntFilter<"ScoreElement"> | number
+    maxUnits?: IntNullableFilter<"ScoreElement"> | number | null
+    category?: StringNullableFilter<"ScoreElement"> | string | null
+    elementType?: StringFilter<"ScoreElement"> | string
+    displayOrder?: IntFilter<"ScoreElement"> | number
+    icon?: StringNullableFilter<"ScoreElement"> | string | null
+    color?: StringNullableFilter<"ScoreElement"> | string | null
+    scoreConfig?: XOR<ScoreConfigScalarRelationFilter, ScoreConfigWhereInput>
+  }, "id" | "scoreConfigId_code">
+
+  export type ScoreElementOrderByWithAggregationInput = {
+    id?: SortOrder
+    scoreConfigId?: SortOrder
+    name?: SortOrder
+    code?: SortOrder
+    description?: SortOrderInput | SortOrder
+    pointsPerUnit?: SortOrder
+    maxUnits?: SortOrderInput | SortOrder
+    category?: SortOrderInput | SortOrder
+    elementType?: SortOrder
+    displayOrder?: SortOrder
+    icon?: SortOrderInput | SortOrder
+    color?: SortOrderInput | SortOrder
+    _count?: ScoreElementCountOrderByAggregateInput
+    _avg?: ScoreElementAvgOrderByAggregateInput
+    _max?: ScoreElementMaxOrderByAggregateInput
+    _min?: ScoreElementMinOrderByAggregateInput
+    _sum?: ScoreElementSumOrderByAggregateInput
+  }
+
+  export type ScoreElementScalarWhereWithAggregatesInput = {
+    AND?: ScoreElementScalarWhereWithAggregatesInput | ScoreElementScalarWhereWithAggregatesInput[]
+    OR?: ScoreElementScalarWhereWithAggregatesInput[]
+    NOT?: ScoreElementScalarWhereWithAggregatesInput | ScoreElementScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"ScoreElement"> | string
+    scoreConfigId?: StringWithAggregatesFilter<"ScoreElement"> | string
+    name?: StringWithAggregatesFilter<"ScoreElement"> | string
+    code?: StringWithAggregatesFilter<"ScoreElement"> | string
+    description?: StringNullableWithAggregatesFilter<"ScoreElement"> | string | null
+    pointsPerUnit?: IntWithAggregatesFilter<"ScoreElement"> | number
+    maxUnits?: IntNullableWithAggregatesFilter<"ScoreElement"> | number | null
+    category?: StringNullableWithAggregatesFilter<"ScoreElement"> | string | null
+    elementType?: StringWithAggregatesFilter<"ScoreElement"> | string
+    displayOrder?: IntWithAggregatesFilter<"ScoreElement"> | number
+    icon?: StringNullableWithAggregatesFilter<"ScoreElement"> | string | null
+    color?: StringNullableWithAggregatesFilter<"ScoreElement"> | string | null
+  }
+
+  export type BonusConditionWhereInput = {
+    AND?: BonusConditionWhereInput | BonusConditionWhereInput[]
+    OR?: BonusConditionWhereInput[]
+    NOT?: BonusConditionWhereInput | BonusConditionWhereInput[]
+    id?: StringFilter<"BonusCondition"> | string
+    scoreConfigId?: StringFilter<"BonusCondition"> | string
+    name?: StringFilter<"BonusCondition"> | string
+    code?: StringFilter<"BonusCondition"> | string
+    description?: StringNullableFilter<"BonusCondition"> | string | null
+    bonusPoints?: IntFilter<"BonusCondition"> | number
+    condition?: JsonFilter<"BonusCondition">
+    displayOrder?: IntFilter<"BonusCondition"> | number
+    scoreConfig?: XOR<ScoreConfigScalarRelationFilter, ScoreConfigWhereInput>
+  }
+
+  export type BonusConditionOrderByWithRelationInput = {
+    id?: SortOrder
+    scoreConfigId?: SortOrder
+    name?: SortOrder
+    code?: SortOrder
+    description?: SortOrderInput | SortOrder
+    bonusPoints?: SortOrder
+    condition?: SortOrder
+    displayOrder?: SortOrder
+    scoreConfig?: ScoreConfigOrderByWithRelationInput
+  }
+
+  export type BonusConditionWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    scoreConfigId_code?: BonusConditionScoreConfigIdCodeCompoundUniqueInput
+    AND?: BonusConditionWhereInput | BonusConditionWhereInput[]
+    OR?: BonusConditionWhereInput[]
+    NOT?: BonusConditionWhereInput | BonusConditionWhereInput[]
+    scoreConfigId?: StringFilter<"BonusCondition"> | string
+    name?: StringFilter<"BonusCondition"> | string
+    code?: StringFilter<"BonusCondition"> | string
+    description?: StringNullableFilter<"BonusCondition"> | string | null
+    bonusPoints?: IntFilter<"BonusCondition"> | number
+    condition?: JsonFilter<"BonusCondition">
+    displayOrder?: IntFilter<"BonusCondition"> | number
+    scoreConfig?: XOR<ScoreConfigScalarRelationFilter, ScoreConfigWhereInput>
+  }, "id" | "scoreConfigId_code">
+
+  export type BonusConditionOrderByWithAggregationInput = {
+    id?: SortOrder
+    scoreConfigId?: SortOrder
+    name?: SortOrder
+    code?: SortOrder
+    description?: SortOrderInput | SortOrder
+    bonusPoints?: SortOrder
+    condition?: SortOrder
+    displayOrder?: SortOrder
+    _count?: BonusConditionCountOrderByAggregateInput
+    _avg?: BonusConditionAvgOrderByAggregateInput
+    _max?: BonusConditionMaxOrderByAggregateInput
+    _min?: BonusConditionMinOrderByAggregateInput
+    _sum?: BonusConditionSumOrderByAggregateInput
+  }
+
+  export type BonusConditionScalarWhereWithAggregatesInput = {
+    AND?: BonusConditionScalarWhereWithAggregatesInput | BonusConditionScalarWhereWithAggregatesInput[]
+    OR?: BonusConditionScalarWhereWithAggregatesInput[]
+    NOT?: BonusConditionScalarWhereWithAggregatesInput | BonusConditionScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"BonusCondition"> | string
+    scoreConfigId?: StringWithAggregatesFilter<"BonusCondition"> | string
+    name?: StringWithAggregatesFilter<"BonusCondition"> | string
+    code?: StringWithAggregatesFilter<"BonusCondition"> | string
+    description?: StringNullableWithAggregatesFilter<"BonusCondition"> | string | null
+    bonusPoints?: IntWithAggregatesFilter<"BonusCondition"> | number
+    condition?: JsonWithAggregatesFilter<"BonusCondition">
+    displayOrder?: IntWithAggregatesFilter<"BonusCondition"> | number
+  }
+
+  export type PenaltyConditionWhereInput = {
+    AND?: PenaltyConditionWhereInput | PenaltyConditionWhereInput[]
+    OR?: PenaltyConditionWhereInput[]
+    NOT?: PenaltyConditionWhereInput | PenaltyConditionWhereInput[]
+    id?: StringFilter<"PenaltyCondition"> | string
+    scoreConfigId?: StringFilter<"PenaltyCondition"> | string
+    name?: StringFilter<"PenaltyCondition"> | string
+    code?: StringFilter<"PenaltyCondition"> | string
+    description?: StringNullableFilter<"PenaltyCondition"> | string | null
+    penaltyPoints?: IntFilter<"PenaltyCondition"> | number
+    condition?: JsonFilter<"PenaltyCondition">
+    displayOrder?: IntFilter<"PenaltyCondition"> | number
+    scoreConfig?: XOR<ScoreConfigScalarRelationFilter, ScoreConfigWhereInput>
+  }
+
+  export type PenaltyConditionOrderByWithRelationInput = {
+    id?: SortOrder
+    scoreConfigId?: SortOrder
+    name?: SortOrder
+    code?: SortOrder
+    description?: SortOrderInput | SortOrder
+    penaltyPoints?: SortOrder
+    condition?: SortOrder
+    displayOrder?: SortOrder
+    scoreConfig?: ScoreConfigOrderByWithRelationInput
+  }
+
+  export type PenaltyConditionWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    scoreConfigId_code?: PenaltyConditionScoreConfigIdCodeCompoundUniqueInput
+    AND?: PenaltyConditionWhereInput | PenaltyConditionWhereInput[]
+    OR?: PenaltyConditionWhereInput[]
+    NOT?: PenaltyConditionWhereInput | PenaltyConditionWhereInput[]
+    scoreConfigId?: StringFilter<"PenaltyCondition"> | string
+    name?: StringFilter<"PenaltyCondition"> | string
+    code?: StringFilter<"PenaltyCondition"> | string
+    description?: StringNullableFilter<"PenaltyCondition"> | string | null
+    penaltyPoints?: IntFilter<"PenaltyCondition"> | number
+    condition?: JsonFilter<"PenaltyCondition">
+    displayOrder?: IntFilter<"PenaltyCondition"> | number
+    scoreConfig?: XOR<ScoreConfigScalarRelationFilter, ScoreConfigWhereInput>
+  }, "id" | "scoreConfigId_code">
+
+  export type PenaltyConditionOrderByWithAggregationInput = {
+    id?: SortOrder
+    scoreConfigId?: SortOrder
+    name?: SortOrder
+    code?: SortOrder
+    description?: SortOrderInput | SortOrder
+    penaltyPoints?: SortOrder
+    condition?: SortOrder
+    displayOrder?: SortOrder
+    _count?: PenaltyConditionCountOrderByAggregateInput
+    _avg?: PenaltyConditionAvgOrderByAggregateInput
+    _max?: PenaltyConditionMaxOrderByAggregateInput
+    _min?: PenaltyConditionMinOrderByAggregateInput
+    _sum?: PenaltyConditionSumOrderByAggregateInput
+  }
+
+  export type PenaltyConditionScalarWhereWithAggregatesInput = {
+    AND?: PenaltyConditionScalarWhereWithAggregatesInput | PenaltyConditionScalarWhereWithAggregatesInput[]
+    OR?: PenaltyConditionScalarWhereWithAggregatesInput[]
+    NOT?: PenaltyConditionScalarWhereWithAggregatesInput | PenaltyConditionScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"PenaltyCondition"> | string
+    scoreConfigId?: StringWithAggregatesFilter<"PenaltyCondition"> | string
+    name?: StringWithAggregatesFilter<"PenaltyCondition"> | string
+    code?: StringWithAggregatesFilter<"PenaltyCondition"> | string
+    description?: StringNullableWithAggregatesFilter<"PenaltyCondition"> | string | null
+    penaltyPoints?: IntWithAggregatesFilter<"PenaltyCondition"> | number
+    condition?: JsonWithAggregatesFilter<"PenaltyCondition">
+    displayOrder?: IntWithAggregatesFilter<"PenaltyCondition"> | number
+  }
+
+  export type MatchScoreWhereInput = {
+    AND?: MatchScoreWhereInput | MatchScoreWhereInput[]
+    OR?: MatchScoreWhereInput[]
+    NOT?: MatchScoreWhereInput | MatchScoreWhereInput[]
+    id?: StringFilter<"MatchScore"> | string
+    matchId?: StringFilter<"MatchScore"> | string
+    allianceId?: StringFilter<"MatchScore"> | string
+    scoreConfigId?: StringFilter<"MatchScore"> | string
+    elementScores?: JsonFilter<"MatchScore">
+    bonusesEarned?: StringNullableListFilter<"MatchScore">
+    penaltiesIncurred?: StringNullableListFilter<"MatchScore">
+    calculationLog?: JsonNullableFilter<"MatchScore">
+    totalScore?: IntFilter<"MatchScore"> | number
+    createdAt?: DateTimeFilter<"MatchScore"> | Date | string
+    updatedAt?: DateTimeFilter<"MatchScore"> | Date | string
+    match?: XOR<MatchScalarRelationFilter, MatchWhereInput>
+    alliance?: XOR<AllianceScalarRelationFilter, AllianceWhereInput>
+    scoreConfig?: XOR<ScoreConfigScalarRelationFilter, ScoreConfigWhereInput>
+  }
+
+  export type MatchScoreOrderByWithRelationInput = {
+    id?: SortOrder
+    matchId?: SortOrder
+    allianceId?: SortOrder
+    scoreConfigId?: SortOrder
+    elementScores?: SortOrder
+    bonusesEarned?: SortOrder
+    penaltiesIncurred?: SortOrder
+    calculationLog?: SortOrderInput | SortOrder
+    totalScore?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    match?: MatchOrderByWithRelationInput
+    alliance?: AllianceOrderByWithRelationInput
+    scoreConfig?: ScoreConfigOrderByWithRelationInput
+  }
+
+  export type MatchScoreWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    matchId_allianceId?: MatchScoreMatchIdAllianceIdCompoundUniqueInput
+    AND?: MatchScoreWhereInput | MatchScoreWhereInput[]
+    OR?: MatchScoreWhereInput[]
+    NOT?: MatchScoreWhereInput | MatchScoreWhereInput[]
+    matchId?: StringFilter<"MatchScore"> | string
+    allianceId?: StringFilter<"MatchScore"> | string
+    scoreConfigId?: StringFilter<"MatchScore"> | string
+    elementScores?: JsonFilter<"MatchScore">
+    bonusesEarned?: StringNullableListFilter<"MatchScore">
+    penaltiesIncurred?: StringNullableListFilter<"MatchScore">
+    calculationLog?: JsonNullableFilter<"MatchScore">
+    totalScore?: IntFilter<"MatchScore"> | number
+    createdAt?: DateTimeFilter<"MatchScore"> | Date | string
+    updatedAt?: DateTimeFilter<"MatchScore"> | Date | string
+    match?: XOR<MatchScalarRelationFilter, MatchWhereInput>
+    alliance?: XOR<AllianceScalarRelationFilter, AllianceWhereInput>
+    scoreConfig?: XOR<ScoreConfigScalarRelationFilter, ScoreConfigWhereInput>
+  }, "id" | "matchId_allianceId">
+
+  export type MatchScoreOrderByWithAggregationInput = {
+    id?: SortOrder
+    matchId?: SortOrder
+    allianceId?: SortOrder
+    scoreConfigId?: SortOrder
+    elementScores?: SortOrder
+    bonusesEarned?: SortOrder
+    penaltiesIncurred?: SortOrder
+    calculationLog?: SortOrderInput | SortOrder
+    totalScore?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: MatchScoreCountOrderByAggregateInput
+    _avg?: MatchScoreAvgOrderByAggregateInput
+    _max?: MatchScoreMaxOrderByAggregateInput
+    _min?: MatchScoreMinOrderByAggregateInput
+    _sum?: MatchScoreSumOrderByAggregateInput
+  }
+
+  export type MatchScoreScalarWhereWithAggregatesInput = {
+    AND?: MatchScoreScalarWhereWithAggregatesInput | MatchScoreScalarWhereWithAggregatesInput[]
+    OR?: MatchScoreScalarWhereWithAggregatesInput[]
+    NOT?: MatchScoreScalarWhereWithAggregatesInput | MatchScoreScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"MatchScore"> | string
+    matchId?: StringWithAggregatesFilter<"MatchScore"> | string
+    allianceId?: StringWithAggregatesFilter<"MatchScore"> | string
+    scoreConfigId?: StringWithAggregatesFilter<"MatchScore"> | string
+    elementScores?: JsonWithAggregatesFilter<"MatchScore">
+    bonusesEarned?: StringNullableListFilter<"MatchScore">
+    penaltiesIncurred?: StringNullableListFilter<"MatchScore">
+    calculationLog?: JsonNullableWithAggregatesFilter<"MatchScore">
+    totalScore?: IntWithAggregatesFilter<"MatchScore"> | number
+    createdAt?: DateTimeWithAggregatesFilter<"MatchScore"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"MatchScore"> | Date | string
+  }
+
   export type UserCreateInput = {
     id?: string
     username: string
@@ -25490,6 +32418,7 @@ export namespace Prisma {
     teams?: TeamCreateNestedManyWithoutTournamentInput
     teamStats?: TeamStatsCreateNestedManyWithoutTournamentInput
     fields?: FieldCreateNestedManyWithoutTournamentInput
+    scoreConfigs?: ScoreConfigCreateNestedManyWithoutTournamentInput
   }
 
   export type TournamentUncheckedCreateInput = {
@@ -25506,6 +32435,7 @@ export namespace Prisma {
     teams?: TeamUncheckedCreateNestedManyWithoutTournamentInput
     teamStats?: TeamStatsUncheckedCreateNestedManyWithoutTournamentInput
     fields?: FieldUncheckedCreateNestedManyWithoutTournamentInput
+    scoreConfigs?: ScoreConfigUncheckedCreateNestedManyWithoutTournamentInput
   }
 
   export type TournamentUpdateInput = {
@@ -25522,6 +32452,7 @@ export namespace Prisma {
     teams?: TeamUpdateManyWithoutTournamentNestedInput
     teamStats?: TeamStatsUpdateManyWithoutTournamentNestedInput
     fields?: FieldUpdateManyWithoutTournamentNestedInput
+    scoreConfigs?: ScoreConfigUpdateManyWithoutTournamentNestedInput
   }
 
   export type TournamentUncheckedUpdateInput = {
@@ -25538,6 +32469,7 @@ export namespace Prisma {
     teams?: TeamUncheckedUpdateManyWithoutTournamentNestedInput
     teamStats?: TeamStatsUncheckedUpdateManyWithoutTournamentNestedInput
     fields?: FieldUncheckedUpdateManyWithoutTournamentNestedInput
+    scoreConfigs?: ScoreConfigUncheckedUpdateManyWithoutTournamentNestedInput
   }
 
   export type TournamentCreateManyInput = {
@@ -25701,6 +32633,7 @@ export namespace Prisma {
     matchControl?: MatchControlCreateNestedOneWithoutMatchInput
     schedule?: ScheduleCreateNestedOneWithoutMatchesInput
     field?: FieldCreateNestedOneWithoutMatchesInput
+    matchScoreRecords?: MatchScoreCreateNestedManyWithoutMatchInput
   }
 
   export type MatchUncheckedCreateInput = {
@@ -25727,6 +32660,7 @@ export namespace Prisma {
     referees?: MatchRefereeUncheckedCreateNestedManyWithoutMatchInput
     matchScores?: MatchScoresUncheckedCreateNestedOneWithoutMatchInput
     matchControl?: MatchControlUncheckedCreateNestedOneWithoutMatchInput
+    matchScoreRecords?: MatchScoreUncheckedCreateNestedManyWithoutMatchInput
   }
 
   export type MatchUpdateInput = {
@@ -25753,6 +32687,7 @@ export namespace Prisma {
     matchControl?: MatchControlUpdateOneWithoutMatchNestedInput
     schedule?: ScheduleUpdateOneWithoutMatchesNestedInput
     field?: FieldUpdateOneWithoutMatchesNestedInput
+    matchScoreRecords?: MatchScoreUpdateManyWithoutMatchNestedInput
   }
 
   export type MatchUncheckedUpdateInput = {
@@ -25779,6 +32714,7 @@ export namespace Prisma {
     referees?: MatchRefereeUncheckedUpdateManyWithoutMatchNestedInput
     matchScores?: MatchScoresUncheckedUpdateOneWithoutMatchNestedInput
     matchControl?: MatchControlUncheckedUpdateOneWithoutMatchNestedInput
+    matchScoreRecords?: MatchScoreUncheckedUpdateManyWithoutMatchNestedInput
   }
 
   export type MatchCreateManyInput = {
@@ -25920,6 +32856,7 @@ export namespace Prisma {
     match: MatchCreateNestedOneWithoutAlliancesInput
     teamAlliances?: TeamAllianceCreateNestedManyWithoutAllianceInput
     allianceScoring?: AllianceScoringCreateNestedOneWithoutAllianceInput
+    matchScores?: MatchScoreCreateNestedManyWithoutAllianceInput
   }
 
   export type AllianceUncheckedCreateInput = {
@@ -25931,6 +32868,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     teamAlliances?: TeamAllianceUncheckedCreateNestedManyWithoutAllianceInput
     allianceScoring?: AllianceScoringUncheckedCreateNestedOneWithoutAllianceInput
+    matchScores?: MatchScoreUncheckedCreateNestedManyWithoutAllianceInput
   }
 
   export type AllianceUpdateInput = {
@@ -25942,6 +32880,7 @@ export namespace Prisma {
     match?: MatchUpdateOneRequiredWithoutAlliancesNestedInput
     teamAlliances?: TeamAllianceUpdateManyWithoutAllianceNestedInput
     allianceScoring?: AllianceScoringUpdateOneWithoutAllianceNestedInput
+    matchScores?: MatchScoreUpdateManyWithoutAllianceNestedInput
   }
 
   export type AllianceUncheckedUpdateInput = {
@@ -25953,6 +32892,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     teamAlliances?: TeamAllianceUncheckedUpdateManyWithoutAllianceNestedInput
     allianceScoring?: AllianceScoringUncheckedUpdateOneWithoutAllianceNestedInput
+    matchScores?: MatchScoreUncheckedUpdateManyWithoutAllianceNestedInput
   }
 
   export type AllianceCreateManyInput = {
@@ -27030,6 +33970,435 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type ScoreConfigCreateInput = {
+    id?: string
+    name: string
+    description?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    tournament: TournamentCreateNestedOneWithoutScoreConfigsInput
+    scoreElements?: ScoreElementCreateNestedManyWithoutScoreConfigInput
+    bonusConditions?: BonusConditionCreateNestedManyWithoutScoreConfigInput
+    penaltyConditions?: PenaltyConditionCreateNestedManyWithoutScoreConfigInput
+    matchScores?: MatchScoreCreateNestedManyWithoutScoreConfigInput
+  }
+
+  export type ScoreConfigUncheckedCreateInput = {
+    id?: string
+    tournamentId: string
+    name: string
+    description?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    scoreElements?: ScoreElementUncheckedCreateNestedManyWithoutScoreConfigInput
+    bonusConditions?: BonusConditionUncheckedCreateNestedManyWithoutScoreConfigInput
+    penaltyConditions?: PenaltyConditionUncheckedCreateNestedManyWithoutScoreConfigInput
+    matchScores?: MatchScoreUncheckedCreateNestedManyWithoutScoreConfigInput
+  }
+
+  export type ScoreConfigUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tournament?: TournamentUpdateOneRequiredWithoutScoreConfigsNestedInput
+    scoreElements?: ScoreElementUpdateManyWithoutScoreConfigNestedInput
+    bonusConditions?: BonusConditionUpdateManyWithoutScoreConfigNestedInput
+    penaltyConditions?: PenaltyConditionUpdateManyWithoutScoreConfigNestedInput
+    matchScores?: MatchScoreUpdateManyWithoutScoreConfigNestedInput
+  }
+
+  export type ScoreConfigUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tournamentId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    scoreElements?: ScoreElementUncheckedUpdateManyWithoutScoreConfigNestedInput
+    bonusConditions?: BonusConditionUncheckedUpdateManyWithoutScoreConfigNestedInput
+    penaltyConditions?: PenaltyConditionUncheckedUpdateManyWithoutScoreConfigNestedInput
+    matchScores?: MatchScoreUncheckedUpdateManyWithoutScoreConfigNestedInput
+  }
+
+  export type ScoreConfigCreateManyInput = {
+    id?: string
+    tournamentId: string
+    name: string
+    description?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ScoreConfigUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ScoreConfigUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tournamentId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ScoreElementCreateInput = {
+    id?: string
+    name: string
+    code: string
+    description?: string | null
+    pointsPerUnit: number
+    maxUnits?: number | null
+    category?: string | null
+    elementType: string
+    displayOrder: number
+    icon?: string | null
+    color?: string | null
+    scoreConfig: ScoreConfigCreateNestedOneWithoutScoreElementsInput
+  }
+
+  export type ScoreElementUncheckedCreateInput = {
+    id?: string
+    scoreConfigId: string
+    name: string
+    code: string
+    description?: string | null
+    pointsPerUnit: number
+    maxUnits?: number | null
+    category?: string | null
+    elementType: string
+    displayOrder: number
+    icon?: string | null
+    color?: string | null
+  }
+
+  export type ScoreElementUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    pointsPerUnit?: IntFieldUpdateOperationsInput | number
+    maxUnits?: NullableIntFieldUpdateOperationsInput | number | null
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    elementType?: StringFieldUpdateOperationsInput | string
+    displayOrder?: IntFieldUpdateOperationsInput | number
+    icon?: NullableStringFieldUpdateOperationsInput | string | null
+    color?: NullableStringFieldUpdateOperationsInput | string | null
+    scoreConfig?: ScoreConfigUpdateOneRequiredWithoutScoreElementsNestedInput
+  }
+
+  export type ScoreElementUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    scoreConfigId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    pointsPerUnit?: IntFieldUpdateOperationsInput | number
+    maxUnits?: NullableIntFieldUpdateOperationsInput | number | null
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    elementType?: StringFieldUpdateOperationsInput | string
+    displayOrder?: IntFieldUpdateOperationsInput | number
+    icon?: NullableStringFieldUpdateOperationsInput | string | null
+    color?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type ScoreElementCreateManyInput = {
+    id?: string
+    scoreConfigId: string
+    name: string
+    code: string
+    description?: string | null
+    pointsPerUnit: number
+    maxUnits?: number | null
+    category?: string | null
+    elementType: string
+    displayOrder: number
+    icon?: string | null
+    color?: string | null
+  }
+
+  export type ScoreElementUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    pointsPerUnit?: IntFieldUpdateOperationsInput | number
+    maxUnits?: NullableIntFieldUpdateOperationsInput | number | null
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    elementType?: StringFieldUpdateOperationsInput | string
+    displayOrder?: IntFieldUpdateOperationsInput | number
+    icon?: NullableStringFieldUpdateOperationsInput | string | null
+    color?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type ScoreElementUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    scoreConfigId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    pointsPerUnit?: IntFieldUpdateOperationsInput | number
+    maxUnits?: NullableIntFieldUpdateOperationsInput | number | null
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    elementType?: StringFieldUpdateOperationsInput | string
+    displayOrder?: IntFieldUpdateOperationsInput | number
+    icon?: NullableStringFieldUpdateOperationsInput | string | null
+    color?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type BonusConditionCreateInput = {
+    id?: string
+    name: string
+    code: string
+    description?: string | null
+    bonusPoints: number
+    condition: JsonNullValueInput | InputJsonValue
+    displayOrder: number
+    scoreConfig: ScoreConfigCreateNestedOneWithoutBonusConditionsInput
+  }
+
+  export type BonusConditionUncheckedCreateInput = {
+    id?: string
+    scoreConfigId: string
+    name: string
+    code: string
+    description?: string | null
+    bonusPoints: number
+    condition: JsonNullValueInput | InputJsonValue
+    displayOrder: number
+  }
+
+  export type BonusConditionUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    bonusPoints?: IntFieldUpdateOperationsInput | number
+    condition?: JsonNullValueInput | InputJsonValue
+    displayOrder?: IntFieldUpdateOperationsInput | number
+    scoreConfig?: ScoreConfigUpdateOneRequiredWithoutBonusConditionsNestedInput
+  }
+
+  export type BonusConditionUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    scoreConfigId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    bonusPoints?: IntFieldUpdateOperationsInput | number
+    condition?: JsonNullValueInput | InputJsonValue
+    displayOrder?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type BonusConditionCreateManyInput = {
+    id?: string
+    scoreConfigId: string
+    name: string
+    code: string
+    description?: string | null
+    bonusPoints: number
+    condition: JsonNullValueInput | InputJsonValue
+    displayOrder: number
+  }
+
+  export type BonusConditionUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    bonusPoints?: IntFieldUpdateOperationsInput | number
+    condition?: JsonNullValueInput | InputJsonValue
+    displayOrder?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type BonusConditionUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    scoreConfigId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    bonusPoints?: IntFieldUpdateOperationsInput | number
+    condition?: JsonNullValueInput | InputJsonValue
+    displayOrder?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type PenaltyConditionCreateInput = {
+    id?: string
+    name: string
+    code: string
+    description?: string | null
+    penaltyPoints: number
+    condition: JsonNullValueInput | InputJsonValue
+    displayOrder: number
+    scoreConfig: ScoreConfigCreateNestedOneWithoutPenaltyConditionsInput
+  }
+
+  export type PenaltyConditionUncheckedCreateInput = {
+    id?: string
+    scoreConfigId: string
+    name: string
+    code: string
+    description?: string | null
+    penaltyPoints: number
+    condition: JsonNullValueInput | InputJsonValue
+    displayOrder: number
+  }
+
+  export type PenaltyConditionUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    penaltyPoints?: IntFieldUpdateOperationsInput | number
+    condition?: JsonNullValueInput | InputJsonValue
+    displayOrder?: IntFieldUpdateOperationsInput | number
+    scoreConfig?: ScoreConfigUpdateOneRequiredWithoutPenaltyConditionsNestedInput
+  }
+
+  export type PenaltyConditionUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    scoreConfigId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    penaltyPoints?: IntFieldUpdateOperationsInput | number
+    condition?: JsonNullValueInput | InputJsonValue
+    displayOrder?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type PenaltyConditionCreateManyInput = {
+    id?: string
+    scoreConfigId: string
+    name: string
+    code: string
+    description?: string | null
+    penaltyPoints: number
+    condition: JsonNullValueInput | InputJsonValue
+    displayOrder: number
+  }
+
+  export type PenaltyConditionUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    penaltyPoints?: IntFieldUpdateOperationsInput | number
+    condition?: JsonNullValueInput | InputJsonValue
+    displayOrder?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type PenaltyConditionUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    scoreConfigId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    penaltyPoints?: IntFieldUpdateOperationsInput | number
+    condition?: JsonNullValueInput | InputJsonValue
+    displayOrder?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type MatchScoreCreateInput = {
+    id?: string
+    elementScores: JsonNullValueInput | InputJsonValue
+    bonusesEarned?: MatchScoreCreatebonusesEarnedInput | string[]
+    penaltiesIncurred?: MatchScoreCreatepenaltiesIncurredInput | string[]
+    calculationLog?: NullableJsonNullValueInput | InputJsonValue
+    totalScore: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    match: MatchCreateNestedOneWithoutMatchScoreRecordsInput
+    alliance: AllianceCreateNestedOneWithoutMatchScoresInput
+    scoreConfig: ScoreConfigCreateNestedOneWithoutMatchScoresInput
+  }
+
+  export type MatchScoreUncheckedCreateInput = {
+    id?: string
+    matchId: string
+    allianceId: string
+    scoreConfigId: string
+    elementScores: JsonNullValueInput | InputJsonValue
+    bonusesEarned?: MatchScoreCreatebonusesEarnedInput | string[]
+    penaltiesIncurred?: MatchScoreCreatepenaltiesIncurredInput | string[]
+    calculationLog?: NullableJsonNullValueInput | InputJsonValue
+    totalScore: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MatchScoreUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    elementScores?: JsonNullValueInput | InputJsonValue
+    bonusesEarned?: MatchScoreUpdatebonusesEarnedInput | string[]
+    penaltiesIncurred?: MatchScoreUpdatepenaltiesIncurredInput | string[]
+    calculationLog?: NullableJsonNullValueInput | InputJsonValue
+    totalScore?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    match?: MatchUpdateOneRequiredWithoutMatchScoreRecordsNestedInput
+    alliance?: AllianceUpdateOneRequiredWithoutMatchScoresNestedInput
+    scoreConfig?: ScoreConfigUpdateOneRequiredWithoutMatchScoresNestedInput
+  }
+
+  export type MatchScoreUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    matchId?: StringFieldUpdateOperationsInput | string
+    allianceId?: StringFieldUpdateOperationsInput | string
+    scoreConfigId?: StringFieldUpdateOperationsInput | string
+    elementScores?: JsonNullValueInput | InputJsonValue
+    bonusesEarned?: MatchScoreUpdatebonusesEarnedInput | string[]
+    penaltiesIncurred?: MatchScoreUpdatepenaltiesIncurredInput | string[]
+    calculationLog?: NullableJsonNullValueInput | InputJsonValue
+    totalScore?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MatchScoreCreateManyInput = {
+    id?: string
+    matchId: string
+    allianceId: string
+    scoreConfigId: string
+    elementScores: JsonNullValueInput | InputJsonValue
+    bonusesEarned?: MatchScoreCreatebonusesEarnedInput | string[]
+    penaltiesIncurred?: MatchScoreCreatepenaltiesIncurredInput | string[]
+    calculationLog?: NullableJsonNullValueInput | InputJsonValue
+    totalScore: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MatchScoreUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    elementScores?: JsonNullValueInput | InputJsonValue
+    bonusesEarned?: MatchScoreUpdatebonusesEarnedInput | string[]
+    penaltiesIncurred?: MatchScoreUpdatepenaltiesIncurredInput | string[]
+    calculationLog?: NullableJsonNullValueInput | InputJsonValue
+    totalScore?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MatchScoreUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    matchId?: StringFieldUpdateOperationsInput | string
+    allianceId?: StringFieldUpdateOperationsInput | string
+    scoreConfigId?: StringFieldUpdateOperationsInput | string
+    elementScores?: JsonNullValueInput | InputJsonValue
+    bonusesEarned?: MatchScoreUpdatebonusesEarnedInput | string[]
+    penaltiesIncurred?: MatchScoreUpdatepenaltiesIncurredInput | string[]
+    calculationLog?: NullableJsonNullValueInput | InputJsonValue
+    totalScore?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -27318,6 +34687,12 @@ export namespace Prisma {
     none?: FieldWhereInput
   }
 
+  export type ScoreConfigListRelationFilter = {
+    every?: ScoreConfigWhereInput
+    some?: ScoreConfigWhereInput
+    none?: ScoreConfigWhereInput
+  }
+
   export type StageOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -27331,6 +34706,10 @@ export namespace Prisma {
   }
 
   export type FieldOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ScoreConfigOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -27524,7 +34903,17 @@ export namespace Prisma {
     isNot?: FieldWhereInput | null
   }
 
+  export type MatchScoreListRelationFilter = {
+    every?: MatchScoreWhereInput
+    some?: MatchScoreWhereInput
+    none?: MatchScoreWhereInput
+  }
+
   export type AllianceOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type MatchScoreOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -28492,6 +35881,326 @@ export namespace Prisma {
     _max?: NestedEnumDisplayStateFilter<$PrismaModel>
   }
 
+  export type ScoreElementListRelationFilter = {
+    every?: ScoreElementWhereInput
+    some?: ScoreElementWhereInput
+    none?: ScoreElementWhereInput
+  }
+
+  export type BonusConditionListRelationFilter = {
+    every?: BonusConditionWhereInput
+    some?: BonusConditionWhereInput
+    none?: BonusConditionWhereInput
+  }
+
+  export type PenaltyConditionListRelationFilter = {
+    every?: PenaltyConditionWhereInput
+    some?: PenaltyConditionWhereInput
+    none?: PenaltyConditionWhereInput
+  }
+
+  export type ScoreElementOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type BonusConditionOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type PenaltyConditionOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ScoreConfigCountOrderByAggregateInput = {
+    id?: SortOrder
+    tournamentId?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ScoreConfigMaxOrderByAggregateInput = {
+    id?: SortOrder
+    tournamentId?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ScoreConfigMinOrderByAggregateInput = {
+    id?: SortOrder
+    tournamentId?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ScoreConfigScalarRelationFilter = {
+    is?: ScoreConfigWhereInput
+    isNot?: ScoreConfigWhereInput
+  }
+
+  export type ScoreElementScoreConfigIdCodeCompoundUniqueInput = {
+    scoreConfigId: string
+    code: string
+  }
+
+  export type ScoreElementCountOrderByAggregateInput = {
+    id?: SortOrder
+    scoreConfigId?: SortOrder
+    name?: SortOrder
+    code?: SortOrder
+    description?: SortOrder
+    pointsPerUnit?: SortOrder
+    maxUnits?: SortOrder
+    category?: SortOrder
+    elementType?: SortOrder
+    displayOrder?: SortOrder
+    icon?: SortOrder
+    color?: SortOrder
+  }
+
+  export type ScoreElementAvgOrderByAggregateInput = {
+    pointsPerUnit?: SortOrder
+    maxUnits?: SortOrder
+    displayOrder?: SortOrder
+  }
+
+  export type ScoreElementMaxOrderByAggregateInput = {
+    id?: SortOrder
+    scoreConfigId?: SortOrder
+    name?: SortOrder
+    code?: SortOrder
+    description?: SortOrder
+    pointsPerUnit?: SortOrder
+    maxUnits?: SortOrder
+    category?: SortOrder
+    elementType?: SortOrder
+    displayOrder?: SortOrder
+    icon?: SortOrder
+    color?: SortOrder
+  }
+
+  export type ScoreElementMinOrderByAggregateInput = {
+    id?: SortOrder
+    scoreConfigId?: SortOrder
+    name?: SortOrder
+    code?: SortOrder
+    description?: SortOrder
+    pointsPerUnit?: SortOrder
+    maxUnits?: SortOrder
+    category?: SortOrder
+    elementType?: SortOrder
+    displayOrder?: SortOrder
+    icon?: SortOrder
+    color?: SortOrder
+  }
+
+  export type ScoreElementSumOrderByAggregateInput = {
+    pointsPerUnit?: SortOrder
+    maxUnits?: SortOrder
+    displayOrder?: SortOrder
+  }
+  export type JsonFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+
+  export type BonusConditionScoreConfigIdCodeCompoundUniqueInput = {
+    scoreConfigId: string
+    code: string
+  }
+
+  export type BonusConditionCountOrderByAggregateInput = {
+    id?: SortOrder
+    scoreConfigId?: SortOrder
+    name?: SortOrder
+    code?: SortOrder
+    description?: SortOrder
+    bonusPoints?: SortOrder
+    condition?: SortOrder
+    displayOrder?: SortOrder
+  }
+
+  export type BonusConditionAvgOrderByAggregateInput = {
+    bonusPoints?: SortOrder
+    displayOrder?: SortOrder
+  }
+
+  export type BonusConditionMaxOrderByAggregateInput = {
+    id?: SortOrder
+    scoreConfigId?: SortOrder
+    name?: SortOrder
+    code?: SortOrder
+    description?: SortOrder
+    bonusPoints?: SortOrder
+    displayOrder?: SortOrder
+  }
+
+  export type BonusConditionMinOrderByAggregateInput = {
+    id?: SortOrder
+    scoreConfigId?: SortOrder
+    name?: SortOrder
+    code?: SortOrder
+    description?: SortOrder
+    bonusPoints?: SortOrder
+    displayOrder?: SortOrder
+  }
+
+  export type BonusConditionSumOrderByAggregateInput = {
+    bonusPoints?: SortOrder
+    displayOrder?: SortOrder
+  }
+  export type JsonWithAggregatesFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonWithAggregatesFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonWithAggregatesFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedJsonFilter<$PrismaModel>
+    _max?: NestedJsonFilter<$PrismaModel>
+  }
+
+  export type PenaltyConditionScoreConfigIdCodeCompoundUniqueInput = {
+    scoreConfigId: string
+    code: string
+  }
+
+  export type PenaltyConditionCountOrderByAggregateInput = {
+    id?: SortOrder
+    scoreConfigId?: SortOrder
+    name?: SortOrder
+    code?: SortOrder
+    description?: SortOrder
+    penaltyPoints?: SortOrder
+    condition?: SortOrder
+    displayOrder?: SortOrder
+  }
+
+  export type PenaltyConditionAvgOrderByAggregateInput = {
+    penaltyPoints?: SortOrder
+    displayOrder?: SortOrder
+  }
+
+  export type PenaltyConditionMaxOrderByAggregateInput = {
+    id?: SortOrder
+    scoreConfigId?: SortOrder
+    name?: SortOrder
+    code?: SortOrder
+    description?: SortOrder
+    penaltyPoints?: SortOrder
+    displayOrder?: SortOrder
+  }
+
+  export type PenaltyConditionMinOrderByAggregateInput = {
+    id?: SortOrder
+    scoreConfigId?: SortOrder
+    name?: SortOrder
+    code?: SortOrder
+    description?: SortOrder
+    penaltyPoints?: SortOrder
+    displayOrder?: SortOrder
+  }
+
+  export type PenaltyConditionSumOrderByAggregateInput = {
+    penaltyPoints?: SortOrder
+    displayOrder?: SortOrder
+  }
+
+  export type StringNullableListFilter<$PrismaModel = never> = {
+    equals?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    has?: string | StringFieldRefInput<$PrismaModel> | null
+    hasEvery?: string[] | ListStringFieldRefInput<$PrismaModel>
+    hasSome?: string[] | ListStringFieldRefInput<$PrismaModel>
+    isEmpty?: boolean
+  }
+
+  export type MatchScoreMatchIdAllianceIdCompoundUniqueInput = {
+    matchId: string
+    allianceId: string
+  }
+
+  export type MatchScoreCountOrderByAggregateInput = {
+    id?: SortOrder
+    matchId?: SortOrder
+    allianceId?: SortOrder
+    scoreConfigId?: SortOrder
+    elementScores?: SortOrder
+    bonusesEarned?: SortOrder
+    penaltiesIncurred?: SortOrder
+    calculationLog?: SortOrder
+    totalScore?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type MatchScoreAvgOrderByAggregateInput = {
+    totalScore?: SortOrder
+  }
+
+  export type MatchScoreMaxOrderByAggregateInput = {
+    id?: SortOrder
+    matchId?: SortOrder
+    allianceId?: SortOrder
+    scoreConfigId?: SortOrder
+    totalScore?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type MatchScoreMinOrderByAggregateInput = {
+    id?: SortOrder
+    matchId?: SortOrder
+    allianceId?: SortOrder
+    scoreConfigId?: SortOrder
+    totalScore?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type MatchScoreSumOrderByAggregateInput = {
+    totalScore?: SortOrder
+  }
+
   export type UserCreateNestedOneWithoutCreatedUsersInput = {
     create?: XOR<UserCreateWithoutCreatedUsersInput, UserUncheckedCreateWithoutCreatedUsersInput>
     connectOrCreate?: UserCreateOrConnectWithoutCreatedUsersInput
@@ -28776,6 +36485,13 @@ export namespace Prisma {
     connect?: FieldWhereUniqueInput | FieldWhereUniqueInput[]
   }
 
+  export type ScoreConfigCreateNestedManyWithoutTournamentInput = {
+    create?: XOR<ScoreConfigCreateWithoutTournamentInput, ScoreConfigUncheckedCreateWithoutTournamentInput> | ScoreConfigCreateWithoutTournamentInput[] | ScoreConfigUncheckedCreateWithoutTournamentInput[]
+    connectOrCreate?: ScoreConfigCreateOrConnectWithoutTournamentInput | ScoreConfigCreateOrConnectWithoutTournamentInput[]
+    createMany?: ScoreConfigCreateManyTournamentInputEnvelope
+    connect?: ScoreConfigWhereUniqueInput | ScoreConfigWhereUniqueInput[]
+  }
+
   export type StageUncheckedCreateNestedManyWithoutTournamentInput = {
     create?: XOR<StageCreateWithoutTournamentInput, StageUncheckedCreateWithoutTournamentInput> | StageCreateWithoutTournamentInput[] | StageUncheckedCreateWithoutTournamentInput[]
     connectOrCreate?: StageCreateOrConnectWithoutTournamentInput | StageCreateOrConnectWithoutTournamentInput[]
@@ -28802,6 +36518,13 @@ export namespace Prisma {
     connectOrCreate?: FieldCreateOrConnectWithoutTournamentInput | FieldCreateOrConnectWithoutTournamentInput[]
     createMany?: FieldCreateManyTournamentInputEnvelope
     connect?: FieldWhereUniqueInput | FieldWhereUniqueInput[]
+  }
+
+  export type ScoreConfigUncheckedCreateNestedManyWithoutTournamentInput = {
+    create?: XOR<ScoreConfigCreateWithoutTournamentInput, ScoreConfigUncheckedCreateWithoutTournamentInput> | ScoreConfigCreateWithoutTournamentInput[] | ScoreConfigUncheckedCreateWithoutTournamentInput[]
+    connectOrCreate?: ScoreConfigCreateOrConnectWithoutTournamentInput | ScoreConfigCreateOrConnectWithoutTournamentInput[]
+    createMany?: ScoreConfigCreateManyTournamentInputEnvelope
+    connect?: ScoreConfigWhereUniqueInput | ScoreConfigWhereUniqueInput[]
   }
 
   export type IntFieldUpdateOperationsInput = {
@@ -28876,6 +36599,20 @@ export namespace Prisma {
     deleteMany?: FieldScalarWhereInput | FieldScalarWhereInput[]
   }
 
+  export type ScoreConfigUpdateManyWithoutTournamentNestedInput = {
+    create?: XOR<ScoreConfigCreateWithoutTournamentInput, ScoreConfigUncheckedCreateWithoutTournamentInput> | ScoreConfigCreateWithoutTournamentInput[] | ScoreConfigUncheckedCreateWithoutTournamentInput[]
+    connectOrCreate?: ScoreConfigCreateOrConnectWithoutTournamentInput | ScoreConfigCreateOrConnectWithoutTournamentInput[]
+    upsert?: ScoreConfigUpsertWithWhereUniqueWithoutTournamentInput | ScoreConfigUpsertWithWhereUniqueWithoutTournamentInput[]
+    createMany?: ScoreConfigCreateManyTournamentInputEnvelope
+    set?: ScoreConfigWhereUniqueInput | ScoreConfigWhereUniqueInput[]
+    disconnect?: ScoreConfigWhereUniqueInput | ScoreConfigWhereUniqueInput[]
+    delete?: ScoreConfigWhereUniqueInput | ScoreConfigWhereUniqueInput[]
+    connect?: ScoreConfigWhereUniqueInput | ScoreConfigWhereUniqueInput[]
+    update?: ScoreConfigUpdateWithWhereUniqueWithoutTournamentInput | ScoreConfigUpdateWithWhereUniqueWithoutTournamentInput[]
+    updateMany?: ScoreConfigUpdateManyWithWhereWithoutTournamentInput | ScoreConfigUpdateManyWithWhereWithoutTournamentInput[]
+    deleteMany?: ScoreConfigScalarWhereInput | ScoreConfigScalarWhereInput[]
+  }
+
   export type StageUncheckedUpdateManyWithoutTournamentNestedInput = {
     create?: XOR<StageCreateWithoutTournamentInput, StageUncheckedCreateWithoutTournamentInput> | StageCreateWithoutTournamentInput[] | StageUncheckedCreateWithoutTournamentInput[]
     connectOrCreate?: StageCreateOrConnectWithoutTournamentInput | StageCreateOrConnectWithoutTournamentInput[]
@@ -28930,6 +36667,20 @@ export namespace Prisma {
     update?: FieldUpdateWithWhereUniqueWithoutTournamentInput | FieldUpdateWithWhereUniqueWithoutTournamentInput[]
     updateMany?: FieldUpdateManyWithWhereWithoutTournamentInput | FieldUpdateManyWithWhereWithoutTournamentInput[]
     deleteMany?: FieldScalarWhereInput | FieldScalarWhereInput[]
+  }
+
+  export type ScoreConfigUncheckedUpdateManyWithoutTournamentNestedInput = {
+    create?: XOR<ScoreConfigCreateWithoutTournamentInput, ScoreConfigUncheckedCreateWithoutTournamentInput> | ScoreConfigCreateWithoutTournamentInput[] | ScoreConfigUncheckedCreateWithoutTournamentInput[]
+    connectOrCreate?: ScoreConfigCreateOrConnectWithoutTournamentInput | ScoreConfigCreateOrConnectWithoutTournamentInput[]
+    upsert?: ScoreConfigUpsertWithWhereUniqueWithoutTournamentInput | ScoreConfigUpsertWithWhereUniqueWithoutTournamentInput[]
+    createMany?: ScoreConfigCreateManyTournamentInputEnvelope
+    set?: ScoreConfigWhereUniqueInput | ScoreConfigWhereUniqueInput[]
+    disconnect?: ScoreConfigWhereUniqueInput | ScoreConfigWhereUniqueInput[]
+    delete?: ScoreConfigWhereUniqueInput | ScoreConfigWhereUniqueInput[]
+    connect?: ScoreConfigWhereUniqueInput | ScoreConfigWhereUniqueInput[]
+    update?: ScoreConfigUpdateWithWhereUniqueWithoutTournamentInput | ScoreConfigUpdateWithWhereUniqueWithoutTournamentInput[]
+    updateMany?: ScoreConfigUpdateManyWithWhereWithoutTournamentInput | ScoreConfigUpdateManyWithWhereWithoutTournamentInput[]
+    deleteMany?: ScoreConfigScalarWhereInput | ScoreConfigScalarWhereInput[]
   }
 
   export type TournamentCreateNestedOneWithoutStagesInput = {
@@ -29126,6 +36877,13 @@ export namespace Prisma {
     connect?: FieldWhereUniqueInput
   }
 
+  export type MatchScoreCreateNestedManyWithoutMatchInput = {
+    create?: XOR<MatchScoreCreateWithoutMatchInput, MatchScoreUncheckedCreateWithoutMatchInput> | MatchScoreCreateWithoutMatchInput[] | MatchScoreUncheckedCreateWithoutMatchInput[]
+    connectOrCreate?: MatchScoreCreateOrConnectWithoutMatchInput | MatchScoreCreateOrConnectWithoutMatchInput[]
+    createMany?: MatchScoreCreateManyMatchInputEnvelope
+    connect?: MatchScoreWhereUniqueInput | MatchScoreWhereUniqueInput[]
+  }
+
   export type AllianceUncheckedCreateNestedManyWithoutMatchInput = {
     create?: XOR<AllianceCreateWithoutMatchInput, AllianceUncheckedCreateWithoutMatchInput> | AllianceCreateWithoutMatchInput[] | AllianceUncheckedCreateWithoutMatchInput[]
     connectOrCreate?: AllianceCreateOrConnectWithoutMatchInput | AllianceCreateOrConnectWithoutMatchInput[]
@@ -29150,6 +36908,13 @@ export namespace Prisma {
     create?: XOR<MatchControlCreateWithoutMatchInput, MatchControlUncheckedCreateWithoutMatchInput>
     connectOrCreate?: MatchControlCreateOrConnectWithoutMatchInput
     connect?: MatchControlWhereUniqueInput
+  }
+
+  export type MatchScoreUncheckedCreateNestedManyWithoutMatchInput = {
+    create?: XOR<MatchScoreCreateWithoutMatchInput, MatchScoreUncheckedCreateWithoutMatchInput> | MatchScoreCreateWithoutMatchInput[] | MatchScoreUncheckedCreateWithoutMatchInput[]
+    connectOrCreate?: MatchScoreCreateOrConnectWithoutMatchInput | MatchScoreCreateOrConnectWithoutMatchInput[]
+    createMany?: MatchScoreCreateManyMatchInputEnvelope
+    connect?: MatchScoreWhereUniqueInput | MatchScoreWhereUniqueInput[]
   }
 
   export type NullableIntFieldUpdateOperationsInput = {
@@ -29250,6 +37015,20 @@ export namespace Prisma {
     update?: XOR<XOR<FieldUpdateToOneWithWhereWithoutMatchesInput, FieldUpdateWithoutMatchesInput>, FieldUncheckedUpdateWithoutMatchesInput>
   }
 
+  export type MatchScoreUpdateManyWithoutMatchNestedInput = {
+    create?: XOR<MatchScoreCreateWithoutMatchInput, MatchScoreUncheckedCreateWithoutMatchInput> | MatchScoreCreateWithoutMatchInput[] | MatchScoreUncheckedCreateWithoutMatchInput[]
+    connectOrCreate?: MatchScoreCreateOrConnectWithoutMatchInput | MatchScoreCreateOrConnectWithoutMatchInput[]
+    upsert?: MatchScoreUpsertWithWhereUniqueWithoutMatchInput | MatchScoreUpsertWithWhereUniqueWithoutMatchInput[]
+    createMany?: MatchScoreCreateManyMatchInputEnvelope
+    set?: MatchScoreWhereUniqueInput | MatchScoreWhereUniqueInput[]
+    disconnect?: MatchScoreWhereUniqueInput | MatchScoreWhereUniqueInput[]
+    delete?: MatchScoreWhereUniqueInput | MatchScoreWhereUniqueInput[]
+    connect?: MatchScoreWhereUniqueInput | MatchScoreWhereUniqueInput[]
+    update?: MatchScoreUpdateWithWhereUniqueWithoutMatchInput | MatchScoreUpdateWithWhereUniqueWithoutMatchInput[]
+    updateMany?: MatchScoreUpdateManyWithWhereWithoutMatchInput | MatchScoreUpdateManyWithWhereWithoutMatchInput[]
+    deleteMany?: MatchScoreScalarWhereInput | MatchScoreScalarWhereInput[]
+  }
+
   export type AllianceUncheckedUpdateManyWithoutMatchNestedInput = {
     create?: XOR<AllianceCreateWithoutMatchInput, AllianceUncheckedCreateWithoutMatchInput> | AllianceCreateWithoutMatchInput[] | AllianceUncheckedCreateWithoutMatchInput[]
     connectOrCreate?: AllianceCreateOrConnectWithoutMatchInput | AllianceCreateOrConnectWithoutMatchInput[]
@@ -29296,6 +37075,20 @@ export namespace Prisma {
     delete?: MatchControlWhereInput | boolean
     connect?: MatchControlWhereUniqueInput
     update?: XOR<XOR<MatchControlUpdateToOneWithWhereWithoutMatchInput, MatchControlUpdateWithoutMatchInput>, MatchControlUncheckedUpdateWithoutMatchInput>
+  }
+
+  export type MatchScoreUncheckedUpdateManyWithoutMatchNestedInput = {
+    create?: XOR<MatchScoreCreateWithoutMatchInput, MatchScoreUncheckedCreateWithoutMatchInput> | MatchScoreCreateWithoutMatchInput[] | MatchScoreUncheckedCreateWithoutMatchInput[]
+    connectOrCreate?: MatchScoreCreateOrConnectWithoutMatchInput | MatchScoreCreateOrConnectWithoutMatchInput[]
+    upsert?: MatchScoreUpsertWithWhereUniqueWithoutMatchInput | MatchScoreUpsertWithWhereUniqueWithoutMatchInput[]
+    createMany?: MatchScoreCreateManyMatchInputEnvelope
+    set?: MatchScoreWhereUniqueInput | MatchScoreWhereUniqueInput[]
+    disconnect?: MatchScoreWhereUniqueInput | MatchScoreWhereUniqueInput[]
+    delete?: MatchScoreWhereUniqueInput | MatchScoreWhereUniqueInput[]
+    connect?: MatchScoreWhereUniqueInput | MatchScoreWhereUniqueInput[]
+    update?: MatchScoreUpdateWithWhereUniqueWithoutMatchInput | MatchScoreUpdateWithWhereUniqueWithoutMatchInput[]
+    updateMany?: MatchScoreUpdateManyWithWhereWithoutMatchInput | MatchScoreUpdateManyWithWhereWithoutMatchInput[]
+    deleteMany?: MatchScoreScalarWhereInput | MatchScoreScalarWhereInput[]
   }
 
   export type MatchCreateNestedOneWithoutRefereesInput = {
@@ -29349,6 +37142,13 @@ export namespace Prisma {
     connect?: AllianceScoringWhereUniqueInput
   }
 
+  export type MatchScoreCreateNestedManyWithoutAllianceInput = {
+    create?: XOR<MatchScoreCreateWithoutAllianceInput, MatchScoreUncheckedCreateWithoutAllianceInput> | MatchScoreCreateWithoutAllianceInput[] | MatchScoreUncheckedCreateWithoutAllianceInput[]
+    connectOrCreate?: MatchScoreCreateOrConnectWithoutAllianceInput | MatchScoreCreateOrConnectWithoutAllianceInput[]
+    createMany?: MatchScoreCreateManyAllianceInputEnvelope
+    connect?: MatchScoreWhereUniqueInput | MatchScoreWhereUniqueInput[]
+  }
+
   export type TeamAllianceUncheckedCreateNestedManyWithoutAllianceInput = {
     create?: XOR<TeamAllianceCreateWithoutAllianceInput, TeamAllianceUncheckedCreateWithoutAllianceInput> | TeamAllianceCreateWithoutAllianceInput[] | TeamAllianceUncheckedCreateWithoutAllianceInput[]
     connectOrCreate?: TeamAllianceCreateOrConnectWithoutAllianceInput | TeamAllianceCreateOrConnectWithoutAllianceInput[]
@@ -29360,6 +37160,13 @@ export namespace Prisma {
     create?: XOR<AllianceScoringCreateWithoutAllianceInput, AllianceScoringUncheckedCreateWithoutAllianceInput>
     connectOrCreate?: AllianceScoringCreateOrConnectWithoutAllianceInput
     connect?: AllianceScoringWhereUniqueInput
+  }
+
+  export type MatchScoreUncheckedCreateNestedManyWithoutAllianceInput = {
+    create?: XOR<MatchScoreCreateWithoutAllianceInput, MatchScoreUncheckedCreateWithoutAllianceInput> | MatchScoreCreateWithoutAllianceInput[] | MatchScoreUncheckedCreateWithoutAllianceInput[]
+    connectOrCreate?: MatchScoreCreateOrConnectWithoutAllianceInput | MatchScoreCreateOrConnectWithoutAllianceInput[]
+    createMany?: MatchScoreCreateManyAllianceInputEnvelope
+    connect?: MatchScoreWhereUniqueInput | MatchScoreWhereUniqueInput[]
   }
 
   export type MatchUpdateOneRequiredWithoutAlliancesNestedInput = {
@@ -29394,6 +37201,20 @@ export namespace Prisma {
     update?: XOR<XOR<AllianceScoringUpdateToOneWithWhereWithoutAllianceInput, AllianceScoringUpdateWithoutAllianceInput>, AllianceScoringUncheckedUpdateWithoutAllianceInput>
   }
 
+  export type MatchScoreUpdateManyWithoutAllianceNestedInput = {
+    create?: XOR<MatchScoreCreateWithoutAllianceInput, MatchScoreUncheckedCreateWithoutAllianceInput> | MatchScoreCreateWithoutAllianceInput[] | MatchScoreUncheckedCreateWithoutAllianceInput[]
+    connectOrCreate?: MatchScoreCreateOrConnectWithoutAllianceInput | MatchScoreCreateOrConnectWithoutAllianceInput[]
+    upsert?: MatchScoreUpsertWithWhereUniqueWithoutAllianceInput | MatchScoreUpsertWithWhereUniqueWithoutAllianceInput[]
+    createMany?: MatchScoreCreateManyAllianceInputEnvelope
+    set?: MatchScoreWhereUniqueInput | MatchScoreWhereUniqueInput[]
+    disconnect?: MatchScoreWhereUniqueInput | MatchScoreWhereUniqueInput[]
+    delete?: MatchScoreWhereUniqueInput | MatchScoreWhereUniqueInput[]
+    connect?: MatchScoreWhereUniqueInput | MatchScoreWhereUniqueInput[]
+    update?: MatchScoreUpdateWithWhereUniqueWithoutAllianceInput | MatchScoreUpdateWithWhereUniqueWithoutAllianceInput[]
+    updateMany?: MatchScoreUpdateManyWithWhereWithoutAllianceInput | MatchScoreUpdateManyWithWhereWithoutAllianceInput[]
+    deleteMany?: MatchScoreScalarWhereInput | MatchScoreScalarWhereInput[]
+  }
+
   export type TeamAllianceUncheckedUpdateManyWithoutAllianceNestedInput = {
     create?: XOR<TeamAllianceCreateWithoutAllianceInput, TeamAllianceUncheckedCreateWithoutAllianceInput> | TeamAllianceCreateWithoutAllianceInput[] | TeamAllianceUncheckedCreateWithoutAllianceInput[]
     connectOrCreate?: TeamAllianceCreateOrConnectWithoutAllianceInput | TeamAllianceCreateOrConnectWithoutAllianceInput[]
@@ -29416,6 +37237,20 @@ export namespace Prisma {
     delete?: AllianceScoringWhereInput | boolean
     connect?: AllianceScoringWhereUniqueInput
     update?: XOR<XOR<AllianceScoringUpdateToOneWithWhereWithoutAllianceInput, AllianceScoringUpdateWithoutAllianceInput>, AllianceScoringUncheckedUpdateWithoutAllianceInput>
+  }
+
+  export type MatchScoreUncheckedUpdateManyWithoutAllianceNestedInput = {
+    create?: XOR<MatchScoreCreateWithoutAllianceInput, MatchScoreUncheckedCreateWithoutAllianceInput> | MatchScoreCreateWithoutAllianceInput[] | MatchScoreUncheckedCreateWithoutAllianceInput[]
+    connectOrCreate?: MatchScoreCreateOrConnectWithoutAllianceInput | MatchScoreCreateOrConnectWithoutAllianceInput[]
+    upsert?: MatchScoreUpsertWithWhereUniqueWithoutAllianceInput | MatchScoreUpsertWithWhereUniqueWithoutAllianceInput[]
+    createMany?: MatchScoreCreateManyAllianceInputEnvelope
+    set?: MatchScoreWhereUniqueInput | MatchScoreWhereUniqueInput[]
+    disconnect?: MatchScoreWhereUniqueInput | MatchScoreWhereUniqueInput[]
+    delete?: MatchScoreWhereUniqueInput | MatchScoreWhereUniqueInput[]
+    connect?: MatchScoreWhereUniqueInput | MatchScoreWhereUniqueInput[]
+    update?: MatchScoreUpdateWithWhereUniqueWithoutAllianceInput | MatchScoreUpdateWithWhereUniqueWithoutAllianceInput[]
+    updateMany?: MatchScoreUpdateManyWithWhereWithoutAllianceInput | MatchScoreUpdateManyWithWhereWithoutAllianceInput[]
+    deleteMany?: MatchScoreScalarWhereInput | MatchScoreScalarWhereInput[]
   }
 
   export type AllianceCreateNestedOneWithoutAllianceScoringInput = {
@@ -29950,6 +37785,290 @@ export namespace Prisma {
     update?: XOR<XOR<MatchControlUpdateToOneWithWhereWithoutAudienceDisplayInput, MatchControlUpdateWithoutAudienceDisplayInput>, MatchControlUncheckedUpdateWithoutAudienceDisplayInput>
   }
 
+  export type TournamentCreateNestedOneWithoutScoreConfigsInput = {
+    create?: XOR<TournamentCreateWithoutScoreConfigsInput, TournamentUncheckedCreateWithoutScoreConfigsInput>
+    connectOrCreate?: TournamentCreateOrConnectWithoutScoreConfigsInput
+    connect?: TournamentWhereUniqueInput
+  }
+
+  export type ScoreElementCreateNestedManyWithoutScoreConfigInput = {
+    create?: XOR<ScoreElementCreateWithoutScoreConfigInput, ScoreElementUncheckedCreateWithoutScoreConfigInput> | ScoreElementCreateWithoutScoreConfigInput[] | ScoreElementUncheckedCreateWithoutScoreConfigInput[]
+    connectOrCreate?: ScoreElementCreateOrConnectWithoutScoreConfigInput | ScoreElementCreateOrConnectWithoutScoreConfigInput[]
+    createMany?: ScoreElementCreateManyScoreConfigInputEnvelope
+    connect?: ScoreElementWhereUniqueInput | ScoreElementWhereUniqueInput[]
+  }
+
+  export type BonusConditionCreateNestedManyWithoutScoreConfigInput = {
+    create?: XOR<BonusConditionCreateWithoutScoreConfigInput, BonusConditionUncheckedCreateWithoutScoreConfigInput> | BonusConditionCreateWithoutScoreConfigInput[] | BonusConditionUncheckedCreateWithoutScoreConfigInput[]
+    connectOrCreate?: BonusConditionCreateOrConnectWithoutScoreConfigInput | BonusConditionCreateOrConnectWithoutScoreConfigInput[]
+    createMany?: BonusConditionCreateManyScoreConfigInputEnvelope
+    connect?: BonusConditionWhereUniqueInput | BonusConditionWhereUniqueInput[]
+  }
+
+  export type PenaltyConditionCreateNestedManyWithoutScoreConfigInput = {
+    create?: XOR<PenaltyConditionCreateWithoutScoreConfigInput, PenaltyConditionUncheckedCreateWithoutScoreConfigInput> | PenaltyConditionCreateWithoutScoreConfigInput[] | PenaltyConditionUncheckedCreateWithoutScoreConfigInput[]
+    connectOrCreate?: PenaltyConditionCreateOrConnectWithoutScoreConfigInput | PenaltyConditionCreateOrConnectWithoutScoreConfigInput[]
+    createMany?: PenaltyConditionCreateManyScoreConfigInputEnvelope
+    connect?: PenaltyConditionWhereUniqueInput | PenaltyConditionWhereUniqueInput[]
+  }
+
+  export type MatchScoreCreateNestedManyWithoutScoreConfigInput = {
+    create?: XOR<MatchScoreCreateWithoutScoreConfigInput, MatchScoreUncheckedCreateWithoutScoreConfigInput> | MatchScoreCreateWithoutScoreConfigInput[] | MatchScoreUncheckedCreateWithoutScoreConfigInput[]
+    connectOrCreate?: MatchScoreCreateOrConnectWithoutScoreConfigInput | MatchScoreCreateOrConnectWithoutScoreConfigInput[]
+    createMany?: MatchScoreCreateManyScoreConfigInputEnvelope
+    connect?: MatchScoreWhereUniqueInput | MatchScoreWhereUniqueInput[]
+  }
+
+  export type ScoreElementUncheckedCreateNestedManyWithoutScoreConfigInput = {
+    create?: XOR<ScoreElementCreateWithoutScoreConfigInput, ScoreElementUncheckedCreateWithoutScoreConfigInput> | ScoreElementCreateWithoutScoreConfigInput[] | ScoreElementUncheckedCreateWithoutScoreConfigInput[]
+    connectOrCreate?: ScoreElementCreateOrConnectWithoutScoreConfigInput | ScoreElementCreateOrConnectWithoutScoreConfigInput[]
+    createMany?: ScoreElementCreateManyScoreConfigInputEnvelope
+    connect?: ScoreElementWhereUniqueInput | ScoreElementWhereUniqueInput[]
+  }
+
+  export type BonusConditionUncheckedCreateNestedManyWithoutScoreConfigInput = {
+    create?: XOR<BonusConditionCreateWithoutScoreConfigInput, BonusConditionUncheckedCreateWithoutScoreConfigInput> | BonusConditionCreateWithoutScoreConfigInput[] | BonusConditionUncheckedCreateWithoutScoreConfigInput[]
+    connectOrCreate?: BonusConditionCreateOrConnectWithoutScoreConfigInput | BonusConditionCreateOrConnectWithoutScoreConfigInput[]
+    createMany?: BonusConditionCreateManyScoreConfigInputEnvelope
+    connect?: BonusConditionWhereUniqueInput | BonusConditionWhereUniqueInput[]
+  }
+
+  export type PenaltyConditionUncheckedCreateNestedManyWithoutScoreConfigInput = {
+    create?: XOR<PenaltyConditionCreateWithoutScoreConfigInput, PenaltyConditionUncheckedCreateWithoutScoreConfigInput> | PenaltyConditionCreateWithoutScoreConfigInput[] | PenaltyConditionUncheckedCreateWithoutScoreConfigInput[]
+    connectOrCreate?: PenaltyConditionCreateOrConnectWithoutScoreConfigInput | PenaltyConditionCreateOrConnectWithoutScoreConfigInput[]
+    createMany?: PenaltyConditionCreateManyScoreConfigInputEnvelope
+    connect?: PenaltyConditionWhereUniqueInput | PenaltyConditionWhereUniqueInput[]
+  }
+
+  export type MatchScoreUncheckedCreateNestedManyWithoutScoreConfigInput = {
+    create?: XOR<MatchScoreCreateWithoutScoreConfigInput, MatchScoreUncheckedCreateWithoutScoreConfigInput> | MatchScoreCreateWithoutScoreConfigInput[] | MatchScoreUncheckedCreateWithoutScoreConfigInput[]
+    connectOrCreate?: MatchScoreCreateOrConnectWithoutScoreConfigInput | MatchScoreCreateOrConnectWithoutScoreConfigInput[]
+    createMany?: MatchScoreCreateManyScoreConfigInputEnvelope
+    connect?: MatchScoreWhereUniqueInput | MatchScoreWhereUniqueInput[]
+  }
+
+  export type TournamentUpdateOneRequiredWithoutScoreConfigsNestedInput = {
+    create?: XOR<TournamentCreateWithoutScoreConfigsInput, TournamentUncheckedCreateWithoutScoreConfigsInput>
+    connectOrCreate?: TournamentCreateOrConnectWithoutScoreConfigsInput
+    upsert?: TournamentUpsertWithoutScoreConfigsInput
+    connect?: TournamentWhereUniqueInput
+    update?: XOR<XOR<TournamentUpdateToOneWithWhereWithoutScoreConfigsInput, TournamentUpdateWithoutScoreConfigsInput>, TournamentUncheckedUpdateWithoutScoreConfigsInput>
+  }
+
+  export type ScoreElementUpdateManyWithoutScoreConfigNestedInput = {
+    create?: XOR<ScoreElementCreateWithoutScoreConfigInput, ScoreElementUncheckedCreateWithoutScoreConfigInput> | ScoreElementCreateWithoutScoreConfigInput[] | ScoreElementUncheckedCreateWithoutScoreConfigInput[]
+    connectOrCreate?: ScoreElementCreateOrConnectWithoutScoreConfigInput | ScoreElementCreateOrConnectWithoutScoreConfigInput[]
+    upsert?: ScoreElementUpsertWithWhereUniqueWithoutScoreConfigInput | ScoreElementUpsertWithWhereUniqueWithoutScoreConfigInput[]
+    createMany?: ScoreElementCreateManyScoreConfigInputEnvelope
+    set?: ScoreElementWhereUniqueInput | ScoreElementWhereUniqueInput[]
+    disconnect?: ScoreElementWhereUniqueInput | ScoreElementWhereUniqueInput[]
+    delete?: ScoreElementWhereUniqueInput | ScoreElementWhereUniqueInput[]
+    connect?: ScoreElementWhereUniqueInput | ScoreElementWhereUniqueInput[]
+    update?: ScoreElementUpdateWithWhereUniqueWithoutScoreConfigInput | ScoreElementUpdateWithWhereUniqueWithoutScoreConfigInput[]
+    updateMany?: ScoreElementUpdateManyWithWhereWithoutScoreConfigInput | ScoreElementUpdateManyWithWhereWithoutScoreConfigInput[]
+    deleteMany?: ScoreElementScalarWhereInput | ScoreElementScalarWhereInput[]
+  }
+
+  export type BonusConditionUpdateManyWithoutScoreConfigNestedInput = {
+    create?: XOR<BonusConditionCreateWithoutScoreConfigInput, BonusConditionUncheckedCreateWithoutScoreConfigInput> | BonusConditionCreateWithoutScoreConfigInput[] | BonusConditionUncheckedCreateWithoutScoreConfigInput[]
+    connectOrCreate?: BonusConditionCreateOrConnectWithoutScoreConfigInput | BonusConditionCreateOrConnectWithoutScoreConfigInput[]
+    upsert?: BonusConditionUpsertWithWhereUniqueWithoutScoreConfigInput | BonusConditionUpsertWithWhereUniqueWithoutScoreConfigInput[]
+    createMany?: BonusConditionCreateManyScoreConfigInputEnvelope
+    set?: BonusConditionWhereUniqueInput | BonusConditionWhereUniqueInput[]
+    disconnect?: BonusConditionWhereUniqueInput | BonusConditionWhereUniqueInput[]
+    delete?: BonusConditionWhereUniqueInput | BonusConditionWhereUniqueInput[]
+    connect?: BonusConditionWhereUniqueInput | BonusConditionWhereUniqueInput[]
+    update?: BonusConditionUpdateWithWhereUniqueWithoutScoreConfigInput | BonusConditionUpdateWithWhereUniqueWithoutScoreConfigInput[]
+    updateMany?: BonusConditionUpdateManyWithWhereWithoutScoreConfigInput | BonusConditionUpdateManyWithWhereWithoutScoreConfigInput[]
+    deleteMany?: BonusConditionScalarWhereInput | BonusConditionScalarWhereInput[]
+  }
+
+  export type PenaltyConditionUpdateManyWithoutScoreConfigNestedInput = {
+    create?: XOR<PenaltyConditionCreateWithoutScoreConfigInput, PenaltyConditionUncheckedCreateWithoutScoreConfigInput> | PenaltyConditionCreateWithoutScoreConfigInput[] | PenaltyConditionUncheckedCreateWithoutScoreConfigInput[]
+    connectOrCreate?: PenaltyConditionCreateOrConnectWithoutScoreConfigInput | PenaltyConditionCreateOrConnectWithoutScoreConfigInput[]
+    upsert?: PenaltyConditionUpsertWithWhereUniqueWithoutScoreConfigInput | PenaltyConditionUpsertWithWhereUniqueWithoutScoreConfigInput[]
+    createMany?: PenaltyConditionCreateManyScoreConfigInputEnvelope
+    set?: PenaltyConditionWhereUniqueInput | PenaltyConditionWhereUniqueInput[]
+    disconnect?: PenaltyConditionWhereUniqueInput | PenaltyConditionWhereUniqueInput[]
+    delete?: PenaltyConditionWhereUniqueInput | PenaltyConditionWhereUniqueInput[]
+    connect?: PenaltyConditionWhereUniqueInput | PenaltyConditionWhereUniqueInput[]
+    update?: PenaltyConditionUpdateWithWhereUniqueWithoutScoreConfigInput | PenaltyConditionUpdateWithWhereUniqueWithoutScoreConfigInput[]
+    updateMany?: PenaltyConditionUpdateManyWithWhereWithoutScoreConfigInput | PenaltyConditionUpdateManyWithWhereWithoutScoreConfigInput[]
+    deleteMany?: PenaltyConditionScalarWhereInput | PenaltyConditionScalarWhereInput[]
+  }
+
+  export type MatchScoreUpdateManyWithoutScoreConfigNestedInput = {
+    create?: XOR<MatchScoreCreateWithoutScoreConfigInput, MatchScoreUncheckedCreateWithoutScoreConfigInput> | MatchScoreCreateWithoutScoreConfigInput[] | MatchScoreUncheckedCreateWithoutScoreConfigInput[]
+    connectOrCreate?: MatchScoreCreateOrConnectWithoutScoreConfigInput | MatchScoreCreateOrConnectWithoutScoreConfigInput[]
+    upsert?: MatchScoreUpsertWithWhereUniqueWithoutScoreConfigInput | MatchScoreUpsertWithWhereUniqueWithoutScoreConfigInput[]
+    createMany?: MatchScoreCreateManyScoreConfigInputEnvelope
+    set?: MatchScoreWhereUniqueInput | MatchScoreWhereUniqueInput[]
+    disconnect?: MatchScoreWhereUniqueInput | MatchScoreWhereUniqueInput[]
+    delete?: MatchScoreWhereUniqueInput | MatchScoreWhereUniqueInput[]
+    connect?: MatchScoreWhereUniqueInput | MatchScoreWhereUniqueInput[]
+    update?: MatchScoreUpdateWithWhereUniqueWithoutScoreConfigInput | MatchScoreUpdateWithWhereUniqueWithoutScoreConfigInput[]
+    updateMany?: MatchScoreUpdateManyWithWhereWithoutScoreConfigInput | MatchScoreUpdateManyWithWhereWithoutScoreConfigInput[]
+    deleteMany?: MatchScoreScalarWhereInput | MatchScoreScalarWhereInput[]
+  }
+
+  export type ScoreElementUncheckedUpdateManyWithoutScoreConfigNestedInput = {
+    create?: XOR<ScoreElementCreateWithoutScoreConfigInput, ScoreElementUncheckedCreateWithoutScoreConfigInput> | ScoreElementCreateWithoutScoreConfigInput[] | ScoreElementUncheckedCreateWithoutScoreConfigInput[]
+    connectOrCreate?: ScoreElementCreateOrConnectWithoutScoreConfigInput | ScoreElementCreateOrConnectWithoutScoreConfigInput[]
+    upsert?: ScoreElementUpsertWithWhereUniqueWithoutScoreConfigInput | ScoreElementUpsertWithWhereUniqueWithoutScoreConfigInput[]
+    createMany?: ScoreElementCreateManyScoreConfigInputEnvelope
+    set?: ScoreElementWhereUniqueInput | ScoreElementWhereUniqueInput[]
+    disconnect?: ScoreElementWhereUniqueInput | ScoreElementWhereUniqueInput[]
+    delete?: ScoreElementWhereUniqueInput | ScoreElementWhereUniqueInput[]
+    connect?: ScoreElementWhereUniqueInput | ScoreElementWhereUniqueInput[]
+    update?: ScoreElementUpdateWithWhereUniqueWithoutScoreConfigInput | ScoreElementUpdateWithWhereUniqueWithoutScoreConfigInput[]
+    updateMany?: ScoreElementUpdateManyWithWhereWithoutScoreConfigInput | ScoreElementUpdateManyWithWhereWithoutScoreConfigInput[]
+    deleteMany?: ScoreElementScalarWhereInput | ScoreElementScalarWhereInput[]
+  }
+
+  export type BonusConditionUncheckedUpdateManyWithoutScoreConfigNestedInput = {
+    create?: XOR<BonusConditionCreateWithoutScoreConfigInput, BonusConditionUncheckedCreateWithoutScoreConfigInput> | BonusConditionCreateWithoutScoreConfigInput[] | BonusConditionUncheckedCreateWithoutScoreConfigInput[]
+    connectOrCreate?: BonusConditionCreateOrConnectWithoutScoreConfigInput | BonusConditionCreateOrConnectWithoutScoreConfigInput[]
+    upsert?: BonusConditionUpsertWithWhereUniqueWithoutScoreConfigInput | BonusConditionUpsertWithWhereUniqueWithoutScoreConfigInput[]
+    createMany?: BonusConditionCreateManyScoreConfigInputEnvelope
+    set?: BonusConditionWhereUniqueInput | BonusConditionWhereUniqueInput[]
+    disconnect?: BonusConditionWhereUniqueInput | BonusConditionWhereUniqueInput[]
+    delete?: BonusConditionWhereUniqueInput | BonusConditionWhereUniqueInput[]
+    connect?: BonusConditionWhereUniqueInput | BonusConditionWhereUniqueInput[]
+    update?: BonusConditionUpdateWithWhereUniqueWithoutScoreConfigInput | BonusConditionUpdateWithWhereUniqueWithoutScoreConfigInput[]
+    updateMany?: BonusConditionUpdateManyWithWhereWithoutScoreConfigInput | BonusConditionUpdateManyWithWhereWithoutScoreConfigInput[]
+    deleteMany?: BonusConditionScalarWhereInput | BonusConditionScalarWhereInput[]
+  }
+
+  export type PenaltyConditionUncheckedUpdateManyWithoutScoreConfigNestedInput = {
+    create?: XOR<PenaltyConditionCreateWithoutScoreConfigInput, PenaltyConditionUncheckedCreateWithoutScoreConfigInput> | PenaltyConditionCreateWithoutScoreConfigInput[] | PenaltyConditionUncheckedCreateWithoutScoreConfigInput[]
+    connectOrCreate?: PenaltyConditionCreateOrConnectWithoutScoreConfigInput | PenaltyConditionCreateOrConnectWithoutScoreConfigInput[]
+    upsert?: PenaltyConditionUpsertWithWhereUniqueWithoutScoreConfigInput | PenaltyConditionUpsertWithWhereUniqueWithoutScoreConfigInput[]
+    createMany?: PenaltyConditionCreateManyScoreConfigInputEnvelope
+    set?: PenaltyConditionWhereUniqueInput | PenaltyConditionWhereUniqueInput[]
+    disconnect?: PenaltyConditionWhereUniqueInput | PenaltyConditionWhereUniqueInput[]
+    delete?: PenaltyConditionWhereUniqueInput | PenaltyConditionWhereUniqueInput[]
+    connect?: PenaltyConditionWhereUniqueInput | PenaltyConditionWhereUniqueInput[]
+    update?: PenaltyConditionUpdateWithWhereUniqueWithoutScoreConfigInput | PenaltyConditionUpdateWithWhereUniqueWithoutScoreConfigInput[]
+    updateMany?: PenaltyConditionUpdateManyWithWhereWithoutScoreConfigInput | PenaltyConditionUpdateManyWithWhereWithoutScoreConfigInput[]
+    deleteMany?: PenaltyConditionScalarWhereInput | PenaltyConditionScalarWhereInput[]
+  }
+
+  export type MatchScoreUncheckedUpdateManyWithoutScoreConfigNestedInput = {
+    create?: XOR<MatchScoreCreateWithoutScoreConfigInput, MatchScoreUncheckedCreateWithoutScoreConfigInput> | MatchScoreCreateWithoutScoreConfigInput[] | MatchScoreUncheckedCreateWithoutScoreConfigInput[]
+    connectOrCreate?: MatchScoreCreateOrConnectWithoutScoreConfigInput | MatchScoreCreateOrConnectWithoutScoreConfigInput[]
+    upsert?: MatchScoreUpsertWithWhereUniqueWithoutScoreConfigInput | MatchScoreUpsertWithWhereUniqueWithoutScoreConfigInput[]
+    createMany?: MatchScoreCreateManyScoreConfigInputEnvelope
+    set?: MatchScoreWhereUniqueInput | MatchScoreWhereUniqueInput[]
+    disconnect?: MatchScoreWhereUniqueInput | MatchScoreWhereUniqueInput[]
+    delete?: MatchScoreWhereUniqueInput | MatchScoreWhereUniqueInput[]
+    connect?: MatchScoreWhereUniqueInput | MatchScoreWhereUniqueInput[]
+    update?: MatchScoreUpdateWithWhereUniqueWithoutScoreConfigInput | MatchScoreUpdateWithWhereUniqueWithoutScoreConfigInput[]
+    updateMany?: MatchScoreUpdateManyWithWhereWithoutScoreConfigInput | MatchScoreUpdateManyWithWhereWithoutScoreConfigInput[]
+    deleteMany?: MatchScoreScalarWhereInput | MatchScoreScalarWhereInput[]
+  }
+
+  export type ScoreConfigCreateNestedOneWithoutScoreElementsInput = {
+    create?: XOR<ScoreConfigCreateWithoutScoreElementsInput, ScoreConfigUncheckedCreateWithoutScoreElementsInput>
+    connectOrCreate?: ScoreConfigCreateOrConnectWithoutScoreElementsInput
+    connect?: ScoreConfigWhereUniqueInput
+  }
+
+  export type ScoreConfigUpdateOneRequiredWithoutScoreElementsNestedInput = {
+    create?: XOR<ScoreConfigCreateWithoutScoreElementsInput, ScoreConfigUncheckedCreateWithoutScoreElementsInput>
+    connectOrCreate?: ScoreConfigCreateOrConnectWithoutScoreElementsInput
+    upsert?: ScoreConfigUpsertWithoutScoreElementsInput
+    connect?: ScoreConfigWhereUniqueInput
+    update?: XOR<XOR<ScoreConfigUpdateToOneWithWhereWithoutScoreElementsInput, ScoreConfigUpdateWithoutScoreElementsInput>, ScoreConfigUncheckedUpdateWithoutScoreElementsInput>
+  }
+
+  export type ScoreConfigCreateNestedOneWithoutBonusConditionsInput = {
+    create?: XOR<ScoreConfigCreateWithoutBonusConditionsInput, ScoreConfigUncheckedCreateWithoutBonusConditionsInput>
+    connectOrCreate?: ScoreConfigCreateOrConnectWithoutBonusConditionsInput
+    connect?: ScoreConfigWhereUniqueInput
+  }
+
+  export type ScoreConfigUpdateOneRequiredWithoutBonusConditionsNestedInput = {
+    create?: XOR<ScoreConfigCreateWithoutBonusConditionsInput, ScoreConfigUncheckedCreateWithoutBonusConditionsInput>
+    connectOrCreate?: ScoreConfigCreateOrConnectWithoutBonusConditionsInput
+    upsert?: ScoreConfigUpsertWithoutBonusConditionsInput
+    connect?: ScoreConfigWhereUniqueInput
+    update?: XOR<XOR<ScoreConfigUpdateToOneWithWhereWithoutBonusConditionsInput, ScoreConfigUpdateWithoutBonusConditionsInput>, ScoreConfigUncheckedUpdateWithoutBonusConditionsInput>
+  }
+
+  export type ScoreConfigCreateNestedOneWithoutPenaltyConditionsInput = {
+    create?: XOR<ScoreConfigCreateWithoutPenaltyConditionsInput, ScoreConfigUncheckedCreateWithoutPenaltyConditionsInput>
+    connectOrCreate?: ScoreConfigCreateOrConnectWithoutPenaltyConditionsInput
+    connect?: ScoreConfigWhereUniqueInput
+  }
+
+  export type ScoreConfigUpdateOneRequiredWithoutPenaltyConditionsNestedInput = {
+    create?: XOR<ScoreConfigCreateWithoutPenaltyConditionsInput, ScoreConfigUncheckedCreateWithoutPenaltyConditionsInput>
+    connectOrCreate?: ScoreConfigCreateOrConnectWithoutPenaltyConditionsInput
+    upsert?: ScoreConfigUpsertWithoutPenaltyConditionsInput
+    connect?: ScoreConfigWhereUniqueInput
+    update?: XOR<XOR<ScoreConfigUpdateToOneWithWhereWithoutPenaltyConditionsInput, ScoreConfigUpdateWithoutPenaltyConditionsInput>, ScoreConfigUncheckedUpdateWithoutPenaltyConditionsInput>
+  }
+
+  export type MatchScoreCreatebonusesEarnedInput = {
+    set: string[]
+  }
+
+  export type MatchScoreCreatepenaltiesIncurredInput = {
+    set: string[]
+  }
+
+  export type MatchCreateNestedOneWithoutMatchScoreRecordsInput = {
+    create?: XOR<MatchCreateWithoutMatchScoreRecordsInput, MatchUncheckedCreateWithoutMatchScoreRecordsInput>
+    connectOrCreate?: MatchCreateOrConnectWithoutMatchScoreRecordsInput
+    connect?: MatchWhereUniqueInput
+  }
+
+  export type AllianceCreateNestedOneWithoutMatchScoresInput = {
+    create?: XOR<AllianceCreateWithoutMatchScoresInput, AllianceUncheckedCreateWithoutMatchScoresInput>
+    connectOrCreate?: AllianceCreateOrConnectWithoutMatchScoresInput
+    connect?: AllianceWhereUniqueInput
+  }
+
+  export type ScoreConfigCreateNestedOneWithoutMatchScoresInput = {
+    create?: XOR<ScoreConfigCreateWithoutMatchScoresInput, ScoreConfigUncheckedCreateWithoutMatchScoresInput>
+    connectOrCreate?: ScoreConfigCreateOrConnectWithoutMatchScoresInput
+    connect?: ScoreConfigWhereUniqueInput
+  }
+
+  export type MatchScoreUpdatebonusesEarnedInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type MatchScoreUpdatepenaltiesIncurredInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type MatchUpdateOneRequiredWithoutMatchScoreRecordsNestedInput = {
+    create?: XOR<MatchCreateWithoutMatchScoreRecordsInput, MatchUncheckedCreateWithoutMatchScoreRecordsInput>
+    connectOrCreate?: MatchCreateOrConnectWithoutMatchScoreRecordsInput
+    upsert?: MatchUpsertWithoutMatchScoreRecordsInput
+    connect?: MatchWhereUniqueInput
+    update?: XOR<XOR<MatchUpdateToOneWithWhereWithoutMatchScoreRecordsInput, MatchUpdateWithoutMatchScoreRecordsInput>, MatchUncheckedUpdateWithoutMatchScoreRecordsInput>
+  }
+
+  export type AllianceUpdateOneRequiredWithoutMatchScoresNestedInput = {
+    create?: XOR<AllianceCreateWithoutMatchScoresInput, AllianceUncheckedCreateWithoutMatchScoresInput>
+    connectOrCreate?: AllianceCreateOrConnectWithoutMatchScoresInput
+    upsert?: AllianceUpsertWithoutMatchScoresInput
+    connect?: AllianceWhereUniqueInput
+    update?: XOR<XOR<AllianceUpdateToOneWithWhereWithoutMatchScoresInput, AllianceUpdateWithoutMatchScoresInput>, AllianceUncheckedUpdateWithoutMatchScoresInput>
+  }
+
+  export type ScoreConfigUpdateOneRequiredWithoutMatchScoresNestedInput = {
+    create?: XOR<ScoreConfigCreateWithoutMatchScoresInput, ScoreConfigUncheckedCreateWithoutMatchScoresInput>
+    connectOrCreate?: ScoreConfigCreateOrConnectWithoutMatchScoresInput
+    upsert?: ScoreConfigUpsertWithoutMatchScoresInput
+    connect?: ScoreConfigWhereUniqueInput
+    update?: XOR<XOR<ScoreConfigUpdateToOneWithWhereWithoutMatchScoresInput, ScoreConfigUpdateWithoutMatchScoresInput>, ScoreConfigUncheckedUpdateWithoutMatchScoresInput>
+  }
+
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -30355,6 +38474,29 @@ export namespace Prisma {
     _min?: NestedEnumDisplayStateFilter<$PrismaModel>
     _max?: NestedEnumDisplayStateFilter<$PrismaModel>
   }
+  export type NestedJsonFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<NestedJsonFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonFilterBase<$PrismaModel>>, 'path'>>,
+        Required<NestedJsonFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<NestedJsonFilterBase<$PrismaModel>>, 'path'>>
+
+  export type NestedJsonFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
 
   export type UserCreateWithoutCreatedUsersInput = {
     id?: string
@@ -30456,6 +38598,7 @@ export namespace Prisma {
     teams?: TeamCreateNestedManyWithoutTournamentInput
     teamStats?: TeamStatsCreateNestedManyWithoutTournamentInput
     fields?: FieldCreateNestedManyWithoutTournamentInput
+    scoreConfigs?: ScoreConfigCreateNestedManyWithoutTournamentInput
   }
 
   export type TournamentUncheckedCreateWithoutAdminInput = {
@@ -30471,6 +38614,7 @@ export namespace Prisma {
     teams?: TeamUncheckedCreateNestedManyWithoutTournamentInput
     teamStats?: TeamStatsUncheckedCreateNestedManyWithoutTournamentInput
     fields?: FieldUncheckedCreateNestedManyWithoutTournamentInput
+    scoreConfigs?: ScoreConfigUncheckedCreateNestedManyWithoutTournamentInput
   }
 
   export type TournamentCreateOrConnectWithoutAdminInput = {
@@ -30506,6 +38650,7 @@ export namespace Prisma {
     matchControl?: MatchControlCreateNestedOneWithoutMatchInput
     schedule?: ScheduleCreateNestedOneWithoutMatchesInput
     field?: FieldCreateNestedOneWithoutMatchesInput
+    matchScoreRecords?: MatchScoreCreateNestedManyWithoutMatchInput
   }
 
   export type MatchUncheckedCreateWithoutScoredByInput = {
@@ -30531,6 +38676,7 @@ export namespace Prisma {
     referees?: MatchRefereeUncheckedCreateNestedManyWithoutMatchInput
     matchScores?: MatchScoresUncheckedCreateNestedOneWithoutMatchInput
     matchControl?: MatchControlUncheckedCreateNestedOneWithoutMatchInput
+    matchScoreRecords?: MatchScoreUncheckedCreateNestedManyWithoutMatchInput
   }
 
   export type MatchCreateOrConnectWithoutScoredByInput = {
@@ -31013,6 +39159,40 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type ScoreConfigCreateWithoutTournamentInput = {
+    id?: string
+    name: string
+    description?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    scoreElements?: ScoreElementCreateNestedManyWithoutScoreConfigInput
+    bonusConditions?: BonusConditionCreateNestedManyWithoutScoreConfigInput
+    penaltyConditions?: PenaltyConditionCreateNestedManyWithoutScoreConfigInput
+    matchScores?: MatchScoreCreateNestedManyWithoutScoreConfigInput
+  }
+
+  export type ScoreConfigUncheckedCreateWithoutTournamentInput = {
+    id?: string
+    name: string
+    description?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    scoreElements?: ScoreElementUncheckedCreateNestedManyWithoutScoreConfigInput
+    bonusConditions?: BonusConditionUncheckedCreateNestedManyWithoutScoreConfigInput
+    penaltyConditions?: PenaltyConditionUncheckedCreateNestedManyWithoutScoreConfigInput
+    matchScores?: MatchScoreUncheckedCreateNestedManyWithoutScoreConfigInput
+  }
+
+  export type ScoreConfigCreateOrConnectWithoutTournamentInput = {
+    where: ScoreConfigWhereUniqueInput
+    create: XOR<ScoreConfigCreateWithoutTournamentInput, ScoreConfigUncheckedCreateWithoutTournamentInput>
+  }
+
+  export type ScoreConfigCreateManyTournamentInputEnvelope = {
+    data: ScoreConfigCreateManyTournamentInput | ScoreConfigCreateManyTournamentInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserUpsertWithoutTournamentsInput = {
     update: XOR<UserUpdateWithoutTournamentsInput, UserUncheckedUpdateWithoutTournamentsInput>
     create: XOR<UserCreateWithoutTournamentsInput, UserUncheckedCreateWithoutTournamentsInput>
@@ -31194,6 +39374,34 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Field"> | Date | string
   }
 
+  export type ScoreConfigUpsertWithWhereUniqueWithoutTournamentInput = {
+    where: ScoreConfigWhereUniqueInput
+    update: XOR<ScoreConfigUpdateWithoutTournamentInput, ScoreConfigUncheckedUpdateWithoutTournamentInput>
+    create: XOR<ScoreConfigCreateWithoutTournamentInput, ScoreConfigUncheckedCreateWithoutTournamentInput>
+  }
+
+  export type ScoreConfigUpdateWithWhereUniqueWithoutTournamentInput = {
+    where: ScoreConfigWhereUniqueInput
+    data: XOR<ScoreConfigUpdateWithoutTournamentInput, ScoreConfigUncheckedUpdateWithoutTournamentInput>
+  }
+
+  export type ScoreConfigUpdateManyWithWhereWithoutTournamentInput = {
+    where: ScoreConfigScalarWhereInput
+    data: XOR<ScoreConfigUpdateManyMutationInput, ScoreConfigUncheckedUpdateManyWithoutTournamentInput>
+  }
+
+  export type ScoreConfigScalarWhereInput = {
+    AND?: ScoreConfigScalarWhereInput | ScoreConfigScalarWhereInput[]
+    OR?: ScoreConfigScalarWhereInput[]
+    NOT?: ScoreConfigScalarWhereInput | ScoreConfigScalarWhereInput[]
+    id?: StringFilter<"ScoreConfig"> | string
+    tournamentId?: StringFilter<"ScoreConfig"> | string
+    name?: StringFilter<"ScoreConfig"> | string
+    description?: StringNullableFilter<"ScoreConfig"> | string | null
+    createdAt?: DateTimeFilter<"ScoreConfig"> | Date | string
+    updatedAt?: DateTimeFilter<"ScoreConfig"> | Date | string
+  }
+
   export type TournamentCreateWithoutStagesInput = {
     id?: string
     name: string
@@ -31207,6 +39415,7 @@ export namespace Prisma {
     teams?: TeamCreateNestedManyWithoutTournamentInput
     teamStats?: TeamStatsCreateNestedManyWithoutTournamentInput
     fields?: FieldCreateNestedManyWithoutTournamentInput
+    scoreConfigs?: ScoreConfigCreateNestedManyWithoutTournamentInput
   }
 
   export type TournamentUncheckedCreateWithoutStagesInput = {
@@ -31222,6 +39431,7 @@ export namespace Prisma {
     teams?: TeamUncheckedCreateNestedManyWithoutTournamentInput
     teamStats?: TeamStatsUncheckedCreateNestedManyWithoutTournamentInput
     fields?: FieldUncheckedCreateNestedManyWithoutTournamentInput
+    scoreConfigs?: ScoreConfigUncheckedCreateNestedManyWithoutTournamentInput
   }
 
   export type TournamentCreateOrConnectWithoutStagesInput = {
@@ -31252,6 +39462,7 @@ export namespace Prisma {
     matchControl?: MatchControlCreateNestedOneWithoutMatchInput
     schedule?: ScheduleCreateNestedOneWithoutMatchesInput
     field?: FieldCreateNestedOneWithoutMatchesInput
+    matchScoreRecords?: MatchScoreCreateNestedManyWithoutMatchInput
   }
 
   export type MatchUncheckedCreateWithoutStageInput = {
@@ -31277,6 +39488,7 @@ export namespace Prisma {
     referees?: MatchRefereeUncheckedCreateNestedManyWithoutMatchInput
     matchScores?: MatchScoresUncheckedCreateNestedOneWithoutMatchInput
     matchControl?: MatchControlUncheckedCreateNestedOneWithoutMatchInput
+    matchScoreRecords?: MatchScoreUncheckedCreateNestedManyWithoutMatchInput
   }
 
   export type MatchCreateOrConnectWithoutStageInput = {
@@ -31391,6 +39603,7 @@ export namespace Prisma {
     teams?: TeamUpdateManyWithoutTournamentNestedInput
     teamStats?: TeamStatsUpdateManyWithoutTournamentNestedInput
     fields?: FieldUpdateManyWithoutTournamentNestedInput
+    scoreConfigs?: ScoreConfigUpdateManyWithoutTournamentNestedInput
   }
 
   export type TournamentUncheckedUpdateWithoutStagesInput = {
@@ -31406,6 +39619,7 @@ export namespace Prisma {
     teams?: TeamUncheckedUpdateManyWithoutTournamentNestedInput
     teamStats?: TeamStatsUncheckedUpdateManyWithoutTournamentNestedInput
     fields?: FieldUncheckedUpdateManyWithoutTournamentNestedInput
+    scoreConfigs?: ScoreConfigUncheckedUpdateManyWithoutTournamentNestedInput
   }
 
   export type MatchUpsertWithWhereUniqueWithoutStageInput = {
@@ -31511,6 +39725,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     teamAlliances?: TeamAllianceCreateNestedManyWithoutAllianceInput
     allianceScoring?: AllianceScoringCreateNestedOneWithoutAllianceInput
+    matchScores?: MatchScoreCreateNestedManyWithoutAllianceInput
   }
 
   export type AllianceUncheckedCreateWithoutMatchInput = {
@@ -31521,6 +39736,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     teamAlliances?: TeamAllianceUncheckedCreateNestedManyWithoutAllianceInput
     allianceScoring?: AllianceScoringUncheckedCreateNestedOneWithoutAllianceInput
+    matchScores?: MatchScoreUncheckedCreateNestedManyWithoutAllianceInput
   }
 
   export type AllianceCreateOrConnectWithoutMatchInput = {
@@ -31726,6 +39942,42 @@ export namespace Prisma {
   export type FieldCreateOrConnectWithoutMatchesInput = {
     where: FieldWhereUniqueInput
     create: XOR<FieldCreateWithoutMatchesInput, FieldUncheckedCreateWithoutMatchesInput>
+  }
+
+  export type MatchScoreCreateWithoutMatchInput = {
+    id?: string
+    elementScores: JsonNullValueInput | InputJsonValue
+    bonusesEarned?: MatchScoreCreatebonusesEarnedInput | string[]
+    penaltiesIncurred?: MatchScoreCreatepenaltiesIncurredInput | string[]
+    calculationLog?: NullableJsonNullValueInput | InputJsonValue
+    totalScore: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    alliance: AllianceCreateNestedOneWithoutMatchScoresInput
+    scoreConfig: ScoreConfigCreateNestedOneWithoutMatchScoresInput
+  }
+
+  export type MatchScoreUncheckedCreateWithoutMatchInput = {
+    id?: string
+    allianceId: string
+    scoreConfigId: string
+    elementScores: JsonNullValueInput | InputJsonValue
+    bonusesEarned?: MatchScoreCreatebonusesEarnedInput | string[]
+    penaltiesIncurred?: MatchScoreCreatepenaltiesIncurredInput | string[]
+    calculationLog?: NullableJsonNullValueInput | InputJsonValue
+    totalScore: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MatchScoreCreateOrConnectWithoutMatchInput = {
+    where: MatchScoreWhereUniqueInput
+    create: XOR<MatchScoreCreateWithoutMatchInput, MatchScoreUncheckedCreateWithoutMatchInput>
+  }
+
+  export type MatchScoreCreateManyMatchInputEnvelope = {
+    data: MatchScoreCreateManyMatchInput | MatchScoreCreateManyMatchInput[]
+    skipDuplicates?: boolean
   }
 
   export type StageUpsertWithoutMatchesInput = {
@@ -32010,6 +40262,39 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type MatchScoreUpsertWithWhereUniqueWithoutMatchInput = {
+    where: MatchScoreWhereUniqueInput
+    update: XOR<MatchScoreUpdateWithoutMatchInput, MatchScoreUncheckedUpdateWithoutMatchInput>
+    create: XOR<MatchScoreCreateWithoutMatchInput, MatchScoreUncheckedCreateWithoutMatchInput>
+  }
+
+  export type MatchScoreUpdateWithWhereUniqueWithoutMatchInput = {
+    where: MatchScoreWhereUniqueInput
+    data: XOR<MatchScoreUpdateWithoutMatchInput, MatchScoreUncheckedUpdateWithoutMatchInput>
+  }
+
+  export type MatchScoreUpdateManyWithWhereWithoutMatchInput = {
+    where: MatchScoreScalarWhereInput
+    data: XOR<MatchScoreUpdateManyMutationInput, MatchScoreUncheckedUpdateManyWithoutMatchInput>
+  }
+
+  export type MatchScoreScalarWhereInput = {
+    AND?: MatchScoreScalarWhereInput | MatchScoreScalarWhereInput[]
+    OR?: MatchScoreScalarWhereInput[]
+    NOT?: MatchScoreScalarWhereInput | MatchScoreScalarWhereInput[]
+    id?: StringFilter<"MatchScore"> | string
+    matchId?: StringFilter<"MatchScore"> | string
+    allianceId?: StringFilter<"MatchScore"> | string
+    scoreConfigId?: StringFilter<"MatchScore"> | string
+    elementScores?: JsonFilter<"MatchScore">
+    bonusesEarned?: StringNullableListFilter<"MatchScore">
+    penaltiesIncurred?: StringNullableListFilter<"MatchScore">
+    calculationLog?: JsonNullableFilter<"MatchScore">
+    totalScore?: IntFilter<"MatchScore"> | number
+    createdAt?: DateTimeFilter<"MatchScore"> | Date | string
+    updatedAt?: DateTimeFilter<"MatchScore"> | Date | string
+  }
+
   export type MatchCreateWithoutRefereesInput = {
     id?: string
     matchNumber: number
@@ -32033,6 +40318,7 @@ export namespace Prisma {
     matchControl?: MatchControlCreateNestedOneWithoutMatchInput
     schedule?: ScheduleCreateNestedOneWithoutMatchesInput
     field?: FieldCreateNestedOneWithoutMatchesInput
+    matchScoreRecords?: MatchScoreCreateNestedManyWithoutMatchInput
   }
 
   export type MatchUncheckedCreateWithoutRefereesInput = {
@@ -32058,6 +40344,7 @@ export namespace Prisma {
     alliances?: AllianceUncheckedCreateNestedManyWithoutMatchInput
     matchScores?: MatchScoresUncheckedCreateNestedOneWithoutMatchInput
     matchControl?: MatchControlUncheckedCreateNestedOneWithoutMatchInput
+    matchScoreRecords?: MatchScoreUncheckedCreateNestedManyWithoutMatchInput
   }
 
   export type MatchCreateOrConnectWithoutRefereesInput = {
@@ -32140,6 +40427,7 @@ export namespace Prisma {
     matchControl?: MatchControlUpdateOneWithoutMatchNestedInput
     schedule?: ScheduleUpdateOneWithoutMatchesNestedInput
     field?: FieldUpdateOneWithoutMatchesNestedInput
+    matchScoreRecords?: MatchScoreUpdateManyWithoutMatchNestedInput
   }
 
   export type MatchUncheckedUpdateWithoutRefereesInput = {
@@ -32165,6 +40453,7 @@ export namespace Prisma {
     alliances?: AllianceUncheckedUpdateManyWithoutMatchNestedInput
     matchScores?: MatchScoresUncheckedUpdateOneWithoutMatchNestedInput
     matchControl?: MatchControlUncheckedUpdateOneWithoutMatchNestedInput
+    matchScoreRecords?: MatchScoreUncheckedUpdateManyWithoutMatchNestedInput
   }
 
   export type UserUpsertWithoutMatchRefereesInput = {
@@ -32237,6 +40526,7 @@ export namespace Prisma {
     matchControl?: MatchControlCreateNestedOneWithoutMatchInput
     schedule?: ScheduleCreateNestedOneWithoutMatchesInput
     field?: FieldCreateNestedOneWithoutMatchesInput
+    matchScoreRecords?: MatchScoreCreateNestedManyWithoutMatchInput
   }
 
   export type MatchUncheckedCreateWithoutAlliancesInput = {
@@ -32262,6 +40552,7 @@ export namespace Prisma {
     referees?: MatchRefereeUncheckedCreateNestedManyWithoutMatchInput
     matchScores?: MatchScoresUncheckedCreateNestedOneWithoutMatchInput
     matchControl?: MatchControlUncheckedCreateNestedOneWithoutMatchInput
+    matchScoreRecords?: MatchScoreUncheckedCreateNestedManyWithoutMatchInput
   }
 
   export type MatchCreateOrConnectWithoutAlliancesInput = {
@@ -32322,6 +40613,42 @@ export namespace Prisma {
     create: XOR<AllianceScoringCreateWithoutAllianceInput, AllianceScoringUncheckedCreateWithoutAllianceInput>
   }
 
+  export type MatchScoreCreateWithoutAllianceInput = {
+    id?: string
+    elementScores: JsonNullValueInput | InputJsonValue
+    bonusesEarned?: MatchScoreCreatebonusesEarnedInput | string[]
+    penaltiesIncurred?: MatchScoreCreatepenaltiesIncurredInput | string[]
+    calculationLog?: NullableJsonNullValueInput | InputJsonValue
+    totalScore: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    match: MatchCreateNestedOneWithoutMatchScoreRecordsInput
+    scoreConfig: ScoreConfigCreateNestedOneWithoutMatchScoresInput
+  }
+
+  export type MatchScoreUncheckedCreateWithoutAllianceInput = {
+    id?: string
+    matchId: string
+    scoreConfigId: string
+    elementScores: JsonNullValueInput | InputJsonValue
+    bonusesEarned?: MatchScoreCreatebonusesEarnedInput | string[]
+    penaltiesIncurred?: MatchScoreCreatepenaltiesIncurredInput | string[]
+    calculationLog?: NullableJsonNullValueInput | InputJsonValue
+    totalScore: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MatchScoreCreateOrConnectWithoutAllianceInput = {
+    where: MatchScoreWhereUniqueInput
+    create: XOR<MatchScoreCreateWithoutAllianceInput, MatchScoreUncheckedCreateWithoutAllianceInput>
+  }
+
+  export type MatchScoreCreateManyAllianceInputEnvelope = {
+    data: MatchScoreCreateManyAllianceInput | MatchScoreCreateManyAllianceInput[]
+    skipDuplicates?: boolean
+  }
+
   export type MatchUpsertWithoutAlliancesInput = {
     update: XOR<MatchUpdateWithoutAlliancesInput, MatchUncheckedUpdateWithoutAlliancesInput>
     create: XOR<MatchCreateWithoutAlliancesInput, MatchUncheckedCreateWithoutAlliancesInput>
@@ -32356,6 +40683,7 @@ export namespace Prisma {
     matchControl?: MatchControlUpdateOneWithoutMatchNestedInput
     schedule?: ScheduleUpdateOneWithoutMatchesNestedInput
     field?: FieldUpdateOneWithoutMatchesNestedInput
+    matchScoreRecords?: MatchScoreUpdateManyWithoutMatchNestedInput
   }
 
   export type MatchUncheckedUpdateWithoutAlliancesInput = {
@@ -32381,6 +40709,7 @@ export namespace Prisma {
     referees?: MatchRefereeUncheckedUpdateManyWithoutMatchNestedInput
     matchScores?: MatchScoresUncheckedUpdateOneWithoutMatchNestedInput
     matchControl?: MatchControlUncheckedUpdateOneWithoutMatchNestedInput
+    matchScoreRecords?: MatchScoreUncheckedUpdateManyWithoutMatchNestedInput
   }
 
   export type TeamAllianceUpsertWithWhereUniqueWithoutAllianceInput = {
@@ -32443,6 +40772,22 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type MatchScoreUpsertWithWhereUniqueWithoutAllianceInput = {
+    where: MatchScoreWhereUniqueInput
+    update: XOR<MatchScoreUpdateWithoutAllianceInput, MatchScoreUncheckedUpdateWithoutAllianceInput>
+    create: XOR<MatchScoreCreateWithoutAllianceInput, MatchScoreUncheckedCreateWithoutAllianceInput>
+  }
+
+  export type MatchScoreUpdateWithWhereUniqueWithoutAllianceInput = {
+    where: MatchScoreWhereUniqueInput
+    data: XOR<MatchScoreUpdateWithoutAllianceInput, MatchScoreUncheckedUpdateWithoutAllianceInput>
+  }
+
+  export type MatchScoreUpdateManyWithWhereWithoutAllianceInput = {
+    where: MatchScoreScalarWhereInput
+    data: XOR<MatchScoreUpdateManyMutationInput, MatchScoreUncheckedUpdateManyWithoutAllianceInput>
+  }
+
   export type AllianceCreateWithoutAllianceScoringInput = {
     id?: string
     color: string
@@ -32451,6 +40796,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     match: MatchCreateNestedOneWithoutAlliancesInput
     teamAlliances?: TeamAllianceCreateNestedManyWithoutAllianceInput
+    matchScores?: MatchScoreCreateNestedManyWithoutAllianceInput
   }
 
   export type AllianceUncheckedCreateWithoutAllianceScoringInput = {
@@ -32461,6 +40807,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     teamAlliances?: TeamAllianceUncheckedCreateNestedManyWithoutAllianceInput
+    matchScores?: MatchScoreUncheckedCreateNestedManyWithoutAllianceInput
   }
 
   export type AllianceCreateOrConnectWithoutAllianceScoringInput = {
@@ -32528,6 +40875,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     match?: MatchUpdateOneRequiredWithoutAlliancesNestedInput
     teamAlliances?: TeamAllianceUpdateManyWithoutAllianceNestedInput
+    matchScores?: MatchScoreUpdateManyWithoutAllianceNestedInput
   }
 
   export type AllianceUncheckedUpdateWithoutAllianceScoringInput = {
@@ -32538,6 +40886,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     teamAlliances?: TeamAllianceUncheckedUpdateManyWithoutAllianceNestedInput
+    matchScores?: MatchScoreUncheckedUpdateManyWithoutAllianceNestedInput
   }
 
   export type UserUpsertWithoutAllianceRefForInput = {
@@ -32600,6 +40949,7 @@ export namespace Prisma {
     stages?: StageCreateNestedManyWithoutTournamentInput
     teamStats?: TeamStatsCreateNestedManyWithoutTournamentInput
     fields?: FieldCreateNestedManyWithoutTournamentInput
+    scoreConfigs?: ScoreConfigCreateNestedManyWithoutTournamentInput
   }
 
   export type TournamentUncheckedCreateWithoutTeamsInput = {
@@ -32615,6 +40965,7 @@ export namespace Prisma {
     stages?: StageUncheckedCreateNestedManyWithoutTournamentInput
     teamStats?: TeamStatsUncheckedCreateNestedManyWithoutTournamentInput
     fields?: FieldUncheckedCreateNestedManyWithoutTournamentInput
+    scoreConfigs?: ScoreConfigUncheckedCreateNestedManyWithoutTournamentInput
   }
 
   export type TournamentCreateOrConnectWithoutTeamsInput = {
@@ -32724,6 +41075,7 @@ export namespace Prisma {
     stages?: StageUpdateManyWithoutTournamentNestedInput
     teamStats?: TeamStatsUpdateManyWithoutTournamentNestedInput
     fields?: FieldUpdateManyWithoutTournamentNestedInput
+    scoreConfigs?: ScoreConfigUpdateManyWithoutTournamentNestedInput
   }
 
   export type TournamentUncheckedUpdateWithoutTeamsInput = {
@@ -32739,6 +41091,7 @@ export namespace Prisma {
     stages?: StageUncheckedUpdateManyWithoutTournamentNestedInput
     teamStats?: TeamStatsUncheckedUpdateManyWithoutTournamentNestedInput
     fields?: FieldUncheckedUpdateManyWithoutTournamentNestedInput
+    scoreConfigs?: ScoreConfigUncheckedUpdateManyWithoutTournamentNestedInput
   }
 
   export type TeamAllianceUpsertWithWhereUniqueWithoutTeamInput = {
@@ -32814,6 +41167,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     match: MatchCreateNestedOneWithoutAlliancesInput
     allianceScoring?: AllianceScoringCreateNestedOneWithoutAllianceInput
+    matchScores?: MatchScoreCreateNestedManyWithoutAllianceInput
   }
 
   export type AllianceUncheckedCreateWithoutTeamAlliancesInput = {
@@ -32824,6 +41178,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     allianceScoring?: AllianceScoringUncheckedCreateNestedOneWithoutAllianceInput
+    matchScores?: MatchScoreUncheckedCreateNestedManyWithoutAllianceInput
   }
 
   export type AllianceCreateOrConnectWithoutTeamAlliancesInput = {
@@ -32889,6 +41244,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     match?: MatchUpdateOneRequiredWithoutAlliancesNestedInput
     allianceScoring?: AllianceScoringUpdateOneWithoutAllianceNestedInput
+    matchScores?: MatchScoreUpdateManyWithoutAllianceNestedInput
   }
 
   export type AllianceUncheckedUpdateWithoutTeamAlliancesInput = {
@@ -32899,6 +41255,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     allianceScoring?: AllianceScoringUncheckedUpdateOneWithoutAllianceNestedInput
+    matchScores?: MatchScoreUncheckedUpdateManyWithoutAllianceNestedInput
   }
 
   export type MatchCreateWithoutMatchScoresInput = {
@@ -32924,6 +41281,7 @@ export namespace Prisma {
     matchControl?: MatchControlCreateNestedOneWithoutMatchInput
     schedule?: ScheduleCreateNestedOneWithoutMatchesInput
     field?: FieldCreateNestedOneWithoutMatchesInput
+    matchScoreRecords?: MatchScoreCreateNestedManyWithoutMatchInput
   }
 
   export type MatchUncheckedCreateWithoutMatchScoresInput = {
@@ -32949,6 +41307,7 @@ export namespace Prisma {
     alliances?: AllianceUncheckedCreateNestedManyWithoutMatchInput
     referees?: MatchRefereeUncheckedCreateNestedManyWithoutMatchInput
     matchControl?: MatchControlUncheckedCreateNestedOneWithoutMatchInput
+    matchScoreRecords?: MatchScoreUncheckedCreateNestedManyWithoutMatchInput
   }
 
   export type MatchCreateOrConnectWithoutMatchScoresInput = {
@@ -32990,6 +41349,7 @@ export namespace Prisma {
     matchControl?: MatchControlUpdateOneWithoutMatchNestedInput
     schedule?: ScheduleUpdateOneWithoutMatchesNestedInput
     field?: FieldUpdateOneWithoutMatchesNestedInput
+    matchScoreRecords?: MatchScoreUpdateManyWithoutMatchNestedInput
   }
 
   export type MatchUncheckedUpdateWithoutMatchScoresInput = {
@@ -33015,6 +41375,7 @@ export namespace Prisma {
     alliances?: AllianceUncheckedUpdateManyWithoutMatchNestedInput
     referees?: MatchRefereeUncheckedUpdateManyWithoutMatchNestedInput
     matchControl?: MatchControlUncheckedUpdateOneWithoutMatchNestedInput
+    matchScoreRecords?: MatchScoreUncheckedUpdateManyWithoutMatchNestedInput
   }
 
   export type TeamCreateWithoutTeamStatsInput = {
@@ -33063,6 +41424,7 @@ export namespace Prisma {
     stages?: StageCreateNestedManyWithoutTournamentInput
     teams?: TeamCreateNestedManyWithoutTournamentInput
     fields?: FieldCreateNestedManyWithoutTournamentInput
+    scoreConfigs?: ScoreConfigCreateNestedManyWithoutTournamentInput
   }
 
   export type TournamentUncheckedCreateWithoutTeamStatsInput = {
@@ -33078,6 +41440,7 @@ export namespace Prisma {
     stages?: StageUncheckedCreateNestedManyWithoutTournamentInput
     teams?: TeamUncheckedCreateNestedManyWithoutTournamentInput
     fields?: FieldUncheckedCreateNestedManyWithoutTournamentInput
+    scoreConfigs?: ScoreConfigUncheckedCreateNestedManyWithoutTournamentInput
   }
 
   export type TournamentCreateOrConnectWithoutTeamStatsInput = {
@@ -33183,6 +41546,7 @@ export namespace Prisma {
     stages?: StageUpdateManyWithoutTournamentNestedInput
     teams?: TeamUpdateManyWithoutTournamentNestedInput
     fields?: FieldUpdateManyWithoutTournamentNestedInput
+    scoreConfigs?: ScoreConfigUpdateManyWithoutTournamentNestedInput
   }
 
   export type TournamentUncheckedUpdateWithoutTeamStatsInput = {
@@ -33198,6 +41562,7 @@ export namespace Prisma {
     stages?: StageUncheckedUpdateManyWithoutTournamentNestedInput
     teams?: TeamUncheckedUpdateManyWithoutTournamentNestedInput
     fields?: FieldUncheckedUpdateManyWithoutTournamentNestedInput
+    scoreConfigs?: ScoreConfigUncheckedUpdateManyWithoutTournamentNestedInput
   }
 
   export type StageUpsertWithoutTeamStatsInput = {
@@ -33299,6 +41664,7 @@ export namespace Prisma {
     matchScores?: MatchScoresCreateNestedOneWithoutMatchInput
     matchControl?: MatchControlCreateNestedOneWithoutMatchInput
     field?: FieldCreateNestedOneWithoutMatchesInput
+    matchScoreRecords?: MatchScoreCreateNestedManyWithoutMatchInput
   }
 
   export type MatchUncheckedCreateWithoutScheduleInput = {
@@ -33324,6 +41690,7 @@ export namespace Prisma {
     referees?: MatchRefereeUncheckedCreateNestedManyWithoutMatchInput
     matchScores?: MatchScoresUncheckedCreateNestedOneWithoutMatchInput
     matchControl?: MatchControlUncheckedCreateNestedOneWithoutMatchInput
+    matchScoreRecords?: MatchScoreUncheckedCreateNestedManyWithoutMatchInput
   }
 
   export type MatchCreateOrConnectWithoutScheduleInput = {
@@ -33406,6 +41773,7 @@ export namespace Prisma {
     stages?: StageCreateNestedManyWithoutTournamentInput
     teams?: TeamCreateNestedManyWithoutTournamentInput
     teamStats?: TeamStatsCreateNestedManyWithoutTournamentInput
+    scoreConfigs?: ScoreConfigCreateNestedManyWithoutTournamentInput
   }
 
   export type TournamentUncheckedCreateWithoutFieldsInput = {
@@ -33421,6 +41789,7 @@ export namespace Prisma {
     stages?: StageUncheckedCreateNestedManyWithoutTournamentInput
     teams?: TeamUncheckedCreateNestedManyWithoutTournamentInput
     teamStats?: TeamStatsUncheckedCreateNestedManyWithoutTournamentInput
+    scoreConfigs?: ScoreConfigUncheckedCreateNestedManyWithoutTournamentInput
   }
 
   export type TournamentCreateOrConnectWithoutFieldsInput = {
@@ -33451,6 +41820,7 @@ export namespace Prisma {
     matchScores?: MatchScoresCreateNestedOneWithoutMatchInput
     matchControl?: MatchControlCreateNestedOneWithoutMatchInput
     schedule?: ScheduleCreateNestedOneWithoutMatchesInput
+    matchScoreRecords?: MatchScoreCreateNestedManyWithoutMatchInput
   }
 
   export type MatchUncheckedCreateWithoutFieldInput = {
@@ -33476,6 +41846,7 @@ export namespace Prisma {
     referees?: MatchRefereeUncheckedCreateNestedManyWithoutMatchInput
     matchScores?: MatchScoresUncheckedCreateNestedOneWithoutMatchInput
     matchControl?: MatchControlUncheckedCreateNestedOneWithoutMatchInput
+    matchScoreRecords?: MatchScoreUncheckedCreateNestedManyWithoutMatchInput
   }
 
   export type MatchCreateOrConnectWithoutFieldInput = {
@@ -33512,6 +41883,7 @@ export namespace Prisma {
     stages?: StageUpdateManyWithoutTournamentNestedInput
     teams?: TeamUpdateManyWithoutTournamentNestedInput
     teamStats?: TeamStatsUpdateManyWithoutTournamentNestedInput
+    scoreConfigs?: ScoreConfigUpdateManyWithoutTournamentNestedInput
   }
 
   export type TournamentUncheckedUpdateWithoutFieldsInput = {
@@ -33527,6 +41899,7 @@ export namespace Prisma {
     stages?: StageUncheckedUpdateManyWithoutTournamentNestedInput
     teams?: TeamUncheckedUpdateManyWithoutTournamentNestedInput
     teamStats?: TeamStatsUncheckedUpdateManyWithoutTournamentNestedInput
+    scoreConfigs?: ScoreConfigUncheckedUpdateManyWithoutTournamentNestedInput
   }
 
   export type MatchUpsertWithWhereUniqueWithoutFieldInput = {
@@ -33568,6 +41941,7 @@ export namespace Prisma {
     matchScores?: MatchScoresCreateNestedOneWithoutMatchInput
     schedule?: ScheduleCreateNestedOneWithoutMatchesInput
     field?: FieldCreateNestedOneWithoutMatchesInput
+    matchScoreRecords?: MatchScoreCreateNestedManyWithoutMatchInput
   }
 
   export type MatchUncheckedCreateWithoutMatchControlInput = {
@@ -33593,6 +41967,7 @@ export namespace Prisma {
     alliances?: AllianceUncheckedCreateNestedManyWithoutMatchInput
     referees?: MatchRefereeUncheckedCreateNestedManyWithoutMatchInput
     matchScores?: MatchScoresUncheckedCreateNestedOneWithoutMatchInput
+    matchScoreRecords?: MatchScoreUncheckedCreateNestedManyWithoutMatchInput
   }
 
   export type MatchCreateOrConnectWithoutMatchControlInput = {
@@ -33735,6 +42110,7 @@ export namespace Prisma {
     matchScores?: MatchScoresUpdateOneWithoutMatchNestedInput
     schedule?: ScheduleUpdateOneWithoutMatchesNestedInput
     field?: FieldUpdateOneWithoutMatchesNestedInput
+    matchScoreRecords?: MatchScoreUpdateManyWithoutMatchNestedInput
   }
 
   export type MatchUncheckedUpdateWithoutMatchControlInput = {
@@ -33760,6 +42136,7 @@ export namespace Prisma {
     alliances?: AllianceUncheckedUpdateManyWithoutMatchNestedInput
     referees?: MatchRefereeUncheckedUpdateManyWithoutMatchNestedInput
     matchScores?: MatchScoresUncheckedUpdateOneWithoutMatchNestedInput
+    matchScoreRecords?: MatchScoreUncheckedUpdateManyWithoutMatchNestedInput
   }
 
   export type MatchTimerUpsertWithWhereUniqueWithoutMatchControlInput = {
@@ -34076,6 +42453,766 @@ export namespace Prisma {
     matchErrors?: MatchErrorUncheckedUpdateManyWithoutMatchControlNestedInput
   }
 
+  export type TournamentCreateWithoutScoreConfigsInput = {
+    id?: string
+    name: string
+    description?: string | null
+    startDate: Date | string
+    endDate: Date | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    numberOfFields?: number
+    admin: UserCreateNestedOneWithoutTournamentsInput
+    stages?: StageCreateNestedManyWithoutTournamentInput
+    teams?: TeamCreateNestedManyWithoutTournamentInput
+    teamStats?: TeamStatsCreateNestedManyWithoutTournamentInput
+    fields?: FieldCreateNestedManyWithoutTournamentInput
+  }
+
+  export type TournamentUncheckedCreateWithoutScoreConfigsInput = {
+    id?: string
+    name: string
+    description?: string | null
+    startDate: Date | string
+    endDate: Date | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    adminId: string
+    numberOfFields?: number
+    stages?: StageUncheckedCreateNestedManyWithoutTournamentInput
+    teams?: TeamUncheckedCreateNestedManyWithoutTournamentInput
+    teamStats?: TeamStatsUncheckedCreateNestedManyWithoutTournamentInput
+    fields?: FieldUncheckedCreateNestedManyWithoutTournamentInput
+  }
+
+  export type TournamentCreateOrConnectWithoutScoreConfigsInput = {
+    where: TournamentWhereUniqueInput
+    create: XOR<TournamentCreateWithoutScoreConfigsInput, TournamentUncheckedCreateWithoutScoreConfigsInput>
+  }
+
+  export type ScoreElementCreateWithoutScoreConfigInput = {
+    id?: string
+    name: string
+    code: string
+    description?: string | null
+    pointsPerUnit: number
+    maxUnits?: number | null
+    category?: string | null
+    elementType: string
+    displayOrder: number
+    icon?: string | null
+    color?: string | null
+  }
+
+  export type ScoreElementUncheckedCreateWithoutScoreConfigInput = {
+    id?: string
+    name: string
+    code: string
+    description?: string | null
+    pointsPerUnit: number
+    maxUnits?: number | null
+    category?: string | null
+    elementType: string
+    displayOrder: number
+    icon?: string | null
+    color?: string | null
+  }
+
+  export type ScoreElementCreateOrConnectWithoutScoreConfigInput = {
+    where: ScoreElementWhereUniqueInput
+    create: XOR<ScoreElementCreateWithoutScoreConfigInput, ScoreElementUncheckedCreateWithoutScoreConfigInput>
+  }
+
+  export type ScoreElementCreateManyScoreConfigInputEnvelope = {
+    data: ScoreElementCreateManyScoreConfigInput | ScoreElementCreateManyScoreConfigInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type BonusConditionCreateWithoutScoreConfigInput = {
+    id?: string
+    name: string
+    code: string
+    description?: string | null
+    bonusPoints: number
+    condition: JsonNullValueInput | InputJsonValue
+    displayOrder: number
+  }
+
+  export type BonusConditionUncheckedCreateWithoutScoreConfigInput = {
+    id?: string
+    name: string
+    code: string
+    description?: string | null
+    bonusPoints: number
+    condition: JsonNullValueInput | InputJsonValue
+    displayOrder: number
+  }
+
+  export type BonusConditionCreateOrConnectWithoutScoreConfigInput = {
+    where: BonusConditionWhereUniqueInput
+    create: XOR<BonusConditionCreateWithoutScoreConfigInput, BonusConditionUncheckedCreateWithoutScoreConfigInput>
+  }
+
+  export type BonusConditionCreateManyScoreConfigInputEnvelope = {
+    data: BonusConditionCreateManyScoreConfigInput | BonusConditionCreateManyScoreConfigInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type PenaltyConditionCreateWithoutScoreConfigInput = {
+    id?: string
+    name: string
+    code: string
+    description?: string | null
+    penaltyPoints: number
+    condition: JsonNullValueInput | InputJsonValue
+    displayOrder: number
+  }
+
+  export type PenaltyConditionUncheckedCreateWithoutScoreConfigInput = {
+    id?: string
+    name: string
+    code: string
+    description?: string | null
+    penaltyPoints: number
+    condition: JsonNullValueInput | InputJsonValue
+    displayOrder: number
+  }
+
+  export type PenaltyConditionCreateOrConnectWithoutScoreConfigInput = {
+    where: PenaltyConditionWhereUniqueInput
+    create: XOR<PenaltyConditionCreateWithoutScoreConfigInput, PenaltyConditionUncheckedCreateWithoutScoreConfigInput>
+  }
+
+  export type PenaltyConditionCreateManyScoreConfigInputEnvelope = {
+    data: PenaltyConditionCreateManyScoreConfigInput | PenaltyConditionCreateManyScoreConfigInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type MatchScoreCreateWithoutScoreConfigInput = {
+    id?: string
+    elementScores: JsonNullValueInput | InputJsonValue
+    bonusesEarned?: MatchScoreCreatebonusesEarnedInput | string[]
+    penaltiesIncurred?: MatchScoreCreatepenaltiesIncurredInput | string[]
+    calculationLog?: NullableJsonNullValueInput | InputJsonValue
+    totalScore: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    match: MatchCreateNestedOneWithoutMatchScoreRecordsInput
+    alliance: AllianceCreateNestedOneWithoutMatchScoresInput
+  }
+
+  export type MatchScoreUncheckedCreateWithoutScoreConfigInput = {
+    id?: string
+    matchId: string
+    allianceId: string
+    elementScores: JsonNullValueInput | InputJsonValue
+    bonusesEarned?: MatchScoreCreatebonusesEarnedInput | string[]
+    penaltiesIncurred?: MatchScoreCreatepenaltiesIncurredInput | string[]
+    calculationLog?: NullableJsonNullValueInput | InputJsonValue
+    totalScore: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MatchScoreCreateOrConnectWithoutScoreConfigInput = {
+    where: MatchScoreWhereUniqueInput
+    create: XOR<MatchScoreCreateWithoutScoreConfigInput, MatchScoreUncheckedCreateWithoutScoreConfigInput>
+  }
+
+  export type MatchScoreCreateManyScoreConfigInputEnvelope = {
+    data: MatchScoreCreateManyScoreConfigInput | MatchScoreCreateManyScoreConfigInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type TournamentUpsertWithoutScoreConfigsInput = {
+    update: XOR<TournamentUpdateWithoutScoreConfigsInput, TournamentUncheckedUpdateWithoutScoreConfigsInput>
+    create: XOR<TournamentCreateWithoutScoreConfigsInput, TournamentUncheckedCreateWithoutScoreConfigsInput>
+    where?: TournamentWhereInput
+  }
+
+  export type TournamentUpdateToOneWithWhereWithoutScoreConfigsInput = {
+    where?: TournamentWhereInput
+    data: XOR<TournamentUpdateWithoutScoreConfigsInput, TournamentUncheckedUpdateWithoutScoreConfigsInput>
+  }
+
+  export type TournamentUpdateWithoutScoreConfigsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    numberOfFields?: IntFieldUpdateOperationsInput | number
+    admin?: UserUpdateOneRequiredWithoutTournamentsNestedInput
+    stages?: StageUpdateManyWithoutTournamentNestedInput
+    teams?: TeamUpdateManyWithoutTournamentNestedInput
+    teamStats?: TeamStatsUpdateManyWithoutTournamentNestedInput
+    fields?: FieldUpdateManyWithoutTournamentNestedInput
+  }
+
+  export type TournamentUncheckedUpdateWithoutScoreConfigsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    adminId?: StringFieldUpdateOperationsInput | string
+    numberOfFields?: IntFieldUpdateOperationsInput | number
+    stages?: StageUncheckedUpdateManyWithoutTournamentNestedInput
+    teams?: TeamUncheckedUpdateManyWithoutTournamentNestedInput
+    teamStats?: TeamStatsUncheckedUpdateManyWithoutTournamentNestedInput
+    fields?: FieldUncheckedUpdateManyWithoutTournamentNestedInput
+  }
+
+  export type ScoreElementUpsertWithWhereUniqueWithoutScoreConfigInput = {
+    where: ScoreElementWhereUniqueInput
+    update: XOR<ScoreElementUpdateWithoutScoreConfigInput, ScoreElementUncheckedUpdateWithoutScoreConfigInput>
+    create: XOR<ScoreElementCreateWithoutScoreConfigInput, ScoreElementUncheckedCreateWithoutScoreConfigInput>
+  }
+
+  export type ScoreElementUpdateWithWhereUniqueWithoutScoreConfigInput = {
+    where: ScoreElementWhereUniqueInput
+    data: XOR<ScoreElementUpdateWithoutScoreConfigInput, ScoreElementUncheckedUpdateWithoutScoreConfigInput>
+  }
+
+  export type ScoreElementUpdateManyWithWhereWithoutScoreConfigInput = {
+    where: ScoreElementScalarWhereInput
+    data: XOR<ScoreElementUpdateManyMutationInput, ScoreElementUncheckedUpdateManyWithoutScoreConfigInput>
+  }
+
+  export type ScoreElementScalarWhereInput = {
+    AND?: ScoreElementScalarWhereInput | ScoreElementScalarWhereInput[]
+    OR?: ScoreElementScalarWhereInput[]
+    NOT?: ScoreElementScalarWhereInput | ScoreElementScalarWhereInput[]
+    id?: StringFilter<"ScoreElement"> | string
+    scoreConfigId?: StringFilter<"ScoreElement"> | string
+    name?: StringFilter<"ScoreElement"> | string
+    code?: StringFilter<"ScoreElement"> | string
+    description?: StringNullableFilter<"ScoreElement"> | string | null
+    pointsPerUnit?: IntFilter<"ScoreElement"> | number
+    maxUnits?: IntNullableFilter<"ScoreElement"> | number | null
+    category?: StringNullableFilter<"ScoreElement"> | string | null
+    elementType?: StringFilter<"ScoreElement"> | string
+    displayOrder?: IntFilter<"ScoreElement"> | number
+    icon?: StringNullableFilter<"ScoreElement"> | string | null
+    color?: StringNullableFilter<"ScoreElement"> | string | null
+  }
+
+  export type BonusConditionUpsertWithWhereUniqueWithoutScoreConfigInput = {
+    where: BonusConditionWhereUniqueInput
+    update: XOR<BonusConditionUpdateWithoutScoreConfigInput, BonusConditionUncheckedUpdateWithoutScoreConfigInput>
+    create: XOR<BonusConditionCreateWithoutScoreConfigInput, BonusConditionUncheckedCreateWithoutScoreConfigInput>
+  }
+
+  export type BonusConditionUpdateWithWhereUniqueWithoutScoreConfigInput = {
+    where: BonusConditionWhereUniqueInput
+    data: XOR<BonusConditionUpdateWithoutScoreConfigInput, BonusConditionUncheckedUpdateWithoutScoreConfigInput>
+  }
+
+  export type BonusConditionUpdateManyWithWhereWithoutScoreConfigInput = {
+    where: BonusConditionScalarWhereInput
+    data: XOR<BonusConditionUpdateManyMutationInput, BonusConditionUncheckedUpdateManyWithoutScoreConfigInput>
+  }
+
+  export type BonusConditionScalarWhereInput = {
+    AND?: BonusConditionScalarWhereInput | BonusConditionScalarWhereInput[]
+    OR?: BonusConditionScalarWhereInput[]
+    NOT?: BonusConditionScalarWhereInput | BonusConditionScalarWhereInput[]
+    id?: StringFilter<"BonusCondition"> | string
+    scoreConfigId?: StringFilter<"BonusCondition"> | string
+    name?: StringFilter<"BonusCondition"> | string
+    code?: StringFilter<"BonusCondition"> | string
+    description?: StringNullableFilter<"BonusCondition"> | string | null
+    bonusPoints?: IntFilter<"BonusCondition"> | number
+    condition?: JsonFilter<"BonusCondition">
+    displayOrder?: IntFilter<"BonusCondition"> | number
+  }
+
+  export type PenaltyConditionUpsertWithWhereUniqueWithoutScoreConfigInput = {
+    where: PenaltyConditionWhereUniqueInput
+    update: XOR<PenaltyConditionUpdateWithoutScoreConfigInput, PenaltyConditionUncheckedUpdateWithoutScoreConfigInput>
+    create: XOR<PenaltyConditionCreateWithoutScoreConfigInput, PenaltyConditionUncheckedCreateWithoutScoreConfigInput>
+  }
+
+  export type PenaltyConditionUpdateWithWhereUniqueWithoutScoreConfigInput = {
+    where: PenaltyConditionWhereUniqueInput
+    data: XOR<PenaltyConditionUpdateWithoutScoreConfigInput, PenaltyConditionUncheckedUpdateWithoutScoreConfigInput>
+  }
+
+  export type PenaltyConditionUpdateManyWithWhereWithoutScoreConfigInput = {
+    where: PenaltyConditionScalarWhereInput
+    data: XOR<PenaltyConditionUpdateManyMutationInput, PenaltyConditionUncheckedUpdateManyWithoutScoreConfigInput>
+  }
+
+  export type PenaltyConditionScalarWhereInput = {
+    AND?: PenaltyConditionScalarWhereInput | PenaltyConditionScalarWhereInput[]
+    OR?: PenaltyConditionScalarWhereInput[]
+    NOT?: PenaltyConditionScalarWhereInput | PenaltyConditionScalarWhereInput[]
+    id?: StringFilter<"PenaltyCondition"> | string
+    scoreConfigId?: StringFilter<"PenaltyCondition"> | string
+    name?: StringFilter<"PenaltyCondition"> | string
+    code?: StringFilter<"PenaltyCondition"> | string
+    description?: StringNullableFilter<"PenaltyCondition"> | string | null
+    penaltyPoints?: IntFilter<"PenaltyCondition"> | number
+    condition?: JsonFilter<"PenaltyCondition">
+    displayOrder?: IntFilter<"PenaltyCondition"> | number
+  }
+
+  export type MatchScoreUpsertWithWhereUniqueWithoutScoreConfigInput = {
+    where: MatchScoreWhereUniqueInput
+    update: XOR<MatchScoreUpdateWithoutScoreConfigInput, MatchScoreUncheckedUpdateWithoutScoreConfigInput>
+    create: XOR<MatchScoreCreateWithoutScoreConfigInput, MatchScoreUncheckedCreateWithoutScoreConfigInput>
+  }
+
+  export type MatchScoreUpdateWithWhereUniqueWithoutScoreConfigInput = {
+    where: MatchScoreWhereUniqueInput
+    data: XOR<MatchScoreUpdateWithoutScoreConfigInput, MatchScoreUncheckedUpdateWithoutScoreConfigInput>
+  }
+
+  export type MatchScoreUpdateManyWithWhereWithoutScoreConfigInput = {
+    where: MatchScoreScalarWhereInput
+    data: XOR<MatchScoreUpdateManyMutationInput, MatchScoreUncheckedUpdateManyWithoutScoreConfigInput>
+  }
+
+  export type ScoreConfigCreateWithoutScoreElementsInput = {
+    id?: string
+    name: string
+    description?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    tournament: TournamentCreateNestedOneWithoutScoreConfigsInput
+    bonusConditions?: BonusConditionCreateNestedManyWithoutScoreConfigInput
+    penaltyConditions?: PenaltyConditionCreateNestedManyWithoutScoreConfigInput
+    matchScores?: MatchScoreCreateNestedManyWithoutScoreConfigInput
+  }
+
+  export type ScoreConfigUncheckedCreateWithoutScoreElementsInput = {
+    id?: string
+    tournamentId: string
+    name: string
+    description?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    bonusConditions?: BonusConditionUncheckedCreateNestedManyWithoutScoreConfigInput
+    penaltyConditions?: PenaltyConditionUncheckedCreateNestedManyWithoutScoreConfigInput
+    matchScores?: MatchScoreUncheckedCreateNestedManyWithoutScoreConfigInput
+  }
+
+  export type ScoreConfigCreateOrConnectWithoutScoreElementsInput = {
+    where: ScoreConfigWhereUniqueInput
+    create: XOR<ScoreConfigCreateWithoutScoreElementsInput, ScoreConfigUncheckedCreateWithoutScoreElementsInput>
+  }
+
+  export type ScoreConfigUpsertWithoutScoreElementsInput = {
+    update: XOR<ScoreConfigUpdateWithoutScoreElementsInput, ScoreConfigUncheckedUpdateWithoutScoreElementsInput>
+    create: XOR<ScoreConfigCreateWithoutScoreElementsInput, ScoreConfigUncheckedCreateWithoutScoreElementsInput>
+    where?: ScoreConfigWhereInput
+  }
+
+  export type ScoreConfigUpdateToOneWithWhereWithoutScoreElementsInput = {
+    where?: ScoreConfigWhereInput
+    data: XOR<ScoreConfigUpdateWithoutScoreElementsInput, ScoreConfigUncheckedUpdateWithoutScoreElementsInput>
+  }
+
+  export type ScoreConfigUpdateWithoutScoreElementsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tournament?: TournamentUpdateOneRequiredWithoutScoreConfigsNestedInput
+    bonusConditions?: BonusConditionUpdateManyWithoutScoreConfigNestedInput
+    penaltyConditions?: PenaltyConditionUpdateManyWithoutScoreConfigNestedInput
+    matchScores?: MatchScoreUpdateManyWithoutScoreConfigNestedInput
+  }
+
+  export type ScoreConfigUncheckedUpdateWithoutScoreElementsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tournamentId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    bonusConditions?: BonusConditionUncheckedUpdateManyWithoutScoreConfigNestedInput
+    penaltyConditions?: PenaltyConditionUncheckedUpdateManyWithoutScoreConfigNestedInput
+    matchScores?: MatchScoreUncheckedUpdateManyWithoutScoreConfigNestedInput
+  }
+
+  export type ScoreConfigCreateWithoutBonusConditionsInput = {
+    id?: string
+    name: string
+    description?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    tournament: TournamentCreateNestedOneWithoutScoreConfigsInput
+    scoreElements?: ScoreElementCreateNestedManyWithoutScoreConfigInput
+    penaltyConditions?: PenaltyConditionCreateNestedManyWithoutScoreConfigInput
+    matchScores?: MatchScoreCreateNestedManyWithoutScoreConfigInput
+  }
+
+  export type ScoreConfigUncheckedCreateWithoutBonusConditionsInput = {
+    id?: string
+    tournamentId: string
+    name: string
+    description?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    scoreElements?: ScoreElementUncheckedCreateNestedManyWithoutScoreConfigInput
+    penaltyConditions?: PenaltyConditionUncheckedCreateNestedManyWithoutScoreConfigInput
+    matchScores?: MatchScoreUncheckedCreateNestedManyWithoutScoreConfigInput
+  }
+
+  export type ScoreConfigCreateOrConnectWithoutBonusConditionsInput = {
+    where: ScoreConfigWhereUniqueInput
+    create: XOR<ScoreConfigCreateWithoutBonusConditionsInput, ScoreConfigUncheckedCreateWithoutBonusConditionsInput>
+  }
+
+  export type ScoreConfigUpsertWithoutBonusConditionsInput = {
+    update: XOR<ScoreConfigUpdateWithoutBonusConditionsInput, ScoreConfigUncheckedUpdateWithoutBonusConditionsInput>
+    create: XOR<ScoreConfigCreateWithoutBonusConditionsInput, ScoreConfigUncheckedCreateWithoutBonusConditionsInput>
+    where?: ScoreConfigWhereInput
+  }
+
+  export type ScoreConfigUpdateToOneWithWhereWithoutBonusConditionsInput = {
+    where?: ScoreConfigWhereInput
+    data: XOR<ScoreConfigUpdateWithoutBonusConditionsInput, ScoreConfigUncheckedUpdateWithoutBonusConditionsInput>
+  }
+
+  export type ScoreConfigUpdateWithoutBonusConditionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tournament?: TournamentUpdateOneRequiredWithoutScoreConfigsNestedInput
+    scoreElements?: ScoreElementUpdateManyWithoutScoreConfigNestedInput
+    penaltyConditions?: PenaltyConditionUpdateManyWithoutScoreConfigNestedInput
+    matchScores?: MatchScoreUpdateManyWithoutScoreConfigNestedInput
+  }
+
+  export type ScoreConfigUncheckedUpdateWithoutBonusConditionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tournamentId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    scoreElements?: ScoreElementUncheckedUpdateManyWithoutScoreConfigNestedInput
+    penaltyConditions?: PenaltyConditionUncheckedUpdateManyWithoutScoreConfigNestedInput
+    matchScores?: MatchScoreUncheckedUpdateManyWithoutScoreConfigNestedInput
+  }
+
+  export type ScoreConfigCreateWithoutPenaltyConditionsInput = {
+    id?: string
+    name: string
+    description?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    tournament: TournamentCreateNestedOneWithoutScoreConfigsInput
+    scoreElements?: ScoreElementCreateNestedManyWithoutScoreConfigInput
+    bonusConditions?: BonusConditionCreateNestedManyWithoutScoreConfigInput
+    matchScores?: MatchScoreCreateNestedManyWithoutScoreConfigInput
+  }
+
+  export type ScoreConfigUncheckedCreateWithoutPenaltyConditionsInput = {
+    id?: string
+    tournamentId: string
+    name: string
+    description?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    scoreElements?: ScoreElementUncheckedCreateNestedManyWithoutScoreConfigInput
+    bonusConditions?: BonusConditionUncheckedCreateNestedManyWithoutScoreConfigInput
+    matchScores?: MatchScoreUncheckedCreateNestedManyWithoutScoreConfigInput
+  }
+
+  export type ScoreConfigCreateOrConnectWithoutPenaltyConditionsInput = {
+    where: ScoreConfigWhereUniqueInput
+    create: XOR<ScoreConfigCreateWithoutPenaltyConditionsInput, ScoreConfigUncheckedCreateWithoutPenaltyConditionsInput>
+  }
+
+  export type ScoreConfigUpsertWithoutPenaltyConditionsInput = {
+    update: XOR<ScoreConfigUpdateWithoutPenaltyConditionsInput, ScoreConfigUncheckedUpdateWithoutPenaltyConditionsInput>
+    create: XOR<ScoreConfigCreateWithoutPenaltyConditionsInput, ScoreConfigUncheckedCreateWithoutPenaltyConditionsInput>
+    where?: ScoreConfigWhereInput
+  }
+
+  export type ScoreConfigUpdateToOneWithWhereWithoutPenaltyConditionsInput = {
+    where?: ScoreConfigWhereInput
+    data: XOR<ScoreConfigUpdateWithoutPenaltyConditionsInput, ScoreConfigUncheckedUpdateWithoutPenaltyConditionsInput>
+  }
+
+  export type ScoreConfigUpdateWithoutPenaltyConditionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tournament?: TournamentUpdateOneRequiredWithoutScoreConfigsNestedInput
+    scoreElements?: ScoreElementUpdateManyWithoutScoreConfigNestedInput
+    bonusConditions?: BonusConditionUpdateManyWithoutScoreConfigNestedInput
+    matchScores?: MatchScoreUpdateManyWithoutScoreConfigNestedInput
+  }
+
+  export type ScoreConfigUncheckedUpdateWithoutPenaltyConditionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tournamentId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    scoreElements?: ScoreElementUncheckedUpdateManyWithoutScoreConfigNestedInput
+    bonusConditions?: BonusConditionUncheckedUpdateManyWithoutScoreConfigNestedInput
+    matchScores?: MatchScoreUncheckedUpdateManyWithoutScoreConfigNestedInput
+  }
+
+  export type MatchCreateWithoutMatchScoreRecordsInput = {
+    id?: string
+    matchNumber: number
+    roundNumber?: number | null
+    status?: string
+    startTime?: Date | string | null
+    scheduledTime?: Date | string | null
+    endTime?: Date | string | null
+    duration?: number | null
+    winningAlliance?: string | null
+    roundType?: string | null
+    fieldNumber?: number | null
+    matchType?: $Enums.MatchType
+    matchDuration?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    stage: StageCreateNestedOneWithoutMatchesInput
+    alliances?: AllianceCreateNestedManyWithoutMatchInput
+    scoredBy?: UserCreateNestedOneWithoutScoredMatchesInput
+    referees?: MatchRefereeCreateNestedManyWithoutMatchInput
+    matchScores?: MatchScoresCreateNestedOneWithoutMatchInput
+    matchControl?: MatchControlCreateNestedOneWithoutMatchInput
+    schedule?: ScheduleCreateNestedOneWithoutMatchesInput
+    field?: FieldCreateNestedOneWithoutMatchesInput
+  }
+
+  export type MatchUncheckedCreateWithoutMatchScoreRecordsInput = {
+    id?: string
+    matchNumber: number
+    roundNumber?: number | null
+    status?: string
+    startTime?: Date | string | null
+    scheduledTime?: Date | string | null
+    endTime?: Date | string | null
+    duration?: number | null
+    winningAlliance?: string | null
+    stageId: string
+    scoredById?: string | null
+    roundType?: string | null
+    scheduleId?: string | null
+    fieldId?: string | null
+    fieldNumber?: number | null
+    matchType?: $Enums.MatchType
+    matchDuration?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    alliances?: AllianceUncheckedCreateNestedManyWithoutMatchInput
+    referees?: MatchRefereeUncheckedCreateNestedManyWithoutMatchInput
+    matchScores?: MatchScoresUncheckedCreateNestedOneWithoutMatchInput
+    matchControl?: MatchControlUncheckedCreateNestedOneWithoutMatchInput
+  }
+
+  export type MatchCreateOrConnectWithoutMatchScoreRecordsInput = {
+    where: MatchWhereUniqueInput
+    create: XOR<MatchCreateWithoutMatchScoreRecordsInput, MatchUncheckedCreateWithoutMatchScoreRecordsInput>
+  }
+
+  export type AllianceCreateWithoutMatchScoresInput = {
+    id?: string
+    color: string
+    score?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    match: MatchCreateNestedOneWithoutAlliancesInput
+    teamAlliances?: TeamAllianceCreateNestedManyWithoutAllianceInput
+    allianceScoring?: AllianceScoringCreateNestedOneWithoutAllianceInput
+  }
+
+  export type AllianceUncheckedCreateWithoutMatchScoresInput = {
+    id?: string
+    color: string
+    score?: number
+    matchId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    teamAlliances?: TeamAllianceUncheckedCreateNestedManyWithoutAllianceInput
+    allianceScoring?: AllianceScoringUncheckedCreateNestedOneWithoutAllianceInput
+  }
+
+  export type AllianceCreateOrConnectWithoutMatchScoresInput = {
+    where: AllianceWhereUniqueInput
+    create: XOR<AllianceCreateWithoutMatchScoresInput, AllianceUncheckedCreateWithoutMatchScoresInput>
+  }
+
+  export type ScoreConfigCreateWithoutMatchScoresInput = {
+    id?: string
+    name: string
+    description?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    tournament: TournamentCreateNestedOneWithoutScoreConfigsInput
+    scoreElements?: ScoreElementCreateNestedManyWithoutScoreConfigInput
+    bonusConditions?: BonusConditionCreateNestedManyWithoutScoreConfigInput
+    penaltyConditions?: PenaltyConditionCreateNestedManyWithoutScoreConfigInput
+  }
+
+  export type ScoreConfigUncheckedCreateWithoutMatchScoresInput = {
+    id?: string
+    tournamentId: string
+    name: string
+    description?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    scoreElements?: ScoreElementUncheckedCreateNestedManyWithoutScoreConfigInput
+    bonusConditions?: BonusConditionUncheckedCreateNestedManyWithoutScoreConfigInput
+    penaltyConditions?: PenaltyConditionUncheckedCreateNestedManyWithoutScoreConfigInput
+  }
+
+  export type ScoreConfigCreateOrConnectWithoutMatchScoresInput = {
+    where: ScoreConfigWhereUniqueInput
+    create: XOR<ScoreConfigCreateWithoutMatchScoresInput, ScoreConfigUncheckedCreateWithoutMatchScoresInput>
+  }
+
+  export type MatchUpsertWithoutMatchScoreRecordsInput = {
+    update: XOR<MatchUpdateWithoutMatchScoreRecordsInput, MatchUncheckedUpdateWithoutMatchScoreRecordsInput>
+    create: XOR<MatchCreateWithoutMatchScoreRecordsInput, MatchUncheckedCreateWithoutMatchScoreRecordsInput>
+    where?: MatchWhereInput
+  }
+
+  export type MatchUpdateToOneWithWhereWithoutMatchScoreRecordsInput = {
+    where?: MatchWhereInput
+    data: XOR<MatchUpdateWithoutMatchScoreRecordsInput, MatchUncheckedUpdateWithoutMatchScoreRecordsInput>
+  }
+
+  export type MatchUpdateWithoutMatchScoreRecordsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    matchNumber?: IntFieldUpdateOperationsInput | number
+    roundNumber?: NullableIntFieldUpdateOperationsInput | number | null
+    status?: StringFieldUpdateOperationsInput | string
+    startTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    scheduledTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    endTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    duration?: NullableIntFieldUpdateOperationsInput | number | null
+    winningAlliance?: NullableStringFieldUpdateOperationsInput | string | null
+    roundType?: NullableStringFieldUpdateOperationsInput | string | null
+    fieldNumber?: NullableIntFieldUpdateOperationsInput | number | null
+    matchType?: EnumMatchTypeFieldUpdateOperationsInput | $Enums.MatchType
+    matchDuration?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    stage?: StageUpdateOneRequiredWithoutMatchesNestedInput
+    alliances?: AllianceUpdateManyWithoutMatchNestedInput
+    scoredBy?: UserUpdateOneWithoutScoredMatchesNestedInput
+    referees?: MatchRefereeUpdateManyWithoutMatchNestedInput
+    matchScores?: MatchScoresUpdateOneWithoutMatchNestedInput
+    matchControl?: MatchControlUpdateOneWithoutMatchNestedInput
+    schedule?: ScheduleUpdateOneWithoutMatchesNestedInput
+    field?: FieldUpdateOneWithoutMatchesNestedInput
+  }
+
+  export type MatchUncheckedUpdateWithoutMatchScoreRecordsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    matchNumber?: IntFieldUpdateOperationsInput | number
+    roundNumber?: NullableIntFieldUpdateOperationsInput | number | null
+    status?: StringFieldUpdateOperationsInput | string
+    startTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    scheduledTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    endTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    duration?: NullableIntFieldUpdateOperationsInput | number | null
+    winningAlliance?: NullableStringFieldUpdateOperationsInput | string | null
+    stageId?: StringFieldUpdateOperationsInput | string
+    scoredById?: NullableStringFieldUpdateOperationsInput | string | null
+    roundType?: NullableStringFieldUpdateOperationsInput | string | null
+    scheduleId?: NullableStringFieldUpdateOperationsInput | string | null
+    fieldId?: NullableStringFieldUpdateOperationsInput | string | null
+    fieldNumber?: NullableIntFieldUpdateOperationsInput | number | null
+    matchType?: EnumMatchTypeFieldUpdateOperationsInput | $Enums.MatchType
+    matchDuration?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    alliances?: AllianceUncheckedUpdateManyWithoutMatchNestedInput
+    referees?: MatchRefereeUncheckedUpdateManyWithoutMatchNestedInput
+    matchScores?: MatchScoresUncheckedUpdateOneWithoutMatchNestedInput
+    matchControl?: MatchControlUncheckedUpdateOneWithoutMatchNestedInput
+  }
+
+  export type AllianceUpsertWithoutMatchScoresInput = {
+    update: XOR<AllianceUpdateWithoutMatchScoresInput, AllianceUncheckedUpdateWithoutMatchScoresInput>
+    create: XOR<AllianceCreateWithoutMatchScoresInput, AllianceUncheckedCreateWithoutMatchScoresInput>
+    where?: AllianceWhereInput
+  }
+
+  export type AllianceUpdateToOneWithWhereWithoutMatchScoresInput = {
+    where?: AllianceWhereInput
+    data: XOR<AllianceUpdateWithoutMatchScoresInput, AllianceUncheckedUpdateWithoutMatchScoresInput>
+  }
+
+  export type AllianceUpdateWithoutMatchScoresInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    color?: StringFieldUpdateOperationsInput | string
+    score?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    match?: MatchUpdateOneRequiredWithoutAlliancesNestedInput
+    teamAlliances?: TeamAllianceUpdateManyWithoutAllianceNestedInput
+    allianceScoring?: AllianceScoringUpdateOneWithoutAllianceNestedInput
+  }
+
+  export type AllianceUncheckedUpdateWithoutMatchScoresInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    color?: StringFieldUpdateOperationsInput | string
+    score?: IntFieldUpdateOperationsInput | number
+    matchId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    teamAlliances?: TeamAllianceUncheckedUpdateManyWithoutAllianceNestedInput
+    allianceScoring?: AllianceScoringUncheckedUpdateOneWithoutAllianceNestedInput
+  }
+
+  export type ScoreConfigUpsertWithoutMatchScoresInput = {
+    update: XOR<ScoreConfigUpdateWithoutMatchScoresInput, ScoreConfigUncheckedUpdateWithoutMatchScoresInput>
+    create: XOR<ScoreConfigCreateWithoutMatchScoresInput, ScoreConfigUncheckedCreateWithoutMatchScoresInput>
+    where?: ScoreConfigWhereInput
+  }
+
+  export type ScoreConfigUpdateToOneWithWhereWithoutMatchScoresInput = {
+    where?: ScoreConfigWhereInput
+    data: XOR<ScoreConfigUpdateWithoutMatchScoresInput, ScoreConfigUncheckedUpdateWithoutMatchScoresInput>
+  }
+
+  export type ScoreConfigUpdateWithoutMatchScoresInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tournament?: TournamentUpdateOneRequiredWithoutScoreConfigsNestedInput
+    scoreElements?: ScoreElementUpdateManyWithoutScoreConfigNestedInput
+    bonusConditions?: BonusConditionUpdateManyWithoutScoreConfigNestedInput
+    penaltyConditions?: PenaltyConditionUpdateManyWithoutScoreConfigNestedInput
+  }
+
+  export type ScoreConfigUncheckedUpdateWithoutMatchScoresInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tournamentId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    scoreElements?: ScoreElementUncheckedUpdateManyWithoutScoreConfigNestedInput
+    bonusConditions?: BonusConditionUncheckedUpdateManyWithoutScoreConfigNestedInput
+    penaltyConditions?: PenaltyConditionUncheckedUpdateManyWithoutScoreConfigNestedInput
+  }
+
   export type UserCreateManyCreatedByInput = {
     id?: string
     username: string
@@ -34202,6 +43339,7 @@ export namespace Prisma {
     teams?: TeamUpdateManyWithoutTournamentNestedInput
     teamStats?: TeamStatsUpdateManyWithoutTournamentNestedInput
     fields?: FieldUpdateManyWithoutTournamentNestedInput
+    scoreConfigs?: ScoreConfigUpdateManyWithoutTournamentNestedInput
   }
 
   export type TournamentUncheckedUpdateWithoutAdminInput = {
@@ -34217,6 +43355,7 @@ export namespace Prisma {
     teams?: TeamUncheckedUpdateManyWithoutTournamentNestedInput
     teamStats?: TeamStatsUncheckedUpdateManyWithoutTournamentNestedInput
     fields?: FieldUncheckedUpdateManyWithoutTournamentNestedInput
+    scoreConfigs?: ScoreConfigUncheckedUpdateManyWithoutTournamentNestedInput
   }
 
   export type TournamentUncheckedUpdateManyWithoutAdminInput = {
@@ -34253,6 +43392,7 @@ export namespace Prisma {
     matchControl?: MatchControlUpdateOneWithoutMatchNestedInput
     schedule?: ScheduleUpdateOneWithoutMatchesNestedInput
     field?: FieldUpdateOneWithoutMatchesNestedInput
+    matchScoreRecords?: MatchScoreUpdateManyWithoutMatchNestedInput
   }
 
   export type MatchUncheckedUpdateWithoutScoredByInput = {
@@ -34278,6 +43418,7 @@ export namespace Prisma {
     referees?: MatchRefereeUncheckedUpdateManyWithoutMatchNestedInput
     matchScores?: MatchScoresUncheckedUpdateOneWithoutMatchNestedInput
     matchControl?: MatchControlUncheckedUpdateOneWithoutMatchNestedInput
+    matchScoreRecords?: MatchScoreUncheckedUpdateManyWithoutMatchNestedInput
   }
 
   export type MatchUncheckedUpdateManyWithoutScoredByInput = {
@@ -34407,6 +43548,14 @@ export namespace Prisma {
     name: string
     number: number
     location?: string | null
+    description?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ScoreConfigCreateManyTournamentInput = {
+    id?: string
+    name: string
     description?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -34586,6 +43735,38 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type ScoreConfigUpdateWithoutTournamentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    scoreElements?: ScoreElementUpdateManyWithoutScoreConfigNestedInput
+    bonusConditions?: BonusConditionUpdateManyWithoutScoreConfigNestedInput
+    penaltyConditions?: PenaltyConditionUpdateManyWithoutScoreConfigNestedInput
+    matchScores?: MatchScoreUpdateManyWithoutScoreConfigNestedInput
+  }
+
+  export type ScoreConfigUncheckedUpdateWithoutTournamentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    scoreElements?: ScoreElementUncheckedUpdateManyWithoutScoreConfigNestedInput
+    bonusConditions?: BonusConditionUncheckedUpdateManyWithoutScoreConfigNestedInput
+    penaltyConditions?: PenaltyConditionUncheckedUpdateManyWithoutScoreConfigNestedInput
+    matchScores?: MatchScoreUncheckedUpdateManyWithoutScoreConfigNestedInput
+  }
+
+  export type ScoreConfigUncheckedUpdateManyWithoutTournamentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type MatchCreateManyStageInput = {
     id?: string
     matchNumber: number
@@ -34658,6 +43839,7 @@ export namespace Prisma {
     matchControl?: MatchControlUpdateOneWithoutMatchNestedInput
     schedule?: ScheduleUpdateOneWithoutMatchesNestedInput
     field?: FieldUpdateOneWithoutMatchesNestedInput
+    matchScoreRecords?: MatchScoreUpdateManyWithoutMatchNestedInput
   }
 
   export type MatchUncheckedUpdateWithoutStageInput = {
@@ -34683,6 +43865,7 @@ export namespace Prisma {
     referees?: MatchRefereeUncheckedUpdateManyWithoutMatchNestedInput
     matchScores?: MatchScoresUncheckedUpdateOneWithoutMatchNestedInput
     matchControl?: MatchControlUncheckedUpdateOneWithoutMatchNestedInput
+    matchScoreRecords?: MatchScoreUncheckedUpdateManyWithoutMatchNestedInput
   }
 
   export type MatchUncheckedUpdateManyWithoutStageInput = {
@@ -34809,6 +43992,19 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type MatchScoreCreateManyMatchInput = {
+    id?: string
+    allianceId: string
+    scoreConfigId: string
+    elementScores: JsonNullValueInput | InputJsonValue
+    bonusesEarned?: MatchScoreCreatebonusesEarnedInput | string[]
+    penaltiesIncurred?: MatchScoreCreatepenaltiesIncurredInput | string[]
+    calculationLog?: NullableJsonNullValueInput | InputJsonValue
+    totalScore: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type AllianceUpdateWithoutMatchInput = {
     id?: StringFieldUpdateOperationsInput | string
     color?: StringFieldUpdateOperationsInput | string
@@ -34817,6 +44013,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     teamAlliances?: TeamAllianceUpdateManyWithoutAllianceNestedInput
     allianceScoring?: AllianceScoringUpdateOneWithoutAllianceNestedInput
+    matchScores?: MatchScoreUpdateManyWithoutAllianceNestedInput
   }
 
   export type AllianceUncheckedUpdateWithoutMatchInput = {
@@ -34827,6 +44024,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     teamAlliances?: TeamAllianceUncheckedUpdateManyWithoutAllianceNestedInput
     allianceScoring?: AllianceScoringUncheckedUpdateOneWithoutAllianceNestedInput
+    matchScores?: MatchScoreUncheckedUpdateManyWithoutAllianceNestedInput
   }
 
   export type AllianceUncheckedUpdateManyWithoutMatchInput = {
@@ -34864,11 +44062,63 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type MatchScoreUpdateWithoutMatchInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    elementScores?: JsonNullValueInput | InputJsonValue
+    bonusesEarned?: MatchScoreUpdatebonusesEarnedInput | string[]
+    penaltiesIncurred?: MatchScoreUpdatepenaltiesIncurredInput | string[]
+    calculationLog?: NullableJsonNullValueInput | InputJsonValue
+    totalScore?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    alliance?: AllianceUpdateOneRequiredWithoutMatchScoresNestedInput
+    scoreConfig?: ScoreConfigUpdateOneRequiredWithoutMatchScoresNestedInput
+  }
+
+  export type MatchScoreUncheckedUpdateWithoutMatchInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    allianceId?: StringFieldUpdateOperationsInput | string
+    scoreConfigId?: StringFieldUpdateOperationsInput | string
+    elementScores?: JsonNullValueInput | InputJsonValue
+    bonusesEarned?: MatchScoreUpdatebonusesEarnedInput | string[]
+    penaltiesIncurred?: MatchScoreUpdatepenaltiesIncurredInput | string[]
+    calculationLog?: NullableJsonNullValueInput | InputJsonValue
+    totalScore?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MatchScoreUncheckedUpdateManyWithoutMatchInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    allianceId?: StringFieldUpdateOperationsInput | string
+    scoreConfigId?: StringFieldUpdateOperationsInput | string
+    elementScores?: JsonNullValueInput | InputJsonValue
+    bonusesEarned?: MatchScoreUpdatebonusesEarnedInput | string[]
+    penaltiesIncurred?: MatchScoreUpdatepenaltiesIncurredInput | string[]
+    calculationLog?: NullableJsonNullValueInput | InputJsonValue
+    totalScore?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type TeamAllianceCreateManyAllianceInput = {
     id?: string
     teamId: string
     stationPosition?: number
     isSurrogate?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MatchScoreCreateManyAllianceInput = {
+    id?: string
+    matchId: string
+    scoreConfigId: string
+    elementScores: JsonNullValueInput | InputJsonValue
+    bonusesEarned?: MatchScoreCreatebonusesEarnedInput | string[]
+    penaltiesIncurred?: MatchScoreCreatepenaltiesIncurredInput | string[]
+    calculationLog?: NullableJsonNullValueInput | InputJsonValue
+    totalScore: number
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -34896,6 +44146,45 @@ export namespace Prisma {
     teamId?: StringFieldUpdateOperationsInput | string
     stationPosition?: IntFieldUpdateOperationsInput | number
     isSurrogate?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MatchScoreUpdateWithoutAllianceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    elementScores?: JsonNullValueInput | InputJsonValue
+    bonusesEarned?: MatchScoreUpdatebonusesEarnedInput | string[]
+    penaltiesIncurred?: MatchScoreUpdatepenaltiesIncurredInput | string[]
+    calculationLog?: NullableJsonNullValueInput | InputJsonValue
+    totalScore?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    match?: MatchUpdateOneRequiredWithoutMatchScoreRecordsNestedInput
+    scoreConfig?: ScoreConfigUpdateOneRequiredWithoutMatchScoresNestedInput
+  }
+
+  export type MatchScoreUncheckedUpdateWithoutAllianceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    matchId?: StringFieldUpdateOperationsInput | string
+    scoreConfigId?: StringFieldUpdateOperationsInput | string
+    elementScores?: JsonNullValueInput | InputJsonValue
+    bonusesEarned?: MatchScoreUpdatebonusesEarnedInput | string[]
+    penaltiesIncurred?: MatchScoreUpdatepenaltiesIncurredInput | string[]
+    calculationLog?: NullableJsonNullValueInput | InputJsonValue
+    totalScore?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MatchScoreUncheckedUpdateManyWithoutAllianceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    matchId?: StringFieldUpdateOperationsInput | string
+    scoreConfigId?: StringFieldUpdateOperationsInput | string
+    elementScores?: JsonNullValueInput | InputJsonValue
+    bonusesEarned?: MatchScoreUpdatebonusesEarnedInput | string[]
+    penaltiesIncurred?: MatchScoreUpdatepenaltiesIncurredInput | string[]
+    calculationLog?: NullableJsonNullValueInput | InputJsonValue
+    totalScore?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -35060,6 +44349,7 @@ export namespace Prisma {
     matchScores?: MatchScoresUpdateOneWithoutMatchNestedInput
     matchControl?: MatchControlUpdateOneWithoutMatchNestedInput
     field?: FieldUpdateOneWithoutMatchesNestedInput
+    matchScoreRecords?: MatchScoreUpdateManyWithoutMatchNestedInput
   }
 
   export type MatchUncheckedUpdateWithoutScheduleInput = {
@@ -35085,6 +44375,7 @@ export namespace Prisma {
     referees?: MatchRefereeUncheckedUpdateManyWithoutMatchNestedInput
     matchScores?: MatchScoresUncheckedUpdateOneWithoutMatchNestedInput
     matchControl?: MatchControlUncheckedUpdateOneWithoutMatchNestedInput
+    matchScoreRecords?: MatchScoreUncheckedUpdateManyWithoutMatchNestedInput
   }
 
   export type MatchUncheckedUpdateManyWithoutScheduleInput = {
@@ -35152,6 +44443,7 @@ export namespace Prisma {
     matchScores?: MatchScoresUpdateOneWithoutMatchNestedInput
     matchControl?: MatchControlUpdateOneWithoutMatchNestedInput
     schedule?: ScheduleUpdateOneWithoutMatchesNestedInput
+    matchScoreRecords?: MatchScoreUpdateManyWithoutMatchNestedInput
   }
 
   export type MatchUncheckedUpdateWithoutFieldInput = {
@@ -35177,6 +44469,7 @@ export namespace Prisma {
     referees?: MatchRefereeUncheckedUpdateManyWithoutMatchNestedInput
     matchScores?: MatchScoresUncheckedUpdateOneWithoutMatchNestedInput
     matchControl?: MatchControlUncheckedUpdateOneWithoutMatchNestedInput
+    matchScoreRecords?: MatchScoreUncheckedUpdateManyWithoutMatchNestedInput
   }
 
   export type MatchUncheckedUpdateManyWithoutFieldInput = {
@@ -35312,6 +44605,194 @@ export namespace Prisma {
     affectedAlliance?: NullableStringFieldUpdateOperationsInput | string | null
     affectedTeamId?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ScoreElementCreateManyScoreConfigInput = {
+    id?: string
+    name: string
+    code: string
+    description?: string | null
+    pointsPerUnit: number
+    maxUnits?: number | null
+    category?: string | null
+    elementType: string
+    displayOrder: number
+    icon?: string | null
+    color?: string | null
+  }
+
+  export type BonusConditionCreateManyScoreConfigInput = {
+    id?: string
+    name: string
+    code: string
+    description?: string | null
+    bonusPoints: number
+    condition: JsonNullValueInput | InputJsonValue
+    displayOrder: number
+  }
+
+  export type PenaltyConditionCreateManyScoreConfigInput = {
+    id?: string
+    name: string
+    code: string
+    description?: string | null
+    penaltyPoints: number
+    condition: JsonNullValueInput | InputJsonValue
+    displayOrder: number
+  }
+
+  export type MatchScoreCreateManyScoreConfigInput = {
+    id?: string
+    matchId: string
+    allianceId: string
+    elementScores: JsonNullValueInput | InputJsonValue
+    bonusesEarned?: MatchScoreCreatebonusesEarnedInput | string[]
+    penaltiesIncurred?: MatchScoreCreatepenaltiesIncurredInput | string[]
+    calculationLog?: NullableJsonNullValueInput | InputJsonValue
+    totalScore: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ScoreElementUpdateWithoutScoreConfigInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    pointsPerUnit?: IntFieldUpdateOperationsInput | number
+    maxUnits?: NullableIntFieldUpdateOperationsInput | number | null
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    elementType?: StringFieldUpdateOperationsInput | string
+    displayOrder?: IntFieldUpdateOperationsInput | number
+    icon?: NullableStringFieldUpdateOperationsInput | string | null
+    color?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type ScoreElementUncheckedUpdateWithoutScoreConfigInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    pointsPerUnit?: IntFieldUpdateOperationsInput | number
+    maxUnits?: NullableIntFieldUpdateOperationsInput | number | null
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    elementType?: StringFieldUpdateOperationsInput | string
+    displayOrder?: IntFieldUpdateOperationsInput | number
+    icon?: NullableStringFieldUpdateOperationsInput | string | null
+    color?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type ScoreElementUncheckedUpdateManyWithoutScoreConfigInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    pointsPerUnit?: IntFieldUpdateOperationsInput | number
+    maxUnits?: NullableIntFieldUpdateOperationsInput | number | null
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    elementType?: StringFieldUpdateOperationsInput | string
+    displayOrder?: IntFieldUpdateOperationsInput | number
+    icon?: NullableStringFieldUpdateOperationsInput | string | null
+    color?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type BonusConditionUpdateWithoutScoreConfigInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    bonusPoints?: IntFieldUpdateOperationsInput | number
+    condition?: JsonNullValueInput | InputJsonValue
+    displayOrder?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type BonusConditionUncheckedUpdateWithoutScoreConfigInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    bonusPoints?: IntFieldUpdateOperationsInput | number
+    condition?: JsonNullValueInput | InputJsonValue
+    displayOrder?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type BonusConditionUncheckedUpdateManyWithoutScoreConfigInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    bonusPoints?: IntFieldUpdateOperationsInput | number
+    condition?: JsonNullValueInput | InputJsonValue
+    displayOrder?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type PenaltyConditionUpdateWithoutScoreConfigInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    penaltyPoints?: IntFieldUpdateOperationsInput | number
+    condition?: JsonNullValueInput | InputJsonValue
+    displayOrder?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type PenaltyConditionUncheckedUpdateWithoutScoreConfigInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    penaltyPoints?: IntFieldUpdateOperationsInput | number
+    condition?: JsonNullValueInput | InputJsonValue
+    displayOrder?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type PenaltyConditionUncheckedUpdateManyWithoutScoreConfigInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    penaltyPoints?: IntFieldUpdateOperationsInput | number
+    condition?: JsonNullValueInput | InputJsonValue
+    displayOrder?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type MatchScoreUpdateWithoutScoreConfigInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    elementScores?: JsonNullValueInput | InputJsonValue
+    bonusesEarned?: MatchScoreUpdatebonusesEarnedInput | string[]
+    penaltiesIncurred?: MatchScoreUpdatepenaltiesIncurredInput | string[]
+    calculationLog?: NullableJsonNullValueInput | InputJsonValue
+    totalScore?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    match?: MatchUpdateOneRequiredWithoutMatchScoreRecordsNestedInput
+    alliance?: AllianceUpdateOneRequiredWithoutMatchScoresNestedInput
+  }
+
+  export type MatchScoreUncheckedUpdateWithoutScoreConfigInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    matchId?: StringFieldUpdateOperationsInput | string
+    allianceId?: StringFieldUpdateOperationsInput | string
+    elementScores?: JsonNullValueInput | InputJsonValue
+    bonusesEarned?: MatchScoreUpdatebonusesEarnedInput | string[]
+    penaltiesIncurred?: MatchScoreUpdatepenaltiesIncurredInput | string[]
+    calculationLog?: NullableJsonNullValueInput | InputJsonValue
+    totalScore?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MatchScoreUncheckedUpdateManyWithoutScoreConfigInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    matchId?: StringFieldUpdateOperationsInput | string
+    allianceId?: StringFieldUpdateOperationsInput | string
+    elementScores?: JsonNullValueInput | InputJsonValue
+    bonusesEarned?: MatchScoreUpdatebonusesEarnedInput | string[]
+    penaltiesIncurred?: MatchScoreUpdatepenaltiesIncurredInput | string[]
+    calculationLog?: NullableJsonNullValueInput | InputJsonValue
+    totalScore?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
