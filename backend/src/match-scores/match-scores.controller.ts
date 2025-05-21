@@ -16,7 +16,7 @@ import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { UserRole } from '../utils/prisma-types';
 import { MatchScoresService } from './match-scores.service';
-import { CreateMatchScoresDto, UpdateMatchScoresDto } from './dto';
+import { CreateMatchScoresDto, UpdateMatchScoresDto, SubmitScoreDto } from './dto';
 
 @ApiTags('match-scores')
 @Controller('match-scores')
@@ -132,5 +132,19 @@ export class MatchScoresController {
   })
   remove(@Param('id') id: string) {
     return this.matchScoresService.remove(id);
+  }
+
+  @Post('submit')
+  @Roles(UserRole.ADMIN, UserRole.HEAD_REFEREE, UserRole.ALLIANCE_REFEREE)
+  @ApiOperation({ summary: 'Submit match score (flexible scoring)' })
+  @ApiResponse({ status: HttpStatus.CREATED, description: 'Match score submitted successfully.' })
+  submitScore(@Body() submitScoreDto: SubmitScoreDto) {
+    return this.matchScoresService.submitScore(submitScoreDto);
+  }
+
+  @Get(':matchId')
+  @ApiOperation({ summary: 'Get match score by match ID' })
+  getMatchScore(@Param('matchId') matchId: string) {
+    return this.matchScoresService.getMatchScore(matchId);
   }
 }
