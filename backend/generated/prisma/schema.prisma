@@ -99,20 +99,21 @@ model User {
 }
 
 model Tournament {
-  id             String      @id @default(uuid())
+  id             String        @id @default(uuid())
   name           String
   description    String?
   startDate      DateTime
   endDate        DateTime
-  createdAt      DateTime    @default(now())
-  updatedAt      DateTime    @updatedAt
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
   adminId        String
-  admin          User        @relation(fields: [adminId], references: [id])
+  admin          User          @relation(fields: [adminId], references: [id])
   stages         Stage[]
   teams          Team[] // Added teams relationship
   teamStats      TeamStats[] // New relation to track team statistics
   fields         Field[] // New relation: Tournament has many Fields
-  numberOfFields Int         @default(1)
+  numberOfFields Int           @default(1)
+  scoreConfigs   ScoreConfig[] // New relation: Tournament has many ScoreConfigs
 }
 
 model Stage {
@@ -133,33 +134,34 @@ model Stage {
 }
 
 model Match {
-  id              String         @id @default(uuid())
-  matchNumber     Int
-  roundNumber     Int? // The round number this match belongs to
-  status          String         @default("PENDING") // PENDING, IN_PROGRESS, COMPLETED
-  startTime       DateTime? // Full timestamp with hour-minute precision
-  scheduledTime   DateTime? // New field for the scheduled time with hour-minute precision
-  endTime         DateTime? // Full timestamp with hour-minute precision
-  duration        Int? // Duration in minutes
-  winningAlliance String? // "RED" or "BLUE" - indicates which alliance won
-  stageId         String
-  stage           Stage          @relation(fields: [stageId], references: [id], onDelete: Cascade)
-  alliances       Alliance[]
-  scoredById      String?
-  scoredBy        User?          @relation("ScoredBy", fields: [scoredById], references: [id])
-  referees        MatchReferee[] // New relation for match referees
-  matchScores     MatchScores?
-  matchControl    MatchControl? // Optional relation to match control for display state
-  roundType       String? // e.g., "QUALIFICATION", "SWISS", "PLAYOFF", "FINAL"
-  scheduleId      String?
-  schedule        Schedule?      @relation(fields: [scheduleId], references: [id], onDelete: SetNull)
-  fieldId         String?
-  field           Field?         @relation(fields: [fieldId], references: [id], onDelete: SetNull)
-  fieldNumber     Int?
-  matchType       MatchType      @default(FULL) // Type of match: FULL, TELEOP_ENDGAME
-  matchDuration   Int? // Duration of the match in seconds (overrides default if set)
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
+  id                String         @id @default(uuid())
+  matchNumber       Int
+  roundNumber       Int? // The round number this match belongs to
+  status            String         @default("PENDING") // PENDING, IN_PROGRESS, COMPLETED
+  startTime         DateTime? // Full timestamp with hour-minute precision
+  scheduledTime     DateTime? // New field for the scheduled time with hour-minute precision
+  endTime           DateTime? // Full timestamp with hour-minute precision
+  duration          Int? // Duration in minutes
+  winningAlliance   String? // "RED" or "BLUE" - indicates which alliance won
+  stageId           String
+  stage             Stage          @relation(fields: [stageId], references: [id], onDelete: Cascade)
+  alliances         Alliance[]
+  scoredById        String?
+  scoredBy          User?          @relation("ScoredBy", fields: [scoredById], references: [id])
+  referees          MatchReferee[] // New relation for match referees
+  matchScores       MatchScores?
+  matchControl      MatchControl? // Optional relation to match control for display state
+  roundType         String? // e.g., "QUALIFICATION", "SWISS", "PLAYOFF", "FINAL"
+  scheduleId        String?
+  schedule          Schedule?      @relation(fields: [scheduleId], references: [id], onDelete: SetNull)
+  fieldId           String?
+  field             Field?         @relation(fields: [fieldId], references: [id], onDelete: SetNull)
+  fieldNumber       Int?
+  matchType         MatchType      @default(FULL) // Type of match: FULL, TELEOP_ENDGAME
+  matchDuration     Int? // Duration of the match in seconds (overrides default if set)
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  matchScoreRecords MatchScore[] // New relation to flexible match scores
 }
 
 model MatchReferee {
@@ -188,6 +190,7 @@ model Alliance {
   allianceScoring AllianceScoring?
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
+  matchScores     MatchScore[] // New relation to flexible match scores
 }
 
 model AllianceScoring {
@@ -382,4 +385,85 @@ model AudienceDisplay {
   customData     Json? // Additional display data
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
+}
+
+// New models for flexible scoring system
+
+model ScoreConfig {
+  id                String             @id @default(uuid())
+  tournamentId      String
+  tournament        Tournament         @relation(fields: [tournamentId], references: [id])
+  name              String // e.g., "Fire Fighting Competition 2025"
+  description       String?
+  scoreElements     ScoreElement[]
+  bonusConditions   BonusCondition[]
+  penaltyConditions PenaltyCondition[]
+  matchScores       MatchScore[] // Relation to match scores using this config
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+}
+
+model ScoreElement {
+  id            String      @id @default(uuid())
+  scoreConfigId String
+  scoreConfig   ScoreConfig @relation(fields: [scoreConfigId], references: [id], onDelete: Cascade)
+  name          String // e.g., "Dry Powder in Own Area"
+  code          String // Unique identifier for this element, e.g., "dry_powder_own"
+  description   String?
+  pointsPerUnit Int // e.g., 5 (can be negative for penalties)
+  maxUnits      Int? // Optional limit (e.g., max 10 balls)
+  category      String? // For grouping related elements
+  elementType   String // "counter" (numeric) or "boolean" (yes/no)
+  displayOrder  Int // For UI ordering
+  icon          String? // Optional icon reference
+  color         String? // Optional color for UI
+
+  @@unique([scoreConfigId, code])
+}
+
+model BonusCondition {
+  id            String      @id @default(uuid())
+  scoreConfigId String
+  scoreConfig   ScoreConfig @relation(fields: [scoreConfigId], references: [id], onDelete: Cascade)
+  name          String // e.g., "5 Dry Powder Balls Bonus"
+  code          String // Unique identifier, e.g., "five_balls_bonus"
+  description   String?
+  bonusPoints   Int // e.g., 10
+  condition     Json // JSON for storing condition logic
+  displayOrder  Int // For UI ordering
+
+  @@unique([scoreConfigId, code])
+}
+
+model PenaltyCondition {
+  id            String      @id @default(uuid())
+  scoreConfigId String
+  scoreConfig   ScoreConfig @relation(fields: [scoreConfigId], references: [id], onDelete: Cascade)
+  name          String // e.g., "Red Area Violation"
+  code          String // Unique identifier, e.g., "red_area_violation"
+  description   String?
+  penaltyPoints Int // e.g., -10
+  condition     Json // JSON for storing condition logic
+  displayOrder  Int // For UI ordering
+
+  @@unique([scoreConfigId, code])
+}
+
+model MatchScore {
+  id                String      @id @default(uuid())
+  matchId           String
+  match             Match       @relation(fields: [matchId], references: [id])
+  allianceId        String
+  alliance          Alliance    @relation(fields: [allianceId], references: [id])
+  scoreConfigId     String
+  scoreConfig       ScoreConfig @relation(fields: [scoreConfigId], references: [id])
+  elementScores     Json // Store counts for each ScoreElement
+  bonusesEarned     String[] // IDs of earned BonusCondition
+  penaltiesIncurred String[] // IDs of incurred PenaltyCondition
+  calculationLog    Json? // Optional detailed breakdown of score calculation
+  totalScore        Int // Calculated total
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  @@unique([matchId, allianceId])
 }

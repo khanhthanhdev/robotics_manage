@@ -345,6 +345,66 @@ exports.Prisma.AudienceDisplayScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.ScoreConfigScalarFieldEnum = {
+  id: 'id',
+  tournamentId: 'tournamentId',
+  name: 'name',
+  description: 'description',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ScoreElementScalarFieldEnum = {
+  id: 'id',
+  scoreConfigId: 'scoreConfigId',
+  name: 'name',
+  code: 'code',
+  description: 'description',
+  pointsPerUnit: 'pointsPerUnit',
+  maxUnits: 'maxUnits',
+  category: 'category',
+  elementType: 'elementType',
+  displayOrder: 'displayOrder',
+  icon: 'icon',
+  color: 'color'
+};
+
+exports.Prisma.BonusConditionScalarFieldEnum = {
+  id: 'id',
+  scoreConfigId: 'scoreConfigId',
+  name: 'name',
+  code: 'code',
+  description: 'description',
+  bonusPoints: 'bonusPoints',
+  condition: 'condition',
+  displayOrder: 'displayOrder'
+};
+
+exports.Prisma.PenaltyConditionScalarFieldEnum = {
+  id: 'id',
+  scoreConfigId: 'scoreConfigId',
+  name: 'name',
+  code: 'code',
+  description: 'description',
+  penaltyPoints: 'penaltyPoints',
+  condition: 'condition',
+  displayOrder: 'displayOrder'
+};
+
+exports.Prisma.MatchScoreScalarFieldEnum = {
+  id: 'id',
+  matchId: 'matchId',
+  allianceId: 'allianceId',
+  scoreConfigId: 'scoreConfigId',
+  elementScores: 'elementScores',
+  bonusesEarned: 'bonusesEarned',
+  penaltiesIncurred: 'penaltiesIncurred',
+  calculationLog: 'calculationLog',
+  totalScore: 'totalScore',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -352,6 +412,10 @@ exports.Prisma.SortOrder = {
 
 exports.Prisma.NullableJsonNullValueInput = {
   DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull
+};
+
+exports.Prisma.JsonNullValueInput = {
   JsonNull: Prisma.JsonNull
 };
 
@@ -451,7 +515,12 @@ exports.Prisma.ModelName = {
   MatchControl: 'MatchControl',
   MatchTimer: 'MatchTimer',
   MatchError: 'MatchError',
-  AudienceDisplay: 'AudienceDisplay'
+  AudienceDisplay: 'AudienceDisplay',
+  ScoreConfig: 'ScoreConfig',
+  ScoreElement: 'ScoreElement',
+  BonusCondition: 'BonusCondition',
+  PenaltyCondition: 'PenaltyCondition',
+  MatchScore: 'MatchScore'
 };
 
 /**
