@@ -22,6 +22,7 @@ git commit -m "#1 - "
 git push --set-upstream origin feature/[number-feature des]
 
 git checkout develop
+git pull
 ```
 
 :::info

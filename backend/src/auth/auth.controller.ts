@@ -95,4 +95,107 @@ export class AuthController {
       message: 'Your ADMIN role is working correctly'
     };
   }
+
+  @Get('debug-admin')
+  async debugAdmin() {
+    try {
+      const adminUsername = process.env.ADMIN_USERNAME || 'admin';
+      const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
+
+      // Find admin user
+      const user = await this.authService['prisma'].user.findUnique({
+        where: { username: adminUsername },
+        select: {
+          id: true,
+          username: true,
+          role: true,
+          password: true, // Include password for debugging
+          createdAt: true
+        }
+      });
+
+      if (!user) {
+        return {
+          found: false,
+          message: 'Admin user not found',
+          expectedUsername: adminUsername
+        };
+      }
+
+      // Test password validation
+      const bcrypt = require('bcrypt');
+      const passwordMatch = await bcrypt.compare(adminPassword, user.password);
+
+      return {
+        found: true,
+        user: {
+          id: user.id,
+          username: user.username,
+          role: user.role,
+          createdAt: user.createdAt,
+          passwordHashLength: user.password.length
+        },
+        passwordTest: {
+          expectedPassword: adminPassword,
+          passwordMatch: passwordMatch,
+          hashStartsWith: user.password.substring(0, 10) + '...'
+        }
+      };
+    } catch (error) {
+      return {
+        error: true,
+        message: error.message
+      };
+    }
+  }
+
+  @Get('force-recreate-admin')
+  @HttpCode(201)
+  async forceRecreateAdmin() {
+    try {
+      const adminUsername = process.env.ADMIN_USERNAME || 'admin';
+      const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
+
+      // Delete existing admin user if exists
+      await this.authService['prisma'].user.deleteMany({
+        where: { username: adminUsername }
+      });
+
+      // Create new admin user with proper password hash
+      const bcrypt = require('bcrypt');
+      const hashedPassword = await bcrypt.hash(adminPassword, 10);
+
+      const newAdmin = await this.authService['prisma'].user.create({
+        data: {
+          username: adminUsername,
+          password: hashedPassword,
+          role: UserRole.ADMIN,
+        },
+        select: {
+          id: true,
+          username: true,
+          role: true,
+          createdAt: true
+        }
+      });
+
+      // Test the new password immediately
+      const passwordTest = await bcrypt.compare(adminPassword, hashedPassword);
+
+      return {
+        success: true,
+        message: 'Admin user recreated successfully',
+        user: newAdmin,
+        passwordTest: {
+          expectedPassword: adminPassword,
+          passwordMatch: passwordTest
+        }
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message
+      };
+    }
+  }
 }

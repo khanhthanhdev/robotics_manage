@@ -80,27 +80,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       throw error;
     }
   }
-  
-  // Login function
+    // Login function
   const login = async (username: string, password: string) => {
     try {
+      console.log('Attempting login with:', { username, apiUrl: NEXT_PUBLIC_API_URL });
+      
       const response = await fetch(`${NEXT_PUBLIC_API_URL}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
         credentials: 'include',
       });
+      
+      console.log('Login response status:', response.status);
+      console.log('Login response headers:', Object.fromEntries(response.headers.entries()));
+      
       if (!response.ok) {
-        let errorMsg = 'Login failed';
+        let errorMsg = 'Login failed'; 
         try {
           const errorData = await response.json();
+          console.log('Error response data:', errorData);
           errorMsg = errorData.message || errorMsg;
-        } catch {}
+        } catch (parseError) {
+          console.log('Failed to parse error response:', parseError);
+          const textResponse = await response.text();
+          console.log('Raw error response:', textResponse);
+        }
         throw new Error(errorMsg);
       }
+      
+      const responseData = await response.json();
+      console.log('Successful login response:', responseData);
+      
       // Refetch user state after successful login
       await refetch();
     } catch (error) {
+      console.error('Login error:', error);
       throw error;
     }
   };
