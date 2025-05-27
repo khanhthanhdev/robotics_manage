@@ -37,14 +37,12 @@ import {
 import { toast } from "sonner";
 import { PlusIcon, PencilIcon, TrashIcon } from "lucide-react";
 import TournamentDialog from "./tournament-dialog";
-import { useQueryClient } from "@tanstack/react-query";
 
 export default function TournamentsPage() {
   const router = useRouter();
   const { user, isLoading: authLoading } = useAuth();
   const { data: tournaments, isLoading: tournamentsLoading, error: tournamentsError } = useTournaments();
   const deleteMutation = useDeleteTournament();
-  const queryClient = useQueryClient();
   
   // State for dialogs
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
@@ -92,16 +90,6 @@ export default function TournamentsPage() {
     setIsDeleteDialogOpen(true);
   };
 
-  // Efficiently load tournaments using cache
-  const fetchTournaments = async () => {
-    const cached = queryClient.getQueryData<any[]>(["tournaments"]);
-    if (cached && Array.isArray(cached)) {
-      return cached;
-    }
-    // fallback to hook's fetch (already handled by useTournaments)
-    return null;
-  };
-
   // Handler for confirming delete
   const handleConfirmDelete = async () => {
     if (!selectedTournament) return;
@@ -110,8 +98,6 @@ export default function TournamentsPage() {
       await deleteMutation.mutateAsync(selectedTournament.id);
       setIsDeleteDialogOpen(false);
       setSelectedTournament(null);
-      // Invalidate cache so next fetch gets fresh data
-      queryClient.invalidateQueries({ queryKey: ["tournaments"] });
     } catch (error) {
       console.error("Failed to delete tournament:", error);
     }

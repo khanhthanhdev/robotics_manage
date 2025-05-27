@@ -23,8 +23,6 @@ export interface MatchResponse {
   scoredById: string | null;
   createdAt: string;
   updatedAt: string;
-  matchType?: string; // Add matchType field
-  fieldNumber?: number | null; // Add fieldNumber field
   stage: {
     id: string;
     name: string;
@@ -368,29 +366,4 @@ export function useUpdateMatchScores() {
     // For advanced use, expose the original mutateAsync
     mutateAsync: mutation.mutateAsync,
   };
-}
-
-/**
- * Hook to update a match (e.g., matchType)
- */
-export function useUpdateMatch() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async ({ matchId, data }: { matchId: string; data: Partial<MatchResponse> }) => {
-      try {
-        return await MatchService.updateMatch(matchId, data);
-      } catch (error: any) {
-        toast.error(`Failed to update match: ${error.message}`);
-        throw error;
-      }
-    },
-    onSuccess: (data) => {
-      toast.success("Match updated successfully");
-      queryClient.invalidateQueries({ queryKey: QueryKeys.matches.all() });
-      queryClient.invalidateQueries({ queryKey: QueryKeys.matches.byId(data.id) });
-    },
-    onError: (error: any) => {
-      toast.error(`Failed to update match: ${error.message}`);
-    },
-  });
 }

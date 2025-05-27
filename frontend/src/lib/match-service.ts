@@ -70,8 +70,4 @@ export class MatchService {
   static async updateMatchScores(data: Partial<MatchScores> & { id: string }): Promise<MatchScores> {
     return apiClient.patch(`/match-scores/${data.id}`, data);
   }
-
-  static async updateMatch(matchId: string, data: Partial<MatchResponse>): Promise<MatchResponse> {
-    return apiClient.patch<MatchResponse>(`/matches/${matchId}`, data);
-  }
 }
