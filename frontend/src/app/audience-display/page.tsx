@@ -1,6 +1,6 @@
 'use client';
 import { useRouter } from 'next/navigation';
-import { useTournaments, Tournament } from '@/hooks/use-tournaments';
+import { useTournaments, Tournament } from '@/hooks/api/use-tournaments';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
 import { useState } from 'react';
 

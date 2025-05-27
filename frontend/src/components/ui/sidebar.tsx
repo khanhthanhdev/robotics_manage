@@ -6,8 +6,8 @@ import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
-import { useAuth } from "@/hooks/use-auth";
-import { useMobile } from "@/hooks/use-mobile";
+import { useAuth } from "@/hooks/common/use-auth";
+import { useMobile } from "@/hooks/common/use-mobile";
 import { 
   LayoutDashboardIcon, 
   TrophyIcon, 

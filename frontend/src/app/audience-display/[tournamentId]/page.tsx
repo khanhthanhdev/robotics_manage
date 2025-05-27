@@ -1,6 +1,6 @@
 "use client";
 import { useRouter, useParams } from "next/navigation";
-import { useTournament } from "@/hooks/use-tournaments";
+import { useTournament } from "@/hooks/api/use-tournaments";
 import FieldSelectDropdown, { useTournamentFields } from "@/components/fields/FieldSelectDropdown";
 
 export default function FieldSelectionPage() {

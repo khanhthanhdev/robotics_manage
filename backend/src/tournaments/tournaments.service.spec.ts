@@ -19,9 +19,8 @@ describe('TournamentsService', () => {
     service = module.get<TournamentsService>(TournamentsService);
     jest.clearAllMocks();
   });
-
   describe('create', () => {
-    it('should create a tournament', async () => {
+    it('should create a tournament with fields', async () => {
       const dto = { name: 'Tournament 1', description: "Test tournament using jest", location: 'City', startDate: '2025-05-13', endDate: '2025-05-14', adminId: 'admin1', numberOfFields: 2 };
       const now = new Date();
       const tournament = {
@@ -36,7 +35,10 @@ describe('TournamentsService', () => {
         numberOfFields: dto.numberOfFields,
       };
       prisma.tournament.create.mockResolvedValue(tournament);
+      prisma.field.create.mockResolvedValue({} as any);
+      
       const result = await service.create(dto as any);
+      
       expect(result).toHaveProperty('id', 't1');
       expect(prisma.tournament.create).toHaveBeenCalledWith({
         data: {
@@ -45,9 +47,49 @@ describe('TournamentsService', () => {
           startDate: new Date(dto.startDate),
           endDate: new Date(dto.endDate),
           adminId: dto.adminId,
+          numberOfFields: dto.numberOfFields,
+        },
+      });
+      // Should create 2 fields
+      expect(prisma.field.create).toHaveBeenCalledTimes(2);
+      expect(prisma.field.create).toHaveBeenCalledWith({
+        data: {
+          tournamentId: 't1',
+          number: 1,
+          name: 'Field 1',
+        },
+      });
+      expect(prisma.field.create).toHaveBeenCalledWith({
+        data: {
+          tournamentId: 't1',
+          number: 2,
+          name: 'Field 2',
         },
       });
     });
+
+    it('should create a tournament without fields when numberOfFields is 0', async () => {
+      const dto = { name: 'Tournament 1', description: "Test tournament using jest", location: 'City', startDate: '2025-05-13', endDate: '2025-05-14', adminId: 'admin1', numberOfFields: 0 };
+      const now = new Date();
+      const tournament = {
+        id: 't1',
+        name: dto.name,
+        description: dto.description,
+        startDate: new Date(dto.startDate),
+        endDate: new Date(dto.endDate),
+        createdAt: now,
+        updatedAt: now,
+        adminId: dto.adminId,
+        numberOfFields: dto.numberOfFields,
+      };
+      prisma.tournament.create.mockResolvedValue(tournament);
+      
+      const result = await service.create(dto as any);
+      
+      expect(result).toHaveProperty('id', 't1');
+      expect(prisma.field.create).not.toHaveBeenCalled();
+    });
+
     it('should throw if prisma throws', async () => {
       prisma.tournament.create.mockRejectedValue(new Error('DB error'));
       await expect(service.create({} as any)).rejects.toThrow('DB error');

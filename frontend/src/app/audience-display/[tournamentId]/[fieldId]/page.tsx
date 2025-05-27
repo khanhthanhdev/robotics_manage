@@ -1,22 +1,22 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { useTournament } from "@/hooks/use-tournaments";
+import { useTournament } from "@/hooks/api/use-tournaments";
 import { useTournamentFields } from "@/components/fields/FieldSelectDropdown";
-import { useWebSocket } from "@/hooks/useWebSocket";
-import { AudienceDisplaySettings } from "@/lib/websocket-service";
-import TeamsDisplay from "../../components/TeamsDisplay";
-import ScheduleDisplay, { Match } from "../../components/ScheduleDisplay";
-import { useTeams } from "@/hooks/use-teams";
+import { useWebSocket } from "@/hooks/common/use-websocket";
+import { AudienceDisplaySettings } from "@/services/websocket-service";
+import TeamsDisplay from "../../../../components/features/audience-display/displays/teams-display";
+import ScheduleDisplay, { Match } from "../../../../components/features/audience-display/displays/schedule-display";
+import { useTeams } from "@/hooks/api/use-teams";
 import { apiClient } from "@/lib/api-client";
-import { useInjectTextShadowStyle } from "../../components/useInjectTextShadowStyle";
-import { useAnnouncement } from "../../components/useAnnouncement";
-import { AnnouncementOverlay } from "../../components/AnnouncementOverlay";
-import { FieldNotFound } from "../../components/FieldNotFound";
-import { LoadingDisplay } from "../../components/LoadingDisplay";
-import { MatchDisplay } from "../../components/MatchDisplay";
-import { useMatchesByTournament } from "../../components/useMatchesByTournament";
-import { SwissRankingsDisplay } from "../../components/SwissRankingsDisplay";
+import { useInjectTextShadowStyle } from "../../../../hooks/features/use-inject-text-shadow-style";
+import { useAnnouncement } from "../../../../hooks/features/use-announcement";
+import { AnnouncementOverlay } from "../../../../components/features/audience-display/overlays/announcement-overlay";
+import { FieldNotFound } from "../../../../components/features/audience-display/states/field-not-found";
+import { LoadingDisplay } from "../../../../components/features/audience-display/states/loading-display";
+import { MatchDisplay } from "../../../../components/features/audience-display/displays/match-display";
+import { useMatchesByTournament } from "@/hooks/features/use-matches-by-tournament";
+import { SwissRankingsDisplay } from "../../../../components/features/audience-display/displays/swiss-rankings-display";
 
 export default function LiveFieldDisplayPage() {
   const router = useRouter();

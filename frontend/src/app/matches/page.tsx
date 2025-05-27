@@ -3,8 +3,8 @@
 import { useState, useEffect, useMemo } from "react";
 import { format } from "date-fns";
 import { useRouter } from "next/navigation";
-import { useMatches } from "@/hooks/use-matches";
-import { useAuth } from "@/hooks/use-auth";
+import { useMatches } from "@/hooks/api/use-matches";
+import { useAuth } from "@/hooks/common/use-auth";
 import { MatchStatus } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import {

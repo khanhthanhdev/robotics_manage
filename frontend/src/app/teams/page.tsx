@@ -4,10 +4,12 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import { apiClient } from "@/lib/api-client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PlusIcon, UploadIcon, DownloadIcon } from "lucide-react";
-import { LeaderboardTable } from "@/components/LeaderboardTable";
-import { LeaderboardFilters } from "@/components/LeaderboardFilters";
-import { teamLeaderboardColumns, TeamLeaderboardRow } from "@/components/teamLeaderboardColumns";
+import { LeaderboardTable } from "@/components/features/leaderboard/leaderboard-table";
+import { LeaderboardFilters } from "@/components/features/leaderboard/leaderboard-filters";
+import { teamLeaderboardColumns, TeamLeaderboardRow } from "@/components/features/leaderboard/team-leaderboard-columns";
+import { useTournaments, Tournament } from "@/hooks/api/use-tournaments";
 
 interface Team {
   id: string;
@@ -24,10 +26,13 @@ export default function TeamsPage() {
   const [teams, setTeams] = useState<Team[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [importing, setImporting] = useState(false);
+  const [showImportCard, setShowImportCard] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
   const [importContent, setImportContent] = useState("");
   const [importResult, setImportResult] = useState<any>(null);
   const [importError, setImportError] = useState<string | null>(null);
+  const [selectedTournamentId, setSelectedTournamentId] = useState<string>("");
+  const [delimiter, setDelimiter] = useState<string>(",");
 
   // State for leaderboard filters
   const [teamName, setTeamName] = useState("");
@@ -36,6 +41,9 @@ export default function TeamsPage() {
   const [totalScoreRange, setTotalScoreRange] = useState<[number, number]>([0, 1000]);
 
   const workerRef = useRef<Worker | null>(null);
+  
+  // Fetch tournaments
+  const { data: tournaments, isLoading: tournamentsLoading } = useTournaments();
 
   useEffect(() => {
     fetchTeams();
@@ -99,23 +107,34 @@ export default function TeamsPage() {
           row.totalScore <= totalScoreRange[1]
       ),
     [leaderboardRows, teamName, teamCode, rankRange, totalScoreRange]
-  );
+  );  async function handleImport() {
+    // Validate tournament selection before setting importing state
+    if (!selectedTournamentId) {
+      setImportResult({ success: false, message: "Please select a tournament before importing teams." });
+      return;
+    }
 
-  async function handleImport() {
-    setImporting(true);
+    if (!importContent) {
+      setImportResult({ success: false, message: "Please provide CSV content before importing teams." });
+      return;
+    }
+
+    setIsImporting(true);
     setImportResult(null);
     try {
       const result = await apiClient.post("/teams/import", {
         content: importContent,
         format: "csv",
         hasHeader: true,
+        tournamentId: selectedTournamentId,
+        delimiter: delimiter,
       });
       setImportResult(result);
       fetchTeams();
     } catch (e: any) {
       setImportResult({ success: false, message: e.message });
     } finally {
-      setImporting(false);
+      setIsImporting(false);
     }
   }
 
@@ -145,25 +164,90 @@ export default function TeamsPage() {
         <div className="flex gap-2">
           <Button onClick={handleExport} variant="outline" className="flex items-center gap-2">
             <DownloadIcon size={16} /> Export
-          </Button>
-          <Button onClick={() => setImporting((v) => !v)} variant="outline" className="flex items-center gap-2">
+          </Button>          <Button onClick={() => {
+            const wasImporting = showImportCard;
+            setShowImportCard((v) => !v);
+            if (!showImportCard) {
+              // Reset form when opening
+              setImportContent("");
+              setImportResult(null);
+              setImportError(null);
+              setSelectedTournamentId("");
+              setDelimiter(",");
+              setIsImporting(false);
+            } else {
+              // Reset states when closing
+              setImportContent("");
+              setImportResult(null);
+              setImportError(null);
+              setSelectedTournamentId("");
+              setDelimiter(",");
+              setIsImporting(false);
+            }
+          }} variant="outline" className="flex items-center gap-2">
             <UploadIcon size={16} /> Import
           </Button>
         </div>
-      </div>
-      {importing && (
+      </div>      {showImportCard && (
         <Card className="mb-6 border-2 border-blue-700 bg-gradient-to-br from-blue-950 to-blue-900 shadow-xl">
           <CardContent className="py-6">
             <div className="flex items-center gap-2 mb-4">
               <UploadIcon size={22} className="text-blue-400" />
               <h3 className="font-bold text-lg text-blue-200 tracking-wide">Import Teams from CSV</h3>
             </div>
-            <div className="mb-4 text-blue-100 text-sm">
-              <span className="font-semibold text-blue-300">Instructions:</span> Upload a <span className="font-mono bg-blue-800/60 px-1 rounded">.csv</span> file or paste CSV content below.<br/>
-              <span className="text-blue-300">Columns:</span> <span className="font-mono bg-blue-800/60 px-1 rounded">Name</span>, <span className="font-mono bg-blue-800/60 px-1 rounded">Organization</span>, <span className="font-mono bg-blue-800/60 px-1 rounded">Description</span>
+            
+            {/* Tournament Selection */}
+            <div className="mb-4">
+              <label className="block mb-2 font-semibold text-blue-300">Select Tournament</label>              <Select value={selectedTournamentId} onValueChange={setSelectedTournamentId}>
+                <SelectTrigger className="w-full bg-blue-950 border-blue-700 text-blue-100">
+                  <SelectValue placeholder={tournamentsLoading ? "Loading tournaments..." : "Select a tournament"} />
+                </SelectTrigger>
+                <SelectContent>
+                  {tournaments?.map((tournament) => (
+                    <SelectItem key={tournament.id} value={tournament.id}>
+                      {tournament.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {!selectedTournamentId ? (
+                <p className="text-blue-400 text-xs mt-1">⚠️ A tournament must be selected to import teams</p>
+              ) : (
+                <p className="text-green-400 text-xs mt-1">✓ Tournament selected: {tournaments?.find(t => t.id === selectedTournamentId)?.name}</p>
+              )}
             </div>
-            <label className="block mb-2 font-semibold text-blue-300">Upload CSV File</label>
-            <input
+
+            {/* CSV Delimiter Selection */}
+            <div className="mb-4">
+              <label className="block mb-2 font-semibold text-blue-300">CSV Delimiter</label>
+              <Select value={delimiter} onValueChange={setDelimiter}>
+                <SelectTrigger className="w-full bg-blue-950 border-blue-700 text-blue-100">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value=",">, (Comma)</SelectItem>
+                  <SelectItem value=";">; (Semicolon)</SelectItem>
+                  <SelectItem value={"\t"}>Tab</SelectItem>
+                  <SelectItem value="|">| (Pipe)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>            <div className="mb-4 text-blue-100 text-sm">
+              <span className="font-semibold text-blue-300">Instructions:</span> Follow these steps to import teams:
+              <ol className="mt-2 ml-4 space-y-1 text-blue-200">
+                <li>1. <span className="font-semibold text-blue-300">Select a tournament</span> from the dropdown above</li>
+                <li>2. <span className="font-semibold text-blue-300">Choose CSV delimiter</span> that matches your file format</li>
+                <li>3. <span className="font-semibold text-blue-300">Upload a CSV file</span> or paste CSV content below</li>
+                <li>4. <span className="font-semibold text-blue-300">Click Import</span> when all fields are filled</li>
+              </ol>
+              <div className="mt-3 p-2 bg-blue-800/40 rounded border border-blue-600">
+                <span className="text-blue-300 font-semibold">Required CSV columns:</span> 
+                <span className="font-mono bg-blue-800/60 px-1 rounded ml-1">Name</span>, 
+                <span className="font-mono bg-blue-800/60 px-1 rounded ml-1">Organization</span>, 
+                <span className="font-mono bg-blue-800/60 px-1 rounded ml-1">Description</span>
+              </div>
+            </div>
+            
+            <label className="block mb-2 font-semibold text-blue-300">Upload CSV File</label>            <input
               type="file"
               accept=".csv"
               className="mb-4 block w-full text-sm text-blue-100 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-800/80 file:text-blue-200 hover:file:bg-blue-700/80"
@@ -171,10 +255,13 @@ export default function TeamsPage() {
                 const file = e.target.files?.[0];
                 if (!file) return;
                 const text = await file.text();
+                
+                // Always set the content directly, and also send to worker for validation
+                setImportContent(text);
+                setImportError(null);
+                
                 if (workerRef.current) {
                   workerRef.current.postMessage({ csvText: text });
-                } else {
-                  setImportContent(text);
                 }
               }}
             />
@@ -184,9 +271,15 @@ export default function TeamsPage() {
               placeholder="Paste CSV content here. Columns: Name, Organization, Description."
               value={importContent}
               onChange={(e) => setImportContent(e.target.value)}
-            />
-            {importError && (
+            />            {importError && (
               <div className="text-red-400 text-sm mb-2 font-semibold border-l-4 border-red-500 pl-2 bg-red-950/60 py-1">{importError}</div>
+            )}
+            
+            {/* Success indicator when content is loaded */}
+            {importContent && !importError && (
+              <div className="text-green-400 text-sm mb-2 font-semibold border-l-4 border-green-500 pl-2 bg-green-950/60 py-1">
+                ✓ CSV content loaded ({importContent.split('\n').length} rows)
+              </div>
             )}
             {/* Preview first 3 rows if available */}
             {importContent && (
@@ -194,18 +287,35 @@ export default function TeamsPage() {
                 <div className="font-bold mb-1 text-blue-300">Preview:</div>
                 {importContent.split('\n').slice(0, 3).map((row, i) => (
                   <div key={i} className="font-mono text-blue-200">{row}</div>
-                ))}
-                {importContent.split('\n').length > 3 && <div className="text-blue-400">...</div>}
+                ))}                {importContent.split('\n').length > 3 && <div className="text-blue-400">...</div>}
+              </div>
+            )}            <div className="flex gap-2 mt-4">
+              <Button 
+                onClick={handleImport} 
+                disabled={isImporting || !importContent.trim() || !selectedTournamentId} 
+                className="bg-blue-700 hover:bg-blue-800 text-white font-bold px-6 py-2 rounded-lg shadow disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <UploadIcon size={16} className="mr-2" /> 
+                {isImporting ? "Importing..." : "Import"}
+              </Button>
+              <Button variant="outline" onClick={() => {
+                setIsImporting(false);
+                setImportResult(null);
+                setImportError(null);
+              }} className="border-blue-700 text-blue-200 hover:bg-blue-800/30">
+                {isImporting ? "Reset" : "Cancel"}
+              </Button>
+            </div>            {/* Debug info for import button state */}
+            {(isImporting || !importContent.trim() || !selectedTournamentId) && (
+              <div className="mt-2 text-xs text-blue-400">
+                <span className="font-semibold">Import button disabled because:</span>
+                <ul className="ml-2 mt-1">
+                  {isImporting && <li>• Currently importing...</li>}
+                  {!selectedTournamentId && <li>• No tournament selected</li>}
+                  {!importContent.trim() && <li>• No CSV content provided (content length: {importContent.length})</li>}
+                </ul>
               </div>
             )}
-            <div className="flex gap-2 mt-4">
-              <Button onClick={handleImport} disabled={importing || !importContent} className="bg-blue-700 hover:bg-blue-800 text-white font-bold px-6 py-2 rounded-lg shadow">
-                <UploadIcon size={16} className="mr-2" /> Import
-              </Button>
-              <Button variant="outline" onClick={() => setImporting(false)} className="border-blue-700 text-blue-200 hover:bg-blue-800/30">
-                Cancel
-              </Button>
-            </div>
             {importResult && (
               <div className={`mt-4 text-sm font-semibold px-3 py-2 rounded ${importResult.success ? "bg-green-900/80 text-green-300 border-l-4 border-green-500" : "bg-red-900/80 text-red-300 border-l-4 border-red-500"}`}>
                 {importResult.message}

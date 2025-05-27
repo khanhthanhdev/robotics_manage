@@ -3,10 +3,10 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
-import { useAuth } from "@/hooks/use-auth";
-import { useTournaments } from "@/hooks/use-tournaments";
-import { useStage, useDeleteStage, useStagesByTournament } from "@/hooks/use-stages";
-import { useMatchesByStage } from "@/hooks/use-matches";
+import { useAuth } from "@/hooks/common/use-auth";
+import { useTournaments } from "@/hooks/api/use-tournaments";
+import { useStage, useDeleteStage, useStagesByTournament } from "@/hooks/api/use-stages";
+import { useMatchesByStage } from "@/hooks/api/use-matches";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -50,7 +50,7 @@ import { toast } from "sonner";
 import { PlusIcon, PencilIcon, TrashIcon, InfoIcon, CalendarIcon, ArrowLeftIcon, ListIcon, ClipboardIcon, BarChart3Icon, AlarmClock, Medal } from "lucide-react";
 import StageDialog from "./stage-dialog";
 import MatchSchedulerDialog from "./match-scheduler-dialog";
-import { MatchService } from "@/lib/match-service";
+import { MatchService } from "@/services/match-service";
 
 export default function StagesPage() {
   const router = useRouter();

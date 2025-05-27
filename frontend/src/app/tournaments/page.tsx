@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
-import { useAuth } from "@/hooks/use-auth";
-import { useTournaments, useDeleteTournament } from "@/hooks/use-tournaments";
+import { useAuth } from "@/hooks/common/use-auth";
+import { useTournaments, useDeleteTournament } from "@/hooks/api/use-tournaments";
 import { Button } from "@/components/ui/button";
 import {
   Card,

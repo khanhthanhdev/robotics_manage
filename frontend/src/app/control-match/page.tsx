@@ -9,16 +9,16 @@ import {
   useUpdateMatchScores,
   useCreateMatchScores,
   useUpdateMatchStatus,
-} from "@/hooks/use-matches";
+} from "@/hooks/api/use-matches";
 import { MatchStatus } from "@/lib/types";
-import { useWebSocket } from "@/hooks/useWebSocket";
-import { useTournaments } from "@/hooks/use-tournaments";
-import { MatchData } from "@/lib/websocket-service";
+import { useWebSocket } from "@/hooks/common/use-websocket";
+import { useTournaments } from "@/hooks/api/use-tournaments";
+import { MatchData } from "@/services/websocket-service";
 import { Card } from "@/components/ui/card";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-import ConnectionStatus from "./components/ConnectionStatus";
+import ConnectionStatus from "../../components/features/control-match/connection-status";
 import { toast } from "sonner";
-import MatchControlTabs from "./components/MatchControlTabs";
+import MatchControlTabs from "../../components/features/control-match/match-control-tab";
 import FieldSelectDropdown from "@/components/fields/FieldSelectDropdown";
 
 

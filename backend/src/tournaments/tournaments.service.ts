@@ -6,17 +6,33 @@ import { UpdateTournamentDto } from './dto/update-tournament.dto';
 @Injectable()
 export class TournamentsService {
   constructor(private prisma: PrismaService) {}
-
-  create(createTournamentDto: CreateTournamentDto) {
-    return this.prisma.tournament.create({
+  async create(createTournamentDto: CreateTournamentDto) {
+    // Create the tournament first
+    const tournament = await this.prisma.tournament.create({
       data: {
         name: createTournamentDto.name,
         description: createTournamentDto.description,
         startDate: new Date(createTournamentDto.startDate),
         endDate: new Date(createTournamentDto.endDate),
         adminId: createTournamentDto.adminId,
+        numberOfFields: createTournamentDto.numberOfFields,
       },
     });
+
+    // Create fields if numberOfFields is specified and > 0
+    if (createTournamentDto.numberOfFields && createTournamentDto.numberOfFields > 0) {
+      for (let n = 1; n <= createTournamentDto.numberOfFields; n++) {
+        await this.prisma.field.create({
+          data: {
+            tournamentId: tournament.id,
+            number: n,
+            name: `Field ${n}`,
+          },
+        });
+      }
+    }
+
+    return tournament;
   }
 
   findAll() {
