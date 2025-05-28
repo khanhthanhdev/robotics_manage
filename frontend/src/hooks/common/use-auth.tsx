@@ -2,25 +2,11 @@
 
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { UserRole } from "@/lib/types";
+import { AuthContextType, User } from "@/lib/types";
 
 // User type definition
-type User = {
-  id: string;
-  username: string;
-  role: UserRole;
-  email?: string;
-};
 
-// Auth context type
-type AuthContextType = {
-  user: User | null;
-  isLoading: boolean;
-  error: Error | null;
-  login: (username: string, password: string) => Promise<void>;
-  logout: () => Promise<void>;
-  register: (username: string, password: string, email?: string) => Promise<void>;
-};
+
 
 // Create the auth context
 const AuthContext = createContext<AuthContextType | undefined>(undefined);

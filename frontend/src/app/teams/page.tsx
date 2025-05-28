@@ -5,11 +5,11 @@ import { apiClient } from "@/lib/api-client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { PlusIcon, UploadIcon, DownloadIcon } from "lucide-react";
+import {  UploadIcon, DownloadIcon } from "lucide-react";
 import { LeaderboardTable } from "@/components/features/leaderboard/leaderboard-table";
 import { LeaderboardFilters } from "@/components/features/leaderboard/leaderboard-filters";
 import { teamLeaderboardColumns, TeamLeaderboardRow } from "@/components/features/leaderboard/team-leaderboard-columns";
-import { useTournaments, Tournament } from "@/hooks/api/use-tournaments";
+import { useTournaments } from "@/hooks/api/use-tournaments";
 
 interface Team {
   id: string;

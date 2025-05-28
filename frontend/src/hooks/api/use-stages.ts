@@ -5,38 +5,7 @@ import { toast } from "sonner";
 import { apiClient } from "@/lib/api-client";
 import { QueryKeys } from "@/lib/query-keys";
 
-// Type definitions for stage data
-export interface Stage {
-  id: string;
-  name: string;
-  type: "SWISS" | "PLAYOFF" | "FINAL";
-  startDate: string;
-  endDate: string;
-  tournamentId: string;
-  createdAt: string;
-  updatedAt: string;
-  tournament?: {
-    id: string;
-    name: string;
-    startDate: string;
-    endDate: string;
-  };
-}
-
-export interface CreateStageInput {
-  name: string;
-  type: "SWISS" | "PLAYOFF" | "FINAL";
-  startDate: string;
-  endDate: string;
-  tournamentId: string;
-}
-
-export interface UpdateStageInput {
-  name?: string;
-  type?: "SWISS" | "PLAYOFF" | "FINAL";
-  startDate?: string;
-  endDate?: string;
-}
+import type { Stage, CreateStageInput, UpdateStageInput } from "@/lib/types";
 
 /**
  * Hook to fetch all stages

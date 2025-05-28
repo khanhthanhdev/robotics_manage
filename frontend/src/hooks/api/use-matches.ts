@@ -8,113 +8,6 @@ import { QueryKeys } from "@/lib/query-keys";
 import { MatchStatus } from "@/lib/types";
 import { MatchService } from "@/services/match-service";
 
-// Type definition for our match response
-export interface MatchResponse {
-  id: string;
-  matchNumber: number;
-  roundNumber: number;
-  status: MatchStatus;
-  startTime: string | null;
-  scheduledTime: string | null;
-  endTime: string | null;
-  duration: number | null;
-  winningAlliance: string | null;
-  stageId: string;
-  scoredById: string | null;
-  createdAt: string;
-  updatedAt: string;
-  stage: {
-    id: string;
-    name: string;
-    type: string;
-    startDate: string;
-    endDate: string;
-    tournamentId: string;
-    createdAt: string;
-    updatedAt: string;
-    tournament: {
-      id: string;
-      name: string;
-      description: string;
-      startDate: string;
-      endDate: string;
-      createdAt: string;
-      updatedAt: string;
-      adminId: string;
-    };
-  };
-  alliances: Array<{
-    id: string;
-    color: string;
-    score: number;
-    matchId: string;
-    createdAt: string;
-    updatedAt: string;
-    teamAlliances: Array<{
-      id: string;
-      teamId: string;
-      allianceId: string;
-      stationPosition: number;
-      isSurrogate: boolean;
-      createdAt: string;
-      updatedAt: string;
-      team: {
-        id: string;
-        teamNumber: string;
-        name: string;
-        organization: string | null;
-        avatar: string | null;
-        description: string | null;
-        teamMembers: string | null;
-        tournamentId: string;
-        createdAt: string;
-        updatedAt: string;
-      };
-    }>;
-    allianceScoring: any | null;
-  }>;
-  scoredBy: any | null;
-}
-
-// Match Scores interface
-export interface MatchScores {
-  id: string;
-  matchId: string;
-  redAutoScore: number;
-  redDriveScore: number;
-  redTotalScore: number;
-  blueAutoScore: number;
-  blueDriveScore: number;
-  blueTotalScore: number;
-  redGameElements: Array<{
-    element: string;
-    count: number;
-    pointsEach: number;
-    totalPoints: number;
-    operation: string;
-  }>;
-  blueGameElements: Array<{
-    element: string;
-    count: number;
-    pointsEach: number;
-    totalPoints: number;
-    operation: string;
-  }>;
-  redTeamCount: number;
-  redMultiplier: number;
-  blueTeamCount: number;
-  blueMultiplier: number;
-  scoreDetails: Record<string, any>;
-  createdAt: string;
-  updatedAt: string;
-  match?: {
-    id: string;
-    matchNumber: number;
-    status: string;
-    winningAlliance: string | null;
-  };
-}
-
 /**
  * Hook to fetch all matches, optionally filtered by fieldId
  */
@@ -264,8 +157,8 @@ export function useCreateMatchScores() {
       blueTeamCount?: number;
       redMultiplier?: number;
       blueMultiplier?: number;
-      redGameElements?: any[];
-      blueGameElements?: any[];
+      redGameElements?: Record<string, number>;
+      blueGameElements?: Record<string, number>;
       scoreDetails?: Record<string, any>;
     }) => {
       try {
@@ -312,8 +205,8 @@ export function useUpdateMatchScores() {
       blueTeamCount?: number;
       redMultiplier?: number;
       blueMultiplier?: number;
-      redGameElements?: any[];
-      blueGameElements?: any[];
+      redGameElements?: Record<string, number>;
+      blueGameElements?: Record<string, number>;
       scoreDetails?: Record<string, any>;
     }) => {
       if (!data.id) {
@@ -366,4 +259,23 @@ export function useUpdateMatchScores() {
     // For advanced use, expose the original mutateAsync
     mutateAsync: mutation.mutateAsync,
   };
+}
+
+/**
+ * Hook to fetch all match scores
+ */
+export function useAllMatchScores(enabled: boolean = true) {
+  return useQuery({
+    queryKey: ["all-match-scores"],
+    queryFn: async () => {
+      const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
+      const response = await fetch(`${API_BASE_URL}/api/match-scores`, {
+        credentials: "include",
+      });
+      if (!response.ok) throw new Error("Failed to fetch match scores");
+      return await response.json();
+    },
+    staleTime: 60 * 1000, // 1 minute
+    enabled,
+  });
 }

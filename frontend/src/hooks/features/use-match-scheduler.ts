@@ -5,24 +5,11 @@ import { toast } from "sonner";
 import { apiClient } from "@/lib/api-client";
 import { QueryKeys } from "@/lib/query-keys";
 import { useAuth } from "@/hooks/common/use-auth";
-
-interface GenerateFrcScheduleRequest {
-  stageId: string;
-  rounds: number;
-  teamsPerAlliance: number;
-  minMatchSeparation: number;
-  qualityLevel: 'low' | 'medium' | 'high';
-}
-
-interface GenerateSwissRoundRequest {
-  stageId: string;
-  currentRoundNumber: number;
-}
-
-interface GeneratePlayoffRequest {
-  stageId: string;
-  numberOfRounds: number;
-}
+import type {
+  GenerateFrcScheduleRequest,
+  GenerateSwissRoundRequest,
+  GeneratePlayoffRequest
+} from "@/lib/types";
 
 export function useMatchScheduler() {
   const queryClient = useQueryClient();

@@ -5,6 +5,13 @@ import {
   useQueryClient 
 } from '@tanstack/react-query';
 
+import type {
+  Match,
+  MatchScores,
+  ScoreUpdate,
+  TimerState,
+} from '@/lib/types';
+
 // API base URL - should be from env vars in a real app
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
@@ -21,142 +28,6 @@ const handleApiError = async (response: Response): Promise<never> => {
   
   throw new Error(errorMessage);
 };
-
-// Types
-export interface Match {
-  id: string;
-  matchNumber: number;
-  roundNumber: number;
-  status: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED';
-  startTime?: string;
-  endTime?: string;
-  scheduledTime?: string;
-  winningAlliance?: 'RED' | 'BLUE' | 'TIE';
-  stageId: string;
-  stage?: {
-    id: string;
-    name: string;
-    tournament?: {
-      id: string;
-      name: string;
-    }
-  };
-  alliances?: Alliance[];
-}
-
-export interface MatchScores {
-  id: string;
-  matchId: string;
-  redAutoScore: number;
-  redDriveScore: number;
-  redTotalScore: number;
-  redTeamCount?: number;
-  redMultiplier?: number;
-  // Detailed red alliance scoring properties
-  redHighGoals?: number;
-  redLowGoals?: number;
-  redPenalties?: number;
-  redEndgamePoints?: number;
-
-  blueAutoScore: number;
-  blueDriveScore: number;
-  blueTotalScore: number;
-  blueTeamCount?: number;
-  blueMultiplier?: number;
-  // Detailed blue alliance scoring properties
-  blueHighGoals?: number;
-  blueLowGoals?: number;
-  bluePenalties?: number;
-  blueEndgamePoints?: number;
-
-  redGameElements?: Record<string, number>;
-  blueGameElements?: Record<string, number>;
-  scoreDetails?: {
-    penalties?: {
-      red: number;
-      blue: number;
-    };
-    specialScoring?: Record<string, {
-      red: number;
-      blue: number;
-    }>;
-  };
-  match?: {
-    id: string;
-    matchNumber: number;
-    status: string;
-    stage?: {
-      name: string;
-      tournament?: {
-        name: string;
-      };
-    };
-  };
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface ScoreUpdate {
-  redAutoScore?: number;
-  redDriveScore?: number;
-  blueAutoScore?: number;
-  blueDriveScore?: number;
-}
-
-export interface TimerState {
-  duration: number;
-  remaining: number;
-  isRunning: boolean;
-}
-
-export interface Alliance {
-  id: string;
-  color: 'RED' | 'BLUE';
-  matchId: string;
-  score: number;
-  teamAlliances?: {
-    team: {
-      id: string;
-      name: string;
-      teamNumber: string;
-    }
-  }[]; 
-  allianceScoring?: AllianceScoring;
-}
-
-export interface AllianceScoring {
-  id: string;
-  allianceId: string;
-  autoScore: number;
-  driverScore: number;
-  endGameScore: number;
-  penaltyScore: number;
-  totalScore: number;
-}
-
-export interface AllianceScoreUpdate {
-  allianceId: string;
-  autoScore?: number;
-  driverScore?: number;
-  endGameScore?: number;
-  penaltyScore?: number;
-}
-
-export interface AudienceDisplayData {
-  matchId: string | null;
-  showTimer: boolean;
-  showScores: boolean;
-  showTeams: boolean;
-  displayMode: 'INTRO' | 'MATCH_RESULTS' | 'WAITING' | 'FINAL_RESULTS' | 'CUSTOM_MESSAGE' | 'DEFAULT';
-  customMessage?: string;
-  introVideo?: {
-    source: string;
-    autoplay: boolean;
-    loop: boolean;
-  };
-  waitingMessage?: string;
-  finalScoreDelay?: number; // Delay in ms before showing final results
-}
 
 // --- SOLID: Service Layer for Match Control ---
 class MatchControlService {

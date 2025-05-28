@@ -16,32 +16,35 @@ export enum UserRole {
   ALLIANCE_REFEREE = "ALLIANCE_REFEREE"
 }
 
-export interface Tournament {
-  id: string;
-  name: string;
-  description: string;
-  startDate: string;
-  endDate: string;
-  adminId: string;
-  createdAt: string;
-  updatedAt: string;
-  admin?: {
-    id: string;
-    username: string;
-  };
-  numberOfFields?: number;
-}
-
 // --- Audience Display Types ---
 
 export type DisplayMode =
-  | "intro"
-  | "queue"
-  | "active"
-  | "results"
-  | "standings"
-  | "awards"
-  | "custom";
+  | "match"
+  | "teams"
+  | "schedule"
+  | "blank"
+  | "rankings"
+  | "custom"
+  | "announcement"
+  | "intro";
+
+
+export interface User {
+  id: string;
+  username: string;
+  role: UserRole;
+  email?: string;
+};
+
+export interface AuthContextType  {
+  user: User | null;
+  isLoading: boolean;
+  error: Error | null;
+  login: (username: string, password: string) => Promise<void>;
+  logout: () => Promise<void>;
+  register: (username: string, password: string, email?: string) => Promise<void>;
+};
+
 
 export interface AudienceDisplaySettings {
   displayMode: DisplayMode;
@@ -52,6 +55,8 @@ export interface AudienceDisplaySettings {
   message?: string;
   timerStartedAt?: number | null;
   updatedAt: number;
+  tournamentId: string;
+  fieldId?: string | null;
 }
 
 // --- Field ---
@@ -69,26 +74,52 @@ export interface Match {
   id: string;
   matchNumber: number;
   roundNumber?: number;
-  status: string;
+  status: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED';
   startTime?: string;
-  scheduledTime?: string;
   endTime?: string;
-  duration?: number;
-  winningAlliance?: "RED" | "BLUE";
+  scheduledTime?: string;
+  winningAlliance?: 'RED' | 'BLUE' | 'TIE';
   stageId: string;
-  fieldId?: string;
-  fieldNumber?: number;
-  matchType?: string;
-  matchDuration?: number;
-  alliances: Alliance[];
+  stage?: {
+    id: string;
+    name: string;
+    tournament?: {
+      id: string;
+      name: string;
+    }
+  };
+  alliances?: Alliance[];
 }
+
+export interface MatchContextType {
+  activeMatchId: string | null;
+  setActiveMatchId: (id: string | null) => void;
+};
 
 // --- Alliance ---
 export interface Alliance {
   id: string;
-  color: "RED" | "BLUE";
+  color: 'RED' | 'BLUE';
+  matchId: string;
   score: number;
-  teamAlliances: TeamAlliance[];
+  teamAlliances?: {
+    team: {
+      id: string;
+      name: string;
+      teamNumber: string;
+    }
+  }[];
+  allianceScoring?: AllianceScoring;
+}
+
+export interface AllianceScoring {
+  id: string;
+  allianceId: string;
+  autoScore: number;
+  driverScore: number;
+  endGameScore: number;
+  penaltyScore: number;
+  totalScore: number;
 }
 
 export interface TeamAlliance {
@@ -148,6 +179,12 @@ export interface LoadingState {
 }
 
 // --- WebSocket/Real-time Types ---
+
+export interface UseWebSocketOptions {
+  autoConnect?: boolean;
+  url?: string;
+  tournamentId?: string;
+}
 
 export interface TimerData {
   duration: number;
@@ -221,3 +258,217 @@ export type WebSocketEvent =
   | 'match_state_change'
   | 'announcement';
 
+// --- Match Control Types ---
+export interface Match {
+  id: string;
+  matchNumber: number;
+  roundNumber?: number;
+  status: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED';
+  startTime?: string;
+  endTime?: string;
+  scheduledTime?: string;
+  winningAlliance?: 'RED' | 'BLUE' | 'TIE';
+  stageId: string;
+  stage?: {
+    id: string;
+    name: string;
+    tournament?: {
+      id: string;
+      name: string;
+    }
+  };
+  alliances?: Alliance[];
+}
+
+export interface MatchScores {
+  id: string;
+  matchId: string;
+  redAutoScore: number;
+  redDriveScore: number;
+  redTotalScore: number;
+  redTeamCount?: number;
+  redMultiplier?: number;
+  redHighGoals?: number;
+  redLowGoals?: number;
+  redPenalties?: number;
+  redEndgamePoints?: number;
+  blueAutoScore: number;
+  blueDriveScore: number;
+  blueTotalScore: number;
+  blueTeamCount?: number;
+  blueMultiplier?: number;
+  blueHighGoals?: number;
+  blueLowGoals?: number;
+  bluePenalties?: number;
+  blueEndgamePoints?: number;
+  redGameElements?: Record<string, number>;
+  blueGameElements?: Record<string, number>;
+  scoreDetails?: {
+    penalties?: {
+      red: number;
+      blue: number;
+    };
+    specialScoring?: Record<string, {
+      red: number;
+      blue: number;
+    }>;
+  };
+  match?: {
+    id: string;
+    matchNumber: number;
+    status: string;
+    stage?: {
+      name: string;
+      tournament?: {
+        name: string;
+      };
+    };
+  };
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ScoreUpdate {
+  redAutoScore?: number;
+  redDriveScore?: number;
+  blueAutoScore?: number;
+  blueDriveScore?: number;
+}
+
+export interface TimerState {
+  duration: number;
+  remaining: number;
+  isRunning: boolean;
+}
+
+export interface Alliance {
+  id: string;
+  color: 'RED' | 'BLUE';
+  matchId: string;
+  score: number;
+  teamAlliances?: {
+    team: {
+      id: string;
+      name: string;
+      teamNumber: string;
+    }
+  }[];
+  allianceScoring?: AllianceScoring;
+}
+
+export interface AllianceScoring {
+  id: string;
+  allianceId: string;
+  autoScore: number;
+  driverScore: number;
+  endGameScore: number;
+  penaltyScore: number;
+  totalScore: number;
+}
+
+export interface AllianceScoreUpdate {
+  allianceId: string;
+  autoScore?: number;
+  driverScore?: number;
+  endGameScore?: number;
+  penaltyScore?: number;
+}
+
+export interface AudienceDisplayData {
+  matchId: string | null;
+  showTimer: boolean;
+  showScores: boolean;
+  showTeams: boolean;
+  displayMode: 'INTRO' | 'MATCH_RESULTS' | 'WAITING' | 'FINAL_RESULTS' | 'CUSTOM_MESSAGE' | 'DEFAULT';
+  customMessage?: string;
+  introVideo?: {
+    source: string;
+    autoplay: boolean;
+    loop: boolean;
+  };
+  waitingMessage?: string;
+  finalScoreDelay?: number;
+}
+
+// --- API Data Types ---
+
+export interface Stage {
+  id: string;
+  name: string;
+  type: "SWISS" | "PLAYOFF" | "FINAL";
+  startDate: string;
+  endDate: string;
+  tournamentId: string;
+  createdAt: string;
+  updatedAt: string;
+  tournament?: {
+    id: string;
+    name: string;
+    startDate: string;
+    endDate: string;
+  };
+}
+
+export interface CreateStageInput {
+  name: string;
+  type: "SWISS" | "PLAYOFF" | "FINAL";
+  startDate: string;
+  endDate: string;
+  tournamentId: string;
+}
+
+export interface UpdateStageInput {
+  name?: string;
+  type?: "SWISS" | "PLAYOFF" | "FINAL";
+  startDate?: string;
+  endDate?: string;
+}
+
+export interface Tournament {
+  id: string;
+  name: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  adminId: string;
+  createdAt: string;
+  updatedAt: string;
+  numberOfFields?: number;
+  admin?: {
+    id: string;
+    username: string;
+  };
+}
+
+export interface CreateTournamentInput {
+  name: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+}
+
+export interface UpdateTournamentInput {
+  name?: string;
+  description?: string;
+  startDate?: string;
+  endDate?: string;
+}
+
+// --- Match Scheduler Types ---
+export interface GenerateFrcScheduleRequest {
+  stageId: string;
+  rounds: number;
+  teamsPerAlliance: number;
+  minMatchSeparation: number;
+  qualityLevel: 'low' | 'medium' | 'high';
+}
+
+export interface GenerateSwissRoundRequest {
+  stageId: string;
+  currentRoundNumber: number;
+}
+
+export interface GeneratePlayoffRequest {
+  stageId: string;
+  numberOfRounds: number;
+}

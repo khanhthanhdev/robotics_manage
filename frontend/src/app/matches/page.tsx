@@ -1,18 +1,15 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { format } from "date-fns";
 import { useRouter } from "next/navigation";
-import { useMatches } from "@/hooks/api/use-matches";
-import { useAuth } from "@/hooks/common/use-auth";
-import { MatchStatus } from "@/lib/types";
-import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { useMatches, useAllMatchScores } from "@/hooks/api/use-matches";
+import { MatchStatus, Alliance } from "@/lib/types";
+import { Badge } from "@/components/ui/badge";
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import {
   Table,
@@ -31,13 +28,39 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ArrowUpDown, ChevronDown, ChevronUp } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 export default function MatchesPage() {
   const router = useRouter();
-  const { user, isLoading: authLoading } = useAuth();
   const { data: matches, isLoading: matchesLoading, error: matchesError } = useMatches();
+
+  // Fetch all match scores using the custom hook
+  const {
+    data: allMatchScores = [],
+    isLoading: isLoadingAllScores,
+    error: allScoresError,
+  } = useAllMatchScores(!!matches && matches.length > 0);
+
+  // Build a map of matchId -> { redTotalScore, blueTotalScore }
+  const matchScoresMap = useMemo(() => {
+    if (!isLoadingAllScores && Array.isArray(allMatchScores)) {
+      const scoresMap: Record<string, { redTotalScore: number; blueTotalScore: number }> = {};
+      allMatchScores.forEach((score: any) => {
+        if (
+          score.matchId &&
+          score.redTotalScore !== undefined &&
+          score.blueTotalScore !== undefined
+        ) {
+          scoresMap[score.matchId] = {
+            redTotalScore: score.redTotalScore,
+            blueTotalScore: score.blueTotalScore,
+          };
+        }
+      });
+      return scoresMap;
+    }
+    return {};
+  }, [allMatchScores, isLoadingAllScores]);
 
   // State for sorting
   const [sortField, setSortField] = useState<string>('tournamentName');
@@ -67,37 +90,37 @@ export default function MatchesPage() {
     
     // Then, sort the filtered matches
     return [...filteredMatches].sort((a, b) => {
-      let valueA, valueB;
+      let valueA: any, valueB: any;
 
       // Extract the values based on the sort field
       switch (sortField) {
         case 'tournamentName':
-          valueA = a.stage.tournament.name.toLowerCase();
-          valueB = b.stage.tournament.name.toLowerCase();
+          valueA = a.stage?.tournament?.name?.toLowerCase() ?? '';
+          valueB = b.stage?.tournament?.name?.toLowerCase() ?? '';
           break;
         case 'stageName':
-          valueA = a.stage.name.toLowerCase();
-          valueB = b.stage.name.toLowerCase();
+          valueA = a.stage?.name?.toLowerCase() ?? '';
+          valueB = b.stage?.name?.toLowerCase() ?? '';
           break;
         case 'matchNumber':
-          valueA = a.matchNumber;
-          valueB = b.matchNumber;
+          valueA = a.matchNumber ?? 0;
+          valueB = b.matchNumber ?? 0;
           break;
         case 'roundNumber':
-          valueA = a.roundNumber;
-          valueB = b.roundNumber;
+          valueA = a.roundNumber ?? 0;
+          valueB = b.roundNumber ?? 0;
           break;
         case 'status':
-          valueA = a.status;
-          valueB = b.status;
+          valueA = a.status ?? '';
+          valueB = b.status ?? '';
           break;
         case 'scheduledTime':
           valueA = a.scheduledTime ? new Date(a.scheduledTime).getTime() : 0;
           valueB = b.scheduledTime ? new Date(b.scheduledTime).getTime() : 0;
           break;
         default:
-          valueA = a.matchNumber;
-          valueB = b.matchNumber;
+          valueA = a.matchNumber ?? 0;
+          valueB = b.matchNumber ?? 0;
       }
       
       // Sort based on direction
@@ -226,55 +249,62 @@ export default function MatchesPage() {
                     className="hover:bg-gray-800/70 cursor-pointer transition"
                     onClick={() => handleMatchClick(match.id)}
                   >
-                    <TableCell className="font-medium text-gray-100">{match.stage.tournament.name}</TableCell>
-                    <TableCell className="text-gray-300">{match.stage.name}</TableCell>
-                    <TableCell className="text-gray-300">{match.matchNumber}</TableCell>
-                    <TableCell className="text-gray-300">{match.roundNumber}</TableCell>
+                    <TableCell className="font-medium text-gray-100">{match.stage?.tournament?.name ?? 'N/A'}</TableCell>
+                    <TableCell className="text-gray-300">{match.stage?.name ?? 'N/A'}</TableCell>
+                    <TableCell className="text-gray-300">{match.matchNumber ?? ''}</TableCell>
+                    <TableCell className="text-gray-300">{match.roundNumber ?? ''}</TableCell>
                     <TableCell>{getStatusBadge(match.status)}</TableCell>
-                    <TableCell className="text-gray-300">{formatDate(match.scheduledTime)}</TableCell>
+                    <TableCell className="text-gray-300">{formatDate(match.scheduledTime ?? null)}</TableCell>
                     <TableCell>
-                      <div className="grid grid-cols-2 gap-2">
-                        <div>
-                          <div className="text-xs font-semibold text-red-400">Red</div>
-                          {match.alliances.find(a => a.color === 'RED')?.teamAlliances.map(ta => (
-                            <div key={ta.id} className="text-xs text-gray-200">{ta.team.name}</div>
-                          ))}
-                        </div>
-                        <div>
-                          <div className="text-xs font-semibold text-blue-400">Blue</div>
-                          {match.alliances.find(a => a.color === 'BLUE')?.teamAlliances.map(ta => (
-                            <div key={ta.id} className="text-xs text-gray-200">{ta.team.name}</div>
-                          ))}
-                        </div>
-                      </div>
+                      {/* Teams: show team numbers for both alliances if available */}
+                      <span className="text-red-400">
+                        {(() => {
+                          const redAlliance = match.alliances?.find((a: Alliance) => a.color === 'RED');
+                          if (!redAlliance?.teamAlliances) return '—';
+                          return redAlliance.teamAlliances
+                            .map((ta) => {
+                              // Type guard: if stationPosition exists, it's a TeamAlliance
+                              if ('stationPosition' in ta && ta.team) {
+                                return ta.team.teamNumber;
+                              } else if (ta.team) {
+                                return ta.team.teamNumber;
+                              }
+                              return '';
+                            })
+                            .filter(Boolean)
+                            .join(', ') || '—';
+                        })()}
+                      </span>
+                      <span className="mx-1 text-gray-400">/</span>
+                      <span className="text-blue-400">
+                        {(() => {
+                          const blueAlliance = match.alliances?.find((a: Alliance) => a.color === 'BLUE');
+                          if (!blueAlliance?.teamAlliances) return '—';
+                          return blueAlliance.teamAlliances
+                            .map((ta) => {
+                              if ('stationPosition' in ta && ta.team) {
+                                return ta.team.teamNumber;
+                              } else if (ta.team) {
+                                return ta.team.teamNumber;
+                              }
+                              return '';
+                            })
+                            .filter(Boolean)
+                            .join(', ') || '—';
+                        })()}
+                      </span>
                     </TableCell>
                     <TableCell>
-                      {match.status === "COMPLETED" ? (
-                        <div className="flex items-center space-x-1">
-                          <span className="text-red-400 font-medium">
-                            {match.alliances.find(a => a.color === 'RED')?.score || 0}
-                          </span>
-                          <span className="text-gray-500">-</span>
-                          <span className="text-blue-400 font-medium">
-                            {match.alliances.find(a => a.color === 'BLUE')?.score || 0}
-                          </span>
-                        </div>
-                      ) : (
-                        <span className="text-sm text-gray-500">-</span>
-                      )}
+                      <span className="text-red-400 font-semibold">
+                        {matchScoresMap[match.id]?.redTotalScore ?? match.alliances?.find((a: Alliance) => a.color === 'RED')?.score ?? 0}
+                      </span>
+                      <span className="mx-1 text-gray-400">-</span>
+                      <span className="text-blue-400 font-semibold">
+                        {matchScoresMap[match.id]?.blueTotalScore ?? match.alliances?.find((a: Alliance) => a.color === 'BLUE')?.score ?? 0}
+                      </span>
                     </TableCell>
                     <TableCell>
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        className="border-gray-700 text-gray-400 hover:bg-gray-800 hover:text-white focus:ring-2 focus:ring-primary-700"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleMatchClick(match.id);
-                        }}
-                      >
-                        View Details
-                      </Button>
+                      <Link href={`/matches/${match.id}`} className="text-blue-500 hover:underline">View</Link>
                     </TableCell>
                   </TableRow>
                 ))}

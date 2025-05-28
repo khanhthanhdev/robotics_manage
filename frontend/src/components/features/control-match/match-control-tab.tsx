@@ -7,8 +7,7 @@ import {
   MatchesList,
   ScoreControl
 } from "./tabs";
-import CombinedMatchTimerControl from "./match-timer-control";
-
+import CombinedMatchTimerControl from "./match-timer-control"
 // Define interface for props
 interface MatchControlTabsProps {
   // Common props

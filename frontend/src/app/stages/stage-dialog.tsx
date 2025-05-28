@@ -31,8 +31,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useCreateStage, useUpdateStage, Stage } from "@/hooks/api/use-stages";
-import { Tournament } from "@/hooks/api/use-tournaments";
+import { useCreateStage, useUpdateStage } from "@/hooks/api/use-stages";
+import { Tournament, Stage } from "@/lib/types";
 import { toast } from "sonner";
 
 // Define props for the dialog component

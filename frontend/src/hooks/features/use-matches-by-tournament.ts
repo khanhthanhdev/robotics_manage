@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api-client";
-import { Match } from "./schedule-display";
+import { Match } from "@/lib/types";
 
 export function useMatchesByTournament(tournamentId: string) {
   return useQuery({

@@ -1,25 +1,18 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-
+import { AudienceDisplaySettings } from "@/lib/types";
 // Define the audience display settings type
-export type AudienceDisplaySettings = {
-  displayMode: string;
-  matchId?: string | null;
-  showTimer?: boolean;
-  showScores?: boolean;
-  showTeams?: boolean;
-  message?: string;
-  timerStartedAt?: number | null; // Timestamp when timer was started
-  updatedAt: number;
-};
 
+ 
 // Default settings
 const DEFAULT_SETTINGS: AudienceDisplaySettings = {
-  displayMode: "intro",
+  displayMode: "match",
   showTimer: true,
   showScores: true,
   showTeams: true,
   timerStartedAt: null,
   updatedAt: Date.now(),
+  tournamentId: "",
+  fieldId: ""
 };
 
 /**

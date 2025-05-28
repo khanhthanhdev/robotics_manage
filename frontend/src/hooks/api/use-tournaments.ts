@@ -6,36 +6,7 @@ import { apiClient } from "@/lib/api-client";
 import { QueryKeys } from "@/lib/query-keys";
 import { useAuth } from "@/hooks/common/use-auth";
 
-// Type definitions for tournament data
-export interface Tournament {
-  id: string;
-  name: string;
-  description: string;
-  startDate: string;
-  endDate: string;
-  adminId: string;
-  createdAt: string;
-  updatedAt: string;
-  numberOfFields?: number;
-  admin?: {
-    id: string;
-    username: string;
-  };
-}
-
-export interface CreateTournamentInput {
-  name: string;
-  description: string;
-  startDate: string;
-  endDate: string;
-}
-
-export interface UpdateTournamentInput {
-  name?: string;
-  description?: string;
-  startDate?: string;
-  endDate?: string;
-}
+import type { Tournament, CreateTournamentInput, UpdateTournamentInput } from "@/lib/types";
 
 /**
  * Hook to fetch all tournaments

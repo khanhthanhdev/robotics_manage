@@ -25,7 +25,8 @@ import {
   FormLabel, 
   FormMessage 
 } from "@/components/ui/form";
-import { useCreateTournament, useUpdateTournament, Tournament } from "@/hooks/api/use-tournaments";
+import { useCreateTournament, useUpdateTournament } from "@/hooks/api/use-tournaments";
+import { Tournament } from "@/lib/types";
 import { toast } from "sonner";
 
 // Define the form schema for validation

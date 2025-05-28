@@ -7,13 +7,9 @@ import {
   MatchStateData,
   AudienceDisplaySettings,
   AnnouncementData,
-} from '@/services/websocket-service';
+  UseWebSocketOptions
+} from '@/lib/types';
 
-interface UseWebSocketOptions {
-  autoConnect?: boolean;
-  url?: string;
-  tournamentId?: string;
-}
 
 /**
  * React hook for using the WebSocket service (SOLID: depends on interface)

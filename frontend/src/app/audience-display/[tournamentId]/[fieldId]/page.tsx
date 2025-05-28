@@ -4,7 +4,7 @@ import { useRouter, useParams } from "next/navigation";
 import { useTournament } from "@/hooks/api/use-tournaments";
 import { useTournamentFields } from "@/components/fields/FieldSelectDropdown";
 import { useWebSocket } from "@/hooks/common/use-websocket";
-import { AudienceDisplaySettings } from "@/services/websocket-service";
+import { AudienceDisplaySettings } from "@/lib/types";
 import TeamsDisplay from "../../../../components/features/audience-display/displays/teams-display";
 import ScheduleDisplay, { Match } from "../../../../components/features/audience-display/displays/schedule-display";
 import { useTeams } from "@/hooks/api/use-teams";
@@ -691,11 +691,16 @@ export default function LiveFieldDisplayPage() {
         );
 
       case "schedule":
+        // Ensure scheduledTime is always a string for each match
+        const safeMatches = matches.map((m: any) => ({
+          ...m,
+          scheduledTime: m.scheduledTime ?? "",
+        }));
         return (
           <div key={contentKey}>
             <ScheduleDisplay
               tournamentId={tournamentId}
-              matches={matches}
+              matches={safeMatches}
               isLoading={isLoadingMatches}
             />
             <DebugInfo />

@@ -13,7 +13,7 @@ import {
 import { MatchStatus } from "@/lib/types";
 import { useWebSocket } from "@/hooks/common/use-websocket";
 import { useTournaments } from "@/hooks/api/use-tournaments";
-import { MatchData } from "@/services/websocket-service";
+import { MatchData } from "@/lib/types";
 import { Card } from "@/components/ui/card";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import ConnectionStatus from "../../components/features/control-match/connection-status";
@@ -637,8 +637,8 @@ export default function ControlMatchPage() {
       blueAutoScore,
       blueDriveScore,
       blueTotalScore,
-      redGameElements,
-      blueGameElements,
+      redGameElements: redGameElementsObj, // <-- use object, not array
+      blueGameElements: blueGameElementsObj, // <-- use object, not array
       redTeamCount,
       redMultiplier,
       blueTeamCount,

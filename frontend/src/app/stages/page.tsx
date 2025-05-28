@@ -501,14 +501,14 @@ export default function StagesPage() {
                           <div className="grid grid-cols-2 gap-2">
                             <div>
                               <div className="text-xs font-semibold text-red-400">Red</div>
-                              {match.alliances.find(a => a.color === 'RED')?.teamAlliances.map(ta => (
-                                <div key={ta.id} className="text-xs text-gray-200">{ta.team.name}</div>
+                              {match.alliances?.find(a => a.color === 'RED')?.teamAlliances?.map((ta, idx) => (
+                                <div key={ta.team.id || idx} className="text-xs text-gray-200">{ta.team?.name ?? '-'}</div>
                               ))}
                             </div>
                             <div>
                               <div className="text-xs font-semibold text-blue-400">Blue</div>
-                              {match.alliances.find(a => a.color === 'BLUE')?.teamAlliances.map(ta => (
-                                <div key={ta.id} className="text-xs text-gray-200">{ta.team.name}</div>
+                              {match.alliances?.find(a => a.color === 'BLUE')?.teamAlliances?.map((ta, idx) => (
+                                <div key={ta.team.id || idx} className="text-xs text-gray-200">{ta.team?.name ?? '-'}</div>
                               ))}
                             </div>
                           </div>

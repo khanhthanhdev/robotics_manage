@@ -9,8 +9,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useScheduledMatches, useActiveMatch } from "@/hooks/features/use-match-control";
 import { useAudienceDisplaySettings, useUpdateAudienceDisplay } from "@/hooks/features/use-audience-display";
-import { MatchStatus } from "@/lib/types";
 import { toast } from "sonner";
+import type { DisplayMode } from "@/lib/types";
 
 export default function AudienceDisplayController() {
   const [displayMode, setDisplayMode] = useState<string>("intro");
@@ -29,7 +29,7 @@ export default function AudienceDisplayController() {
 
   const handleApply = () => {
     updateAudienceDisplay.mutate({
-      displayMode,
+      displayMode: displayMode as DisplayMode,
       matchId: selectedMatchId,
       showTimer: true,
       showScores: true,
@@ -47,9 +47,10 @@ export default function AudienceDisplayController() {
   const handleMatchSelect = (matchId: string) => {
     setSelectedMatchId(matchId);
     
-    // If selected match and display mode is 'active', update immediately
-    if (displayMode === 'active') {
+    // If selected match and display mode is 'match', update immediately
+    if (displayMode === 'match') {
       updateAudienceDisplay.mutate({
+        displayMode: 'match',
         matchId: matchId
       });
     }
@@ -58,16 +59,16 @@ export default function AudienceDisplayController() {
   const handleDisplayModeChange = (mode: string) => {
     setDisplayMode(mode);
     
-    // Update when changing to active mode with a selected match
-    if (mode === 'active' && selectedMatchId) {
+    // Update when changing to match mode with a selected match
+    if (mode === 'match' && selectedMatchId) {
       updateAudienceDisplay.mutate({
-        displayMode: mode,
+        displayMode: 'match',
         matchId: selectedMatchId
       });
-    } else if (mode !== 'active') {
-      // For non-active modes, clear the match ID in settings
+    } else if (mode !== 'match') {
+      // For non-match modes, clear the match ID in settings
       updateAudienceDisplay.mutate({
-        displayMode: mode,
+        displayMode: mode as DisplayMode,
         matchId: null
       });
     }
@@ -114,12 +115,12 @@ export default function AudienceDisplayController() {
 
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem 
-                    value="active" 
-                    id="active"
+                    value="match" 
+                    id="match"
                     disabled={!selectedMatchId} 
                   />
                   <Label 
-                    htmlFor="active" 
+                    htmlFor="match" 
                     className={`cursor-pointer ${!selectedMatchId ? 'opacity-50' : ''}`}
                   >
                     <div className="font-medium">Active Match</div>

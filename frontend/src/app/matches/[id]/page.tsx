@@ -3,10 +3,11 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { useMatch } from "@/hooks/use-matches";
+import { useMatch, useMatchScores } from "@/hooks/api/use-matches";
 import { cn } from "@/lib/utils";
 import { MatchStatus } from "@/lib/types";
 import { format, parseISO } from "date-fns";
+import type { Alliance, TeamAlliance } from "@/lib/types";
 
 // Components
 import { Spinner } from "@/components/ui/spinner";
@@ -27,9 +28,10 @@ import {
 export default function MatchDetailsPage() {
   const { id } = useParams();
   const { data: match, isLoading, error } = useMatch(id as string);
+  const { data: matchScores, isLoading: scoresLoading } = useMatchScores(id as string);
   const [activeTab, setActiveTab] = useState("overview");
 
-  if (isLoading) {
+  if (isLoading || scoresLoading) {
     return (
       <div className="flex justify-center items-center min-h-[60vh]">
         <Spinner size="lg" />
@@ -59,15 +61,23 @@ export default function MatchDetailsPage() {
   }
 
   // Find red and blue alliances
-  const redAlliance = match.alliances.find((a) => a.color === "RED");
-  const blueAlliance = match.alliances.find((a) => a.color === "BLUE");
+  const redAlliance = match.alliances?.find((a: Alliance) => a.color === "RED");
+  const blueAlliance = match.alliances?.find((a: Alliance) => a.color === "BLUE");
 
-  // Determine match result based on scores
+  // Prefer scores from matchScores (scores table), fallback to alliance.score
+  const redScore = typeof matchScores?.redTotalScore === "number"
+    ? matchScores.redTotalScore
+    : (typeof redAlliance?.score === "number" ? redAlliance.score : 0);
+  const blueScore = typeof matchScores?.blueTotalScore === "number"
+    ? matchScores.blueTotalScore
+    : (typeof blueAlliance?.score === "number" ? blueAlliance.score : 0);
+
+  // Determine match result based on scores from scores table (preferred)
   let calculatedWinningAlliance: string | null = null;
-  if (typeof redAlliance?.score === "number" && typeof blueAlliance?.score === "number") {
-    if (redAlliance.score > blueAlliance.score) {
+  if (typeof redScore === "number" && typeof blueScore === "number") {
+    if (redScore > blueScore) {
       calculatedWinningAlliance = "RED";
-    } else if (blueAlliance.score > redAlliance.score) {
+    } else if (blueScore > redScore) {
       calculatedWinningAlliance = "BLUE";
     } else {
       calculatedWinningAlliance = "TIE";
@@ -85,12 +95,13 @@ export default function MatchDetailsPage() {
   };
 
   // Format team names
-  const formatTeams = (alliance: typeof match.alliances[0]) => {
+  const formatTeams = (alliance: Alliance) => {
     if (!alliance?.teamAlliances || alliance.teamAlliances.length === 0) {
       return "No teams";
     }
 
-    return alliance.teamAlliances
+    // Defensive: fallback to TeamAlliance if available, else fallback to minimal type
+    return (alliance.teamAlliances as TeamAlliance[])
       .sort((a, b) => a.stationPosition - b.stationPosition)
       .map((ta) => ta.team);
   };
@@ -126,12 +137,12 @@ export default function MatchDetailsPage() {
         </div>
         <div className="flex gap-2">
           <Button variant="outline" asChild>
-            <Link href={`/stages/${match.stage.id}`}>
+            <Link href={match.stage ? `/stages/${match.stage.id}` : "/stages"}>
               View Stage
             </Link>
           </Button>
           <Button variant="outline" asChild>
-            <Link href={`/tournaments/${match.stage.tournament.id}`}>
+            <Link href={match.stage && match.stage.tournament ? `/tournaments/${match.stage.tournament.id}` : "/tournaments"}>
               View Tournament
             </Link>
           </Button>
@@ -163,11 +174,11 @@ export default function MatchDetailsPage() {
                   <CardContent className="space-y-4">
                     <div>
                       <p className="text-sm text-muted-foreground">Tournament</p>
-                      <p className="font-medium">{match.stage.tournament.name}</p>
+                      <p className="font-medium">{match.stage?.tournament?.name || "N/A"}</p>
                     </div>
                     <div>
                       <p className="text-sm text-muted-foreground">Stage</p>
-                      <p className="font-medium">{match.stage.name}</p>
+                      <p className="font-medium">{match.stage?.name || "N/A"}</p>
                     </div>
                     <div>
                       <p className="text-sm text-muted-foreground">Round Number</p>
@@ -175,7 +186,7 @@ export default function MatchDetailsPage() {
                     </div>
                     <div>
                       <p className="text-sm text-muted-foreground">Stage Type</p>
-                      <p className="font-medium">{match.stage.type}</p>
+                      <p className="font-medium">N/A</p>
                     </div>
                   </CardContent>
                 </Card>
@@ -190,20 +201,20 @@ export default function MatchDetailsPage() {
                   <CardContent className="space-y-4">
                     <div>
                       <p className="text-sm text-muted-foreground">Scheduled Time</p>
-                      <p className="font-medium">{formatDateTime(match.scheduledTime)}</p>
+                      <p className="font-medium">{formatDateTime(match.scheduledTime ?? null)}</p>
                     </div>
                     <div>
                       <p className="text-sm text-muted-foreground">Start Time</p>
-                      <p className="font-medium">{formatDateTime(match.startTime)}</p>
+                      <p className="font-medium">{formatDateTime(match.startTime ?? null)}</p>
                     </div>
                     <div>
                       <p className="text-sm text-muted-foreground">End Time</p>
-                      <p className="font-medium">{formatDateTime(match.endTime)}</p>
+                      <p className="font-medium">{formatDateTime(match.endTime ?? null)}</p>
                     </div>
                     <div>
                       <p className="text-sm text-muted-foreground">Duration</p>
                       <p className="font-medium">
-                        {match.duration ? `${match.duration} seconds` : "Not completed"}
+                        {('duration' in match && match.duration != null) ? `${match.duration} seconds` : "Not completed"}
                       </p>
                     </div>
                   </CardContent>
@@ -235,20 +246,24 @@ export default function MatchDetailsPage() {
                               "text-4xl font-bold",
                               calculatedWinningAlliance === "RED" ? "text-red-400" : "text-gray-300"
                             )}>
-                              {redAlliance?.score || 0}
+                              {redScore}
                             </span>
                             <span className="text-xs text-gray-400 mt-1">TOTAL POINTS</span>
                           </div>
-                          {redAlliance?.teamAlliances.map((ta) => (
-                            <div key={ta.id} className="text-center w-full bg-black/20 rounded px-2 py-1">
-                              <p className={cn(
-                                "text-sm",
-                                calculatedWinningAlliance === "RED" ? "text-red-300" : "text-gray-400"
-                              )}>
-                                Team #{ta.team.teamNumber} · {ta.team.name}
-                              </p>
-                            </div>
-                          ))}
+                          {(redAlliance?.teamAlliances && Array.isArray(redAlliance.teamAlliances)) ?
+                            (redAlliance.teamAlliances as TeamAlliance[])
+                              .sort((a, b) => a.stationPosition - b.stationPosition)
+                              .map((ta) => (
+                                <div key={ta.id} className="text-center w-full bg-black/20 rounded px-2 py-1">
+                                  <p className={cn(
+                                    "text-sm",
+                                    calculatedWinningAlliance === "RED" ? "text-red-300" : "text-gray-400"
+                                  )}>
+                                    Team #{ta.team.teamNumber} · {ta.team.name}
+                                  </p>
+                                </div>
+                              ))
+                            : null}
                         </div>
                         {/* Match Result */}
                         <div className="flex flex-col items-center justify-center space-y-3">
@@ -270,7 +285,7 @@ export default function MatchDetailsPage() {
                               <div className="mt-4 text-sm text-gray-400">
                                 Score Difference:
                                 <span className="font-semibold text-white ml-1">
-                                  {Math.abs((redAlliance?.score || 0) - (blueAlliance?.score || 0))} points
+                                  {Math.abs(redScore - blueScore)} points
                                 </span>
                               </div>
                               {calculatedWinningAlliance === "TIE" && (
@@ -297,35 +312,39 @@ export default function MatchDetailsPage() {
                               "text-4xl font-bold",
                               calculatedWinningAlliance === "BLUE" ? "text-blue-400" : "text-gray-300"
                             )}>
-                              {blueAlliance?.score || 0}
+                              {blueScore}
                             </span>
                             <span className="text-xs text-gray-400 mt-1">TOTAL POINTS</span>
                           </div>
-                          {blueAlliance?.teamAlliances.map((ta) => (
-                            <div key={ta.id} className="text-center w-full bg-black/20 rounded px-2 py-1">
-                              <p className={cn(
-                                "text-sm",
-                                calculatedWinningAlliance === "BLUE" ? "text-blue-300" : "text-gray-400"
-                              )}>
-                                Team #{ta.team.teamNumber} · {ta.team.name}
-                              </p>
-                            </div>
-                          ))}
+                          {(blueAlliance?.teamAlliances && Array.isArray(blueAlliance.teamAlliances)) ?
+                            (blueAlliance.teamAlliances as TeamAlliance[])
+                              .sort((a, b) => a.stationPosition - b.stationPosition)
+                              .map((ta) => (
+                                <div key={ta.id} className="text-center w-full bg-black/20 rounded px-2 py-1">
+                                  <p className={cn(
+                                    "text-sm",
+                                    calculatedWinningAlliance === "BLUE" ? "text-blue-300" : "text-gray-400"
+                                  )}>
+                                    Team #{ta.team.teamNumber} · {ta.team.name}
+                                  </p>
+                                </div>
+                              ))
+                            : null}
                         </div>
                       </div>
                       {/* Additional match statistics - only shown if match is completed */}
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4 border-t border-gray-800 pt-4">
                         <div className="bg-gray-900/60 rounded-md p-3">
                           <div className="text-xs uppercase text-gray-500 mb-1">Match Duration</div>
-                          <div className="text-lg font-semibold text-gray-100">{match.duration ? `${match.duration} seconds` : "Not completed"}</div>
+                          <div className="text-lg font-semibold text-gray-100">{('duration' in match && match.duration != null) ? `${match.duration} seconds` : "Not completed"}</div>
                         </div>
                         <div className="bg-gray-900/60 rounded-md p-3">
                           <div className="text-xs uppercase text-gray-500 mb-1">Scheduled Time</div>
-                          <div className="text-lg font-semibold text-gray-100">{formatDateTime(match.scheduledTime)}</div>
+                          <div className="text-lg font-semibold text-gray-100">{formatDateTime(match.scheduledTime ?? null)}</div>
                         </div>
                         <div className="bg-gray-900/60 rounded-md p-3">
                           <div className="text-xs uppercase text-gray-500 mb-1">Start Time</div>
-                          <div className="text-lg font-semibold text-gray-100">{formatDateTime(match.startTime)}</div>
+                          <div className="text-lg font-semibold text-gray-100">{formatDateTime(match.startTime ?? null)}</div>
                         </div>
                       </div>
                     </CardContent>
@@ -347,11 +366,11 @@ export default function MatchDetailsPage() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    {!redAlliance || redAlliance.teamAlliances.length === 0 ? (
+                    {!redAlliance || !Array.isArray(redAlliance.teamAlliances) || redAlliance.teamAlliances.length === 0 ? (
                       <p className="py-4 text-center text-muted-foreground">No teams assigned</p>
                     ) : (
                       <div className="space-y-4">
-                        {redAlliance.teamAlliances
+                        {(redAlliance.teamAlliances as TeamAlliance[])
                           .sort((a, b) => a.stationPosition - b.stationPosition)
                           .map((ta) => (
                             <div key={ta.id} className="flex items-center justify-between rounded-lg border p-3">
@@ -383,11 +402,11 @@ export default function MatchDetailsPage() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    {!blueAlliance || blueAlliance.teamAlliances.length === 0 ? (
+                    {!blueAlliance || !Array.isArray(blueAlliance.teamAlliances) || blueAlliance.teamAlliances.length === 0 ? (
                       <p className="py-4 text-center text-muted-foreground">No teams assigned</p>
                     ) : (
                       <div className="space-y-4">
-                        {blueAlliance.teamAlliances
+                        {(blueAlliance.teamAlliances as TeamAlliance[])
                           .sort((a, b) => a.stationPosition - b.stationPosition)
                           .map((ta) => (
                             <div key={ta.id} className="flex items-center justify-between rounded-lg border p-3">
@@ -445,11 +464,11 @@ export default function MatchDetailsPage() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Tournament:</span>
-                    <span className="font-medium">{match.stage.tournament.name}</span>
+                    <span className="font-medium">{match.stage?.tournament?.name || "N/A"}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Stage:</span>
-                    <span className="font-medium">{match.stage.name}</span>
+                    <span className="font-medium">{match.stage?.name || "N/A"}</span>
                   </div>
                   {match.scheduledTime && (
                     <div className="flex justify-between">
@@ -497,7 +516,7 @@ export default function MatchDetailsPage() {
                             "text-xl font-semibold",
                             calculatedWinningAlliance === "RED" ? "text-red-300" : "text-gray-300"
                           )}>
-                            {redAlliance?.score || 0}
+                            {redScore}
                           </p>
                         </div>
                         
@@ -510,14 +529,14 @@ export default function MatchDetailsPage() {
                             "text-xl font-semibold",
                             calculatedWinningAlliance === "BLUE" ? "text-blue-300" : "text-gray-300"
                           )}>
-                            {blueAlliance?.score || 0}
+                            {blueScore}
                           </p>
                         </div>
                       </div>
                       
                       <div className="mt-3 text-xs text-gray-400">
                         Score Difference: <span className="font-semibold text-white">
-                          {Math.abs((redAlliance?.score || 0) - (blueAlliance?.score || 0))} points
+                          {Math.abs(redScore - blueScore)} points
                         </span>
                       </div>
                     </div>
@@ -545,13 +564,13 @@ export default function MatchDetailsPage() {
                 <div>
                   <p className="text-sm text-muted-foreground">Description</p>
                   <p className="font-medium">
-                    {match.stage.tournament.description || "No description available"}
+                    {match.stage?.tournament && 'description' in match.stage.tournament ? (match.stage.tournament as any).description : "No description available"}
                   </p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Tournament Dates</p>
                   <p className="font-medium">
-                    {format(parseISO(match.stage.tournament.startDate), "MMM d")} - {format(parseISO(match.stage.tournament.endDate), "MMM d, yyyy")}
+                    {match.stage?.tournament && 'startDate' in match.stage.tournament ? format(parseISO((match.stage.tournament as any).startDate), "MMM d") : "N/A"} - {match.stage?.tournament && 'endDate' in match.stage.tournament ? format(parseISO((match.stage.tournament as any).endDate), "MMM d, yyyy") : "N/A"}
                   </p>
                 </div>
               </CardContent>
