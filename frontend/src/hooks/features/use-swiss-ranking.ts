@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
-export function useSwissRankings(stageId: string) {
+export function useSwissRankings(stageId: string | undefined) {
   return useQuery({
     queryKey: ['swiss-rankings', stageId],
     queryFn: async () => {

@@ -2,9 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { AuthModule } from './auth.module';
-import { AuthService } from './auth.service';
 import { PrismaService } from '../prisma.service';
-import { JwtService } from '@nestjs/jwt';
 import * as cookieParser from 'cookie-parser';
 
 // Increase Jest timeout for slow e2e tests

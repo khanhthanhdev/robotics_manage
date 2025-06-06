@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
 import { StagesService } from './stages.service';
 import { CreateStageDto } from './dto/create-stage.dto';
 import { UpdateStageDto } from './dto/update-stage.dto';
@@ -17,9 +17,11 @@ export class StagesController {
   create(@Body() createStageDto: CreateStageDto) {
     return this.stagesService.create(createStageDto);
   }
-
   @Get()
-  findAll() {
+  findAll(@Query('tournamentId') tournamentId?: string) {
+    if (tournamentId) {
+      return this.stagesService.findByTournament(tournamentId);
+    }
     return this.stagesService.findAll();
   }
 

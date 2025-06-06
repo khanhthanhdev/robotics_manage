@@ -1,37 +1,49 @@
 "use client";
 
 import { useState, useEffect, useMemo, useRef } from "react";
-import { apiClient } from "@/lib/api-client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import {  UploadIcon, DownloadIcon } from "lucide-react";
+import { UploadIcon, DownloadIcon } from "lucide-react";
 import { LeaderboardTable } from "@/components/features/leaderboard/leaderboard-table";
 import { LeaderboardFilters } from "@/components/features/leaderboard/leaderboard-filters";
 import { teamLeaderboardColumns, TeamLeaderboardRow } from "@/components/features/leaderboard/team-leaderboard-columns";
-import { useTournaments } from "@/hooks/api/use-tournaments";
-
-interface Team {
-  id: string;
-  teamNumber: string;
-  name: string;
-  organization?: string;
-  description?: string;
-  avatar?: string;
-  tournamentId?: string;
-  teamMembers?: any;
-}
+import { useTeams } from "@/hooks/api/use-teams";
+import { useTeamsPageData } from "@/hooks/features/use-teams-page-data";
+import { useTeamManagement } from "@/hooks/features/use-team-management";
 
 export default function TeamsPage() {
-  const [teams, setTeams] = useState<Team[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  // Teams page data hook - handles all the complex selection and data fetching logic
+  const {
+    selectedTournamentId,
+    setSelectedTournamentId,
+    selectedStageId,
+    setSelectedStageId,
+    tournaments,
+    filteredStages,
+    leaderboardRows,
+    isLoading: dataLoading,
+    tournamentsLoading,
+    stagesLoading,
+    ALL_TEAMS_OPTION,
+  } = useTeamsPageData();
+
+  // Team management hook - handles import/export functionality
+  const {
+    isImporting,
+    importResult,
+    importTeams,
+    exportTeams,
+    setImportResult,
+  } = useTeamManagement();
+
+  // All teams query for export functionality
+  const { data: allTeams = [] } = useTeams(undefined);
+
+  // Local UI state
   const [showImportCard, setShowImportCard] = useState(false);
-  const [isImporting, setIsImporting] = useState(false);
   const [importContent, setImportContent] = useState("");
-  const [importResult, setImportResult] = useState<any>(null);
   const [importError, setImportError] = useState<string | null>(null);
-  const [selectedTournamentId, setSelectedTournamentId] = useState<string>("");
   const [delimiter, setDelimiter] = useState<string>(",");
 
   // State for leaderboard filters
@@ -41,13 +53,6 @@ export default function TeamsPage() {
   const [totalScoreRange, setTotalScoreRange] = useState<[number, number]>([0, 1000]);
 
   const workerRef = useRef<Worker | null>(null);
-  
-  // Fetch tournaments
-  const { data: tournaments, isLoading: tournamentsLoading } = useTournaments();
-
-  useEffect(() => {
-    fetchTeams();
-  }, []);
 
   useEffect(() => {
     if (typeof window !== 'undefined' && !workerRef.current) {
@@ -66,36 +71,8 @@ export default function TeamsPage() {
       workerRef.current = null;
     };
   }, []);
-
-  async function fetchTeams() {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await apiClient.get<Team[]>("/teams");
-      setTeams(data);
-    } catch (e: any) {
-      setError(e.message || "Failed to load teams");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  // Transform teams to leaderboard rows (mock rank/score for demo)
-  const leaderboardRows: TeamLeaderboardRow[] = useMemo(
-    () =>
-      teams.map((t, i) => ({
-        id: t.id,
-        teamName: t.name,
-        teamCode: t.teamNumber,
-        rank: i + 1, // Replace with real rank if available
-        totalScore: Math.floor(Math.random() * 1000), // Replace with real data
-        highestScore: Math.floor(Math.random() * 300), // Replace with real data
-      })),
-    [teams]
-  );
-
-  // Filtering logic
-  const filteredRows = useMemo(
+  // Filtering logic for leaderboard
+  const filteredRows: TeamLeaderboardRow[] = useMemo(
     () =>
       leaderboardRows.filter(
         (row) =>
@@ -107,84 +84,70 @@ export default function TeamsPage() {
           row.totalScore <= totalScoreRange[1]
       ),
     [leaderboardRows, teamName, teamCode, rankRange, totalScoreRange]
-  );  async function handleImport() {
-    // Validate tournament selection before setting importing state
-    if (!selectedTournamentId) {
-      setImportResult({ success: false, message: "Please select a tournament before importing teams." });
-      return;
-    }
+  );
 
-    if (!importContent) {
-      setImportResult({ success: false, message: "Please provide CSV content before importing teams." });
-      return;
-    }
-
-    setIsImporting(true);
-    setImportResult(null);
-    try {
-      const result = await apiClient.post("/teams/import", {
-        content: importContent,
-        format: "csv",
-        hasHeader: true,
-        tournamentId: selectedTournamentId,
-        delimiter: delimiter,
-      });
-      setImportResult(result);
-      fetchTeams();
-    } catch (e: any) {
-      setImportResult({ success: false, message: e.message });
-    } finally {
-      setIsImporting(false);
+  async function handleImport() {
+    const result = await importTeams(importContent, selectedTournamentId, delimiter);
+    if (result.success) {
+      // Optionally refetch data or handle success
     }
   }
 
   function handleExport() {
-    const csv = [
-      ["Team Number", "Name", "Organization", "Description"],
-      ...teams.map((t) => [t.teamNumber, t.name, t.organization || "", t.description || ""]),
-    ]
-      .map((row) => row.map((v) => `"${(v ?? "").replace(/"/g, '""')}"`).join(","))
-      .join("\n");
-    const blob = new Blob([csv], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "teams.csv";
-    a.click();
-    URL.revokeObjectURL(url);
+    exportTeams(allTeams);
   }
 
   return (
     <div className="container mx-auto py-8 px-4">
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-100 tracking-tight mb-1">Teams</h1>
           <p className="text-base text-gray-400">View, import, export, and manage teams</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-col md:flex-row gap-2 md:items-center">
+          <Select value={selectedTournamentId} onValueChange={setSelectedTournamentId}>
+            <SelectTrigger className="w-full md:w-56 bg-blue-950 border-blue-700 text-blue-100">
+              <SelectValue placeholder={tournamentsLoading ? "Loading tournaments..." : "Select a tournament"} />
+            </SelectTrigger>
+            <SelectContent>
+              {tournaments?.map((tournament) => (
+                <SelectItem key={tournament.id} value={tournament.id}>
+                  {tournament.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>          <Select 
+            value={selectedStageId} 
+            onValueChange={setSelectedStageId} 
+            disabled={!selectedTournamentId || stagesLoading}
+          >
+            <SelectTrigger className="w-full md:w-56 bg-blue-950 border-blue-700 text-blue-100">
+              <SelectValue placeholder={stagesLoading ? "Loading stages..." : "Select a stage"} />
+            </SelectTrigger>            <SelectContent>
+              <SelectItem value={ALL_TEAMS_OPTION}>All Teams in Tournament</SelectItem>
+              {filteredStages.map((stage) => (
+                <SelectItem key={stage.id} value={stage.id}>
+                  {stage.name} ({stage.type})
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <Button onClick={handleExport} variant="outline" className="flex items-center gap-2">
             <DownloadIcon size={16} /> Export
-          </Button>          <Button onClick={() => {
-            const wasImporting = showImportCard;
-            setShowImportCard((v) => !v);
-            if (!showImportCard) {
-              // Reset form when opening
-              setImportContent("");
-              setImportResult(null);
-              setImportError(null);
-              setSelectedTournamentId("");
-              setDelimiter(",");
-              setIsImporting(false);
-            } else {
-              // Reset states when closing
-              setImportContent("");
-              setImportResult(null);
-              setImportError(null);
-              setSelectedTournamentId("");
-              setDelimiter(",");
-              setIsImporting(false);
-            }
-          }} variant="outline" className="flex items-center gap-2">
+          </Button>          <Button 
+            onClick={() => {
+              setShowImportCard(!showImportCard);
+              if (!showImportCard) {
+                // Reset form when opening
+                setImportContent("");
+                setImportResult(null);
+                setImportError(null);
+                setDelimiter(",");
+              }
+            }} 
+            variant="outline" 
+            className="flex items-center gap-2"
+          >
             <UploadIcon size={16} /> Import
           </Button>
         </div>
@@ -297,25 +260,27 @@ export default function TeamsPage() {
               >
                 <UploadIcon size={16} className="mr-2" /> 
                 {isImporting ? "Importing..." : "Import"}
+              </Button>              <Button 
+                variant="outline" 
+                onClick={() => {
+                  setImportResult(null);
+                  setImportError(null);
+                }} 
+                className="border-blue-700 text-blue-200 hover:bg-blue-800/30"
+              >
+                Reset
               </Button>
-              <Button variant="outline" onClick={() => {
-                setIsImporting(false);
-                setImportResult(null);
-                setImportError(null);
-              }} className="border-blue-700 text-blue-200 hover:bg-blue-800/30">
-                {isImporting ? "Reset" : "Cancel"}
-              </Button>
-            </div>            {/* Debug info for import button state */}
-            {(isImporting || !importContent.trim() || !selectedTournamentId) && (
+            </div>            {(isImporting || !importContent.trim() || !selectedTournamentId) && (
               <div className="mt-2 text-xs text-blue-400">
                 <span className="font-semibold">Import button disabled because:</span>
                 <ul className="ml-2 mt-1">
                   {isImporting && <li>• Currently importing...</li>}
                   {!selectedTournamentId && <li>• No tournament selected</li>}
-                  {!importContent.trim() && <li>• No CSV content provided (content length: {importContent.length})</li>}
+                  {!importContent.trim() && <li>• No CSV content provided</li>}
                 </ul>
               </div>
             )}
+            
             {importResult && (
               <div className={`mt-4 text-sm font-semibold px-3 py-2 rounded ${importResult.success ? "bg-green-900/80 text-green-300 border-l-4 border-green-500" : "bg-red-900/80 text-red-300 border-l-4 border-red-500"}`}>
                 {importResult.message}
@@ -324,31 +289,26 @@ export default function TeamsPage() {
           </CardContent>
         </Card>
       )}
-      {error ? (
-        <div className="text-red-400 mb-4">{error}</div>
-      ) : loading ? (
-        <div className="text-gray-400">Loading teams...</div>
-      ) : (
-        <LeaderboardTable
-          data={filteredRows}
-          columns={teamLeaderboardColumns}
-          loading={loading}
-          filterUI={
-            <LeaderboardFilters
-              teamName={teamName}
-              setTeamName={setTeamName}
-              teamCode={teamCode}
-              setTeamCode={setTeamCode}
-              rankRange={rankRange}
-              setRankRange={setRankRange}
-              totalScoreRange={totalScoreRange}
-              setTotalScoreRange={setTotalScoreRange}
-            />
-          }
-          initialSorting={[{ id: "rank", desc: false }]}
-          emptyMessage="No teams found."
-        />
-      )}
+
+      <LeaderboardTable
+        data={filteredRows}
+        columns={teamLeaderboardColumns}
+        loading={dataLoading}
+        filterUI={
+          <LeaderboardFilters
+            teamName={teamName}
+            setTeamName={setTeamName}
+            teamCode={teamCode}
+            setTeamCode={setTeamCode}
+            rankRange={rankRange}
+            setRankRange={setRankRange}
+            totalScoreRange={totalScoreRange}
+            setTotalScoreRange={setTotalScoreRange}
+          />
+        }
+        initialSorting={[{ id: "rank", desc: false }]}
+        emptyMessage="No teams found."
+      />
     </div>
   );
 }

@@ -27,6 +27,17 @@ export class StagesService {
     });
   }
 
+  findByTournament(tournamentId: string) {
+    return this.prisma.stage.findMany({
+      where: {
+        tournamentId: tournamentId,
+      },
+      include: {
+        tournament: true,
+      },
+    });
+  }
+
   findOne(id: string) {
     return this.prisma.stage.findUnique({
       where: { id },
