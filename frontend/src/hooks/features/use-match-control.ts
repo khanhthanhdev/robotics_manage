@@ -1,10 +1,11 @@
 import { useState, useEffect, useCallback } from 'react';
-import { 
-  useQuery, 
-  useMutation, 
-  useQueryClient 
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
 } from '@tanstack/react-query';
-
+import { apiClient } from '@/lib/api-client';
+import { QueryKeys } from '@/lib/query-keys';
 import type {
   Match,
   MatchScores,
@@ -12,101 +13,50 @@ import type {
   TimerState,
 } from '@/lib/types';
 
-// API base URL - should be from env vars in a real app
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
-
-// Helper function to handle API errors
-const handleApiError = async (response: Response): Promise<never> => {
-  let errorMessage = `Error: ${response.status}`;
-  
-  try {
-    const errorData = await response.json();
-    errorMessage = errorData.message || errorMessage;
-  } catch (e) {
-    // Ignore JSON parse errors
-  }
-  
-  throw new Error(errorMessage);
-};
-
 // --- SOLID: Service Layer for Match Control ---
 class MatchControlService {
-  static async fetchMatches() {
-    const response = await fetch(`${API_BASE_URL}/matches`, {
-      credentials: 'include',
-    });
-    if (!response.ok) throw new Error(`Failed to fetch matches: ${response.status}`);
-    return response.json();
+  static async fetchMatches(): Promise<Match[]> {
+    return apiClient.get<Match[]>('/matches');
   }
 
-  static async fetchMatchById(matchId: string) {
-    const response = await fetch(`${API_BASE_URL}/matches/${matchId}`, {
-      credentials: 'include',
-    });
-    if (!response.ok) throw new Error(`Failed to fetch match: ${response.status}`);
-    return response.json();
+  static async fetchMatchById(matchId: string): Promise<Match> {
+    return apiClient.get<Match>(`/matches/${matchId}`);
   }
 
-  static async fetchMatchScores(matchId: string) {
-    const allScoresResponse = await fetch(`${API_BASE_URL}/match-scores`, {
-      credentials: 'include',
-    });
-    if (!allScoresResponse.ok) throw new Error(`Failed to fetch match scores: ${allScoresResponse.status}`);
-    const allScores = await allScoresResponse.json();
-    const matchScore = allScores.find((score: any) => score.matchId === matchId);
+  static async fetchMatchScores(matchId: string): Promise<MatchScores | null> {
+    const allScores = await apiClient.get<MatchScores[]>('/match-scores');
+    const matchScore = allScores.find((score) => score.matchId === matchId);
     if (!matchScore) return null;
-    const scoreResponse = await fetch(`${API_BASE_URL}/match-scores/${matchScore.id}`, {
-      credentials: 'include',
-    });
-    if (!scoreResponse.ok) throw new Error(`Failed to fetch specific match score: ${scoreResponse.status}`);
-    return scoreResponse.json();
+    return apiClient.get<MatchScores>(`/match-scores/${matchScore.id}`);
   }
 
   static async updateMatchStatus({ id, status, timestamp }: { id: string; status: string; timestamp?: Date }) {
     const payload: any = { status };
     if (timestamp) payload[status === 'IN_PROGRESS' ? 'startTime' : 'endTime'] = timestamp.toISOString();
-    const response = await fetch(`${API_BASE_URL}/matches/${id}`, {
-      method: 'PATCH',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
-    if (!response.ok) throw new Error(`Failed to update match status: ${response.status}`);
-    return response.json();
+    return apiClient.patch(`/matches/${id}`, payload);
   }
 
   static async updateOrCreateScores({ id, matchId, scoreUpdates }: { id?: string; matchId: string; scoreUpdates: ScoreUpdate }) {
     if (id) {
-      const response = await fetch(`${API_BASE_URL}/match-scores/${id}`, {
-        method: 'PATCH',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(scoreUpdates),
-      });
-      if (response.ok) return response.json();
-      if (response.status !== 404) throw new Error(`Failed to update scores: ${response.status}`);
+      try {
+        return await apiClient.patch(`/match-scores/${id}`, scoreUpdates);
+      } catch (error: any) {
+        if (error?.response?.status !== 404) throw error;
+      }
     }
-    const createResponse = await fetch(`${API_BASE_URL}/match-scores`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        matchId,
-        ...scoreUpdates,
-        redTotalScore: (scoreUpdates.redAutoScore || 0) + (scoreUpdates.redDriveScore || 0),
-        blueTotalScore: (scoreUpdates.blueAutoScore || 0) + (scoreUpdates.blueDriveScore || 0),
-      }),
+    return apiClient.post('/match-scores', {
+      matchId,
+      ...scoreUpdates,
+      redTotalScore: (scoreUpdates.redAutoScore || 0) + (scoreUpdates.redDriveScore || 0),
+      blueTotalScore: (scoreUpdates.blueAutoScore || 0) + (scoreUpdates.blueDriveScore || 0),
     });
-    if (!createResponse.ok) throw new Error(`Failed to create scores: ${createResponse.status}`);
-    return createResponse.json();
   }
 }
 // --- End Service Layer ---
 
-// --- Additional hooks for audience display controller ---
 export function useScheduledMatches() {
   return useQuery({
-    queryKey: ['scheduledMatches'],
+    queryKey: QueryKeys.matches.all(),
     queryFn: async () => {
       const matches = await MatchControlService.fetchMatches();
       return matches.filter((m: Match) => m.status === 'PENDING');
@@ -118,8 +68,8 @@ export function useScheduledMatches() {
 
 export function useActiveMatch(matchId: string | null) {
   return useQuery({
-    queryKey: ['activeMatch', matchId],
-    queryFn: () => matchId ? MatchControlService.fetchMatchById(matchId) : null,
+    queryKey: QueryKeys.matches.byId(matchId ?? ''),
+    queryFn: () => (matchId ? MatchControlService.fetchMatchById(matchId) : null),
     enabled: !!matchId,
     staleTime: 5 * 1000,
     refetchInterval: matchId ? 5 * 1000 : false,
@@ -134,7 +84,7 @@ export function useMatchControl() {
 
   // Fetch all matches
   const matchesQuery = useQuery({
-    queryKey: ['matches'],
+    queryKey: QueryKeys.matches.all(),
     queryFn: MatchControlService.fetchMatches,
     staleTime: 30 * 1000,
     refetchInterval: 15 * 1000,
@@ -142,8 +92,8 @@ export function useMatchControl() {
 
   // Fetch current match details
   const currentMatchQuery = useQuery({
-    queryKey: ['match', currentMatchId],
-    queryFn: () => currentMatchId ? MatchControlService.fetchMatchById(currentMatchId) : null,
+    queryKey: QueryKeys.matches.byId(currentMatchId ?? ''),
+    queryFn: () => (currentMatchId ? MatchControlService.fetchMatchById(currentMatchId) : null),
     enabled: !!currentMatchId,
     staleTime: 5 * 1000,
     refetchInterval: currentMatchId ? 5 * 1000 : false,
@@ -151,8 +101,8 @@ export function useMatchControl() {
 
   // Fetch current match scores
   const matchScoresQuery = useQuery({
-    queryKey: ['matchScores', currentMatchId],
-    queryFn: () => currentMatchId ? MatchControlService.fetchMatchScores(currentMatchId) : null,
+    queryKey: QueryKeys.matchScores.byMatch(currentMatchId ?? ''),
+    queryFn: () => (currentMatchId ? MatchControlService.fetchMatchScores(currentMatchId) : null),
     enabled: !!currentMatchId,
     staleTime: 2 * 1000,
     refetchInterval: currentMatchId ? 2 * 1000 : false,
@@ -162,8 +112,8 @@ export function useMatchControl() {
   const updateMatchStatusMutation = useMutation({
     mutationFn: MatchControlService.updateMatchStatus,
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['match', data.id] });
-      queryClient.invalidateQueries({ queryKey: ['matches'] });
+      queryClient.invalidateQueries({ queryKey: QueryKeys.matches.byId(data.id) });
+      queryClient.invalidateQueries({ queryKey: QueryKeys.matches.all() });
     },
     onError: (error) => {
       console.error('Failed to update match status:', error);
@@ -175,7 +125,7 @@ export function useMatchControl() {
     mutationFn: ({ id, scoreUpdates }: { id?: string; scoreUpdates: ScoreUpdate }) =>
       MatchControlService.updateOrCreateScores({ id, matchId: currentMatchId!, scoreUpdates }),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['matchScores', data.matchId] });
+      queryClient.invalidateQueries({ queryKey: QueryKeys.matchScores.byMatch(data.matchId) });
     },
     onError: (error) => {
       console.error('Failed to update scores:', error);
@@ -210,7 +160,7 @@ export function useMatchControl() {
       return;
     }
     updateMatchStatusMutation.mutate({ id: currentMatchId, status: 'IN_PROGRESS', timestamp: new Date() });
-    setTimer(prev => ({ ...prev, isRunning: true }));
+    setTimer((prev) => ({ ...prev, isRunning: true }));
   }, [currentMatchId, updateMatchStatusMutation]);
 
   // Stop/finish the match
@@ -220,36 +170,42 @@ export function useMatchControl() {
       return;
     }
     updateMatchStatusMutation.mutate({ id: currentMatchId, status: 'COMPLETED' });
-    setTimer(prev => ({ ...prev, isRunning: false }));
+    setTimer((prev) => ({ ...prev, isRunning: false }));
   }, [currentMatchId, updateMatchStatusMutation]);
 
   // Update match scores
-  const updateScores = useCallback((scoreUpdates: ScoreUpdate) => {
-    if (!currentMatchId) {
-      setError('No match selected');
-      return;
-    }
-    const scoreId = matchScoresQuery.data?.id;
-    updateScoresMutation.mutate({ id: scoreId, scoreUpdates });
-  }, [currentMatchId, matchScoresQuery.data, updateScoresMutation]);
+  const updateScores = useCallback(
+    (scoreUpdates: ScoreUpdate) => {
+      if (!currentMatchId) {
+        setError('No match selected');
+        return;
+      }
+      const scoreId = matchScoresQuery.data?.id;
+      updateScoresMutation.mutate({ id: scoreId, scoreUpdates });
+    },
+    [currentMatchId, matchScoresQuery.data, updateScoresMutation]
+  );
 
   // Helper to increment a specific score field
-  const incrementScore = useCallback((field: keyof ScoreUpdate, amount: number = 1) => {
-    const currentMatchScores = matchScoresQuery.data;
-    let currentValue = 0;
-    if (currentMatchScores) {
-      currentValue = currentMatchScores[field as keyof MatchScores] as number || 0;
-    }
-    const update = { [field]: currentValue + amount } as ScoreUpdate;
-    updateScores(update);
-  }, [matchScoresQuery.data, updateScores]);
+  const incrementScore = useCallback(
+    (field: keyof ScoreUpdate, amount: number = 1) => {
+      const currentMatchScores = matchScoresQuery.data;
+      let currentValue = 0;
+      if (currentMatchScores) {
+        currentValue = (currentMatchScores[field as keyof MatchScores] as number) || 0;
+      }
+      const update = { [field]: currentValue + amount } as ScoreUpdate;
+      updateScores(update);
+    },
+    [matchScoresQuery.data, updateScores]
+  );
 
   // Timer logic
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (timer.isRunning && timer.remaining > 0) {
       interval = setInterval(() => {
-        setTimer(prev => {
+        setTimer((prev) => {
           const newRemaining = prev.remaining - 1;
           if (newRemaining <= 0 && currentMatchQuery.data?.status === 'IN_PROGRESS') {
             stopMatch();
@@ -262,7 +218,9 @@ export function useMatchControl() {
         });
       }, 1000);
     }
-    return () => { if (interval) clearInterval(interval); };
+    return () => {
+      if (interval) clearInterval(interval);
+    };
   }, [timer.isRunning, timer.remaining, currentMatchQuery.data, stopMatch]);
 
   // Format the timer as MM:SS
@@ -276,8 +234,12 @@ export function useMatchControl() {
   const resetTimer = useCallback(() => {
     setTimer({ duration: 150, remaining: 150, isRunning: false });
   }, []);
-  const pauseTimer = useCallback(() => { setTimer(prev => ({ ...prev, isRunning: false })); }, []);
-  const resumeTimer = useCallback(() => { setTimer(prev => ({ ...prev, isRunning: true })); }, []);
+  const pauseTimer = useCallback(() => {
+    setTimer((prev) => ({ ...prev, isRunning: false }));
+  }, []);
+  const resumeTimer = useCallback(() => {
+    setTimer((prev) => ({ ...prev, isRunning: true }));
+  }, []);
 
   return {
     matches: matchesQuery.data || [],

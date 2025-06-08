@@ -1,10 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api-client";
 import { Match } from "@/lib/types";
+import { QueryKeys } from "@/lib/query-keys";
 
 export function useMatchesByTournament(tournamentId: string) {
   return useQuery({
-    queryKey: ["matches", "tournament", tournamentId],
+    queryKey: QueryKeys.matches.byTournament(tournamentId),
     queryFn: async () => {
       if (!tournamentId) return [];
       try {

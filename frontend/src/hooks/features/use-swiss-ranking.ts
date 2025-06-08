@@ -1,8 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
+import { QueryKeys } from '@/lib/query-keys';
 
 export function useSwissRankings(stageId: string | undefined) {
   return useQuery({
-    queryKey: ['swiss-rankings', stageId],
+    queryKey: QueryKeys.swissRankings.byStage(stageId ?? ''),
     queryFn: async () => {
       if (!stageId) return [];
       const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';

@@ -32,7 +32,7 @@ class WebSocketService implements IWebSocketService {
   private reconnectDelay = 100; // 2 seconds initial delay
 
   private constructor() {
-    // Private constructor to enforce singleton pattern
+    
   }
 
   public static getInstance(): WebSocketService {

@@ -36,18 +36,42 @@ export const QueryKeys = {
   teams: {
     all: () => ['teams'],
     byId: (id: string) => ['teams', id],
-    byTournament: (tournamentId: string) => ['teams', 'tournament', tournamentId],
+    byTournament: (tournamentId: string) => ['teams', tournamentId],
     rankings: (stageId: string) => ['teams', 'rankings', stageId],
   },
   
   // Match scores related queries
   matchScores: {
     byMatch: (matchId: string) => ['match-scores', matchId],
+    all: () => ['all-match-scores'],
   },
   
   // User related queries
   users: {
     all: () => ['users'],
     byId: (id: string) => ['users', id],
+  },
+  
+  // Swiss rankings related queries
+  swissRankings: {
+    byStage: (stageId: string) => ['swiss-rankings', stageId],
+  },
+  
+  // Audience display settings
+  audienceDisplay: {
+    settings: () => ['audience-display-settings'],
+  },
+  
+  // Tournament fields related queries
+  tournamentFields: {
+    byTournament: (tournamentId: string) => ['tournamentFields', tournamentId],
+  },
+  
+  // Tournament teams and stats related queries
+  tournamentTeams: {
+    byTournament: (tournamentId: string) => ['tournament-teams', tournamentId],
+  },
+  tournamentStats: {
+    byTournament: (tournamentId: string) => ['tournament-stats', tournamentId],
   },
 };

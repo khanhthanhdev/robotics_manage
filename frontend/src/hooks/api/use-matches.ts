@@ -3,6 +3,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useRef } from "react";
+import { apiClient } from "@/lib/api-client";
 
 import { QueryKeys } from "@/lib/query-keys";
 import { MatchStatus } from "@/lib/types";
@@ -76,20 +77,7 @@ export function useUpdateMatchStatus() {
     mutationFn: async ({ matchId, status }: { matchId: string; status: MatchStatus }) => {
       try {
         // Use the new /matches/:id/status endpoint
-        const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
-        const response = await fetch(`${API_BASE_URL}/api/matches/${matchId}/status`, {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          credentials: 'include',
-          body: JSON.stringify({ status }),
-        });
-        if (!response.ok) {
-          const error = await response.json().catch(() => ({}));
-          throw new Error(error.message || `Failed to update match status: ${response.status}`);
-        }
-        return await response.json();
+        return await apiClient.patch(`/matches/${matchId}/status`, { status });
       } catch (error: any) {
         throw error;
       }
@@ -266,14 +254,9 @@ export function useUpdateMatchScores() {
  */
 export function useAllMatchScores(enabled: boolean = true) {
   return useQuery({
-    queryKey: ["all-match-scores"],
+    queryKey: QueryKeys.matchScores.all(),
     queryFn: async () => {
-      const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
-      const response = await fetch(`${API_BASE_URL}/api/match-scores`, {
-        credentials: "include",
-      });
-      if (!response.ok) throw new Error("Failed to fetch match scores");
-      return await response.json();
+      return await apiClient.get<any[]>("/match-scores");
     },
     staleTime: 60 * 1000, // 1 minute
     enabled,

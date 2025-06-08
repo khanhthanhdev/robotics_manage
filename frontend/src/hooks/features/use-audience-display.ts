@@ -1,8 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AudienceDisplaySettings } from "@/lib/types";
-// Define the audience display settings type
+import { QueryKeys } from "@/lib/query-keys";
 
- 
 // Default settings
 const DEFAULT_SETTINGS: AudienceDisplaySettings = {
   displayMode: "match",
@@ -20,7 +19,7 @@ const DEFAULT_SETTINGS: AudienceDisplaySettings = {
  */
 export function useAudienceDisplaySettings() {
   return useQuery({
-    queryKey: ["audience-display-settings"],
+    queryKey: QueryKeys.audienceDisplay.settings(),
     queryFn: (): AudienceDisplaySettings => {
       // Get settings from localStorage or use defaults
       const storedSettings = localStorage.getItem("audience-display-settings");
@@ -65,7 +64,7 @@ export function useUpdateAudienceDisplay() {
     },
     onSuccess: (data) => {
       // Update the query cache
-      queryClient.setQueryData(["audience-display-settings"], data);
+      queryClient.setQueryData(QueryKeys.audienceDisplay.settings(), data);
     },
   });
 }
