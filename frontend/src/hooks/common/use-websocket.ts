@@ -80,14 +80,14 @@ export function useWebSocket(options: UseWebSocketOptions = {}, ws: IWebSocketSe
       return;
     }
     ws.sendMatchStateChange({ ...stateData, tournamentId: currentTournament });
-  }, [currentTournament, ws]);
-  // Timer control functions
-  const startTimer = useCallback((timerData: Omit<TimerData, 'tournamentId' | 'startedAt' | 'isRunning'>) => {
+  }, [currentTournament, ws]);  // Timer control functions
+  const startTimer = useCallback((timerData: Omit<TimerData, 'tournamentId'>) => {
     if (!currentTournament) {
       console.error('No tournament ID available for startTimer');
       return;
     }
-    ws.startTimer({ ...timerData, tournamentId: currentTournament, startedAt: Date.now(), isRunning: true });
+    // Don't override isRunning or startedAt - let the backend handle these
+    ws.startTimer({ ...timerData, tournamentId: currentTournament });
   }, [currentTournament, ws]);
   const pauseTimer = useCallback((timerData: Omit<TimerData, 'tournamentId'>) => {
     if (!currentTournament) {

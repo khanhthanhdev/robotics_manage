@@ -250,14 +250,13 @@ export class EventsGateway
       client.to(payload.tournamentId).emit('announcement', payload);
     }
   }
-  
-  // Start a timer for a match (control panel)
+    // Start a timer for a match (control panel)
   @SubscribeMessage('start_timer')
   handleStartTimer(
     @ConnectedSocket() client: Socket,
     @MessageBody() payload: TimerData
   ): void {
-    const { tournamentId } = payload;
+    const { tournamentId, fieldId } = payload;
     
     // Clear any existing timer for this tournament
     if (this.activeTimers.has(tournamentId)) {
@@ -286,8 +285,15 @@ export class EventsGateway
         isRunning: remaining > 0
       };
       
-      // Broadcast timer update to the tournament room
-      this.server.to(tournamentId).emit('timer_update', timerUpdate);
+      // Broadcast timer update - if fieldId is provided, use field-specific broadcasting
+      if (fieldId) {
+        this.emitToField(fieldId, 'timer_update', timerUpdate);
+        // Also broadcast to tournament room for general monitoring
+        this.server.to(tournamentId).emit('timer_update', timerUpdate);
+      } else {
+        // Fallback to tournament-only broadcasting
+        this.server.to(tournamentId).emit('timer_update', timerUpdate);
+      }
       
       // Stop the timer when it reaches zero
       if (remaining <= 0) {
@@ -297,22 +303,28 @@ export class EventsGateway
     }, 1000);
     
     this.activeTimers.set(tournamentId, timer);
-    this.logger.log(`Timer started for tournament: ${tournamentId}`);
+    this.logger.log(`Timer started for tournament: ${tournamentId}, field: ${fieldId || 'none'}`);
     
-    // Initial broadcast
-    this.server.to(tournamentId).emit('timer_update', {
+    // Initial broadcast - same logic as interval broadcast
+    const initialUpdate = {
       ...payload,
       isRunning: true,
-    });
+    };
+    
+    if (fieldId) {
+      this.emitToField(fieldId, 'timer_update', initialUpdate);
+      this.server.to(tournamentId).emit('timer_update', initialUpdate);
+    } else {
+      this.server.to(tournamentId).emit('timer_update', initialUpdate);
+    }
   }
-  
-  // Pause a timer for a match (control panel)
+    // Pause a timer for a match (control panel)
   @SubscribeMessage('pause_timer')
   handlePauseTimer(
     @ConnectedSocket() client: Socket,
     @MessageBody() payload: TimerData
   ): void {
-    const { tournamentId } = payload;
+    const { tournamentId, fieldId } = payload;
     
     // Clear the active timer for this tournament
     if (this.activeTimers.has(tournamentId)) {
@@ -321,22 +333,28 @@ export class EventsGateway
     }
     
     // Broadcast the paused timer state
-    this.server.to(tournamentId).emit('timer_update', {
+    const pausedUpdate = {
       ...payload,
       isRunning: false,
       pausedAt: Date.now()
-    });
+    };
     
-    this.logger.log(`Timer paused for tournament: ${tournamentId}`);
+    if (fieldId) {
+      this.emitToField(fieldId, 'timer_update', pausedUpdate);
+      this.server.to(tournamentId).emit('timer_update', pausedUpdate);
+    } else {
+      this.server.to(tournamentId).emit('timer_update', pausedUpdate);
+    }
+    
+    this.logger.log(`Timer paused for tournament: ${tournamentId}, field: ${fieldId || 'none'}`);
   }
-  
-  // Reset a timer for a match (control panel)
+    // Reset a timer for a match (control panel)
   @SubscribeMessage('reset_timer')
   handleResetTimer(
     @ConnectedSocket() client: Socket,
     @MessageBody() payload: TimerData
   ): void {
-    const { tournamentId } = payload;
+    const { tournamentId, fieldId } = payload;
     
     // Clear the active timer for this tournament
     if (this.activeTimers.has(tournamentId)) {
@@ -345,15 +363,22 @@ export class EventsGateway
     }
     
     // Broadcast the reset timer state
-    this.server.to(tournamentId).emit('timer_update', {
+    const resetUpdate = {
       ...payload,
       remaining: payload.duration,
       isRunning: false,
       startedAt: undefined,
       pausedAt: undefined
-    });
+    };
     
-    this.logger.log(`Timer reset for tournament: ${tournamentId}`);
+    if (fieldId) {
+      this.emitToField(fieldId, 'timer_update', resetUpdate);
+      this.server.to(tournamentId).emit('timer_update', resetUpdate);
+    } else {
+      this.server.to(tournamentId).emit('timer_update', resetUpdate);
+    }
+    
+    this.logger.log(`Timer reset for tournament: ${tournamentId}, field: ${fieldId || 'none'}`);
   }
 
   // Broadcast a message to all connected clients in a specific tournament

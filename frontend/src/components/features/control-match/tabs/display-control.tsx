@@ -67,10 +67,9 @@ export default function DisplayControl({
             <Select value={displayMode} onValueChange={setDisplayMode}>
               <SelectTrigger id="displayMode">
                 <SelectValue placeholder="Select display mode" />
-              </SelectTrigger>
-              <SelectContent position="popper">
+              </SelectTrigger>              <SelectContent position="popper">
                 <SelectItem value="match">Match Details</SelectItem>
-                <SelectItem value="teams">Teams</SelectItem>
+                <SelectItem value="teams">Teams List</SelectItem>
                 <SelectItem value="schedule">Schedule</SelectItem>
                 <SelectItem value="rankings">Rankings</SelectItem>
                 <SelectItem value="announcement">Announcement</SelectItem>

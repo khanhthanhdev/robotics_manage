@@ -9,7 +9,8 @@ import {
 
 interface ConnectionStatusProps {
   isConnected: boolean;
-  tournamentId: string | null;
+  tournamentId?: string | null;
+  currentTournament?: string | null;
   selectedFieldId?: string | null;
   onFieldSelect?: (fieldId: string | null) => void;
 }
@@ -21,9 +22,13 @@ interface ConnectionStatusProps {
 const ConnectionStatus: React.FC<ConnectionStatusProps> = ({
   isConnected,
   tournamentId,
+  currentTournament,
   selectedFieldId,
   onFieldSelect,
 }) => {
+  // Use whichever tournament ID is provided
+  const activeTournament = tournamentId || currentTournament;
+  
   return (
     <Card>
       <CardHeader className="pb-2">
@@ -39,10 +44,10 @@ const ConnectionStatus: React.FC<ConnectionStatusProps> = ({
           />
           <span>{isConnected ? 'Connected' : 'Disconnected'}</span>
         </div>
-        {tournamentId && (
+        {activeTournament && (
           <div className="mt-2">
             <span className="text-sm text-muted-foreground">
-              Tournament ID: {tournamentId}
+              Tournament ID: {activeTournament}
             </span>
           </div>
         )}

@@ -34,17 +34,15 @@ describe('EventsGateway', () => {
     gateway.handleLeaveRoom(mockClient, { tournamentId: 't1' });
     expect(mockClient.leave).toHaveBeenCalledWith('t1');
   });
-
   it('should join and leave field-specific rooms', () => {
     gateway.handleJoinFieldRoom(mockClient, { fieldId: 'fieldA' });
-    expect(mockClient.join).toHaveBeenCalledWith('field_fieldA');
+    expect(mockClient.join).toHaveBeenCalledWith('field:fieldA');
     gateway.handleLeaveFieldRoom(mockClient, { fieldId: 'fieldA' });
-    expect(mockClient.leave).toHaveBeenCalledWith('field_fieldA');
+    expect(mockClient.leave).toHaveBeenCalledWith('field:fieldA');
   });
-
   it('should emit to field-specific room using emitToField', () => {
     gateway.emitToField('fieldA', 'match_update', { foo: 123 });
-    expect(mockServer.to).toHaveBeenCalledWith('field_fieldA');
+    expect(mockServer.to).toHaveBeenCalledWith('field:fieldA');
     expect(mockServer.to().emit).toHaveBeenCalledWith('match_update', { foo: 123 });
   });
 
@@ -77,7 +75,6 @@ describe('EventsGateway', () => {
     gateway.handleAnnouncement(mockClient, payload as any);
     expect(mockClient.to().emit).toHaveBeenCalledWith('announcement', payload);
   });
-
   it('should start, pause, and reset timers correctly', () => {
     jest.useFakeTimers();
     const payload = { tournamentId: 't1', duration: 2000, remaining: 2000, isRunning: false };
@@ -91,6 +88,40 @@ describe('EventsGateway', () => {
     expect(mockServer.to().emit).toHaveBeenCalledWith('timer_update', expect.objectContaining({ isRunning: false }));
     gateway.handleResetTimer(mockClient, payload);
     expect(mockServer.to().emit).toHaveBeenCalledWith('timer_update', expect.objectContaining({ remaining: 2000, isRunning: false }));
+    jest.useRealTimers();
+  });
+
+  it('should start, pause, and reset timers with field-specific broadcasting', () => {
+    jest.useFakeTimers();
+    const payload = { tournamentId: 't1', fieldId: 'fieldA', duration: 2000, remaining: 2000, isRunning: false };
+    
+    // Test start timer with fieldId
+    gateway.handleStartTimer(mockClient, { ...payload });
+    expect(gateway.hasActiveTimer('t1')).toBe(true);
+    expect(mockServer.to).toHaveBeenCalledWith('field:fieldA');
+    expect(mockServer.to().emit).toHaveBeenCalledWith('timer_update', expect.objectContaining({ 
+      tournamentId: 't1', 
+      fieldId: 'fieldA', 
+      isRunning: true 
+    }));
+    
+    // Test pause timer with fieldId
+    gateway.handlePauseTimer(mockClient, payload);
+    expect(mockServer.to).toHaveBeenCalledWith('field:fieldA');
+    expect(mockServer.to().emit).toHaveBeenCalledWith('timer_update', expect.objectContaining({ 
+      isRunning: false,
+      fieldId: 'fieldA'
+    }));
+    
+    // Test reset timer with fieldId
+    gateway.handleResetTimer(mockClient, payload);
+    expect(mockServer.to).toHaveBeenCalledWith('field:fieldA');
+    expect(mockServer.to().emit).toHaveBeenCalledWith('timer_update', expect.objectContaining({ 
+      remaining: 2000, 
+      isRunning: false,
+      fieldId: 'fieldA'
+    }));
+    
     jest.useRealTimers();
   });
 
@@ -124,23 +155,22 @@ describe('EventsGateway', () => {
     expect(gateway.hasActiveTimer('t1')).toBe(true);
     jest.useRealTimers();
   });
-
   it('should emit match, score, timer, and match state updates to field-specific room if fieldId is present', () => {
     const payload = { fieldId: 'fieldA', tournamentId: 't1', foo: 42 };
     gateway.handleMatchUpdate(mockClient, payload);
-    expect(mockServer.to).toHaveBeenCalledWith('field_fieldA');
+    expect(mockServer.to).toHaveBeenCalledWith('field:fieldA');
     expect(mockServer.to().emit).toHaveBeenCalledWith('match_update', payload);
 
     gateway.handleScoreUpdate(mockClient, payload);
-    expect(mockServer.to).toHaveBeenCalledWith('field_fieldA');
+    expect(mockServer.to).toHaveBeenCalledWith('field:fieldA');
     expect(mockServer.to().emit).toHaveBeenCalledWith('score_update', payload);
 
     gateway.handleTimerUpdate(mockClient, payload);
-    expect(mockServer.to).toHaveBeenCalledWith('field_fieldA');
+    expect(mockServer.to).toHaveBeenCalledWith('field:fieldA');
     expect(mockServer.to().emit).toHaveBeenCalledWith('timer_update', payload);
 
     gateway.handleMatchStateChange(mockClient, payload);
-    expect(mockServer.to).toHaveBeenCalledWith('field_fieldA');
+    expect(mockServer.to).toHaveBeenCalledWith('field:fieldA');
     expect(mockServer.to().emit).toHaveBeenCalledWith('match_state_change', payload);
   });
 

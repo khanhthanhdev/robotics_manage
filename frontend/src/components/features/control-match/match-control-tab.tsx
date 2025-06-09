@@ -7,33 +7,46 @@ import {
   MatchesList,
   ScoreControl
 } from "./tabs";
-import CombinedMatchTimerControl from "./match-timer-control"
-// Define interface for props
+import CombinedMatchTimerControl from "./match-timer-control";
+import type { 
+  Match, 
+  DisplayMode, 
+  ScoreData, 
+  MatchStateData,
+  AnnouncementData 
+} from "@/lib/types";
+
+// Define interface for props using proper types
 interface MatchControlTabsProps {
   // Common props
   selectedMatchId: string;
-  setSelectedMatchId: (id: string) => void;
-  selectedMatch: any | null;
-  isLoadingMatches: boolean;
-  matchesData: any[];
+  tournamentId?: string;
+  fieldId?: string | null;
+  setSelectedMatchId?: (id: string) => void;
+  selectedMatch?: Match | null;
+  isLoadingMatches?: boolean;
+  matchesData?: Match[];  
+  // WebSocket props - adjust to match child component expectations
+  sendMatchStateChange?: (params: {
+    matchId: string;
+    status: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED';
+    currentPeriod: string | null;
+  }) => void;
+  sendScoreUpdate?: (params: ScoreData) => void;
   
-  // WebSocket props
-  sendMatchStateChange: (params: any) => void;
-  sendScoreUpdate: (params: any) => void;
-  
-  // Display Control props
-  displayMode: string;
-  setDisplayMode: (mode: string) => void;
-  showTimer: boolean;
-  setShowTimer: (show: boolean) => void;
-  showScores: boolean;
-  setShowScores: (show: boolean) => void;
-  showTeams: boolean;
-  setShowTeams: (show: boolean) => void;
-  announcementMessage: string;
-  setAnnouncementMessage: (message: string) => void;
-  handleDisplayModeChange: () => void;
-  handleSendAnnouncement: () => void;
+  // Display Control props - use string for displayMode to match child component
+  displayMode?: string;
+  setDisplayMode?: (mode: string) => void;
+  showTimer?: boolean;
+  setShowTimer?: (show: boolean) => void;
+  showScores?: boolean;
+  setShowScores?: (show: boolean) => void;
+  showTeams?: boolean;
+  setShowTeams?: (show: boolean) => void;
+  announcementMessage?: string;
+  setAnnouncementMessage?: (message: string) => void;
+  handleDisplayModeChange?: () => void;
+  handleSendAnnouncement?: () => void;
   
   // Match Control props
   matchPeriod: string;
@@ -48,7 +61,8 @@ interface MatchControlTabsProps {
   handleStartTimer: () => void;
   handlePauseTimer: () => void;
   handleResetTimer: () => void;
-    // Score Control props
+  
+  // Score Control props
   redAutoScore: number;
   setRedAutoScore: React.Dispatch<React.SetStateAction<number>>;
   redDriveScore: number;
@@ -59,10 +73,10 @@ interface MatchControlTabsProps {
   setBlueDriveScore: React.Dispatch<React.SetStateAction<number>>;
   redTotalScore: number;
   blueTotalScore: number;
-  redGameElements: any[];
-  blueGameElements: any[];
-  setRedGameElements: (elements: any[]) => void;
-  setBlueGameElements: (elements: any[]) => void;
+  redGameElements: GameElement[];
+  blueGameElements: GameElement[];
+  setRedGameElements: (elements: GameElement[]) => void;
+  setBlueGameElements: (elements: GameElement[]) => void;
   redTeamCount: number;
   blueTeamCount: number;
   redMultiplier: number;
@@ -73,10 +87,10 @@ interface MatchControlTabsProps {
   setBlueMultiplier: (multiplier: number) => void;
   updateRedTeamCount: (count: number) => void;
   updateBlueTeamCount: (count: number) => void;
-  scoreDetails: any;
-  setScoreDetails: (details: any) => void;
-  getRedTeams: (match: any) => string[];
-  getBlueTeams: (match: any) => string[];
+  scoreDetails: Record<string, any>;
+  setScoreDetails: (details: Record<string, any>) => void;
+  getRedTeams: (match: Match) => string[];
+  getBlueTeams: (match: Match) => string[];
   handleUpdateScores: () => void;
   handleSubmitScores: () => void;
   handleSelectMatch: (match: {id: string; matchNumber: string | number}) => void;
@@ -89,6 +103,15 @@ interface MatchControlTabsProps {
   formatDate: (dateString: string) => string;
   getStatusBadgeColor: (status: string) => string;
   matchScoresMap: Record<string, { redTotalScore: number; blueTotalScore: number }>;
+}
+
+// Game element type definition
+interface GameElement {
+  element: string;
+  count: number;
+  pointsEach: number;
+  operation: string;
+  totalPoints: number;
 }
 
 export default function MatchControlTabs({
@@ -192,13 +215,11 @@ export default function MatchControlTabs({
         <TabsTrigger value="display">Display Control</TabsTrigger>
         <TabsTrigger value="match">Match & Timer Control</TabsTrigger>
         <TabsTrigger value="scores">Score Control</TabsTrigger>
-      </TabsList>
-
-      {/* Matches List Tab */}
+      </TabsList>      {/* Matches List Tab */}
       <TabsContent value="matches">
         <MatchesList
-          isLoadingMatches={isLoadingMatches}
-          matchesData={matchesData}
+          isLoadingMatches={isLoadingMatches ?? false}
+          matchesData={matchesData ?? []}
           selectedMatch={selectedMatch}
           handleSelectMatch={handleSelectMatch}
           formatDate={formatDate}
@@ -213,19 +234,18 @@ export default function MatchControlTabs({
       {/* Display Control Tab */}
       <TabsContent value="display">
         <DisplayControl
-          selectedMatchId={selectedMatchId}
-          displayMode={displayMode}
-          setDisplayMode={setDisplayMode}
-          showTimer={showTimer}
-          setShowTimer={setShowTimer}
-          showScores={showScores}
-          setShowScores={setShowScores}
-          showTeams={showTeams}
-          setShowTeams={setShowTeams}
-          announcementMessage={announcementMessage}
-          setAnnouncementMessage={setAnnouncementMessage}
-          handleDisplayModeChange={handleDisplayModeChange}
-          handleSendAnnouncement={handleSendAnnouncement}
+          selectedMatchId={selectedMatchId}          displayMode={displayMode ?? "match"}
+          setDisplayMode={setDisplayMode ?? (() => {})}
+          showTimer={showTimer ?? false}
+          setShowTimer={setShowTimer ?? (() => {})}
+          showScores={showScores ?? false}
+          setShowScores={setShowScores ?? (() => {})}
+          showTeams={showTeams ?? false}
+          setShowTeams={setShowTeams ?? (() => {})}
+          announcementMessage={announcementMessage ?? ""}
+          setAnnouncementMessage={setAnnouncementMessage ?? (() => {})}
+          handleDisplayModeChange={handleDisplayModeChange ?? (() => {})}
+          handleSendAnnouncement={handleSendAnnouncement ?? (() => {})}
           selectedMatch={selectedMatch}
         />
       </TabsContent>
@@ -234,10 +254,10 @@ export default function MatchControlTabs({
       <TabsContent value="match">
         <CombinedMatchTimerControl
           selectedMatchId={selectedMatchId}
-          setSelectedMatchId={setSelectedMatchId}
+          setSelectedMatchId={setSelectedMatchId ?? (() => {})}
           matchPeriod={matchPeriod}
           setMatchPeriod={setMatchPeriod}
-          sendMatchStateChange={sendMatchStateChange}
+          sendMatchStateChange={sendMatchStateChange ?? (() => {})}
           selectedMatch={selectedMatch}
           timerDuration={timerDuration}
           setTimerDuration={setTimerDuration}
@@ -247,7 +267,6 @@ export default function MatchControlTabs({
           handleStartTimer={handleStartTimer}
           handlePauseTimer={handlePauseTimer}
           handleResetTimer={handleResetTimer}
-
         />
       </TabsContent>
 

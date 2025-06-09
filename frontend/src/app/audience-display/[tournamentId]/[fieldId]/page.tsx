@@ -369,16 +369,14 @@ export default function LiveFieldDisplayPage() {
           });
         }
       }
-    });
-
-    // Timer updates - should be field-specific
+    });    // Timer updates - should be field-specific or tournament-wide
     const unsubTimer = subscribe<any>("timer_update", (data) => {
-      // Only process timer updates for this specific field
-      if (data.fieldId === fieldId) {
+      // Process timer updates for this specific field OR tournament-wide updates (no fieldId specified)
+      if (data.fieldId === fieldId || !data.fieldId) {
         console.log("Applying timer update for field:", fieldId, data);
         setTimer(data);
       }
-    }); // Match state changes - should be field-specific
+    });// Match state changes - should be field-specific
     const unsubMatchState = subscribe<any>("match_state_change", (data) => {
       // Only process match state changes for this specific field
       if (data.fieldId === fieldId) {
