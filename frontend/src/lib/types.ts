@@ -254,6 +254,7 @@ export type WebSocketEvent =
   | 'display_mode_change'
   | 'match_update'
   | 'score_update'
+  | 'scoreUpdateRealtime'
   | 'timer_update'
   | 'match_state_change'
   | 'announcement';

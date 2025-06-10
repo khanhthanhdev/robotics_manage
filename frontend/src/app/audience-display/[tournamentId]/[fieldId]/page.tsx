@@ -4,9 +4,13 @@ import { useRouter, useParams } from "next/navigation";
 import { useTournament } from "@/hooks/api/use-tournaments";
 import { useTournamentFields } from "@/components/fields/FieldSelectDropdown";
 import { useWebSocket } from "@/hooks/common/use-websocket";
+import { useRealtimeScores } from "@/hooks/features/use-realtime-scores";
+import { webSocketService } from "@/lib/websocket";
 import { AudienceDisplaySettings } from "@/lib/types";
 import TeamsDisplay from "../../../../components/features/audience-display/displays/teams-display";
-import ScheduleDisplay, { Match } from "../../../../components/features/audience-display/displays/schedule-display";
+import ScheduleDisplay, {
+  Match,
+} from "../../../../components/features/audience-display/displays/schedule-display";
 import { useTeams } from "@/hooks/api/use-teams";
 import { apiClient } from "@/lib/api-client";
 import { useInjectTextShadowStyle } from "../../../../hooks/features/use-inject-text-shadow-style";
@@ -14,6 +18,7 @@ import { useAnnouncement } from "../../../../hooks/features/use-announcement";
 import { AnnouncementOverlay } from "../../../../components/features/audience-display/overlays/announcement-overlay";
 import { FieldNotFound } from "../../../../components/features/audience-display/states/field-not-found";
 import { LoadingDisplay } from "../../../../components/features/audience-display/states/loading-display";
+import { ConnectionStatus } from "../../../../components/features/audience-display/states/connection-status";
 import { MatchDisplay } from "../../../../components/features/audience-display/displays/match-display";
 import { useMatchesByTournament } from "@/hooks/features/use-matches-by-tournament";
 import { SwissRankingsDisplay } from "../../../../components/features/audience-display/displays/swiss-rankings-display";
@@ -43,7 +48,17 @@ export default function LiveFieldDisplayPage() {
     redTeams: [],
     blueTeams: [],
   });
-  const [connectionError, setConnectionError] = useState<string | null>(null);
+  const [connectionError, setConnectionError] = useState<string | null>(null);  // Enhanced real-time scores with fallback support (Steps 10-12)
+  const currentMatchId = matchState.matchId || "";
+  console.log("useRealtimeScores called with matchId:", currentMatchId);
+  
+  const {
+    realtimeScores,
+    lastUpdateTime,
+    isConnected: wsConnected,
+    fallbackMode,
+    source,
+  } = useRealtimeScores(currentMatchId);
 
   // Display mode and announcement state
   const [displaySettings, setDisplaySettings] =
@@ -224,11 +239,13 @@ export default function LiveFieldDisplayPage() {
     fieldId,
     tournamentId,
     displaySettings,
-  ]);
-
-  // Join tournament and field rooms on mount
+  ]);  // Join tournament and field rooms on mount
   useEffect(() => {
     if (!tournamentId) return;
+
+    console.log(
+      `Audience display joining tournament: ${tournamentId} and field: ${fieldId}`
+    );
     joinTournament(tournamentId);
 
     if (fieldId) {
@@ -245,6 +262,27 @@ export default function LiveFieldDisplayPage() {
       }
     };
   }, [tournamentId, fieldId, joinTournament, joinFieldRoom, leaveFieldRoom]);
+  // Connect the new WebSocket service for real-time scores
+  useEffect(() => {
+    console.log("🔗 Connecting new WebSocket service for real-time scores");
+    webSocketService.connect();
+    
+    // Join tournament and field rooms for real-time score updates
+    if (tournamentId) {
+      console.log(`🏆 New WebSocket service joining tournament: ${tournamentId}`);
+      webSocketService.joinTournament(tournamentId);
+    }
+    
+    if (fieldId) {
+      console.log(`🏟️ New WebSocket service joining field room: ${fieldId}`);
+      webSocketService.joinFieldRoom(fieldId);
+    }
+    
+    return () => {
+      console.log("🔌 Disconnecting new WebSocket service");
+      webSocketService.disconnect();
+    };
+  }, [tournamentId, fieldId]);
 
   // Track connection status and attempts
   const [connectionAttempts, setConnectionAttempts] = useState<number>(0);
@@ -286,7 +324,9 @@ export default function LiveFieldDisplayPage() {
         blueTeams: matchDetails.blueTeams || matchDetails.blue_teams || [],
       }));
       // Fetch score breakdown
-      const scoreDetails = await apiClient.get(`/match-scores/match/${matchId}`);
+      const scoreDetails = await apiClient.get(
+        `/match-scores/match/${matchId}`
+      );
       setScore(scoreDetails);
     } catch (error) {
       console.error("Error syncing match data:", error);
@@ -295,7 +335,10 @@ export default function LiveFieldDisplayPage() {
 
   // Subscribe to WebSocket events and sync all live data with field-specific filtering
   useEffect(() => {
-    // Display mode changes - can be tournament-wide or field-specific
+    // --- WebSocket Event Subscriptions for Audience Display ---
+    // Only listen to 'scoreUpdateRealtime' for real-time score updates.
+    // Legacy events like 'score_update' are now ignored to avoid race conditions and ensure clean, scalable real-time flow.
+    // See WebSocket-Score-Sync-Plan.md for details.
     const unsubDisplayMode = subscribe<AudienceDisplaySettings>(
       "display_mode_change",
       (data) => {
@@ -354,8 +397,13 @@ export default function LiveFieldDisplayPage() {
 
         // If a new matchId is provided, and it's different from the current one,
         // or if the current matchId is null, fetch its full details.
-        if (newMatchId && (newMatchId !== matchState.matchId || !matchState.matchId)) {
-          console.log(`Match ID update: current ${matchState.matchId}, new ${newMatchId}. Fetching full details.`);
+        if (
+          newMatchId &&
+          (newMatchId !== matchState.matchId || !matchState.matchId)
+        ) {
+          console.log(
+            `Match ID update: current ${matchState.matchId}, new ${newMatchId}. Fetching full details.`
+          );
           fetchAndSyncMatch(newMatchId);
         }
 
@@ -369,14 +417,14 @@ export default function LiveFieldDisplayPage() {
           });
         }
       }
-    });    // Timer updates - should be field-specific or tournament-wide
+    }); // Timer updates - should be field-specific or tournament-wide
     const unsubTimer = subscribe<any>("timer_update", (data) => {
       // Process timer updates for this specific field OR tournament-wide updates (no fieldId specified)
       if (data.fieldId === fieldId || !data.fieldId) {
         console.log("Applying timer update for field:", fieldId, data);
         setTimer(data);
       }
-    });// Match state changes - should be field-specific
+    }); // Match state changes - should be field-specific
     const unsubMatchState = subscribe<any>("match_state_change", (data) => {
       // Only process match state changes for this specific field
       if (data.fieldId === fieldId) {
@@ -415,19 +463,45 @@ export default function LiveFieldDisplayPage() {
           });
         }
       }
-    }); // Score updates - should be field-specific
-    const unsubScore = subscribe<any>("score_update", (data) => {
-      // Only process score updates for this specific field
-      if (data.fieldId === fieldId) {
-        console.log("Applying score update for field:", fieldId, data);
-        setScore(data);
+    }); // Enhanced score updates - prioritize real-time WebSocket scores (Step 10)
+    const unsubRealtimeScore = subscribe<any>("scoreUpdateRealtime", (data) => {
+      console.log(
+        "🔴 [Legacy WebSocket] Real-time score update received:",
+        data,
+        "for field:",
+        fieldId,
+        "current match:",
+        matchState?.matchId
+      );
 
-        // If this is for the current match and we're not in match display mode, switch to it
-        if (
-          data.matchId &&
-          data.matchId === matchState?.matchId &&
-          displaySettings.displayMode !== "match"
-        ) {
+      // Accept real-time score updates if they're for the current match
+      if (data.matchId && data.matchId === matchState?.matchId) {
+        console.log("Applying real-time score update for match:", data.matchId);
+
+        // Convert real-time score format to display format
+        const realtimeScoreData = {
+          matchId: data.matchId,
+          redAutoScore: data.redAutoScore || 0,
+          redDriveScore: data.redDriveScore || 0,
+          redTotalScore: data.redTotalScore || 0,
+          blueAutoScore: data.blueAutoScore || 0,
+          blueDriveScore: data.blueDriveScore || 0,
+          blueTotalScore: data.blueTotalScore || 0,
+          redTeamCount: data.redTeamCount || 2,
+          blueTeamCount: data.blueTeamCount || 2,
+          redMultiplier: data.redMultiplier || 1,
+          blueMultiplier: data.blueMultiplier || 1,
+          redGameElements: data.redGameElements || [],
+          blueGameElements: data.blueGameElements || [],
+          scoreDetails: data.scoreDetails || {},
+          timestamp: data.timestamp || Date.now(),
+          isRealtime: true, // Flag to identify real-time updates
+        };
+
+        setScore(realtimeScoreData);
+
+        // Ensure we're in match display mode
+        if (displaySettings.displayMode !== "match") {
           setDisplaySettings({
             ...displaySettings,
             displayMode: "match",
@@ -435,6 +509,14 @@ export default function LiveFieldDisplayPage() {
             updatedAt: Date.now(),
           });
         }
+      } else {
+        console.log(
+          "Ignoring real-time score update - not for current match:",
+          {
+            updateMatchId: data.matchId,
+            currentMatchId: matchState?.matchId,
+          }
+        );
       }
     });
 
@@ -463,16 +545,24 @@ export default function LiveFieldDisplayPage() {
         // Clear timeout if component unmounts while announcement is showing
         return () => clearTimeout(timerId);
       }
-    });
-    return () => {
+    });    return () => {
       unsubDisplayMode();
-      unsubMatchUpdate(); // Keep for cleanup
+      unsubMatchUpdate();
       unsubTimer();
       unsubMatchState();
-      unsubScore();
+      unsubRealtimeScore();
       unsubAnnouncement();
     };
-  }, [subscribe, fieldId, displaySettings.displayMode, tournamentId]);
+  }, [
+    subscribe,
+    fieldId,
+    tournamentId,
+    // Remove frequently changing dependencies that don't need to trigger re-subscription:
+    // - displaySettings.displayMode (handled within callback)
+    // - matchState?.matchId (handled within callback)
+    // - wsConnected (not needed for subscription setup)
+    // - lastUpdateTime (not needed for subscription setup)
+  ]);
 
   // Robust timer countdown effect: always use latest timer state from server, prevent drift
   useEffect(() => {
@@ -496,19 +586,19 @@ export default function LiveFieldDisplayPage() {
   // Effect to automatically update match period based on timer
   useEffect(() => {
     // Only update period if the timer is actively running
-    if (timer && typeof timer.remaining === 'number' && timer.isRunning) {
+    if (timer && typeof timer.remaining === "number" && timer.isRunning) {
       const remainingSeconds = Math.floor(timer.remaining / 1000);
-      let newPeriod = ""; 
+      let newPeriod = "";
 
       // Timer counts down from 150 seconds (2:30)
       // Auto: 2:30 (150s) down to 2:01 (121s)
       // Teleop: 2:00 (120s) down to 0:31 (31s)
       // Endgame: 0:30 (30s) down to 0:00 (0s)
-      if (remainingSeconds > 120) { 
+      if (remainingSeconds > 120) {
         newPeriod = "auto";
-      } else if (remainingSeconds > 30) { 
+      } else if (remainingSeconds > 30) {
         newPeriod = "teleop";
-      } else if (remainingSeconds >= 0) { 
+      } else if (remainingSeconds >= 0) {
         newPeriod = "endgame";
       } else {
         // Timer has gone below 0 or is in an unexpected state; do not attempt to set a period.
@@ -517,7 +607,9 @@ export default function LiveFieldDisplayPage() {
 
       // Only update state if the calculated period is different from the current one.
       if (newPeriod && newPeriod !== matchState.currentPeriod) {
-        console.log(`Timer-based period change: ${matchState.currentPeriod} -> ${newPeriod} (Remaining: ${remainingSeconds}s)`);
+        console.log(
+          `Timer-based period change: ${matchState.currentPeriod} -> ${newPeriod} (Remaining: ${remainingSeconds}s)`
+        );
         setMatchState((prevMatchState: any) => ({
           ...prevMatchState,
           currentPeriod: newPeriod,
@@ -708,7 +800,10 @@ export default function LiveFieldDisplayPage() {
       case "rankings":
         return (
           <div key={contentKey} className="p-0 md:p-4">
-            <SwissRankingsDisplay rankings={Array.isArray(rankings) ? rankings : []} isLoading={isLoadingRankings} />
+            <SwissRankingsDisplay
+              rankings={Array.isArray(rankings) ? rankings : []}
+              isLoading={isLoadingRankings}
+            />
             <DebugInfo />
           </div>
         );
@@ -739,10 +834,37 @@ export default function LiveFieldDisplayPage() {
         );
       case "match":
       default:
-        // Display match information regardless of active match state
+        // Use real-time scores if available and recent, otherwise fall back to legacy scores
+        const displayScore =
+          wsConnected && lastUpdateTime
+            ? {
+                redTotalScore: realtimeScores.red.total,
+                blueTotalScore: realtimeScores.blue.total,
+                redAutoScore: realtimeScores.red.auto,
+                redDriveScore: realtimeScores.red.drive,
+                blueAutoScore: realtimeScores.blue.auto,
+                blueDriveScore: realtimeScores.blue.drive,
+              }
+            : score;        console.log("Displaying scores:", {
+          wsConnected,
+          lastUpdateTime,
+          source,
+          fallbackMode,
+          realtimeScores,
+          legacyScore: score,
+          displayScore,
+          newWebSocketConnected: webSocketService.isConnected(),
+          currentMatchId,
+        });
+
+        // Display match information with prioritized real-time scores
         return (
           <div key={contentKey}>
-            <MatchDisplay matchState={matchState} timer={timer} score={score} />
+            <MatchDisplay
+              matchState={matchState}
+              timer={timer}
+              score={displayScore}
+            />
             <DebugInfo />
           </div>
         );
@@ -765,6 +887,15 @@ export default function LiveFieldDisplayPage() {
   }
   return (
     <div className="min-h-screen bg-gray-900 p-6">
+      {/* Enhanced Connection Status with Fallback Support (Steps 10-12) */}
+      <ConnectionStatus
+        isConnected={isConnected}
+        wsConnected={wsConnected}
+        lastUpdateTime={lastUpdateTime}
+        connectionError={connectionError}
+        fallbackMode={fallbackMode}
+        source={source}
+      />
       <AnnouncementOverlay
         announcement={announcement}
         showAnnouncement={showAnnouncement}

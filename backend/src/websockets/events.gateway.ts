@@ -10,7 +10,14 @@ import {
   MessageBody,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { Logger } from '@nestjs/common';
+import { Logger, Injectable } from '@nestjs/common';
+import { MatchScoresService } from '../match-scores/match-scores.service';
+import { GameElementDto } from '../match-scores/dto/create-match-scores.dto';
+import {
+  ScoreUpdateDto,
+  PersistScoresDto,
+  PersistenceResultDto,
+} from './dto';
 
 interface TimerData {
   duration: number;
@@ -81,6 +88,7 @@ interface JoinRoomData {
     credentials: true,
   },
 })
+@Injectable()
 export class EventsGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
@@ -92,6 +100,32 @@ export class EventsGateway
   
   // Store active timers per tournament
   private activeTimers: Map<string, NodeJS.Timeout> = new Map();
+  constructor(
+    private readonly matchScoresService: MatchScoresService,
+  ) {}
+
+  // Helper method to convert Record<string, number> to GameElementDto[]
+  private convertGameElementsToDto(gameElements?: Record<string, number>): GameElementDto[] {
+    if (!gameElements) return [];
+    
+    return Object.entries(gameElements).map(([element, count]) => ({
+      element,
+      count,
+      pointsEach: 1, // Default value - could be enhanced to get actual point values
+      totalPoints: count, // Assuming simple multiplication for now
+      operation: 'multiply', // Default operation
+    }));
+  }
+
+  // Helper method to convert GameElementDto[] to Record<string, number> (if needed)
+  private convertDtoToGameElements(gameElements?: GameElementDto[]): Record<string, number> {
+    if (!gameElements) return {};
+    
+    return gameElements.reduce((acc, item) => {
+      acc[item.element] = item.count;
+      return acc;
+    }, {} as Record<string, number>);
+  }
 
   afterInit(server: Server) {
     this.logger.log('WebSocket Gateway initialized');
@@ -151,9 +185,7 @@ export class EventsGateway
       // fallback for legacy clients
       client.to(payload.tournamentId).emit('match_update', payload);
     }
-  }
-
-  // Handle score updates (control panel -> audience display)
+  }  // Handle score updates (control panel -> audience display)
   @SubscribeMessage('score_update')
   handleScoreUpdate(
     @ConnectedSocket() client: Socket,
@@ -162,14 +194,172 @@ export class EventsGateway
     this.logger.log(`Score update received: ${JSON.stringify(payload)}`);
     if (payload.fieldId) {
       // Use emitToField for field-specific updates
+      this.logger.log(`Emitting score update to field: ${payload.fieldId}`);
       this.emitToField(payload.fieldId, 'score_update', payload);
       
       // Also emit to tournament for history/archiving
       if (payload.tournamentId) {
+        this.logger.log(`Emitting score update to tournament: ${payload.tournamentId}`);
         this.server.to(payload.tournamentId).emit('score_update', payload);
       }
     } else if (payload.tournamentId) {
+      this.logger.log(`Emitting score update to tournament room: ${payload.tournamentId}`);
       client.to(payload.tournamentId).emit('score_update', payload);
+    } else {
+      this.logger.warn('Score update received without fieldId or tournamentId:', payload);
+      // Fallback: broadcast to all connected clients
+      this.server.emit('score_update', payload);
+    }
+  }
+  // Handle real-time score updates (for immediate synchronization without database persistence)
+  @SubscribeMessage('scoreUpdateRealtime')
+  handleRealtimeScoreUpdate(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() payload: ScoreUpdateDto
+  ): void {
+    this.logger.log(`Real-time score update received: ${JSON.stringify(payload)}`);
+
+    // Validate payload type
+    if (!payload || payload.type !== 'realtime') {
+      this.logger.warn('Invalid real-time score update payload received');
+      return;
+    }
+
+    // Prepare event data (add timestamp if not present)
+    const eventData = { ...payload, timestamp: payload.timestamp || Date.now() };
+
+    // Broadcast to all clients in the relevant field or tournament room
+    if (payload.fieldId) {
+      // Field-specific broadcast - use emitToField for consistent field room naming
+      this.emitToField(payload.fieldId, 'scoreUpdateRealtime', eventData);
+      this.logger.log(`Broadcasted scoreUpdateRealtime to field room: field:${payload.fieldId}`);
+      
+      // Also broadcast to tournament room for general monitoring
+      if (payload.tournamentId) {
+        this.server.to(payload.tournamentId).emit('scoreUpdateRealtime', eventData);
+        this.logger.log(`Broadcasted scoreUpdateRealtime to tournament room: ${payload.tournamentId}`);
+      }
+    } else if (payload.tournamentId) {
+      // Tournament-wide broadcast
+      this.server.to(payload.tournamentId).emit('scoreUpdateRealtime', eventData);
+      this.logger.log(`Broadcasted scoreUpdateRealtime to tournament room: ${payload.tournamentId}`);
+    } else {
+      // Fallback: broadcast to all
+      this.server.emit('scoreUpdateRealtime', eventData);
+      this.logger.log('Broadcasted scoreUpdateRealtime to all clients (no field/tournament specified)');
+    }
+    // No DB write here: this is real-time only
+  }
+
+  // Handle score persistence requests (NEW: for database saves when explicitly triggered)
+  @SubscribeMessage('persistScores')
+  async handlePersistScores(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() payload: PersistScoresDto
+  ): Promise<void> {
+    this.logger.log(`Score persistence request received: ${JSON.stringify(payload)}`);
+      // Validate payload type
+    if (payload.type !== 'persist') {
+      this.logger.warn('Invalid payload type for score persistence:', payload.type);
+      const errorResponse: PersistenceResultDto = {
+        matchId: payload.matchId,
+        success: false,
+        error: 'Invalid payload type for score persistence',
+        timestamp: Date.now(),
+      };
+      client.emit('persistenceResult', errorResponse);
+      return;
+    }
+
+    try {
+      let result;
+      
+      // Check if we need to create or update scores
+      const existingScores = await this.matchScoresService.findByMatchId(payload.matchId).catch(() => null);
+      
+      if (existingScores) {        // Update existing scores
+        result = await this.matchScoresService.update(existingScores.id, {
+          redAutoScore: payload.redAutoScore,
+          redDriveScore: payload.redDriveScore,
+          blueAutoScore: payload.blueAutoScore,
+          blueDriveScore: payload.blueDriveScore,
+          redTeamCount: payload.redTeamCount,
+          blueTeamCount: payload.blueTeamCount,
+          redGameElements: this.convertGameElementsToDto(payload.redGameElements),
+          blueGameElements: this.convertGameElementsToDto(payload.blueGameElements),
+          scoreDetails: payload.scoreDetails,
+        });
+      } else {        // Create new scores
+        result = await this.matchScoresService.create({
+          matchId: payload.matchId,
+          redAutoScore: payload.redAutoScore || 0,
+          redDriveScore: payload.redDriveScore || 0,
+          blueAutoScore: payload.blueAutoScore || 0,
+          blueDriveScore: payload.blueDriveScore || 0,
+          redTeamCount: payload.redTeamCount || 0,
+          blueTeamCount: payload.blueTeamCount || 0,
+          redGameElements: this.convertGameElementsToDto(payload.redGameElements),
+          blueGameElements: this.convertGameElementsToDto(payload.blueGameElements),
+          scoreDetails: payload.scoreDetails || {},
+        });
+      }      // Send success response to the requesting client
+      const successResponse: PersistenceResultDto = {
+        matchId: payload.matchId,
+        success: true,
+        data: result,
+        timestamp: Date.now(),
+      };
+      client.emit('persistenceResult', successResponse);
+      
+      // Broadcast persistence success to all connected clients
+      const persistenceEvent = {
+        ...payload,
+        persistedAt: Date.now(),
+        persistedBy: payload.submittedBy,
+        success: true,
+      };
+      
+      if (payload.fieldId) {
+        this.emitToField(payload.fieldId, 'scoresPersisted', persistenceEvent);
+        if (payload.tournamentId) {
+          this.server.to(payload.tournamentId).emit('scoresPersisted', persistenceEvent);
+        }
+      } else if (payload.tournamentId) {
+        this.server.to(payload.tournamentId).emit('scoresPersisted', persistenceEvent);
+      } else {
+        this.server.emit('scoresPersisted', persistenceEvent);
+      }
+      
+      this.logger.log(`Scores persisted successfully for match: ${payload.matchId}`);
+    } catch (error: any) {
+      this.logger.error(`Failed to persist scores for match ${payload.matchId}:`, error);
+      
+      // Send error response to the requesting client
+      const errorResponse: PersistenceResultDto = {
+        matchId: payload.matchId,
+        success: false,
+        error: error.message || 'Failed to persist scores',
+        timestamp: Date.now(),
+      };
+      client.emit('persistenceResult', errorResponse);
+      
+      // Optionally broadcast persistence failure
+      const failureEvent = {
+        ...payload,
+        persistedAt: Date.now(),
+        persistedBy: payload.submittedBy,
+        success: false,
+        error: error.message || 'Failed to persist scores',
+      };
+      
+      if (payload.fieldId) {
+        this.emitToField(payload.fieldId, 'scoresPersistenceFailed', failureEvent);
+        if (payload.tournamentId) {
+          this.server.to(payload.tournamentId).emit('scoresPersistenceFailed', failureEvent);
+        }
+      } else if (payload.tournamentId) {
+        this.server.to(payload.tournamentId).emit('scoresPersistenceFailed', failureEvent);
+      }
     }
   }
 

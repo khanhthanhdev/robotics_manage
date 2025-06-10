@@ -612,11 +612,10 @@ export default function ControlMatchPage() {
 
         {/* Secondary Control Grid */}
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-6 px-6">
-          {/* Scoring Panel */}
-          <div>
+          {/* Scoring Panel */}          <div>
             <ScoringPanel
               {...scoringControl}
-              onUpdateScores={scoringControl.saveScores}
+              onUpdateScores={scoringControl.sendRealtimeUpdate}
               onSubmitScores={handleSubmitScores}
               addRedGameElement={addRedGameElement}
               addBlueGameElement={addBlueGameElement}

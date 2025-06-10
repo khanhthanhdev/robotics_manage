@@ -92,16 +92,21 @@ export function useWebSocketSubscriptions({
     if (!onTimerUpdate) return;    const handleTimerUpdate = (data: any) => {
       console.log("Timer update received:", data);
       
+      // Enhanced tournament filtering logic
+      const shouldAcceptTournament = 
+        tournamentId === "all" || // We're monitoring all tournaments
+        !data.tournamentId || // No tournament filter in data
+        data.tournamentId === "all" || // Data is broadcast to all
+        data.tournamentId === tournamentId; // Exact tournament match
+      
+      if (!shouldAcceptTournament) {
+        console.log(`Ignoring timer update for different tournament: ${data.tournamentId} (expected: ${tournamentId})`);
+        return;
+      }
+      
       // Filter messages by fieldId if we're in a specific field room
       if (selectedFieldId && data.fieldId && data.fieldId !== selectedFieldId) {
         console.log(`Ignoring timer update for different field: ${data.fieldId}`);
-        return;
-      }
-
-      // In "all tournaments" mode, accept updates from any tournament
-      // In specific tournament mode, filter by tournament ID
-      if (tournamentId !== "all" && data.tournamentId && data.tournamentId !== tournamentId) {
-        console.log(`Ignoring timer update for different tournament: ${data.tournamentId}`);
         return;
       }
 
@@ -119,7 +124,8 @@ export function useWebSocketSubscriptions({
 
   // Subscribe to WebSocket score updates and update React Query cache
   useEffect(() => {
-    if (!selectedMatchId || !onScoreUpdate) return;    const handleScoreUpdate = (data: {
+    if (!selectedMatchId || !onScoreUpdate) return;
+    const handleScoreUpdate = (data: {
       matchId: string;
       fieldId?: string;
       tournamentId?: string;
@@ -131,21 +137,45 @@ export function useWebSocketSubscriptions({
       blueTotalScore?: number;
       [key: string]: any;
     }) => {
-      // Filter messages by fieldId if we're in a specific field room
-      if (selectedFieldId && data.fieldId && data.fieldId !== selectedFieldId) {
-        console.log(`Ignoring score update for different field: ${data.fieldId}`);
+      console.log("WebSocket score update received:", {
+        data,
+        currentTournamentId: tournamentId,
+        selectedFieldId,
+        selectedMatchId
+      });
+      
+      // Enhanced tournament filtering logic:
+      // 1. If we're in "all tournaments" mode, accept all updates
+      // 2. If data has no tournamentId, accept it (could be legacy format)
+      // 3. If data tournamentId is "all", accept it (broadcast to all)
+      // 4. Only filter if both have specific tournament IDs and they don't match
+      const shouldAcceptTournament = 
+        tournamentId === "all" || // We're monitoring all tournaments
+        !data.tournamentId || // No tournament filter in data
+        data.tournamentId === "all" || // Data is broadcast to all
+        data.tournamentId === tournamentId; // Exact tournament match
+      
+      if (!shouldAcceptTournament) {
+        console.log(`Ignoring score update for different tournament: ${data.tournamentId} (expected: ${tournamentId})`);
         return;
       }
       
-      // In "all tournaments" mode, accept updates from any tournament
-      // In specific tournament mode, filter by tournament ID
-      if (tournamentId !== "all" && data.tournamentId && data.tournamentId !== tournamentId) {
-        console.log(`Ignoring score update for different tournament: ${data.tournamentId}`);
+      // Accept updates if:
+      // 1. No fieldId filtering needed (selectedFieldId is null), OR
+      // 2. fieldId matches, OR  
+      // 3. No fieldId in update (tournament-wide)
+      const shouldAcceptField = 
+        !selectedFieldId || // No field selected
+        !data.fieldId || // No fieldId in update (tournament-wide)
+        data.fieldId === selectedFieldId; // Exact field match
+      
+      if (!shouldAcceptField) {
+        console.log(`Ignoring score update for different field: ${data.fieldId} (expected: ${selectedFieldId})`);
         return;
       }
       
       if (data.matchId === selectedMatchId) {
-        console.log("Score update received for selected match:", data);
+        console.log("Score update accepted for selected match:", data);
         
         // Update the React Query cache directly
         queryClient.setQueryData(
@@ -158,10 +188,8 @@ export function useWebSocketSubscriptions({
 
         onScoreUpdate(data);
       }
-    };
-
-    // Subscribe to score updates using the websocket hook
-    const unsubscribe = subscribe("score_update", handleScoreUpdate);
+    };    // Subscribe only to 'scoreUpdateRealtime' for real-time score updates
+    const unsubscribe = subscribe("scoreUpdateRealtime", handleScoreUpdate);
 
     return () => {
       if (unsubscribe) unsubscribe();
@@ -173,16 +201,21 @@ export function useWebSocketSubscriptions({
     if (!onMatchUpdate) return;    const handleMatchUpdate = (data: any) => {
       console.log("Match update received:", data);
       
-      // Filter messages by fieldId if we're in a specific field room
-      if (selectedFieldId && data.fieldId && data.fieldId !== selectedFieldId) {
-        console.log(`Ignoring match update for different field: ${data.fieldId}`);
+      // Enhanced tournament filtering logic
+      const shouldAcceptTournament = 
+        tournamentId === "all" || // We're monitoring all tournaments
+        !data.tournamentId || // No tournament filter in data
+        data.tournamentId === "all" || // Data is broadcast to all
+        data.tournamentId === tournamentId; // Exact tournament match
+      
+      if (!shouldAcceptTournament) {
+        console.log(`Ignoring match update for different tournament: ${data.tournamentId} (expected: ${tournamentId})`);
         return;
       }
       
-      // In "all tournaments" mode, accept updates from any tournament
-      // In specific tournament mode, filter by tournament ID
-      if (tournamentId !== "all" && data.tournamentId && data.tournamentId !== tournamentId) {
-        console.log(`Ignoring match update for different tournament: ${data.tournamentId}`);
+      // Filter messages by fieldId if we're in a specific field room
+      if (selectedFieldId && data.fieldId && data.fieldId !== selectedFieldId) {
+        console.log(`Ignoring match update for different field: ${data.fieldId}`);
         return;
       }
       
@@ -217,16 +250,21 @@ export function useWebSocketSubscriptions({
     if (!onMatchStateChange) return;    const handleMatchStateChange = (data: any) => {
       console.log("Match state change received:", data);
       
-      // Filter messages by fieldId if we're in a specific field room
-      if (selectedFieldId && data.fieldId && data.fieldId !== selectedFieldId) {
-        console.log(`Ignoring match state update for different field: ${data.fieldId}`);
+      // Enhanced tournament filtering logic
+      const shouldAcceptTournament = 
+        tournamentId === "all" || // We're monitoring all tournaments
+        !data.tournamentId || // No tournament filter in data
+        data.tournamentId === "all" || // Data is broadcast to all
+        data.tournamentId === tournamentId; // Exact tournament match
+      
+      if (!shouldAcceptTournament) {
+        console.log(`Ignoring match state update for different tournament: ${data.tournamentId} (expected: ${tournamentId})`);
         return;
       }
       
-      // In "all tournaments" mode, accept updates from any tournament
-      // In specific tournament mode, filter by tournament ID
-      if (tournamentId !== "all" && data.tournamentId && data.tournamentId !== tournamentId) {
-        console.log(`Ignoring match state update for different tournament: ${data.tournamentId}`);
+      // Filter messages by fieldId if we're in a specific field room
+      if (selectedFieldId && data.fieldId && data.fieldId !== selectedFieldId) {
+        console.log(`Ignoring match state update for different field: ${data.fieldId}`);
         return;
       }
       

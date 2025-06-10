@@ -86,13 +86,13 @@ class SocketIOConnection implements IWebSocketConnection, IWebSocketEventManager
     if (!this.socket || !this.isConnected) return;
     this.socket.emit(eventName, data);
   }
-
   private setupEventListeners(): void {
     if (!this.socket) return;
     const events: WebSocketEvent[] = [
       'display_mode_change',
       'match_update',
       'score_update',
+      'scoreUpdateRealtime', // Add real-time score updates
       'timer_update',
       'match_state_change',
       'announcement',
