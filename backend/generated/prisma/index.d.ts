@@ -3256,10 +3256,12 @@ export namespace Prisma {
 
   export type FieldCountOutputType = {
     matches: number
+    matchScores: number
   }
 
   export type FieldCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     matches?: boolean | FieldCountOutputTypeCountMatchesArgs
+    matchScores?: boolean | FieldCountOutputTypeCountMatchScoresArgs
   }
 
   // Custom InputTypes
@@ -3278,6 +3280,13 @@ export namespace Prisma {
    */
   export type FieldCountOutputTypeCountMatchesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: MatchWhereInput
+  }
+
+  /**
+   * FieldCountOutputType without action
+   */
+  export type FieldCountOutputTypeCountMatchScoresArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MatchScoresWhereInput
   }
 
 
@@ -14487,6 +14496,7 @@ export namespace Prisma {
     redMultiplier: number | null
     blueTeamCount: number | null
     blueMultiplier: number | null
+    fieldId: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -14504,6 +14514,7 @@ export namespace Prisma {
     redMultiplier: number | null
     blueTeamCount: number | null
     blueMultiplier: number | null
+    fieldId: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -14523,6 +14534,7 @@ export namespace Prisma {
     redMultiplier: number
     blueTeamCount: number
     blueMultiplier: number
+    fieldId: number
     scoreDetails: number
     createdAt: number
     updatedAt: number
@@ -14569,6 +14581,7 @@ export namespace Prisma {
     redMultiplier?: true
     blueTeamCount?: true
     blueMultiplier?: true
+    fieldId?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -14586,6 +14599,7 @@ export namespace Prisma {
     redMultiplier?: true
     blueTeamCount?: true
     blueMultiplier?: true
+    fieldId?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -14605,6 +14619,7 @@ export namespace Prisma {
     redMultiplier?: true
     blueTeamCount?: true
     blueMultiplier?: true
+    fieldId?: true
     scoreDetails?: true
     createdAt?: true
     updatedAt?: true
@@ -14712,6 +14727,7 @@ export namespace Prisma {
     redMultiplier: number
     blueTeamCount: number
     blueMultiplier: number
+    fieldId: string | null
     scoreDetails: JsonValue | null
     createdAt: Date
     updatedAt: Date
@@ -14751,10 +14767,12 @@ export namespace Prisma {
     redMultiplier?: boolean
     blueTeamCount?: boolean
     blueMultiplier?: boolean
+    fieldId?: boolean
     scoreDetails?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     match?: boolean | MatchDefaultArgs<ExtArgs>
+    field?: boolean | MatchScores$fieldArgs<ExtArgs>
   }, ExtArgs["result"]["matchScores"]>
 
   export type MatchScoresSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -14772,10 +14790,12 @@ export namespace Prisma {
     redMultiplier?: boolean
     blueTeamCount?: boolean
     blueMultiplier?: boolean
+    fieldId?: boolean
     scoreDetails?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     match?: boolean | MatchDefaultArgs<ExtArgs>
+    field?: boolean | MatchScores$fieldArgs<ExtArgs>
   }, ExtArgs["result"]["matchScores"]>
 
   export type MatchScoresSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -14793,10 +14813,12 @@ export namespace Prisma {
     redMultiplier?: boolean
     blueTeamCount?: boolean
     blueMultiplier?: boolean
+    fieldId?: boolean
     scoreDetails?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     match?: boolean | MatchDefaultArgs<ExtArgs>
+    field?: boolean | MatchScores$fieldArgs<ExtArgs>
   }, ExtArgs["result"]["matchScores"]>
 
   export type MatchScoresSelectScalar = {
@@ -14814,26 +14836,31 @@ export namespace Prisma {
     redMultiplier?: boolean
     blueTeamCount?: boolean
     blueMultiplier?: boolean
+    fieldId?: boolean
     scoreDetails?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type MatchScoresOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "matchId" | "redAutoScore" | "redDriveScore" | "redTotalScore" | "blueAutoScore" | "blueDriveScore" | "blueTotalScore" | "redGameElements" | "blueGameElements" | "redTeamCount" | "redMultiplier" | "blueTeamCount" | "blueMultiplier" | "scoreDetails" | "createdAt" | "updatedAt", ExtArgs["result"]["matchScores"]>
+  export type MatchScoresOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "matchId" | "redAutoScore" | "redDriveScore" | "redTotalScore" | "blueAutoScore" | "blueDriveScore" | "blueTotalScore" | "redGameElements" | "blueGameElements" | "redTeamCount" | "redMultiplier" | "blueTeamCount" | "blueMultiplier" | "fieldId" | "scoreDetails" | "createdAt" | "updatedAt", ExtArgs["result"]["matchScores"]>
   export type MatchScoresInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     match?: boolean | MatchDefaultArgs<ExtArgs>
+    field?: boolean | MatchScores$fieldArgs<ExtArgs>
   }
   export type MatchScoresIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     match?: boolean | MatchDefaultArgs<ExtArgs>
+    field?: boolean | MatchScores$fieldArgs<ExtArgs>
   }
   export type MatchScoresIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     match?: boolean | MatchDefaultArgs<ExtArgs>
+    field?: boolean | MatchScores$fieldArgs<ExtArgs>
   }
 
   export type $MatchScoresPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "MatchScores"
     objects: {
       match: Prisma.$MatchPayload<ExtArgs>
+      field: Prisma.$FieldPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -14850,6 +14877,7 @@ export namespace Prisma {
       redMultiplier: number
       blueTeamCount: number
       blueMultiplier: number
+      fieldId: string | null
       scoreDetails: Prisma.JsonValue | null
       createdAt: Date
       updatedAt: Date
@@ -15248,6 +15276,7 @@ export namespace Prisma {
   export interface Prisma__MatchScoresClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     match<T extends MatchDefaultArgs<ExtArgs> = {}>(args?: Subset<T, MatchDefaultArgs<ExtArgs>>): Prisma__MatchClient<$Result.GetResult<Prisma.$MatchPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    field<T extends MatchScores$fieldArgs<ExtArgs> = {}>(args?: Subset<T, MatchScores$fieldArgs<ExtArgs>>): Prisma__FieldClient<$Result.GetResult<Prisma.$FieldPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -15291,6 +15320,7 @@ export namespace Prisma {
     readonly redMultiplier: FieldRef<"MatchScores", 'Float'>
     readonly blueTeamCount: FieldRef<"MatchScores", 'Int'>
     readonly blueMultiplier: FieldRef<"MatchScores", 'Float'>
+    readonly fieldId: FieldRef<"MatchScores", 'String'>
     readonly scoreDetails: FieldRef<"MatchScores", 'Json'>
     readonly createdAt: FieldRef<"MatchScores", 'DateTime'>
     readonly updatedAt: FieldRef<"MatchScores", 'DateTime'>
@@ -15687,6 +15717,25 @@ export namespace Prisma {
      * Limit how many MatchScores to delete.
      */
     limit?: number
+  }
+
+  /**
+   * MatchScores.field
+   */
+  export type MatchScores$fieldArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Field
+     */
+    select?: FieldSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Field
+     */
+    omit?: FieldOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FieldInclude<ExtArgs> | null
+    where?: FieldWhereInput
   }
 
   /**
@@ -18369,6 +18418,7 @@ export namespace Prisma {
     updatedAt?: boolean
     tournament?: boolean | TournamentDefaultArgs<ExtArgs>
     matches?: boolean | Field$matchesArgs<ExtArgs>
+    matchScores?: boolean | Field$matchScoresArgs<ExtArgs>
     _count?: boolean | FieldCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["field"]>
 
@@ -18411,6 +18461,7 @@ export namespace Prisma {
   export type FieldInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     tournament?: boolean | TournamentDefaultArgs<ExtArgs>
     matches?: boolean | Field$matchesArgs<ExtArgs>
+    matchScores?: boolean | Field$matchScoresArgs<ExtArgs>
     _count?: boolean | FieldCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type FieldIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -18425,6 +18476,7 @@ export namespace Prisma {
     objects: {
       tournament: Prisma.$TournamentPayload<ExtArgs>
       matches: Prisma.$MatchPayload<ExtArgs>[]
+      matchScores: Prisma.$MatchScoresPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -18831,6 +18883,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     tournament<T extends TournamentDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TournamentDefaultArgs<ExtArgs>>): Prisma__TournamentClient<$Result.GetResult<Prisma.$TournamentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     matches<T extends Field$matchesArgs<ExtArgs> = {}>(args?: Subset<T, Field$matchesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MatchPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    matchScores<T extends Field$matchScoresArgs<ExtArgs> = {}>(args?: Subset<T, Field$matchScoresArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MatchScoresPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -19285,6 +19338,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: MatchScalarFieldEnum | MatchScalarFieldEnum[]
+  }
+
+  /**
+   * Field.matchScores
+   */
+  export type Field$matchScoresArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MatchScores
+     */
+    select?: MatchScoresSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MatchScores
+     */
+    omit?: MatchScoresOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MatchScoresInclude<ExtArgs> | null
+    where?: MatchScoresWhereInput
+    orderBy?: MatchScoresOrderByWithRelationInput | MatchScoresOrderByWithRelationInput[]
+    cursor?: MatchScoresWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: MatchScoresScalarFieldEnum | MatchScoresScalarFieldEnum[]
   }
 
   /**
@@ -29900,6 +29977,7 @@ export namespace Prisma {
     redMultiplier: 'redMultiplier',
     blueTeamCount: 'blueTeamCount',
     blueMultiplier: 'blueMultiplier',
+    fieldId: 'fieldId',
     scoreDetails: 'scoreDetails',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
@@ -31179,10 +31257,12 @@ export namespace Prisma {
     redMultiplier?: FloatFilter<"MatchScores"> | number
     blueTeamCount?: IntFilter<"MatchScores"> | number
     blueMultiplier?: FloatFilter<"MatchScores"> | number
+    fieldId?: StringNullableFilter<"MatchScores"> | string | null
     scoreDetails?: JsonNullableFilter<"MatchScores">
     createdAt?: DateTimeFilter<"MatchScores"> | Date | string
     updatedAt?: DateTimeFilter<"MatchScores"> | Date | string
     match?: XOR<MatchScalarRelationFilter, MatchWhereInput>
+    field?: XOR<FieldNullableScalarRelationFilter, FieldWhereInput> | null
   }
 
   export type MatchScoresOrderByWithRelationInput = {
@@ -31200,10 +31280,12 @@ export namespace Prisma {
     redMultiplier?: SortOrder
     blueTeamCount?: SortOrder
     blueMultiplier?: SortOrder
+    fieldId?: SortOrderInput | SortOrder
     scoreDetails?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     match?: MatchOrderByWithRelationInput
+    field?: FieldOrderByWithRelationInput
   }
 
   export type MatchScoresWhereUniqueInput = Prisma.AtLeast<{
@@ -31224,10 +31306,12 @@ export namespace Prisma {
     redMultiplier?: FloatFilter<"MatchScores"> | number
     blueTeamCount?: IntFilter<"MatchScores"> | number
     blueMultiplier?: FloatFilter<"MatchScores"> | number
+    fieldId?: StringNullableFilter<"MatchScores"> | string | null
     scoreDetails?: JsonNullableFilter<"MatchScores">
     createdAt?: DateTimeFilter<"MatchScores"> | Date | string
     updatedAt?: DateTimeFilter<"MatchScores"> | Date | string
     match?: XOR<MatchScalarRelationFilter, MatchWhereInput>
+    field?: XOR<FieldNullableScalarRelationFilter, FieldWhereInput> | null
   }, "id" | "matchId">
 
   export type MatchScoresOrderByWithAggregationInput = {
@@ -31245,6 +31329,7 @@ export namespace Prisma {
     redMultiplier?: SortOrder
     blueTeamCount?: SortOrder
     blueMultiplier?: SortOrder
+    fieldId?: SortOrderInput | SortOrder
     scoreDetails?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -31273,6 +31358,7 @@ export namespace Prisma {
     redMultiplier?: FloatWithAggregatesFilter<"MatchScores"> | number
     blueTeamCount?: IntWithAggregatesFilter<"MatchScores"> | number
     blueMultiplier?: FloatWithAggregatesFilter<"MatchScores"> | number
+    fieldId?: StringNullableWithAggregatesFilter<"MatchScores"> | string | null
     scoreDetails?: JsonNullableWithAggregatesFilter<"MatchScores">
     createdAt?: DateTimeWithAggregatesFilter<"MatchScores"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"MatchScores"> | Date | string
@@ -31484,6 +31570,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Field"> | Date | string
     tournament?: XOR<TournamentScalarRelationFilter, TournamentWhereInput>
     matches?: MatchListRelationFilter
+    matchScores?: MatchScoresListRelationFilter
   }
 
   export type FieldOrderByWithRelationInput = {
@@ -31497,6 +31584,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     tournament?: TournamentOrderByWithRelationInput
     matches?: MatchOrderByRelationAggregateInput
+    matchScores?: MatchScoresOrderByRelationAggregateInput
   }
 
   export type FieldWhereUniqueInput = Prisma.AtLeast<{
@@ -31514,6 +31602,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Field"> | Date | string
     tournament?: XOR<TournamentScalarRelationFilter, TournamentWhereInput>
     matches?: MatchListRelationFilter
+    matchScores?: MatchScoresListRelationFilter
   }, "id" | "tournamentId_number">
 
   export type FieldOrderByWithAggregationInput = {
@@ -33180,6 +33269,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     match: MatchCreateNestedOneWithoutMatchScoresInput
+    field?: FieldCreateNestedOneWithoutMatchScoresInput
   }
 
   export type MatchScoresUncheckedCreateInput = {
@@ -33197,6 +33287,7 @@ export namespace Prisma {
     redMultiplier?: number
     blueTeamCount?: number
     blueMultiplier?: number
+    fieldId?: string | null
     scoreDetails?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -33220,6 +33311,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     match?: MatchUpdateOneRequiredWithoutMatchScoresNestedInput
+    field?: FieldUpdateOneWithoutMatchScoresNestedInput
   }
 
   export type MatchScoresUncheckedUpdateInput = {
@@ -33237,6 +33329,7 @@ export namespace Prisma {
     redMultiplier?: FloatFieldUpdateOperationsInput | number
     blueTeamCount?: IntFieldUpdateOperationsInput | number
     blueMultiplier?: FloatFieldUpdateOperationsInput | number
+    fieldId?: NullableStringFieldUpdateOperationsInput | string | null
     scoreDetails?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -33257,6 +33350,7 @@ export namespace Prisma {
     redMultiplier?: number
     blueTeamCount?: number
     blueMultiplier?: number
+    fieldId?: string | null
     scoreDetails?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -33296,6 +33390,7 @@ export namespace Prisma {
     redMultiplier?: FloatFieldUpdateOperationsInput | number
     blueTeamCount?: IntFieldUpdateOperationsInput | number
     blueMultiplier?: FloatFieldUpdateOperationsInput | number
+    fieldId?: NullableStringFieldUpdateOperationsInput | string | null
     scoreDetails?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -33521,6 +33616,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     tournament: TournamentCreateNestedOneWithoutFieldsInput
     matches?: MatchCreateNestedManyWithoutFieldInput
+    matchScores?: MatchScoresCreateNestedManyWithoutFieldInput
   }
 
   export type FieldUncheckedCreateInput = {
@@ -33533,6 +33629,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     matches?: MatchUncheckedCreateNestedManyWithoutFieldInput
+    matchScores?: MatchScoresUncheckedCreateNestedManyWithoutFieldInput
   }
 
   export type FieldUpdateInput = {
@@ -33545,6 +33642,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     tournament?: TournamentUpdateOneRequiredWithoutFieldsNestedInput
     matches?: MatchUpdateManyWithoutFieldNestedInput
+    matchScores?: MatchScoresUpdateManyWithoutFieldNestedInput
   }
 
   export type FieldUncheckedUpdateInput = {
@@ -33557,6 +33655,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     matches?: MatchUncheckedUpdateManyWithoutFieldNestedInput
+    matchScores?: MatchScoresUncheckedUpdateManyWithoutFieldNestedInput
   }
 
   export type FieldCreateManyInput = {
@@ -35363,6 +35462,7 @@ export namespace Prisma {
     redMultiplier?: SortOrder
     blueTeamCount?: SortOrder
     blueMultiplier?: SortOrder
+    fieldId?: SortOrder
     scoreDetails?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -35394,6 +35494,7 @@ export namespace Prisma {
     redMultiplier?: SortOrder
     blueTeamCount?: SortOrder
     blueMultiplier?: SortOrder
+    fieldId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -35411,6 +35512,7 @@ export namespace Prisma {
     redMultiplier?: SortOrder
     blueTeamCount?: SortOrder
     blueMultiplier?: SortOrder
+    fieldId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -35570,6 +35672,16 @@ export namespace Prisma {
     createdAt?: SortOrder
     algorithm?: SortOrder
     quality?: SortOrder
+  }
+
+  export type MatchScoresListRelationFilter = {
+    every?: MatchScoresWhereInput
+    some?: MatchScoresWhereInput
+    none?: MatchScoresWhereInput
+  }
+
+  export type MatchScoresOrderByRelationAggregateInput = {
+    _count?: SortOrder
   }
 
   export type FieldTournamentIdNumberCompoundUniqueInput = {
@@ -37425,6 +37537,12 @@ export namespace Prisma {
     connect?: MatchWhereUniqueInput
   }
 
+  export type FieldCreateNestedOneWithoutMatchScoresInput = {
+    create?: XOR<FieldCreateWithoutMatchScoresInput, FieldUncheckedCreateWithoutMatchScoresInput>
+    connectOrCreate?: FieldCreateOrConnectWithoutMatchScoresInput
+    connect?: FieldWhereUniqueInput
+  }
+
   export type FloatFieldUpdateOperationsInput = {
     set?: number
     increment?: number
@@ -37439,6 +37557,16 @@ export namespace Prisma {
     upsert?: MatchUpsertWithoutMatchScoresInput
     connect?: MatchWhereUniqueInput
     update?: XOR<XOR<MatchUpdateToOneWithWhereWithoutMatchScoresInput, MatchUpdateWithoutMatchScoresInput>, MatchUncheckedUpdateWithoutMatchScoresInput>
+  }
+
+  export type FieldUpdateOneWithoutMatchScoresNestedInput = {
+    create?: XOR<FieldCreateWithoutMatchScoresInput, FieldUncheckedCreateWithoutMatchScoresInput>
+    connectOrCreate?: FieldCreateOrConnectWithoutMatchScoresInput
+    upsert?: FieldUpsertWithoutMatchScoresInput
+    disconnect?: FieldWhereInput | boolean
+    delete?: FieldWhereInput | boolean
+    connect?: FieldWhereUniqueInput
+    update?: XOR<XOR<FieldUpdateToOneWithWhereWithoutMatchScoresInput, FieldUpdateWithoutMatchScoresInput>, FieldUncheckedUpdateWithoutMatchScoresInput>
   }
 
   export type TeamCreateNestedOneWithoutTeamStatsInput = {
@@ -37554,11 +37682,25 @@ export namespace Prisma {
     connect?: MatchWhereUniqueInput | MatchWhereUniqueInput[]
   }
 
+  export type MatchScoresCreateNestedManyWithoutFieldInput = {
+    create?: XOR<MatchScoresCreateWithoutFieldInput, MatchScoresUncheckedCreateWithoutFieldInput> | MatchScoresCreateWithoutFieldInput[] | MatchScoresUncheckedCreateWithoutFieldInput[]
+    connectOrCreate?: MatchScoresCreateOrConnectWithoutFieldInput | MatchScoresCreateOrConnectWithoutFieldInput[]
+    createMany?: MatchScoresCreateManyFieldInputEnvelope
+    connect?: MatchScoresWhereUniqueInput | MatchScoresWhereUniqueInput[]
+  }
+
   export type MatchUncheckedCreateNestedManyWithoutFieldInput = {
     create?: XOR<MatchCreateWithoutFieldInput, MatchUncheckedCreateWithoutFieldInput> | MatchCreateWithoutFieldInput[] | MatchUncheckedCreateWithoutFieldInput[]
     connectOrCreate?: MatchCreateOrConnectWithoutFieldInput | MatchCreateOrConnectWithoutFieldInput[]
     createMany?: MatchCreateManyFieldInputEnvelope
     connect?: MatchWhereUniqueInput | MatchWhereUniqueInput[]
+  }
+
+  export type MatchScoresUncheckedCreateNestedManyWithoutFieldInput = {
+    create?: XOR<MatchScoresCreateWithoutFieldInput, MatchScoresUncheckedCreateWithoutFieldInput> | MatchScoresCreateWithoutFieldInput[] | MatchScoresUncheckedCreateWithoutFieldInput[]
+    connectOrCreate?: MatchScoresCreateOrConnectWithoutFieldInput | MatchScoresCreateOrConnectWithoutFieldInput[]
+    createMany?: MatchScoresCreateManyFieldInputEnvelope
+    connect?: MatchScoresWhereUniqueInput | MatchScoresWhereUniqueInput[]
   }
 
   export type TournamentUpdateOneRequiredWithoutFieldsNestedInput = {
@@ -37583,6 +37725,20 @@ export namespace Prisma {
     deleteMany?: MatchScalarWhereInput | MatchScalarWhereInput[]
   }
 
+  export type MatchScoresUpdateManyWithoutFieldNestedInput = {
+    create?: XOR<MatchScoresCreateWithoutFieldInput, MatchScoresUncheckedCreateWithoutFieldInput> | MatchScoresCreateWithoutFieldInput[] | MatchScoresUncheckedCreateWithoutFieldInput[]
+    connectOrCreate?: MatchScoresCreateOrConnectWithoutFieldInput | MatchScoresCreateOrConnectWithoutFieldInput[]
+    upsert?: MatchScoresUpsertWithWhereUniqueWithoutFieldInput | MatchScoresUpsertWithWhereUniqueWithoutFieldInput[]
+    createMany?: MatchScoresCreateManyFieldInputEnvelope
+    set?: MatchScoresWhereUniqueInput | MatchScoresWhereUniqueInput[]
+    disconnect?: MatchScoresWhereUniqueInput | MatchScoresWhereUniqueInput[]
+    delete?: MatchScoresWhereUniqueInput | MatchScoresWhereUniqueInput[]
+    connect?: MatchScoresWhereUniqueInput | MatchScoresWhereUniqueInput[]
+    update?: MatchScoresUpdateWithWhereUniqueWithoutFieldInput | MatchScoresUpdateWithWhereUniqueWithoutFieldInput[]
+    updateMany?: MatchScoresUpdateManyWithWhereWithoutFieldInput | MatchScoresUpdateManyWithWhereWithoutFieldInput[]
+    deleteMany?: MatchScoresScalarWhereInput | MatchScoresScalarWhereInput[]
+  }
+
   export type MatchUncheckedUpdateManyWithoutFieldNestedInput = {
     create?: XOR<MatchCreateWithoutFieldInput, MatchUncheckedCreateWithoutFieldInput> | MatchCreateWithoutFieldInput[] | MatchUncheckedCreateWithoutFieldInput[]
     connectOrCreate?: MatchCreateOrConnectWithoutFieldInput | MatchCreateOrConnectWithoutFieldInput[]
@@ -37595,6 +37751,20 @@ export namespace Prisma {
     update?: MatchUpdateWithWhereUniqueWithoutFieldInput | MatchUpdateWithWhereUniqueWithoutFieldInput[]
     updateMany?: MatchUpdateManyWithWhereWithoutFieldInput | MatchUpdateManyWithWhereWithoutFieldInput[]
     deleteMany?: MatchScalarWhereInput | MatchScalarWhereInput[]
+  }
+
+  export type MatchScoresUncheckedUpdateManyWithoutFieldNestedInput = {
+    create?: XOR<MatchScoresCreateWithoutFieldInput, MatchScoresUncheckedCreateWithoutFieldInput> | MatchScoresCreateWithoutFieldInput[] | MatchScoresUncheckedCreateWithoutFieldInput[]
+    connectOrCreate?: MatchScoresCreateOrConnectWithoutFieldInput | MatchScoresCreateOrConnectWithoutFieldInput[]
+    upsert?: MatchScoresUpsertWithWhereUniqueWithoutFieldInput | MatchScoresUpsertWithWhereUniqueWithoutFieldInput[]
+    createMany?: MatchScoresCreateManyFieldInputEnvelope
+    set?: MatchScoresWhereUniqueInput | MatchScoresWhereUniqueInput[]
+    disconnect?: MatchScoresWhereUniqueInput | MatchScoresWhereUniqueInput[]
+    delete?: MatchScoresWhereUniqueInput | MatchScoresWhereUniqueInput[]
+    connect?: MatchScoresWhereUniqueInput | MatchScoresWhereUniqueInput[]
+    update?: MatchScoresUpdateWithWhereUniqueWithoutFieldInput | MatchScoresUpdateWithWhereUniqueWithoutFieldInput[]
+    updateMany?: MatchScoresUpdateManyWithWhereWithoutFieldInput | MatchScoresUpdateManyWithWhereWithoutFieldInput[]
+    deleteMany?: MatchScoresScalarWhereInput | MatchScoresScalarWhereInput[]
   }
 
   export type MatchCreateNestedOneWithoutMatchControlInput = {
@@ -39136,6 +39306,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     matches?: MatchCreateNestedManyWithoutFieldInput
+    matchScores?: MatchScoresCreateNestedManyWithoutFieldInput
   }
 
   export type FieldUncheckedCreateWithoutTournamentInput = {
@@ -39147,6 +39318,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     matches?: MatchUncheckedCreateNestedManyWithoutFieldInput
+    matchScores?: MatchScoresUncheckedCreateNestedManyWithoutFieldInput
   }
 
   export type FieldCreateOrConnectWithoutTournamentInput = {
@@ -39835,6 +40007,7 @@ export namespace Prisma {
     scoreDetails?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
+    field?: FieldCreateNestedOneWithoutMatchScoresInput
   }
 
   export type MatchScoresUncheckedCreateWithoutMatchInput = {
@@ -39851,6 +40024,7 @@ export namespace Prisma {
     redMultiplier?: number
     blueTeamCount?: number
     blueMultiplier?: number
+    fieldId?: string | null
     scoreDetails?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -39926,6 +40100,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     tournament: TournamentCreateNestedOneWithoutFieldsInput
+    matchScores?: MatchScoresCreateNestedManyWithoutFieldInput
   }
 
   export type FieldUncheckedCreateWithoutMatchesInput = {
@@ -39937,6 +40112,7 @@ export namespace Prisma {
     tournamentId: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    matchScores?: MatchScoresUncheckedCreateNestedManyWithoutFieldInput
   }
 
   export type FieldCreateOrConnectWithoutMatchesInput = {
@@ -40140,6 +40316,7 @@ export namespace Prisma {
     scoreDetails?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    field?: FieldUpdateOneWithoutMatchScoresNestedInput
   }
 
   export type MatchScoresUncheckedUpdateWithoutMatchInput = {
@@ -40156,6 +40333,7 @@ export namespace Prisma {
     redMultiplier?: FloatFieldUpdateOperationsInput | number
     blueTeamCount?: IntFieldUpdateOperationsInput | number
     blueMultiplier?: FloatFieldUpdateOperationsInput | number
+    fieldId?: NullableStringFieldUpdateOperationsInput | string | null
     scoreDetails?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -40249,6 +40427,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     tournament?: TournamentUpdateOneRequiredWithoutFieldsNestedInput
+    matchScores?: MatchScoresUpdateManyWithoutFieldNestedInput
   }
 
   export type FieldUncheckedUpdateWithoutMatchesInput = {
@@ -40260,6 +40439,7 @@ export namespace Prisma {
     tournamentId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    matchScores?: MatchScoresUncheckedUpdateManyWithoutFieldNestedInput
   }
 
   export type MatchScoreUpsertWithWhereUniqueWithoutMatchInput = {
@@ -41315,6 +41495,35 @@ export namespace Prisma {
     create: XOR<MatchCreateWithoutMatchScoresInput, MatchUncheckedCreateWithoutMatchScoresInput>
   }
 
+  export type FieldCreateWithoutMatchScoresInput = {
+    id?: string
+    name: string
+    number: number
+    location?: string | null
+    description?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    tournament: TournamentCreateNestedOneWithoutFieldsInput
+    matches?: MatchCreateNestedManyWithoutFieldInput
+  }
+
+  export type FieldUncheckedCreateWithoutMatchScoresInput = {
+    id?: string
+    name: string
+    number: number
+    location?: string | null
+    description?: string | null
+    tournamentId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    matches?: MatchUncheckedCreateNestedManyWithoutFieldInput
+  }
+
+  export type FieldCreateOrConnectWithoutMatchScoresInput = {
+    where: FieldWhereUniqueInput
+    create: XOR<FieldCreateWithoutMatchScoresInput, FieldUncheckedCreateWithoutMatchScoresInput>
+  }
+
   export type MatchUpsertWithoutMatchScoresInput = {
     update: XOR<MatchUpdateWithoutMatchScoresInput, MatchUncheckedUpdateWithoutMatchScoresInput>
     create: XOR<MatchCreateWithoutMatchScoresInput, MatchUncheckedCreateWithoutMatchScoresInput>
@@ -41376,6 +41585,41 @@ export namespace Prisma {
     referees?: MatchRefereeUncheckedUpdateManyWithoutMatchNestedInput
     matchControl?: MatchControlUncheckedUpdateOneWithoutMatchNestedInput
     matchScoreRecords?: MatchScoreUncheckedUpdateManyWithoutMatchNestedInput
+  }
+
+  export type FieldUpsertWithoutMatchScoresInput = {
+    update: XOR<FieldUpdateWithoutMatchScoresInput, FieldUncheckedUpdateWithoutMatchScoresInput>
+    create: XOR<FieldCreateWithoutMatchScoresInput, FieldUncheckedCreateWithoutMatchScoresInput>
+    where?: FieldWhereInput
+  }
+
+  export type FieldUpdateToOneWithWhereWithoutMatchScoresInput = {
+    where?: FieldWhereInput
+    data: XOR<FieldUpdateWithoutMatchScoresInput, FieldUncheckedUpdateWithoutMatchScoresInput>
+  }
+
+  export type FieldUpdateWithoutMatchScoresInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    number?: IntFieldUpdateOperationsInput | number
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tournament?: TournamentUpdateOneRequiredWithoutFieldsNestedInput
+    matches?: MatchUpdateManyWithoutFieldNestedInput
+  }
+
+  export type FieldUncheckedUpdateWithoutMatchScoresInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    number?: IntFieldUpdateOperationsInput | number
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    tournamentId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    matches?: MatchUncheckedUpdateManyWithoutFieldNestedInput
   }
 
   export type TeamCreateWithoutTeamStatsInput = {
@@ -41859,6 +42103,56 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type MatchScoresCreateWithoutFieldInput = {
+    id?: string
+    redAutoScore?: number
+    redDriveScore?: number
+    redTotalScore?: number
+    blueAutoScore?: number
+    blueDriveScore?: number
+    blueTotalScore?: number
+    redGameElements?: NullableJsonNullValueInput | InputJsonValue
+    blueGameElements?: NullableJsonNullValueInput | InputJsonValue
+    redTeamCount?: number
+    redMultiplier?: number
+    blueTeamCount?: number
+    blueMultiplier?: number
+    scoreDetails?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    match: MatchCreateNestedOneWithoutMatchScoresInput
+  }
+
+  export type MatchScoresUncheckedCreateWithoutFieldInput = {
+    id?: string
+    matchId: string
+    redAutoScore?: number
+    redDriveScore?: number
+    redTotalScore?: number
+    blueAutoScore?: number
+    blueDriveScore?: number
+    blueTotalScore?: number
+    redGameElements?: NullableJsonNullValueInput | InputJsonValue
+    blueGameElements?: NullableJsonNullValueInput | InputJsonValue
+    redTeamCount?: number
+    redMultiplier?: number
+    blueTeamCount?: number
+    blueMultiplier?: number
+    scoreDetails?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MatchScoresCreateOrConnectWithoutFieldInput = {
+    where: MatchScoresWhereUniqueInput
+    create: XOR<MatchScoresCreateWithoutFieldInput, MatchScoresUncheckedCreateWithoutFieldInput>
+  }
+
+  export type MatchScoresCreateManyFieldInputEnvelope = {
+    data: MatchScoresCreateManyFieldInput | MatchScoresCreateManyFieldInput[]
+    skipDuplicates?: boolean
+  }
+
   export type TournamentUpsertWithoutFieldsInput = {
     update: XOR<TournamentUpdateWithoutFieldsInput, TournamentUncheckedUpdateWithoutFieldsInput>
     create: XOR<TournamentCreateWithoutFieldsInput, TournamentUncheckedCreateWithoutFieldsInput>
@@ -41916,6 +42210,46 @@ export namespace Prisma {
   export type MatchUpdateManyWithWhereWithoutFieldInput = {
     where: MatchScalarWhereInput
     data: XOR<MatchUpdateManyMutationInput, MatchUncheckedUpdateManyWithoutFieldInput>
+  }
+
+  export type MatchScoresUpsertWithWhereUniqueWithoutFieldInput = {
+    where: MatchScoresWhereUniqueInput
+    update: XOR<MatchScoresUpdateWithoutFieldInput, MatchScoresUncheckedUpdateWithoutFieldInput>
+    create: XOR<MatchScoresCreateWithoutFieldInput, MatchScoresUncheckedCreateWithoutFieldInput>
+  }
+
+  export type MatchScoresUpdateWithWhereUniqueWithoutFieldInput = {
+    where: MatchScoresWhereUniqueInput
+    data: XOR<MatchScoresUpdateWithoutFieldInput, MatchScoresUncheckedUpdateWithoutFieldInput>
+  }
+
+  export type MatchScoresUpdateManyWithWhereWithoutFieldInput = {
+    where: MatchScoresScalarWhereInput
+    data: XOR<MatchScoresUpdateManyMutationInput, MatchScoresUncheckedUpdateManyWithoutFieldInput>
+  }
+
+  export type MatchScoresScalarWhereInput = {
+    AND?: MatchScoresScalarWhereInput | MatchScoresScalarWhereInput[]
+    OR?: MatchScoresScalarWhereInput[]
+    NOT?: MatchScoresScalarWhereInput | MatchScoresScalarWhereInput[]
+    id?: StringFilter<"MatchScores"> | string
+    matchId?: StringFilter<"MatchScores"> | string
+    redAutoScore?: IntFilter<"MatchScores"> | number
+    redDriveScore?: IntFilter<"MatchScores"> | number
+    redTotalScore?: IntFilter<"MatchScores"> | number
+    blueAutoScore?: IntFilter<"MatchScores"> | number
+    blueDriveScore?: IntFilter<"MatchScores"> | number
+    blueTotalScore?: IntFilter<"MatchScores"> | number
+    redGameElements?: JsonNullableFilter<"MatchScores">
+    blueGameElements?: JsonNullableFilter<"MatchScores">
+    redTeamCount?: IntFilter<"MatchScores"> | number
+    redMultiplier?: FloatFilter<"MatchScores"> | number
+    blueTeamCount?: IntFilter<"MatchScores"> | number
+    blueMultiplier?: FloatFilter<"MatchScores"> | number
+    fieldId?: StringNullableFilter<"MatchScores"> | string | null
+    scoreDetails?: JsonNullableFilter<"MatchScores">
+    createdAt?: DateTimeFilter<"MatchScores"> | Date | string
+    updatedAt?: DateTimeFilter<"MatchScores"> | Date | string
   }
 
   export type MatchCreateWithoutMatchControlInput = {
@@ -43712,6 +44046,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     matches?: MatchUpdateManyWithoutFieldNestedInput
+    matchScores?: MatchScoresUpdateManyWithoutFieldNestedInput
   }
 
   export type FieldUncheckedUpdateWithoutTournamentInput = {
@@ -43723,6 +44058,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     matches?: MatchUncheckedUpdateManyWithoutFieldNestedInput
+    matchScores?: MatchScoresUncheckedUpdateManyWithoutFieldNestedInput
   }
 
   export type FieldUncheckedUpdateManyWithoutTournamentInput = {
@@ -44420,6 +44756,26 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type MatchScoresCreateManyFieldInput = {
+    id?: string
+    matchId: string
+    redAutoScore?: number
+    redDriveScore?: number
+    redTotalScore?: number
+    blueAutoScore?: number
+    blueDriveScore?: number
+    blueTotalScore?: number
+    redGameElements?: NullableJsonNullValueInput | InputJsonValue
+    blueGameElements?: NullableJsonNullValueInput | InputJsonValue
+    redTeamCount?: number
+    redMultiplier?: number
+    blueTeamCount?: number
+    blueMultiplier?: number
+    scoreDetails?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type MatchUpdateWithoutFieldInput = {
     id?: StringFieldUpdateOperationsInput | string
     matchNumber?: IntFieldUpdateOperationsInput | number
@@ -44489,6 +44845,66 @@ export namespace Prisma {
     fieldNumber?: NullableIntFieldUpdateOperationsInput | number | null
     matchType?: EnumMatchTypeFieldUpdateOperationsInput | $Enums.MatchType
     matchDuration?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MatchScoresUpdateWithoutFieldInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    redAutoScore?: IntFieldUpdateOperationsInput | number
+    redDriveScore?: IntFieldUpdateOperationsInput | number
+    redTotalScore?: IntFieldUpdateOperationsInput | number
+    blueAutoScore?: IntFieldUpdateOperationsInput | number
+    blueDriveScore?: IntFieldUpdateOperationsInput | number
+    blueTotalScore?: IntFieldUpdateOperationsInput | number
+    redGameElements?: NullableJsonNullValueInput | InputJsonValue
+    blueGameElements?: NullableJsonNullValueInput | InputJsonValue
+    redTeamCount?: IntFieldUpdateOperationsInput | number
+    redMultiplier?: FloatFieldUpdateOperationsInput | number
+    blueTeamCount?: IntFieldUpdateOperationsInput | number
+    blueMultiplier?: FloatFieldUpdateOperationsInput | number
+    scoreDetails?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    match?: MatchUpdateOneRequiredWithoutMatchScoresNestedInput
+  }
+
+  export type MatchScoresUncheckedUpdateWithoutFieldInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    matchId?: StringFieldUpdateOperationsInput | string
+    redAutoScore?: IntFieldUpdateOperationsInput | number
+    redDriveScore?: IntFieldUpdateOperationsInput | number
+    redTotalScore?: IntFieldUpdateOperationsInput | number
+    blueAutoScore?: IntFieldUpdateOperationsInput | number
+    blueDriveScore?: IntFieldUpdateOperationsInput | number
+    blueTotalScore?: IntFieldUpdateOperationsInput | number
+    redGameElements?: NullableJsonNullValueInput | InputJsonValue
+    blueGameElements?: NullableJsonNullValueInput | InputJsonValue
+    redTeamCount?: IntFieldUpdateOperationsInput | number
+    redMultiplier?: FloatFieldUpdateOperationsInput | number
+    blueTeamCount?: IntFieldUpdateOperationsInput | number
+    blueMultiplier?: FloatFieldUpdateOperationsInput | number
+    scoreDetails?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MatchScoresUncheckedUpdateManyWithoutFieldInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    matchId?: StringFieldUpdateOperationsInput | string
+    redAutoScore?: IntFieldUpdateOperationsInput | number
+    redDriveScore?: IntFieldUpdateOperationsInput | number
+    redTotalScore?: IntFieldUpdateOperationsInput | number
+    blueAutoScore?: IntFieldUpdateOperationsInput | number
+    blueDriveScore?: IntFieldUpdateOperationsInput | number
+    blueTotalScore?: IntFieldUpdateOperationsInput | number
+    redGameElements?: NullableJsonNullValueInput | InputJsonValue
+    blueGameElements?: NullableJsonNullValueInput | InputJsonValue
+    redTeamCount?: IntFieldUpdateOperationsInput | number
+    redMultiplier?: FloatFieldUpdateOperationsInput | number
+    blueTeamCount?: IntFieldUpdateOperationsInput | number
+    blueMultiplier?: FloatFieldUpdateOperationsInput | number
+    scoreDetails?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

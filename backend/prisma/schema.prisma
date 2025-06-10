@@ -266,6 +266,10 @@ model MatchScores {
   blueTeamCount     Int      @default(0)  // Number of teams in blue alliance (1-4)
   blueMultiplier    Float    @default(1.0) // Calculated multiplier based on team count: 1 team (x1.25), 2 teams (x1.5), 3 teams (x1.75), 4 teams (x2)
   
+  // Field association for field-specific scoring
+  fieldId           String?  // Optional field ID for field-specific scores
+  field             Field?   @relation(fields: [fieldId], references: [id], onDelete: SetNull)
+  
   // Additional metadata
   scoreDetails      Json?    // Other scoring details or game-specific information
   createdAt         DateTime @default(now())
@@ -321,6 +325,7 @@ model Field {
   tournamentId String
   tournament   Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
   matches      Match[]
+  matchScores  MatchScores[] // Relation to match scores for this field
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
 

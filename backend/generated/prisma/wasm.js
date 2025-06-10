@@ -246,6 +246,7 @@ exports.Prisma.MatchScoresScalarFieldEnum = {
   redMultiplier: 'redMultiplier',
   blueTeamCount: 'blueTeamCount',
   blueMultiplier: 'blueMultiplier',
+  fieldId: 'fieldId',
   scoreDetails: 'scoreDetails',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
