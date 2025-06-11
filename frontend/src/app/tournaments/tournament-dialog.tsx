@@ -142,26 +142,25 @@ export default function TournamentDialog({
     }
   };
 
-  return (
-    <Dialog open={isOpen} onOpenChange={(open) => {
+  return (    <Dialog open={isOpen} onOpenChange={(open) => {
       if (!open) onClose();
     }}>
-      <DialogContent className="sm:max-w-[500px] bg-gray-900 border border-gray-800 shadow-xl">
+      <DialogContent className="sm:max-w-[500px] bg-white border border-gray-200 shadow-xl rounded-xl">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-gray-100 flex items-center gap-2">
+          <DialogTitle className="text-2xl font-bold text-gray-900 flex items-center gap-2">
             {mode === 'create' ? (
               <span className="inline-flex items-center gap-2">
-                <span className="bg-primary-900 text-primary-300 px-2 py-1 rounded-full text-xs font-semibold">NEW</span>
+                <span className="bg-blue-50 text-blue-800 px-2 py-1 rounded-full text-xs font-semibold border border-blue-200">NEW</span>
                 Create Tournament
               </span>
             ) : (
               <span className="inline-flex items-center gap-2">
-                <span className="bg-purple-900 text-purple-200 px-2 py-1 rounded-full text-xs font-semibold">EDIT</span>
+                <span className="bg-purple-50 text-purple-800 px-2 py-1 rounded-full text-xs font-semibold border border-purple-200">EDIT</span>
                 Edit Tournament
               </span>
             )}
           </DialogTitle>
-          <DialogDescription className="text-gray-400">
+          <DialogDescription className="text-gray-600">
             {mode === 'create' 
               ? 'Add a new tournament to the system.' 
               : 'Edit the details of this tournament.'}
@@ -169,15 +168,14 @@ export default function TournamentDialog({
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <FormField
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">            <FormField
               control={form.control}
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="font-semibold text-gray-200">Name</FormLabel>
+                  <FormLabel className="font-semibold text-gray-900">Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="Tournament name" {...field} className="bg-gray-800 border-gray-700 text-gray-100 focus:border-primary-500 focus:ring-2 focus:ring-primary-900" />
+                    <Input placeholder="Tournament name" {...field} className="bg-white border border-gray-300 text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 rounded-lg" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -189,28 +187,26 @@ export default function TournamentDialog({
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="font-semibold text-gray-200">Description</FormLabel>
+                  <FormLabel className="font-semibold text-gray-900">Description</FormLabel>
                   <FormControl>
                     <Textarea 
                       placeholder="Tournament description" 
                       {...field}
-                      className="min-h-[100px] bg-gray-800 border-gray-700 text-gray-100 focus:border-primary-500 focus:ring-2 focus:ring-primary-900" 
+                      className="min-h-[100px] bg-white border border-gray-300 text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 rounded-lg" 
                     />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
-            />
-
-            <div className="grid grid-cols-2 gap-4">
+            />            <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
                 name="startDate"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="font-semibold text-gray-200">Start Date</FormLabel>
+                    <FormLabel className="font-semibold text-gray-900">Start Date</FormLabel>
                     <FormControl>
-                      <Input type="date" {...field} className="bg-gray-800 border-gray-700 text-gray-100 focus:border-primary-500 focus:ring-2 focus:ring-primary-900" />
+                      <Input type="date" {...field} className="bg-white border border-gray-300 text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 rounded-lg" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -222,9 +218,9 @@ export default function TournamentDialog({
                 name="endDate"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="font-semibold text-gray-200">End Date</FormLabel>
+                    <FormLabel className="font-semibold text-gray-900">End Date</FormLabel>
                     <FormControl>
-                      <Input type="date" {...field} className="bg-gray-800 border-gray-700 text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-900" />
+                      <Input type="date" {...field} className="bg-white border border-gray-300 text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 rounded-lg" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -237,23 +233,21 @@ export default function TournamentDialog({
               name="numberOfFields"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="font-semibold text-gray-200">Number of Fields</FormLabel>
+                  <FormLabel className="font-semibold text-gray-900">Number of Fields</FormLabel>
                   <FormControl>
-                    <Input type="number" min={1} max={20} step={1} {...field} className="bg-gray-800 border-gray-700 text-gray-100 focus:border-green-500 focus:ring-2 focus:ring-green-900" />
+                    <Input type="number" min={1} max={20} step={1} {...field} className="bg-white border border-gray-300 text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 rounded-lg" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
-            />
-
-            <DialogFooter className="flex justify-between items-center mt-4">
+            />            <DialogFooter className="flex justify-between items-center mt-6 pt-4 border-t border-gray-200">
               <DialogClose asChild>
-                <Button type="button" variant="outline" className="border-gray-700 text-gray-300 hover:bg-gray-800">Cancel</Button>
+                <Button type="button" variant="outline" className="border-gray-300 text-gray-700 hover:bg-gray-50 rounded-lg shadow-sm">Cancel</Button>
               </DialogClose>
               <Button 
                 type="submit" 
                 disabled={isSubmitting}
-                className="bg-primary-600 text-white font-semibold rounded-md px-6 py-2 shadow-sm hover:bg-primary-700 focus:ring-2 focus:ring-primary-400 focus:outline-none transition flex items-center gap-2"
+                className="bg-blue-500 text-white font-semibold rounded-lg px-6 py-2 shadow-md hover:bg-blue-600 focus:ring-2 focus:ring-blue-400 focus:outline-none transition-colors duration-200 flex items-center gap-2"
               >
                 {isSubmitting ? (
                   <>

@@ -108,7 +108,7 @@ export function TimerControlPanel({
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="auto">Autonomous</SelectItem>
-              <SelectItem value="teleop">Teleoperated</SelectItem>
+              <SelectItem value="teleop">Teleop</SelectItem>
               <SelectItem value="endgame">Endgame</SelectItem>
               <SelectItem value="match">Full Match</SelectItem>
             </SelectContent>

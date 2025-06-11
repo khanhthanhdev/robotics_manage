@@ -60,10 +60,11 @@ export default function TournamentsPage() {
   // Return null during authentication check to prevent flash of content
   if (authLoading || !user) {
     return (
-      <div className="flex items-center justify-center min-h-[70vh]">
-        <div className="text-center">
-          <h2 className="text-xl font-semibold mb-2">Loading...</h2>
-          <p className="text-gray-500">Please wait while we verify your credentials</p>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center bg-white border border-gray-200 rounded-xl shadow-lg p-8">
+          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <h2 className="text-xl font-semibold mb-2 text-gray-900">Loading...</h2>
+          <p className="text-gray-600">Please wait while we verify your credentials</p>
         </div>
       </div>
     );
@@ -109,66 +110,67 @@ export default function TournamentsPage() {
   };
 
   return (
-    <div className="container mx-auto py-8 px-4">
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-100 tracking-tight mb-1">Tournaments</h1>
-          <p className="text-base text-gray-400">Manage all robotics tournaments</p>
+    <div className="min-h-screen bg-gray-50 py-8 px-4">
+      <div className="container mx-auto">
+        <div className="flex justify-between items-center mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 tracking-tight mb-1">Tournaments</h1>
+            <p className="text-base text-gray-600">Manage all robotics tournaments</p>
+          </div>
+          <Button 
+            onClick={() => setIsCreateDialogOpen(true)}
+            className="flex items-center gap-2 bg-blue-500 text-white font-semibold rounded-lg px-5 py-2.5 shadow-md hover:bg-blue-600 focus:ring-2 focus:ring-blue-400 focus:outline-none transition-colors duration-200"
+          >
+            <PlusIcon size={18} />
+            Add Tournament
+          </Button>
         </div>
-        <Button 
-          onClick={() => setIsCreateDialogOpen(true)}
-          className="flex items-center gap-2 bg-primary-600 text-white font-medium rounded-md px-5 py-2.5 shadow-sm hover:bg-primary-700 focus:ring-2 focus:ring-primary-400 focus:outline-none transition"
-        >
-          <PlusIcon size={18} />
-          Add Tournament
-        </Button>
-      </div>
 
       {tournamentsError ? (
-        <Alert variant="destructive" className="mb-6 border-l-2 border-red-600 bg-red-900/30">
-          <AlertTitle className="font-semibold text-red-300">Error</AlertTitle>
-          <AlertDescription className="text-red-400">
+        <Alert variant="destructive" className="mb-6 bg-red-50 border border-red-200 text-red-800">
+          <AlertTitle className="font-semibold text-red-800">Error</AlertTitle>
+          <AlertDescription className="text-red-700">
             Failed to load tournaments. Please try again later.
           </AlertDescription>
         </Alert>
       ) : null}
 
       {tournamentsLoading ? (
-        <Card className="shadow-none border border-gray-800 bg-gray-900">
+        <Card className="bg-white border border-gray-200 shadow-lg rounded-xl">
           <CardContent className="flex flex-col items-center justify-center py-12">
-            <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-gray-700 mb-4"></div>
-            <p className="text-base text-gray-400">Loading tournaments...</p>
+            <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-500 mb-4"></div>
+            <p className="text-base text-gray-600">Loading tournaments...</p>
           </CardContent>
         </Card>
       ) : tournaments && tournaments.length > 0 ? (
-        <Card className="shadow-none border border-gray-800 bg-gray-900">
+        <Card className="bg-white border border-gray-200 shadow-lg rounded-xl">
           <CardContent className="p-0">
             <Table>
               <TableHeader>
-                <TableRow className="bg-gray-800 border-b border-gray-700">
-                  <TableHead className="text-gray-300 font-semibold text-sm">Name</TableHead>
-                  <TableHead className="text-gray-300 font-semibold text-sm">Description</TableHead>
-                  <TableHead className="text-gray-300 font-semibold text-sm">Start Date</TableHead>
-                  <TableHead className="text-gray-300 font-semibold text-sm">End Date</TableHead>
-                  <TableHead className="text-gray-300 font-semibold text-sm">Fields</TableHead>
-                  <TableHead className="text-gray-300 font-semibold text-sm">Admin</TableHead>
-                  <TableHead className="text-right text-gray-300 font-semibold text-sm">Actions</TableHead>
+                <TableRow className="bg-gray-50 border-b border-gray-200">
+                  <TableHead className="text-gray-900 font-semibold text-sm">Name</TableHead>
+                  <TableHead className="text-gray-900 font-semibold text-sm">Description</TableHead>
+                  <TableHead className="text-gray-900 font-semibold text-sm">Start Date</TableHead>
+                  <TableHead className="text-gray-900 font-semibold text-sm">End Date</TableHead>
+                  <TableHead className="text-gray-900 font-semibold text-sm">Fields</TableHead>
+                  <TableHead className="text-gray-900 font-semibold text-sm">Admin</TableHead>
+                  <TableHead className="text-right text-gray-900 font-semibold text-sm">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {tournaments.map((tournament) => (
-                  <TableRow key={tournament.id} className="hover:bg-gray-800/70 transition">
-                    <TableCell className="font-medium text-gray-100 whitespace-nowrap">{tournament.name}</TableCell>
-                    <TableCell className="text-gray-400 max-w-xs truncate" title={tournament.description}>{tournament.description}</TableCell>
-                    <TableCell className="text-gray-300">{formatDate(tournament.startDate)}</TableCell>
-                    <TableCell className="text-gray-300">{formatDate(tournament.endDate)}</TableCell>
-                    <TableCell className="text-gray-300 text-center">{tournament.numberOfFields ?? 1}</TableCell>
-                    <TableCell className="text-gray-300">{tournament.admin?.username || '-'}</TableCell>
-                    <TableCell className="text-right space-x-1">
+                  <TableRow key={tournament.id} className="hover:bg-gray-50 transition-colors duration-150">
+                    <TableCell className="font-medium text-gray-900 whitespace-nowrap">{tournament.name}</TableCell>
+                    <TableCell className="text-gray-600 max-w-xs truncate" title={tournament.description}>{tournament.description}</TableCell>
+                    <TableCell className="text-gray-700">{formatDate(tournament.startDate)}</TableCell>
+                    <TableCell className="text-gray-700">{formatDate(tournament.endDate)}</TableCell>
+                    <TableCell className="text-gray-700 text-center">{tournament.numberOfFields ?? 1}</TableCell>
+                    <TableCell className="text-gray-700">{tournament.admin?.username || '-'}</TableCell>
+                    <TableCell className="text-right space-x-2">
                       <Button
                         variant="outline"
                         size="icon"
-                        className="border-gray-700 text-gray-400 hover:bg-gray-800 hover:text-white focus:ring-2 focus:ring-primary-700"
+                        className="border-gray-300 text-gray-600 hover:bg-gray-50 hover:text-gray-900 focus:ring-2 focus:ring-blue-500 shadow-sm"
                         onClick={() => handleEditTournament(tournament)}
                       >
                         <PencilIcon size={16} />
@@ -177,7 +179,7 @@ export default function TournamentsPage() {
                       <Button
                         variant="outline"
                         size="icon"
-                        className="border-gray-700 text-red-400 hover:bg-red-900/30 hover:text-red-300 focus:ring-2 focus:ring-red-700"
+                        className="border-red-300 text-red-600 hover:bg-red-50 hover:text-red-700 focus:ring-2 focus:ring-red-500 shadow-sm"
                         onClick={() => handleDeleteClick(tournament)}
                       >
                         <TrashIcon size={16} />
@@ -191,61 +193,62 @@ export default function TournamentsPage() {
           </CardContent>
         </Card>
       ) : (
-        <Card className="shadow-none border border-gray-800 bg-gray-900">
+        <Card className="bg-white border border-gray-200 shadow-lg rounded-xl">
           <CardContent className="flex flex-col items-center justify-center py-16">
             <div className="text-center mb-6">
-              <h3 className="text-lg font-semibold text-gray-100 mb-1">No tournaments found</h3>
-              <p className="text-gray-400 text-base">Create your first tournament to get started</p>
+              <h3 className="text-lg font-semibold text-gray-900 mb-1">No tournaments found</h3>
+              <p className="text-gray-600 text-base">Create your first tournament to get started</p>
             </div>
-            <Button onClick={() => setIsCreateDialogOpen(true)} className="bg-primary-600 text-white font-medium rounded-md px-5 py-2.5 shadow-sm hover:bg-primary-700 focus:ring-2 focus:ring-primary-400 focus:outline-none transition">
+            <Button onClick={() => setIsCreateDialogOpen(true)} className="bg-blue-500 text-white font-semibold rounded-lg px-5 py-2.5 shadow-md hover:bg-blue-600 focus:ring-2 focus:ring-blue-400 focus:outline-none transition-colors duration-200">
               Create Tournament
             </Button>
           </CardContent>
         </Card>
       )}
 
-      {/* Create Tournament Dialog */}
-      <TournamentDialog 
-        isOpen={isCreateDialogOpen} 
-        onClose={() => setIsCreateDialogOpen(false)}
-        mode="create"
-      />
-
-      {/* Edit Tournament Dialog */}
-      {selectedTournament && (
-        <TournamentDialog
-          isOpen={isEditDialogOpen}
-          onClose={() => {
-            setIsEditDialogOpen(false);
-            setSelectedTournament(null);
-          }}
-          mode="edit"
-          tournament={selectedTournament}
+        {/* Create Tournament Dialog */}
+        <TournamentDialog 
+          isOpen={isCreateDialogOpen} 
+          onClose={() => setIsCreateDialogOpen(false)}
+          mode="create"
         />
-      )}
 
-      {/* Delete Confirmation Dialog */}
-      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete Tournament</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to delete{" "}
-              <span className="font-semibold">{selectedTournament?.name}</span>?
-              This action cannot be undone and will also delete all associated stages, matches, and team assignments.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleConfirmDelete}
-              className="bg-destructive hover:bg-destructive/90"
-            >
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+        {/* Edit Tournament Dialog */}
+        {selectedTournament && (
+          <TournamentDialog
+            isOpen={isEditDialogOpen}
+            onClose={() => {
+              setIsEditDialogOpen(false);
+              setSelectedTournament(null);
+            }}
+            mode="edit"
+            tournament={selectedTournament}
+          />
+        )}
+
+        {/* Delete Confirmation Dialog */}
+        <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete Tournament</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to delete{" "}
+                <span className="font-semibold">{selectedTournament?.name}</span>?
+                This action cannot be undone and will also delete all associated stages, matches, and team assignments.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleConfirmDelete}
+                className="bg-destructive hover:bg-destructive/90"
+              >
+                Delete
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
     </div>
   );
 }

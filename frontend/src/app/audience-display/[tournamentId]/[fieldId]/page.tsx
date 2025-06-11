@@ -48,10 +48,10 @@ export default function LiveFieldDisplayPage() {
     redTeams: [],
     blueTeams: [],
   });
-  const [connectionError, setConnectionError] = useState<string | null>(null);  // Enhanced real-time scores with fallback support (Steps 10-12)
+  const [connectionError, setConnectionError] = useState<string | null>(null); // Enhanced real-time scores with fallback support (Steps 10-12)
   const currentMatchId = matchState.matchId || "";
   console.log("useRealtimeScores called with matchId:", currentMatchId);
-  
+
   const {
     realtimeScores,
     lastUpdateTime,
@@ -239,7 +239,7 @@ export default function LiveFieldDisplayPage() {
     fieldId,
     tournamentId,
     displaySettings,
-  ]);  // Join tournament and field rooms on mount
+  ]); // Join tournament and field rooms on mount
   useEffect(() => {
     if (!tournamentId) return;
 
@@ -266,18 +266,20 @@ export default function LiveFieldDisplayPage() {
   useEffect(() => {
     console.log("🔗 Connecting new WebSocket service for real-time scores");
     webSocketService.connect();
-    
+
     // Join tournament and field rooms for real-time score updates
     if (tournamentId) {
-      console.log(`🏆 New WebSocket service joining tournament: ${tournamentId}`);
+      console.log(
+        `🏆 New WebSocket service joining tournament: ${tournamentId}`
+      );
       webSocketService.joinTournament(tournamentId);
     }
-    
+
     if (fieldId) {
       console.log(`🏟️ New WebSocket service joining field room: ${fieldId}`);
       webSocketService.joinFieldRoom(fieldId);
     }
-    
+
     return () => {
       console.log("🔌 Disconnecting new WebSocket service");
       webSocketService.disconnect();
@@ -545,7 +547,8 @@ export default function LiveFieldDisplayPage() {
         // Clear timeout if component unmounts while announcement is showing
         return () => clearTimeout(timerId);
       }
-    });    return () => {
+    });
+    return () => {
       unsubDisplayMode();
       unsubMatchUpdate();
       unsubTimer();
@@ -647,79 +650,76 @@ export default function LiveFieldDisplayPage() {
 
   // Debug component to show current display mode and other info
   const DebugInfo = () => {
-    if (process.env.NODE_ENV !== "development") return null;
-
-    return (
-      <div className="text-xs bg-gray-800 text-white p-3 rounded-lg mt-4 border border-gray-600">
-        <div className="font-semibold border-b border-gray-600 pb-1 mb-1">
+    if (process.env.NODE_ENV !== "development") return null;    return (
+      <div className="text-xs bg-white border border-gray-200 text-gray-700 p-4 rounded-xl mt-4 shadow-sm">
+        <div className="font-semibold border-b border-gray-200 pb-2 mb-2 text-gray-900">
           Debug Information
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
           <div>
             Mode:{" "}
-            <span className="font-mono bg-blue-900 px-1 rounded">
+            <span className="font-mono bg-blue-50 text-blue-800 px-2 py-1 rounded border border-blue-200">
               {displaySettings.displayMode}
             </span>
           </div>
           <div>
-            Field: <span className="font-mono">{fieldId}</span>
+            Field: <span className="font-mono bg-gray-50 px-1 rounded">{fieldId}</span>
           </div>
           <div>
             Tournament:{" "}
-            <span className="font-mono">{tournamentId.substring(0, 8)}...</span>
+            <span className="font-mono bg-gray-50 px-1 rounded">{tournamentId.substring(0, 8)}...</span>
           </div>
           <div>
             Connection:{" "}
             {isConnected ? (
-              <span className="text-green-400">✓ Connected</span>
+              <span className="text-green-800 bg-green-50 px-2 py-1 rounded border border-green-200">✓ Connected</span>
             ) : (
-              <span className="text-red-400">✗ Disconnected</span>
+              <span className="text-red-800 bg-red-50 px-2 py-1 rounded border border-red-200">✗ Disconnected</span>
             )}
-          </div>
-          <div>
+          </div>          <div>
             Last Update:{" "}
-            <span className="font-mono">
+            <span className="font-mono bg-gray-50 px-1 rounded">
               {new Date(displaySettings.updatedAt).toLocaleTimeString()}
             </span>
           </div>
           <div>
             Match State:{" "}
-            <span className="font-mono">{matchState?.status || "none"}</span>
+            <span className="font-mono bg-gray-50 px-1 rounded">{matchState?.status || "none"}</span>
           </div>
           <div>
             Timer:{" "}
-            <span className="font-mono">
+            <span className="font-mono bg-gray-50 px-1 rounded">
               {timer?.isRunning ? "running" : "stopped"}
             </span>
           </div>
           <div>
             Match ID:{" "}
-            <span className="font-mono">{matchState?.matchId || "none"}</span>
+            <span className="font-mono bg-gray-50 px-1 rounded">{matchState?.matchId || "none"}</span>
           </div>
         </div>
-        <div className="mt-2 text-xs border-t border-gray-600 pt-1">
-          <div>Match Data: {matchState ? "Present" : "Missing"}</div>
+        <div className="mt-3 text-xs border-t border-gray-200 pt-2">
+          <div className="text-gray-900 font-medium">Match Data: {matchState ? "Present" : "Missing"}</div>
           {matchState && (
-            <div className="grid grid-cols-2 gap-1 mt-1">
+            <div className="grid grid-cols-2 gap-2 mt-2">
               <div>
                 Number:{" "}
-                <span className="font-mono">
+                <span className="font-mono bg-gray-50 px-1 rounded">
                   {matchState.matchNumber || "none"}
                 </span>
               </div>
               <div>
                 Name:{" "}
-                <span className="font-mono">{matchState.name || "none"}</span>
+                <span className="font-mono bg-gray-50 px-1 rounded">{matchState.name || "none"}</span>
               </div>
               <div>
                 Period:{" "}
-                <span className="font-mono">
+                <span className="font-mono bg-gray-50 px-1 rounded">
                   {matchState.currentPeriod || "none"}
                 </span>
               </div>
               <div>
                 Red Teams:{" "}
-                <span className="font-mono">
+                <span className="font-mono bg-gray-50 px-1 rounded">
                   {Array.isArray(matchState.redTeams)
                     ? matchState.redTeams.length
                     : "none"}
@@ -727,7 +727,7 @@ export default function LiveFieldDisplayPage() {
               </div>
               <div>
                 Blue Teams:{" "}
-                <span className="font-mono">
+                <span className="font-mono bg-gray-50 px-1 rounded">
                   {Array.isArray(matchState.blueTeams)
                     ? matchState.blueTeams.length
                     : "none"}
@@ -736,8 +736,8 @@ export default function LiveFieldDisplayPage() {
             </div>
           )}
         </div>
-        <div className="text-right mt-1 pt-1 border-t border-gray-600">
-          <span className="text-blue-300">
+        <div className="text-right mt-2 pt-2 border-t border-gray-200">
+          <span className="text-blue-800 bg-blue-50 px-2 py-1 rounded border border-blue-200">
             Test with window.audienceDisplayWS
           </span>
         </div>
@@ -813,19 +813,17 @@ export default function LiveFieldDisplayPage() {
           <div key={contentKey} className="min-h-screen">
             <DebugInfo />
           </div>
-        );
-
-      case "announcement":
+        );      case "announcement":
         return (
           <div
             key={contentKey}
             className="flex flex-col items-center justify-center min-h-[70vh]"
           >
-            <div className="bg-blue-100 p-10 rounded-xl max-w-4xl text-center shadow-xl border-2 border-blue-300">
+            <div className="bg-blue-50 border border-blue-200 p-10 rounded-xl max-w-4xl text-center shadow-lg">
               <h2 className="text-4xl font-bold mb-6 text-blue-800">
                 ANNOUNCEMENT
               </h2>
-              <p className="text-3xl">
+              <p className="text-3xl text-gray-900">
                 {displaySettings.message || "No announcement message"}
               </p>
             </div>
@@ -845,7 +843,8 @@ export default function LiveFieldDisplayPage() {
                 blueAutoScore: realtimeScores.blue.auto,
                 blueDriveScore: realtimeScores.blue.drive,
               }
-            : score;        console.log("Displaying scores:", {
+            : score;
+        console.log("Displaying scores:", {
           wsConnected,
           lastUpdateTime,
           source,
@@ -884,9 +883,8 @@ export default function LiveFieldDisplayPage() {
         onBack={() => router.push(`/audience-display/${tournamentId}`)}
       />
     );
-  }
-  return (
-    <div className="min-h-screen bg-gray-900 p-6">
+  }  return (
+    <div className="min-h-screen bg-gray-50">
       {/* Enhanced Connection Status with Fallback Support (Steps 10-12) */}
       <ConnectionStatus
         isConnected={isConnected}
@@ -902,59 +900,58 @@ export default function LiveFieldDisplayPage() {
         announcementCountdown={announcementCountdown}
       />
       {/* Header with tournament and field info */}
-      <header className="mb-8">
+      <header className="mb-6 px-6 pt-6">
         <div className="container mx-auto">
-          <div className="bg-gradient-to-r from-blue-900 to-purple-900 p-4 rounded-lg shadow-lg text-white">
-            <h1 className="text-3xl font-bold text-center mb-2">
+          <div className="bg-white border border-gray-200 shadow-lg p-6 rounded-xl">
+            <h1 className="text-3xl font-bold text-center mb-3 text-gray-900">
               {tournament?.name || "Tournament"} - Field{" "}
               {field?.number || field?.name || fieldId}
             </h1>
             <p className="text-center text-sm">
               {isConnected ? (
-                <span className="text-green-400 font-medium">
-                  <span className="inline-block w-2 h-2 rounded-full bg-green-400 animate-pulse mr-1"></span>
+                <span className="text-green-800 bg-green-50 border border-green-200 px-3 py-1 rounded-full font-medium">
+                  <span className="inline-block w-2 h-2 rounded-full bg-green-500 animate-pulse mr-2"></span>
                   Connected to Field {field?.number || field?.name || fieldId}
                 </span>
               ) : (
-                <span className="text-red-400 font-medium">
-                  <span className="inline-block w-2 h-2 rounded-full bg-red-400 mr-1"></span>
+                <span className="text-red-800 bg-red-50 border border-red-200 px-3 py-1 rounded-full font-medium">
+                  <span className="inline-block w-2 h-2 rounded-full bg-red-500 mr-2"></span>
                   Disconnected - Attempting to reconnect...
                 </span>
               )}
             </p>
             {process.env.NODE_ENV === "development" && (
-              <p className="text-center text-xs text-blue-300 mt-1">
+              <p className="text-center text-xs text-blue-800 bg-blue-50 border border-blue-200 px-3 py-1 rounded-full mt-2 inline-block">
                 WebSocket testing interface available at{" "}
-                <code>window.audienceDisplayWS</code>
+                <code className="bg-blue-100 px-1 rounded">window.audienceDisplayWS</code>
               </p>
             )}
           </div>
         </div>
-      </header>{" "}
-      {/* Main content area */}
-      <main className="container mx-auto bg-gray-800 rounded-xl shadow-lg p-8 text-white">
+      </header>{" "}      {/* Main content area */}
+      <main className="container mx-auto bg-white border border-gray-200 rounded-xl shadow-lg p-8">
         {connectionError ? (
           <div
-            className="bg-red-900 border-l-4 border-red-500 text-red-100 p-4 mb-6"
+            className="bg-red-50 border border-red-200 text-red-800 p-6 mb-6 rounded-xl"
             role="alert"
           >
-            <p className="font-bold">Connection Error</p>
-            <p>{connectionError}</p>
+            <p className="font-bold text-lg">Connection Error</p>
+            <p className="text-red-700">{connectionError}</p>
           </div>
         ) : fieldError ? (
           <div
-            className="bg-red-900 border-l-4 border-red-500 text-red-100 p-4 mb-6"
+            className="bg-red-50 border border-red-200 text-red-800 p-6 mb-6 rounded-xl"
             role="alert"
           >
-            <p className="font-bold">Field Not Found</p>
-            <p>{fieldError}</p>
+            <p className="font-bold text-lg">Field Not Found</p>
+            <p className="text-red-700">{fieldError}</p>
           </div>
         ) : (
           renderContent()
         )}
       </main>
       {/* Footer */}{" "}
-      <footer className="container mx-auto mt-8 text-center text-sm text-gray-400">
+      <footer className="container mx-auto mt-8 text-center text-sm text-gray-600 pb-6">
         <p>
           © {new Date().getFullYear()} Robotics Tournament Management System
         </p>

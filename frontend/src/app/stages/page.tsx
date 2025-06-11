@@ -261,94 +261,96 @@ export default function StagesPage() {
   }
   
   return (
-    <div className="container mx-auto py-8 px-4">
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-100 tracking-tight mb-1">Stages</h1>
-          <p className="text-base text-gray-400">Manage tournament stages</p>
-        </div>
-      </div>
+    <div className="min-h-screen bg-gray-50 py-8 px-4">
 
-      {/* Tournament selection - only show if no stage is selected */}
-      {!selectedStageId && (
-        <Card className="mb-8 border border-gray-800 bg-gray-900">
-          <CardHeader>
-            <CardTitle className="text-gray-100">Select Tournament</CardTitle>
-            <CardDescription className="text-gray-400">Choose a tournament to manage its stages</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid gap-6">
-              <div className="flex flex-col space-y-3">
-                <Select
-                  value={selectedTournamentId}
-                  onValueChange={setSelectedTournamentId}
-                  disabled={tournamentsLoading}
-                >
-                  <SelectTrigger className="w-full md:w-[400px] bg-gray-800 border-gray-700 text-gray-100">
-                    <SelectValue placeholder="Select a tournament" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-gray-900 border-gray-700 text-gray-100">
-                    {tournaments && tournaments.map((tournament) => (
-                      <SelectItem key={tournament.id} value={tournament.id} className="bg-gray-900 text-gray-100 hover:bg-gray-800">
-                        {tournament.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {tournamentsLoading && (
-                  <p className="text-sm text-gray-500">Loading tournaments...</p>
-                )}
-                {!tournamentsLoading && tournaments?.length === 0 && (
-                  <div className="flex items-center gap-2 text-amber-400">
-                    <InfoIcon size={16} />
-                    <p className="text-sm">No tournaments found. Create a tournament first.</p>
-                  </div>
-                )}
-              </div>
-            </div>
-          </CardContent>
-          {selectedTournament && (
-            <CardFooter className="bg-gray-800 flex justify-between items-center">
-              <div className="text-sm text-gray-300">
-                <span className="font-medium">Selected:</span> {selectedTournament.name}
-                <div className="text-xs text-gray-500 flex items-center gap-1">
-                  <CalendarIcon size={12} />
-                  {formatDate(selectedTournament.startDate)} - {formatDate(selectedTournament.endDate)}
+      <div className="container mx-auto">
+        <div className="flex justify-between items-center mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 tracking-tight mb-1">Stages</h1>
+            <p className="text-base text-gray-600">Manage tournament stages</p>
+          </div>
+        </div>
+
+        {/* Tournament selection - only show if no stage is selected */}
+        {!selectedStageId && (
+          <Card className="mb-8 bg-white border border-gray-200 shadow-lg rounded-xl">
+            <CardHeader>
+              <CardTitle className="text-gray-900">Select Tournament</CardTitle>
+              <CardDescription className="text-gray-600">Choose a tournament to manage its stages</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-6">
+                <div className="flex flex-col space-y-3">
+                  <Select
+                    value={selectedTournamentId}
+                    onValueChange={setSelectedTournamentId}
+                    disabled={tournamentsLoading}
+                  >
+                    <SelectTrigger className="w-full md:w-[400px] bg-white border border-gray-300 text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 rounded-lg">
+                      <SelectValue placeholder="Select a tournament" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white border border-gray-200 rounded-lg shadow-lg">
+                      {tournaments && tournaments.map((tournament) => (
+                        <SelectItem key={tournament.id} value={tournament.id} className="text-gray-900 hover:bg-gray-50">
+                          {tournament.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {tournamentsLoading && (
+                    <p className="text-sm text-gray-600">Loading tournaments...</p>
+                  )}
+                  {!tournamentsLoading && tournaments?.length === 0 && (
+                    <div className="flex items-center gap-2 text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-3">
+                      <InfoIcon size={16} />
+                      <p className="text-sm">No tournaments found. Create a tournament first.</p>
+                    </div>
+                  )}
                 </div>
               </div>
-              {selectedTournamentId && (
-                <Button 
-                  onClick={() => setIsCreateDialogOpen(true)}
-                  className="flex items-center gap-2 bg-primary-600 text-white font-medium rounded-md px-5 py-2.5 shadow-sm hover:bg-primary-700 focus:ring-2 focus:ring-primary-400 focus:outline-none transition"
-                >
-                  <PlusIcon size={16} />
-                  Add Stage
-                </Button>
-              )}
-            </CardFooter>
-          )}
-        </Card>
-      )}
+            </CardContent>
+            {selectedTournament && (
+              <CardFooter className="bg-gray-50 border-t border-gray-200 flex justify-between items-center">
+                <div className="text-sm text-gray-700">
+                  <span className="font-medium">Selected:</span> {selectedTournament.name}
+                  <div className="text-xs text-gray-600 flex items-center gap-1 mt-1">
+                    <CalendarIcon size={12} />
+                    {formatDate(selectedTournament.startDate)} - {formatDate(selectedTournament.endDate)}
+                  </div>
+                </div>
+                {selectedTournamentId && (
+                  <Button 
+                    onClick={() => setIsCreateDialogOpen(true)}
+                    className="flex items-center gap-2 bg-blue-500 text-white font-semibold rounded-lg px-5 py-2.5 shadow-md hover:bg-blue-600 focus:ring-2 focus:ring-blue-400 focus:outline-none transition-colors duration-200"
+                  >
+                    <PlusIcon size={16} />
+                    Add Stage
+                  </Button>
+                )}
+              </CardFooter>
+            )}
+          </Card>
+        )}
 
-      {/* Error alert */}
-      {stagesError && (
-        <Alert variant="destructive" className="mb-6 border-l-2 border-red-600 bg-red-900/30">
-          <AlertTitle className="font-semibold text-red-300">Error</AlertTitle>
-          <AlertDescription className="text-red-400">
-            Failed to load stages. Please try again later.
-          </AlertDescription>
-        </Alert>
-      )}
+        {/* Error alert */}
+        {stagesError && (
+          <Alert variant="destructive" className="mb-6 bg-red-50 border border-red-200 text-red-800">
+            <AlertTitle className="font-semibold text-red-800">Error</AlertTitle>
+            <AlertDescription className="text-red-700">
+              Failed to load stages. Please try again later.
+            </AlertDescription>
+          </Alert>
+        )}
 
-      {/* Stage Detail View - show when a stage is selected */}
-      {selectedStageId && stageDetails ? (
-        <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={handleBackClick} 
-              className="flex items-center gap-1 mb-4 text-gray-300 hover:bg-gray-800"
+        {/* Stage Detail View - show when a stage is selected */}
+        {selectedStageId && stageDetails ? (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={handleBackClick} 
+                className="flex items-center gap-1 mb-4 text-gray-700 hover:bg-gray-100 rounded-lg"
             >
               <ArrowLeftIcon size={16} />
               Back to Stages
@@ -357,7 +359,7 @@ export default function StagesPage() {
               <Button
                 variant="outline"
                 size="sm"
-                className="border-gray-700 text-gray-400 hover:bg-gray-800 hover:text-white focus:ring-2 focus:ring-primary-700"
+                className="border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-gray-900 focus:ring-2 focus:ring-blue-100 focus:border-blue-300"
                 onClick={() => handleEditStage(stageDetails)}
               >
                 <PencilIcon size={16} className="mr-1" />
@@ -366,7 +368,7 @@ export default function StagesPage() {
               <Button
                 variant="outline"
                 size="sm"
-                className="border-gray-700 text-red-400 hover:bg-red-900/30 hover:text-red-300 focus:ring-2 focus:ring-red-700"
+                className="border-red-300 text-red-600 hover:bg-red-50 hover:text-red-700 focus:ring-2 focus:ring-red-100 focus:border-red-400"
                 onClick={() => handleDeleteClick(stageDetails)}
               >
                 <TrashIcon size={16} className="mr-1" />
@@ -376,15 +378,15 @@ export default function StagesPage() {
           </div>
 
           {/* Stage Info Card */}
-          <Card className="border border-gray-800 bg-gray-900">
+          <Card className="bg-white border border-gray-200 shadow-lg rounded-xl">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
                   <div className="flex items-center gap-2">
-                    <CardTitle className="text-gray-100">{stageDetails.name}</CardTitle>
+                    <CardTitle className="text-gray-900">{stageDetails.name}</CardTitle>
                     {getStageTypeBadge(stageDetails.type)}
                   </div>
-                  <CardDescription className="text-gray-400">
+                  <CardDescription className="text-gray-600">
                     Part of {stageDetails?.tournament?.name || "tournament"}
                   </CardDescription>
                 </div>
@@ -393,29 +395,29 @@ export default function StagesPage() {
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <div className="text-sm text-gray-400">Start Date</div>
+                  <div className="text-sm text-gray-600">Start Date</div>
                   <div className="flex items-center gap-2">
-                    <CalendarIcon size={16} className="text-primary-400" />
-                    <span className="text-gray-200">{formatDate(stageDetails.startDate)}</span>
+                    <CalendarIcon size={16} className="text-blue-500" />
+                    <span className="text-gray-900">{formatDate(stageDetails.startDate)}</span>
                   </div>
                 </div>
                 <div className="space-y-1">
-                  <div className="text-sm text-gray-400">End Date</div>
+                  <div className="text-sm text-gray-600">End Date</div>
                   <div className="flex items-center gap-2">
-                    <CalendarIcon size={16} className="text-primary-400" />
-                    <span className="text-gray-200">{formatDate(stageDetails.endDate)}</span>
+                    <CalendarIcon size={16} className="text-blue-500" />
+                    <span className="text-gray-900">{formatDate(stageDetails.endDate)}</span>
                   </div>
                 </div>
               </div>
-              <Separator className="bg-gray-700" />
+              <Separator className="bg-gray-200" />
               <div className="space-y-1">
-                <div className="text-sm text-gray-400">Stage Type</div>
-                <div className="font-medium text-gray-200">
+                <div className="text-sm text-gray-600">Stage Type</div>
+                <div className="font-medium text-gray-900">
                   {stageDetails.type === "SWISS" && "Swiss Tournament System"}
                   {stageDetails.type === "PLAYOFF" && "Playoff Elimination Bracket"}
                   {stageDetails.type === "FINAL" && "Finals"}
                 </div>
-                <p className="text-sm text-gray-500 mt-1">
+                <p className="text-sm text-gray-700 mt-1">
                   {stageDetails.type === "SWISS" && "Teams are paired based on their win-loss record. Teams with similar records play against each other."}
                   {stageDetails.type === "PLAYOFF" && "Single elimination bracket where winners advance to the next round."}
                   {stageDetails.type === "FINAL" && "Final matches to determine the tournament champions."}
@@ -425,22 +427,22 @@ export default function StagesPage() {
           </Card>
 
           {/* Matches List */}
-          <Card className="border border-gray-800 bg-gray-900">
+          <Card className="bg-white border border-gray-200 shadow-lg rounded-xl">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle className="flex items-center gap-2 text-gray-100">
+                  <CardTitle className="flex items-center gap-2 text-gray-900">
                     <ListIcon size={20} />
                     Matches in this Stage
                   </CardTitle>
-                  <CardDescription className="text-gray-400">
+                  <CardDescription className="text-gray-600">
                     All scheduled matches for {stageDetails.name}
                   </CardDescription>
                 </div>
                 <div className="flex gap-2">
                   <Button 
                     onClick={() => setIsMatchSchedulerDialogOpen(true)} 
-                    className="flex items-center gap-2 bg-primary-600 text-white font-medium rounded-md px-5 py-2.5 shadow-sm hover:bg-primary-700 focus:ring-2 focus:ring-primary-400 focus:outline-none transition"
+                    className="flex items-center gap-2 bg-blue-500 text-white font-semibold rounded-lg px-5 py-2.5 shadow-md hover:bg-blue-600 focus:ring-2 focus:ring-blue-400 focus:outline-none transition-colors duration-200"
                   >
                     <PlusIcon size={16} />
                     Schedule Matches
@@ -452,7 +454,7 @@ export default function StagesPage() {
                         setIsMatchSchedulerDialogOpen(true);
                         // Optionally, you could pass latestRoundNumber as a prop or context to the dialog
                       }}
-                      className="flex items-center gap-2 bg-blue-700 text-white font-medium rounded-md px-5 py-2.5 shadow-sm hover:bg-blue-800 focus:ring-2 focus:ring-blue-400 focus:outline-none transition"
+                      className="flex items-center gap-2 bg-blue-600 text-white font-semibold rounded-lg px-5 py-2.5 shadow-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-400 focus:outline-none transition-colors duration-200"
                     >
                       <Medal size={16} />
                       Generate Next Swiss Round
@@ -464,14 +466,14 @@ export default function StagesPage() {
             {matchesLoading ? (
               <div className="flex justify-center py-8">
                 <div className="text-center">
-                  <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary-400 mx-auto mb-4"></div>
-                  <p className="text-gray-400">Loading matches...</p>
+                  <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500 mx-auto mb-4"></div>
+                  <p className="text-gray-600">Loading matches...</p>
                 </div>
               </div>
             ) : matchesError ? (
-              <Alert variant="destructive" className="border-l-2 border-red-600 bg-red-900/30">
-                <AlertTitle className="font-semibold text-red-300">Error</AlertTitle>
-                <AlertDescription className="text-red-400">
+              <Alert variant="destructive" className="bg-red-50 border border-red-200 text-red-800">
+                <AlertTitle className="font-semibold text-red-800">Error</AlertTitle>
+                <AlertDescription className="text-red-700">
                   Failed to load matches for this stage. Please try again later.
                 </AlertDescription>
               </Alert>
@@ -479,36 +481,36 @@ export default function StagesPage() {
               <CardContent>
                 <Table>
                   <TableHeader>
-                    <TableRow className="bg-gray-800 border-b border-gray-700">
-                      <TableHead className="text-gray-300">Match #</TableHead>
-                      <TableHead className="text-gray-300">Round</TableHead>
-                      <TableHead className="text-gray-300">Status</TableHead>
-                      <TableHead className="text-gray-300">Scheduled Time</TableHead>
-                      <TableHead className="text-gray-300">Teams</TableHead>
-                      <TableHead className="text-gray-300">Scores</TableHead>
-                      <TableHead className="text-gray-300">Result</TableHead>
-                      <TableHead className="text-right text-gray-300">Actions</TableHead>
+                    <TableRow className="bg-gray-50 border-b border-gray-200">
+                      <TableHead className="text-gray-700">Match #</TableHead>
+                      <TableHead className="text-gray-700">Round</TableHead>
+                      <TableHead className="text-gray-700">Status</TableHead>
+                      <TableHead className="text-gray-700">Scheduled Time</TableHead>
+                      <TableHead className="text-gray-700">Teams</TableHead>
+                      <TableHead className="text-gray-700">Scores</TableHead>
+                      <TableHead className="text-gray-700">Result</TableHead>
+                      <TableHead className="text-right text-gray-700">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {filteredStageMatches.map((match) => (
-                      <TableRow key={match.id} className="hover:bg-gray-800/70 transition">
-                        <TableCell className="font-medium text-gray-100">{match.matchNumber}</TableCell>
-                        <TableCell className="text-gray-400">{match.roundNumber}</TableCell>
+                      <TableRow key={match.id} className="hover:bg-gray-50 transition-colors border-b border-gray-100">
+                        <TableCell className="font-medium text-gray-900">{match.matchNumber}</TableCell>
+                        <TableCell className="text-gray-600">{match.roundNumber}</TableCell>
                         <TableCell>{getMatchStatusBadge(match.status)}</TableCell>
-                        <TableCell className="text-gray-400">{match.scheduledTime ? formatDate(match.scheduledTime) : "Not scheduled"}</TableCell>
+                        <TableCell className="text-gray-600">{match.scheduledTime ? formatDate(match.scheduledTime) : "Not scheduled"}</TableCell>
                         <TableCell>
                           <div className="grid grid-cols-2 gap-2">
                             <div>
-                              <div className="text-xs font-semibold text-red-400">Red</div>
+                              <div className="text-xs font-semibold text-red-600">Red</div>
                               {match.alliances?.find(a => a.color === 'RED')?.teamAlliances?.map((ta, idx) => (
-                                <div key={ta.team.id || idx} className="text-xs text-gray-200">{ta.team?.name ?? '-'}</div>
+                                <div key={ta.team.id || idx} className="text-xs text-gray-900">{ta.team?.name ?? '-'}</div>
                               ))}
                             </div>
                             <div>
-                              <div className="text-xs font-semibold text-blue-400">Blue</div>
+                              <div className="text-xs font-semibold text-blue-600">Blue</div>
                               {match.alliances?.find(a => a.color === 'BLUE')?.teamAlliances?.map((ta, idx) => (
-                                <div key={ta.team.id || idx} className="text-xs text-gray-200">{ta.team?.name ?? '-'}</div>
+                                <div key={ta.team.id || idx} className="text-xs text-gray-900">{ta.team?.name ?? '-'}</div>
                               ))}
                             </div>
                           </div>
@@ -516,9 +518,9 @@ export default function StagesPage() {
                         <TableCell>
                           {matchScoresMap[match.id] ? (
                             <div className="flex items-center space-x-1">
-                              <span className="text-red-400 font-medium">{matchScoresMap[match.id].redTotalScore}</span>
+                              <span className="text-red-600 font-medium">{matchScoresMap[match.id].redTotalScore}</span>
                               <span className="text-gray-500">-</span>
-                              <span className="text-blue-400 font-medium">{matchScoresMap[match.id].blueTotalScore}</span>
+                              <span className="text-blue-600 font-medium">{matchScoresMap[match.id].blueTotalScore}</span>
                             </div>
                           ) : (
                             <span className="text-sm text-gray-500">-</span>
@@ -528,12 +530,12 @@ export default function StagesPage() {
                           {match.status === "COMPLETED" ? (
                             <div className="text-sm">
                               {match.winningAlliance === "RED" && (
-                                <span className="text-red-400 font-semibold">Red Wins</span>
+                                <span className="text-red-600 font-semibold">Red Wins</span>
                               )}
                               {match.winningAlliance === "BLUE" && (
-                                <span className="text-blue-400 font-semibold">Blue Wins</span>
+                                <span className="text-blue-600 font-semibold">Blue Wins</span>
                               )}
-                              {!match.winningAlliance && <span className="text-gray-400">No winner</span>}
+                              {!match.winningAlliance && <span className="text-gray-600">No winner</span>}
                             </div>
                           ) : (
                             <span className="text-sm text-gray-500">Pending</span>
@@ -543,7 +545,7 @@ export default function StagesPage() {
                           <Button
                             variant="outline"
                             size="sm"
-                            className="border-gray-700 text-gray-400 hover:bg-gray-800 hover:text-white focus:ring-2 focus:ring-primary-700"
+                            className="border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-gray-900 focus:ring-2 focus:ring-blue-100 focus:border-blue-300"
                             onClick={() => router.push(`/matches/${match.id}`)}
                           >
                             View
@@ -558,10 +560,10 @@ export default function StagesPage() {
               <CardContent>
                 <div className="flex flex-col items-center justify-center py-12">
                   <div className="text-center mb-6">
-                    <h3 className="text-xl font-semibold text-gray-100 mb-1">No matches found</h3>
-                    <p className="text-gray-400">This stage doesn't have any scheduled matches yet</p>
+                    <h3 className="text-xl font-semibold text-gray-900 mb-1">No matches found</h3>
+                    <p className="text-gray-600">This stage doesn't have any scheduled matches yet</p>
                   </div>
-                  <Button onClick={() => router.push(`/match-scheduler?stageId=${stageDetails.id}`)} className="bg-primary-600 text-white font-medium rounded-md px-5 py-2.5 shadow-sm hover:bg-primary-700 focus:ring-2 focus:ring-primary-400 focus:outline-none transition">
+                  <Button onClick={() => router.push(`/match-scheduler?stageId=${stageDetails.id}`)} className="bg-blue-500 text-white font-semibold rounded-lg px-5 py-2.5 shadow-md hover:bg-blue-600 focus:ring-2 focus:ring-blue-400 focus:outline-none transition-colors duration-200">
                     Create Matches
                   </Button>
                 </div>
@@ -574,47 +576,47 @@ export default function StagesPage() {
         <>
           {selectedTournamentId ? (
             stagesLoading ? (
-              <Card className="border border-gray-800 bg-gray-900">
+              <Card className="bg-white border border-gray-200 shadow-lg rounded-xl">
                 <CardContent className="flex justify-center py-8">
                   <div className="text-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary mx-auto mb-4"></div>
-                    <p className="text-gray-500">Loading stages...</p>
+                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500 mx-auto mb-4"></div>
+                    <p className="text-gray-600">Loading stages...</p>
                   </div>
                 </CardContent>
               </Card>
             ) : stages && stages.length > 0 ? (
-              <Card className="border border-gray-800 bg-gray-900">
+              <Card className="bg-white border border-gray-200 shadow-lg rounded-xl">
                 <CardHeader>
-                  <CardTitle className="text-gray-100">Stages for {selectedTournament?.name}</CardTitle>
-                  <CardDescription className="text-gray-400">Manage qualification, playoff, and final stages</CardDescription>
+                  <CardTitle className="text-gray-900">Stages for {selectedTournament?.name}</CardTitle>
+                  <CardDescription className="text-gray-600">Manage qualification, playoff, and final stages</CardDescription>
                 </CardHeader>
                 <CardContent className="p-0">
                   <Table>
                     <TableHeader>
-                      <TableRow>
-                        <TableHead className="text-gray-400">Name</TableHead>
-                        <TableHead className="text-gray-400">Type</TableHead>
-                        <TableHead className="text-gray-400">Start Date</TableHead>
-                        <TableHead className="text-gray-400">End Date</TableHead>
-                        <TableHead className="text-gray-400 text-right">Actions</TableHead>
+                      <TableRow className="bg-gray-50 border-b border-gray-200">
+                        <TableHead className="text-gray-700">Name</TableHead>
+                        <TableHead className="text-gray-700">Type</TableHead>
+                        <TableHead className="text-gray-700">Start Date</TableHead>
+                        <TableHead className="text-gray-700">End Date</TableHead>
+                        <TableHead className="text-gray-700 text-right">Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {stages.map((stage) => (
                         <TableRow 
                           key={stage.id}
-                          className="cursor-pointer hover:bg-gray-800"
+                          className="cursor-pointer hover:bg-gray-50 transition-colors border-b border-gray-100"
                           onClick={() => setSelectedStageId(stage.id)}
                         >
-                          <TableCell className="font-medium text-gray-300">{stage.name}</TableCell>
+                          <TableCell className="font-medium text-gray-900">{stage.name}</TableCell>
                           <TableCell>{getStageTypeBadge(stage.type)}</TableCell>
-                          <TableCell className="text-gray-300">{formatDate(stage.startDate)}</TableCell>
-                          <TableCell className="text-gray-300">{formatDate(stage.endDate)}</TableCell>
+                          <TableCell className="text-gray-700">{formatDate(stage.startDate)}</TableCell>
+                          <TableCell className="text-gray-700">{formatDate(stage.endDate)}</TableCell>
                           <TableCell className="text-right space-x-2">
                             <Button
                               variant="outline"
                               size="sm"
-                              className="border-gray-700 text-gray-400 hover:bg-gray-800 hover:text-white focus:ring-2 focus:ring-primary-700"
+                              className="border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-gray-900 focus:ring-2 focus:ring-blue-100 focus:border-blue-300"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 handleEditStage(stage);
@@ -626,7 +628,7 @@ export default function StagesPage() {
                             <Button
                               variant="outline"
                               size="sm"
-                              className="border-gray-700 text-red-400 hover:bg-red-900/30 hover:text-red-300 focus:ring-2 focus:ring-red-700"
+                              className="border-red-300 text-red-600 hover:bg-red-50 hover:text-red-700 focus:ring-2 focus:ring-red-100 focus:border-red-400"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 handleDeleteClick(stage);
@@ -643,15 +645,15 @@ export default function StagesPage() {
                 </CardContent>
               </Card>
             ) : (
-              <Card className="border border-gray-800 bg-gray-900">
+              <Card className="bg-white border border-gray-200 shadow-lg rounded-xl">
                 <CardContent className="flex flex-col items-center justify-center py-12">
                   <div className="text-center mb-6">
-                    <h3 className="text-xl font-semibold text-gray-100 mb-1">No stages found</h3>
-                    <p className="text-gray-400">Create your first stage for this tournament</p>
+                    <h3 className="text-xl font-semibold text-gray-900 mb-1">No stages found</h3>
+                    <p className="text-gray-600">Create your first stage for this tournament</p>
                   </div>
                   <Button 
                     onClick={() => setIsCreateDialogOpen(true)}
-                    className="bg-primary-600 text-white font-medium rounded-md px-5 py-2.5 shadow-sm hover:bg-primary-700 focus:ring-2 focus:ring-primary-400 focus:outline-none transition"
+                    className="bg-blue-500 text-white font-semibold rounded-lg px-5 py-2.5 shadow-md hover:bg-blue-600 focus:ring-2 focus:ring-blue-400 focus:outline-none transition-colors duration-200"
                   >
                     Create Stage
                   </Button>
@@ -659,17 +661,18 @@ export default function StagesPage() {
               </Card>
             )
           ) : (
-            <Card className="border border-gray-800 bg-gray-900">
+            <Card className="bg-white border border-gray-200 shadow-lg rounded-xl">
               <CardContent className="flex flex-col items-center justify-center py-12">
                 <div className="text-center">
-                  <h3 className="text-xl font-semibold text-gray-100 mb-1">Select a Tournament</h3>
-                  <p className="text-gray-400">Please select a tournament to view and manage its stages</p>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-1">Select a Tournament</h3>
+                  <p className="text-gray-600">Please select a tournament to view and manage its stages</p>
                 </div>
               </CardContent>
             </Card>
           )}
         </>
       )}
+      </div>
 
       {/* Create Stage Dialog */}
       {selectedTournament && (
@@ -697,20 +700,20 @@ export default function StagesPage() {
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <AlertDialogContent className="bg-gray-900 border border-gray-800">
+        <AlertDialogContent className="bg-white border border-gray-200 rounded-xl shadow-lg">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-gray-100">Delete Stage</AlertDialogTitle>
-            <AlertDialogDescription className="text-gray-400">
+            <AlertDialogTitle className="text-gray-900">Delete Stage</AlertDialogTitle>
+            <AlertDialogDescription className="text-gray-600">
               Are you sure you want to delete{" "}
-              <span className="font-semibold text-gray-300">{selectedStage?.name}</span>?
+              <span className="font-semibold text-gray-900">{selectedStage?.name}</span>?
               This action cannot be undone and will also delete all associated matches.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="bg-gray-800 text-gray-400 hover:bg-gray-700">Cancel</AlertDialogCancel>
+            <AlertDialogCancel className="bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 rounded-lg">Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleConfirmDelete}
-              className="bg-red-600 text-white hover:bg-red-700 focus:ring-2 focus:ring-red-400"
+              className="bg-red-500 text-white hover:bg-red-600 focus:ring-2 focus:ring-red-400 rounded-lg"
             >
               Delete
             </AlertDialogAction>

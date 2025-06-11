@@ -18,7 +18,6 @@ import {
 } from "@/components/ui/select";
 import ConnectionStatus from "../../components/features/control-match/connection-status";
 import { toast } from "sonner";
-import FieldSelectDropdown from "@/components/fields/FieldSelectDropdown";
 import DynamicFieldSelectDropdown from "@/components/fields/DynamicFieldSelectDropdown";
 import { QueryKeys } from "@/lib/query-keys";
 import { apiClient } from "@/lib/api-client";

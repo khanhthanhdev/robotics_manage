@@ -16,58 +16,55 @@ export default function AudienceDisplayPage() {
   const filtered = tournaments.filter((t: Tournament) =>
     t.name.toLowerCase().includes(search.toLowerCase())
   );
-
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-yellow-50 py-10 px-4">
-      <h1 className="text-4xl font-extrabold text-center mb-10 text-blue-900 drop-shadow">Robotics Tournaments</h1>
+    <div className="min-h-screen bg-gray-50 py-10 px-4">
+      <h1 className="text-4xl font-bold text-center mb-10 text-gray-900">Robotics Tournaments</h1>
       <div className="max-w-2xl mx-auto mb-8">
         <input
           type="text"
           placeholder="Search tournaments by name..."
-          className="w-full px-4 py-2 border rounded-lg shadow"
+          className="w-full px-4 py-3 border border-gray-200 rounded-xl shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           value={search}
           onChange={e => setSearch(e.target.value)}
         />
-      </div>
-      {isLoading && (
+      </div>      {isLoading && (
         <div className="flex justify-center items-center h-40">
-          <span className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-900"></span>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
         </div>
       )}
       {isError && (
-        <div className="text-center text-red-600 font-bold text-lg py-10">
+        <div className="text-center text-red-800 bg-red-50 border border-red-200 rounded-xl p-6 font-semibold text-lg py-10 mx-auto max-w-md">
           Could not load tournaments. Please try again later.
         </div>
       )}
       {!isLoading && !isError && filtered.length === 0 && (
-        <div className="text-center text-gray-500 font-semibold text-lg py-10">
+        <div className="text-center text-gray-600 font-semibold text-lg py-10">
           No tournaments available at the moment
         </div>
-      )}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+      )}      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
         {filtered.map((t: Tournament) => (
-          <Card key={t.id} className="hover:shadow-xl transition-shadow cursor-pointer" onClick={() => router.push(`/audience-display/${t.id}`)}>
-            <CardHeader>
-              <CardTitle className="text-2xl font-bold text-blue-900">{t.name}</CardTitle>
+          <Card key={t.id} className="bg-white border border-gray-200 shadow-lg rounded-xl hover:shadow-xl transition-all duration-200 cursor-pointer hover:border-blue-300" onClick={() => router.push(`/audience-display/${t.id}`)}>
+            <CardHeader className="pb-4">
+              <CardTitle className="text-xl font-bold text-gray-900">{t.name}</CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="text-gray-700 mb-2">
-                <span className="font-semibold">Dates:</span> {formatDateRange(t.startDate, t.endDate)}
+            <CardContent className="pb-4">
+              <div className="text-gray-700 mb-3">
+                <span className="font-semibold text-gray-900">Dates:</span> {formatDateRange(t.startDate, t.endDate)}
               </div>
-              {t.description && <div className="text-gray-500 mb-2">{t.description}</div>}
+              {t.description && <div className="text-gray-600 mb-3 text-sm">{t.description}</div>}
               {t.numberOfFields !== undefined && (
-                <div className="text-gray-700 mb-2">
-                  <span className="font-semibold">Fields:</span> {t.numberOfFields}
+                <div className="text-gray-700 mb-3">
+                  <span className="font-semibold text-gray-900">Fields:</span> {t.numberOfFields}
                 </div>
               )}
               {t.admin && t.admin.username && (
-                <div className="text-gray-500 text-sm">Admin: {t.admin.username}</div>
+                <div className="text-gray-600 text-sm">Admin: {t.admin.username}</div>
               )}
             </CardContent>
-            <CardFooter className="flex justify-between items-center">
-              <span className="text-blue-800 font-semibold">Location TBA</span>
+            <CardFooter className="flex justify-between items-center pt-4 border-t border-gray-100">
+              <span className="text-blue-800 font-semibold text-sm">Location TBA</span>
               <button
-                className="bg-blue-700 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded-lg shadow"
+                className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-200"
                 onClick={e => { e.stopPropagation(); router.push(`/audience-display/${t.id}`); }}
               >
                 View Tournament

@@ -185,36 +185,35 @@ export default function MatchSchedulerDialog({
       setIsLoading(false);
     }
   };
-
   return (
     <Dialog open={isOpen} onOpenChange={(open) => {
       if (!open) onClose();
     }}>
-      <DialogContent className="sm:max-w-[550px]">
+      <DialogContent className="sm:max-w-[550px] bg-white border border-gray-200 rounded-xl shadow-lg">
         <DialogHeader>
-          <DialogTitle>Match Scheduler</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-gray-900">Match Scheduler</DialogTitle>
+          <DialogDescription className="text-gray-600">
             Generate matches for {stageName} ({stageType.toLowerCase()} stage)
           </DialogDescription>
         </DialogHeader>
 
         {/* Navigation tabs */}
-        <div className="flex border-b">
+        <div className="flex border-b border-gray-200">
           <div
-            className={`px-4 py-2 cursor-pointer ${
+            className={`px-4 py-2 cursor-pointer rounded-t-lg transition-colors ${
               activeView === "config" 
-                ? "border-b-2 border-primary font-medium text-primary" 
-                : "text-muted-foreground hover:text-foreground"
+                ? "border-b-2 border-blue-500 font-semibold text-blue-600" 
+                : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
             }`}
             onClick={() => setActiveView("config")}
           >
             1. Configuration
           </div>
           <div
-            className={`px-4 py-2 cursor-pointer ${
+            className={`px-4 py-2 cursor-pointer rounded-t-lg transition-colors ${
               activeView === "teams" 
-                ? "border-b-2 border-primary font-medium text-primary" 
-                : "text-muted-foreground hover:text-foreground"
+                ? "border-b-2 border-blue-500 font-semibold text-blue-600" 
+                : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
             }`}
             onClick={() => setActiveView("teams")}
           >
@@ -222,55 +221,53 @@ export default function MatchSchedulerDialog({
           </div>
           {scheduledMatches.length > 0 && (
             <div
-              className={`px-4 py-2 cursor-pointer ${
+              className={`px-4 py-2 cursor-pointer rounded-t-lg transition-colors ${
                 activeView === "results" 
-                  ? "border-b-2 border-primary font-medium text-primary" 
-                  : "text-muted-foreground hover:text-foreground"
+                  ? "border-b-2 border-blue-500 font-semibold text-blue-600" 
+                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
               }`}
               onClick={() => setActiveView("results")}
             >
               3. Results
             </div>
           )}
-        </div>
-
-        {/* Content based on active view */}
+        </div>        {/* Content based on active view */}
         {activeView === "config" && (
           <div className="py-2 space-y-4">
             <div className="space-y-2">
-              <Label>Scheduler Type</Label>
+              <Label className="text-gray-700 font-medium">Scheduler Type</Label>
               <div className="grid grid-cols-2 gap-2">
                 <div
-                  className={`border rounded-md p-3 cursor-pointer ${
+                  className={`border rounded-lg p-3 cursor-pointer transition-colors ${
                     schedulerType === "swiss" 
-                      ? "bg-primary/10 border-primary" 
+                      ? "bg-blue-50 border-blue-200 text-blue-900" 
                       : stageType !== "SWISS"
-                        ? "opacity-50 cursor-not-allowed"
-                        : "hover:bg-accent"
+                        ? "opacity-50 cursor-not-allowed bg-gray-50 border-gray-200 text-gray-400"
+                        : "hover:bg-gray-50 border-gray-300 text-gray-900"
                   }`}
                   onClick={() => {
                     if (stageType === "SWISS") setSchedulerType("swiss");
                   }}
                 >
                   <div className="font-medium">Swiss Tournament</div>
-                  <div className="text-xs text-muted-foreground">
+                  <div className="text-xs text-gray-600">
                     Multiple rounds where teams face opponents with similar records
                   </div>
                 </div>
                 <div
-                  className={`border rounded-md p-3 cursor-pointer ${
+                  className={`border rounded-lg p-3 cursor-pointer transition-colors ${
                     schedulerType === "playoff" 
-                      ? "bg-primary/10 border-primary" 
+                      ? "bg-blue-50 border-blue-200 text-blue-900" 
                       : stageType !== "PLAYOFF"
-                        ? "opacity-50 cursor-not-allowed"
-                        : "hover:bg-accent"
+                        ? "opacity-50 cursor-not-allowed bg-gray-50 border-gray-200 text-gray-400"
+                        : "hover:bg-gray-50 border-gray-300 text-gray-900"
                   }`}
                   onClick={() => {
                     if (stageType === "PLAYOFF") setSchedulerType("playoff");
                   }}
                 >
                   <div className="font-medium">Playoff Bracket</div>
-                  <div className="text-xs text-muted-foreground">
+                  <div className="text-xs text-gray-600">
                     Elimination tournament with advancing winners
                   </div>
                 </div>
@@ -279,7 +276,7 @@ export default function MatchSchedulerDialog({
             
             {schedulerType === "swiss" && (
               <div className="space-y-2">
-                <Label htmlFor="currentRoundNumber">Current Round Number</Label>
+                <Label htmlFor="currentRoundNumber" className="text-gray-700 font-medium">Current Round Number</Label>
                 <Input
                   id="currentRoundNumber"
                   type="number"
@@ -287,8 +284,9 @@ export default function MatchSchedulerDialog({
                   value={currentRoundNumber}
                   onChange={(e) => setCurrentRoundNumber(Number(e.target.value))}
                   placeholder="Enter the current round number (0 for first round)"
+                  className="bg-white border border-gray-300 text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 rounded-lg"
                 />
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-gray-600">
                   Enter 0 for the first round. For subsequent rounds, enter the last completed round number.
                 </p>
               </div>
@@ -296,50 +294,49 @@ export default function MatchSchedulerDialog({
 
             {schedulerType === "playoff" && (
               <div className="space-y-2">
-                <Label htmlFor="numberOfRounds">Number of Rounds</Label>
+                <Label htmlFor="numberOfRounds" className="text-gray-700 font-medium">Number of Rounds</Label>
                 <Select
                   value={numberOfRounds.toString()}
                   onValueChange={(value) => setNumberOfRounds(Number(value))}
                 >
-                  <SelectTrigger id="numberOfRounds">
+                  <SelectTrigger id="numberOfRounds" className="bg-white border border-gray-300 text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 rounded-lg">
                     <SelectValue placeholder="Select number of rounds" />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="2">2 rounds (4 teams)</SelectItem>
-                    <SelectItem value="3">3 rounds (8 teams)</SelectItem>
-                    <SelectItem value="4">4 rounds (16 teams)</SelectItem>
-                    <SelectItem value="5">5 rounds (32 teams)</SelectItem>
+                  <SelectContent className="bg-white border border-gray-200 rounded-lg shadow-lg">
+                    <SelectItem value="2" className="text-gray-900 hover:bg-gray-50">2 rounds (4 teams)</SelectItem>
+                    <SelectItem value="3" className="text-gray-900 hover:bg-gray-50">3 rounds (8 teams)</SelectItem>
+                    <SelectItem value="4" className="text-gray-900 hover:bg-gray-50">4 rounds (16 teams)</SelectItem>
+                    <SelectItem value="5" className="text-gray-900 hover:bg-gray-50">5 rounds (32 teams)</SelectItem>
                   </SelectContent>
                 </Select>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-gray-600">
                   Number of rounds determines the bracket size (2^rounds teams).
                 </p>
               </div>
             )}
           </div>
-        )}
-
-        {activeView === "teams" && (
+        )}        {activeView === "teams" && (
           <div className="py-2 space-y-4">
             <div className="flex items-center justify-between">
-              <div className="text-sm">
-                <span className="font-medium">{selectedTeams.length}</span> of {teams.length} teams selected
+              <div className="text-sm text-gray-700">
+                <span className="font-medium text-gray-900">{selectedTeams.length}</span> of {teams.length} teams selected
               </div>
               
               <div className="flex items-center gap-2">
                 <div className="relative">
-                  <SearchIcon className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <SearchIcon className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
                   <Input
                     placeholder="Search teams..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-8 h-9 w-[180px]"
+                    className="pl-8 h-9 w-[180px] bg-white border border-gray-300 text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 rounded-lg"
                   />
                 </div>
                 <Button 
                   variant="outline" 
                   size="sm" 
                   onClick={handleSelectAllFiltered}
+                  className="border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-gray-900 focus:ring-2 focus:ring-blue-100 focus:border-blue-300 rounded-lg"
                 >
                   {searchQuery ? "Select Filtered" : "Select All"}
                 </Button>
@@ -348,20 +345,20 @@ export default function MatchSchedulerDialog({
 
             {isLoadingTeams ? (
               <div className="flex justify-center py-6">
-                <div className="animate-spin h-6 w-6 border-2 border-primary border-t-transparent rounded-full"></div>
+                <div className="animate-spin h-6 w-6 border-2 border-blue-500 border-t-transparent rounded-full"></div>
               </div>
             ) : teams.length === 0 ? (
-              <div className="text-center py-6 text-muted-foreground">
+              <div className="text-center py-6 text-gray-600">
                 No teams found for this tournament
               </div>
             ) : (
-              <ScrollArea className="h-[300px] border rounded-md">
+              <ScrollArea className="h-[300px] border border-gray-200 rounded-lg">
                 <div className="p-2">
                   {filteredTeams.map(team => (
                     <div
                       key={team.id}
-                      className={`flex items-center p-2 rounded-md cursor-pointer ${
-                        selectedTeams.includes(team.id) ? "bg-primary/10" : "hover:bg-accent"
+                      className={`flex items-center p-2 rounded-lg cursor-pointer transition-colors ${
+                        selectedTeams.includes(team.id) ? "bg-blue-50 border border-blue-200" : "hover:bg-gray-50"
                       }`}
                       onClick={() => toggleTeam(team.id)}
                     >
@@ -372,12 +369,12 @@ export default function MatchSchedulerDialog({
                         className="mr-2"
                       />
                       <div>
-                        <div className="font-medium flex items-center gap-2">
-                          <span className="bg-muted px-1 rounded text-xs">{team.teamNumber}</span>
+                        <div className="font-medium flex items-center gap-2 text-gray-900">
+                          <span className="bg-gray-100 text-gray-700 px-1 rounded text-xs font-semibold">{team.teamNumber}</span>
                           <span>{team.name}</span>
                         </div>
                         {team.organization && (
-                          <div className="text-xs text-muted-foreground">{team.organization}</div>
+                          <div className="text-xs text-gray-600">{team.organization}</div>
                         )}
                       </div>
                     </div>
@@ -387,41 +384,39 @@ export default function MatchSchedulerDialog({
             )}
 
             {error && (
-              <div className="bg-destructive/10 text-destructive p-3 rounded-md text-sm">
+              <div className="bg-red-50 text-red-800 border border-red-200 p-3 rounded-lg text-sm">
                 {error}
               </div>
             )}
           </div>
-        )}
-
-        {activeView === "results" && (
+        )}        {activeView === "results" && (
           <div className="py-2 space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="font-medium">
+              <h3 className="font-medium text-gray-900">
                 Created {scheduledMatches.length} matches
               </h3>
-              <Badge variant="outline" className="bg-green-100 border-green-200 text-green-800">
+              <Badge variant="outline" className="bg-green-50 border-green-200 text-green-800">
                 Success
               </Badge>
             </div>
 
-            <ScrollArea className="h-[300px] border rounded-md">
-              <div className="divide-y">
+            <ScrollArea className="h-[300px] border border-gray-200 rounded-lg">
+              <div className="divide-y divide-gray-100">
                 {paginatedMatches.map(match => (
-                  <div key={match.id} className="p-3 hover:bg-accent/50">
+                  <div key={match.id} className="p-3 hover:bg-gray-50 transition-colors">
                     <div className="flex justify-between items-center mb-1">
-                      <div className="font-medium">
+                      <div className="font-medium text-gray-900">
                         Match #{match.matchNumber}
                       </div>
-                      <Badge variant="outline">{match.status || "PENDING"}</Badge>
+                      <Badge variant="outline" className="border-gray-300 text-gray-700">{match.status || "PENDING"}</Badge>
                     </div>
-                    <div className="text-sm text-muted-foreground mb-2">
+                    <div className="text-sm text-gray-600 mb-2">
                       Round: {match.roundNumber}
                     </div>
                     <div className="grid grid-cols-2 gap-2 text-sm">
                       <div>
                         <div className="text-xs font-semibold text-red-600">Red Alliance</div>
-                        <div>
+                        <div className="text-gray-900">
                           {match.alliances
                             .find((a: any) => a.color === "RED")
                             ?.teamAlliances.map((ta: any) => ta.team?.teamNumber || "TBD")
@@ -430,7 +425,7 @@ export default function MatchSchedulerDialog({
                       </div>
                       <div>
                         <div className="text-xs font-semibold text-blue-600">Blue Alliance</div>
-                        <div>
+                        <div className="text-gray-900">
                           {match.alliances
                             .find((a: any) => a.color === "BLUE")
                             ?.teamAlliances.map((ta: any) => ta.team?.teamNumber || "TBD")
@@ -445,7 +440,7 @@ export default function MatchSchedulerDialog({
 
             {totalPages > 1 && (
               <div className="flex items-center justify-between">
-                <div className="text-sm text-muted-foreground">
+                <div className="text-sm text-gray-600">
                   Page {currentPage} of {totalPages}
                 </div>
                 <div className="flex gap-1">
@@ -454,6 +449,7 @@ export default function MatchSchedulerDialog({
                     size="sm"
                     onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                     disabled={currentPage === 1}
+                    className="border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-gray-900 focus:ring-2 focus:ring-blue-100 focus:border-blue-300 rounded-lg"
                   >
                     <ArrowLeftIcon className="h-4 w-4" />
                   </Button>
@@ -462,6 +458,7 @@ export default function MatchSchedulerDialog({
                     size="sm"
                     onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                     disabled={currentPage === totalPages}
+                    className="border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-gray-900 focus:ring-2 focus:ring-blue-100 focus:border-blue-300 rounded-lg"
                   >
                     <ArrowRightIcon className="h-4 w-4" />
                   </Button>
@@ -469,17 +466,16 @@ export default function MatchSchedulerDialog({
               </div>
             )}
           </div>
-        )}
-
-        <DialogFooter className="gap-2">
+        )}        <DialogFooter className="gap-2">
           {/* Navigation buttons based on active view */}
           {activeView === "config" && (
             <>
-              <Button variant="outline" onClick={onClose}>
+              <Button variant="outline" onClick={onClose} className="border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-gray-900 focus:ring-2 focus:ring-blue-100 focus:border-blue-300 rounded-lg">
                 Cancel
               </Button>
               <Button 
                 onClick={() => setActiveView("teams")}
+                className="bg-blue-500 text-white font-semibold rounded-lg px-5 py-2.5 shadow-md hover:bg-blue-600 focus:ring-2 focus:ring-blue-400 focus:outline-none transition-colors duration-200"
               >
                 Next: Select Teams
               </Button>
@@ -491,12 +487,14 @@ export default function MatchSchedulerDialog({
               <Button 
                 variant="outline" 
                 onClick={() => setActiveView("config")}
+                className="border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-gray-900 focus:ring-2 focus:ring-blue-100 focus:border-blue-300 rounded-lg"
               >
                 Back
               </Button>
               <Button
                 onClick={handleSchedule}
                 disabled={isLoading || selectedTeams.length === 0}
+                className="bg-blue-500 text-white font-semibold rounded-lg px-5 py-2.5 shadow-md hover:bg-blue-600 focus:ring-2 focus:ring-blue-400 focus:outline-none transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? (
                   <>
@@ -518,10 +516,11 @@ export default function MatchSchedulerDialog({
                   setActiveView("config");
                   setScheduledMatches([]);
                 }}
+                className="border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-gray-900 focus:ring-2 focus:ring-blue-100 focus:border-blue-300 rounded-lg"
               >
                 Create More
               </Button>
-              <Button onClick={onClose}>
+              <Button onClick={onClose} className="bg-blue-500 text-white font-semibold rounded-lg px-5 py-2.5 shadow-md hover:bg-blue-600 focus:ring-2 focus:ring-blue-400 focus:outline-none transition-colors duration-200">
                 Close
               </Button>
             </>

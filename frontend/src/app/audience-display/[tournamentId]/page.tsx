@@ -19,30 +19,28 @@ export default function FieldSelectionPage() {
       router.push(`/audience-display/${tournamentId}/${fieldId}`);
     }
   };
-
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-yellow-50 py-10 px-4">
+    <div className="min-h-screen bg-gray-50 py-10 px-4">
       <button
-        className="mb-6 px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 text-blue-900 font-semibold"
+        className="mb-6 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-700 font-semibold shadow-sm transition-colors duration-200"
         onClick={() => router.push("/audience-display")}
       >
         ← Back to Tournament List
       </button>
-      <div className="max-w-xl mx-auto bg-white rounded-xl shadow-lg p-8">
-        {isLoadingTournament ? (
-          <div className="text-center text-blue-700 text-xl">Loading tournament...</div>
+      <div className="max-w-xl mx-auto bg-white border border-gray-200 rounded-xl shadow-lg p-8">        {isLoadingTournament ? (
+          <div className="text-center text-blue-800 text-xl font-semibold">Loading tournament...</div>
         ) : isErrorTournament || !tournament ? (
-          <div className="text-center text-red-600 font-bold text-lg">Could not load tournament details.</div>
+          <div className="text-center text-red-800 bg-red-50 border border-red-200 rounded-xl p-6 font-semibold text-lg">Could not load tournament details.</div>
         ) : (
           <>
-            <h1 className="text-3xl font-extrabold text-center mb-4 text-blue-900 drop-shadow">
+            <h1 className="text-3xl font-bold text-center mb-4 text-gray-900">
               {tournament.name} - Select Field
             </h1>
             <div className="text-center text-gray-700 mb-6">
-              <span className="font-semibold">Dates:</span> {formatDateRange(tournament.startDate, tournament.endDate)}
+              <span className="font-semibold text-gray-900">Dates:</span> {formatDateRange(tournament.startDate, tournament.endDate)}
             </div>
             <div className="mb-8">
-              <label className="block text-blue-900 font-semibold mb-2 text-lg">Select a Field to View</label>
+              <label className="block text-gray-900 font-semibold mb-3 text-lg">Select a Field to View</label>
               <FieldSelectDropdown
                 tournamentId={tournamentId}
                 selectedFieldId={null}
@@ -50,13 +48,12 @@ export default function FieldSelectionPage() {
                 showAllFieldsOption={false}
                 disabled={isLoadingFields}
               />
-            </div>
-            {isLoadingFields ? (
-              <div className="text-center text-blue-700">Loading fields...</div>
+            </div>            {isLoadingFields ? (
+              <div className="text-center text-blue-800 font-semibold">Loading fields...</div>
             ) : isErrorFields ? (
-              <div className="text-center text-red-600 font-bold">Could not load fields for this tournament.</div>
+              <div className="text-center text-red-800 bg-red-50 border border-red-200 rounded-xl p-4 font-semibold">Could not load fields for this tournament.</div>
             ) : fields.length === 0 ? (
-              <div className="text-center text-gray-500 font-semibold">This tournament has no fields available for display.</div>
+              <div className="text-center text-gray-600 bg-gray-50 border border-gray-200 rounded-xl p-4 font-semibold">This tournament has no fields available for display.</div>
             ) : null}
           </>
         )}

@@ -270,9 +270,9 @@ class ConnectionManager implements IConnectionManager {
 class EventEmitter implements IEventEmitter {
   private listeners: Map<string, Set<(...args: any[]) => void>> = new Map();
   private errorCallbacks: Set<ErrorCallback> = new Set();
-  // Map to store the relationship between original callbacks and their wrapped versions
+
   private callbackMap: Map<string, Map<(...args: any[]) => void, (...args: any[]) => void>> = new Map();
-  // Map to store master handlers for each event (optimization for multiple listeners)
+
   private masterHandlers: Map<string, (...args: any[]) => void> = new Map();
 
   constructor(private connectionManager: ConnectionManager) {}
