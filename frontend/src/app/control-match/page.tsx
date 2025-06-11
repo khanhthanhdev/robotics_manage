@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { useMatch, useUpdateMatchStatus, useMatches } from "@/hooks/api/use-matches";
 import { useMatchesByTournament } from "@/hooks/features/use-matches-by-tournament";
@@ -8,6 +8,7 @@ import { MatchStatus } from "@/lib/types";
 import { useTournaments } from "@/hooks/api/use-tournaments";
 import { MatchData } from "@/lib/types";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectTrigger,
@@ -72,9 +73,7 @@ export default function ControlMatchPage() {
     tournamentsLoading,
     selectedTournamentId,
     setSelectedTournamentId,
-  ]);
-
-  // Use selectedTournamentId for all tournament-specific logic
+  ]);  // Use selectedTournamentId for all tournament-specific logic
   const tournamentId = selectedTournamentId || "all";
 
   // State for selected match
@@ -180,12 +179,31 @@ export default function ControlMatchPage() {
     selectedMatchId,
     selectedFieldId,
   });
-
   // State for tracking active match and match state from WebSocket
   const [activeMatch, setActiveMatch] = useState<any>(null);
   const [matchState, setMatchState] = useState<any>(null);
 
-  // Initialize WebSocket subscriptions
+  // Create stable callback functions to prevent unnecessary re-renders
+  const handleTimerUpdate = useCallback((data: any) => {
+    // Timer updates are handled by the timer control hook
+  }, []);
+
+  const handleScoreUpdate = useCallback((data: any) => {
+    // Score updates are handled by the scoring control hook
+  }, []);
+
+  const handleMatchUpdate = useCallback((data: any) => {
+    setActiveMatch(data);
+    // Auto-select this match if we don't have one selected yet
+    if (!selectedMatchId && data.id) {
+      setSelectedMatchId(data.id);
+    }
+  }, [selectedMatchId]);
+
+  const handleMatchStateChange = useCallback((data: any) => {
+    setMatchState(data);
+  }, []);
+  // Initialize WebSocket subscriptions with optimized implementation
   const {
     isConnected,
     currentTournament,
@@ -201,22 +219,10 @@ export default function ControlMatchPage() {
     tournamentId,
     selectedFieldId,
     selectedMatchId,
-    onTimerUpdate: (data: any) => {
-      // Timer updates are handled by the timer control hook
-    },
-    onScoreUpdate: (data: any) => {
-      // Score updates are handled by the scoring control hook
-    },
-    onMatchUpdate: (data: any) => {
-      setActiveMatch(data);
-      // Auto-select this match if we don't have one selected yet
-      if (!selectedMatchId && data.id) {
-        setSelectedMatchId(data.id);
-      }
-    },
-    onMatchStateChange: (data: any) => {
-      setMatchState(data);
-    },
+    onTimerUpdate: handleTimerUpdate,
+    onScoreUpdate: handleScoreUpdate,
+    onMatchUpdate: handleMatchUpdate,
+    onMatchStateChange: handleMatchStateChange,
   });
 
   // Get the match status update mutation
@@ -507,13 +513,11 @@ export default function ControlMatchPage() {
         scoringControl.setBlueMultiplier(1.0);
     }
   };
-
   return (
     <div className="min-h-screen bg-gray-50 p-0 w-full">
       <div className="w-full">
         <h1 className="text-3xl font-bold text-gray-900 mb-6 px-6 pt-6">
-          Match Control Center
-        </h1>
+          Match Control Center        </h1>
 
         {/* Tournament and Field Selection */}
         <Card className="p-6 mb-6 mx-6">

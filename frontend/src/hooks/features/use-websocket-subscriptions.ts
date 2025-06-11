@@ -120,7 +120,7 @@ export function useWebSocketSubscriptions({
     return () => {
       if (unsubscribe) unsubscribe();
     };
-  }, [subscribe, selectedFieldId, onTimerUpdate]);
+  }, [subscribe, selectedFieldId, onTimerUpdate, tournamentId]); // Added tournamentId
 
   // Subscribe to WebSocket score updates and update React Query cache
   useEffect(() => {
@@ -194,7 +194,7 @@ export function useWebSocketSubscriptions({
     return () => {
       if (unsubscribe) unsubscribe();
     };
-  }, [selectedMatchId, subscribe, queryClient, selectedFieldId, onScoreUpdate]);
+  }, [selectedMatchId, subscribe, queryClient, selectedFieldId, onScoreUpdate, tournamentId]); // Added tournamentId
 
   // Listen for match updates from WebSocket
   useEffect(() => {
@@ -243,7 +243,7 @@ export function useWebSocketSubscriptions({
     return () => {
       if (unsubscribe) unsubscribe();
     };
-  }, [subscribe, selectedMatchId, queryClient, selectedFieldId, onMatchUpdate]);
+  }, [subscribe, selectedMatchId, queryClient, selectedFieldId, onMatchUpdate, tournamentId]); // Added tournamentId
 
   // Listen for match state changes from WebSocket
   useEffect(() => {
@@ -292,7 +292,7 @@ export function useWebSocketSubscriptions({
     return () => {
       if (unsubscribe) unsubscribe();
     };
-  }, [subscribe, selectedMatchId, queryClient, selectedFieldId, onMatchStateChange]);
+  }, [subscribe, selectedMatchId, queryClient, selectedFieldId, onMatchStateChange, tournamentId]); // Added tournamentId
 
   return {
     // WebSocket actions

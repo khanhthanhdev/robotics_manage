@@ -31,7 +31,7 @@ export interface BaseScoreData {
 
 // For real-time score updates (no database persistence)
 export interface ScoreUpdateData extends BaseScoreData {
-  type: 'scoreUpdate' | 'realtime';
+  type: 'realtime';
 }
 
 // For database persistence requests

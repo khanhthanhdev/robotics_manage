@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import websocketService, { IWebSocketService } from '@/lib/websocket';
 import {
   TimerData,
@@ -13,126 +13,168 @@ import {
 
 /**
  * React hook for using the WebSocket service (SOLID: depends on interface)
+ * Optimized to minimize re-renders and function recreations
  */
-export function useWebSocket(options: UseWebSocketOptions = {}, ws: IWebSocketService = websocketService) {
+export function useWebSocket(options: UseWebSocketOptions = {}) {
+  // Always use the singleton service to avoid reference changes
+  const ws = websocketService;
   const { autoConnect = true, url, tournamentId } = options;
+
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [currentTournament, setCurrentTournament] = useState<string | null>(tournamentId || null);
+  
+  // Use ref to always access current tournament ID without causing re-renders
+  const currentTournamentRef = useRef<string | null>(tournamentId || null);
 
-  // Connect to the WebSocket server
+  // Sync currentTournament with tournamentId option changes
+  useEffect(() => {
+    if (tournamentId !== undefined) {
+      setCurrentTournament(tournamentId);
+      currentTournamentRef.current = tournamentId;
+    }
+  }, [tournamentId]);// Connect to the WebSocket server
   const connect = useCallback(() => {
     ws.connect(url);
-  }, [url, ws]);
+  }, [url]); // Only url can change
+  
   // Disconnect from the WebSocket server
   const disconnect = useCallback(() => {
     ws.disconnect();
-  }, [ws]);
-  // Join a tournament room
+  }, []); // No dependencies - ws is stable singleton
+    // Join a tournament room
   const joinTournament = useCallback((id: string) => {
     ws.joinTournament(id);
     setCurrentTournament(id);
-  }, [ws]);
+    currentTournamentRef.current = id;
+  }, []); // No dependencies - only sets state, doesn't read currentTournament
+  
   // Leave a tournament room
   const leaveTournament = useCallback((id: string) => {
     ws.leaveTournament(id);
     setCurrentTournament(null);
-  }, [ws]);
+    currentTournamentRef.current = null;
+  }, []); // No dependencies - only sets state, doesn't read currentTournament
+  
   // Subscribe to WebSocket events
   const subscribe = useCallback(<T>(eventName: string, callback: (data: T) => void) => {
     return ws.on<T>(eventName, callback);
-  }, [ws]);
+  }, []); // No dependencies - ws is stable singleton
+  
   // Unsubscribe from WebSocket events
   const unsubscribe = useCallback((eventName: string) => {
     ws.off(eventName);
-  }, [ws]);
-  // Display mode control functions
+  }, []); // No dependencies - ws is stable singleton  // Display mode control functions - Use currentTournament ref to avoid dependency
   const changeDisplayMode = useCallback((settings: Omit<AudienceDisplaySettings, 'updatedAt'>) => {
-    if (!currentTournament && !settings.tournamentId) {
+    const tournamentId = currentTournamentRef.current;
+    if (!tournamentId && !settings.tournamentId) {
       console.error('No tournament ID available for changeDisplayMode');
       return;
     }
     ws.sendDisplayModeChange({
       ...settings,
-      tournamentId: settings.tournamentId || currentTournament!,
+      tournamentId: settings.tournamentId || tournamentId!,
       updatedAt: Date.now(),
     });
-  }, [currentTournament, ws]);
-  // Match update functions
+  }, []); // Remove dependencies to prevent re-creation
+  
+  // Match update functions - Use currentTournament ref to avoid dependency
   const sendMatchUpdate = useCallback((matchData: Omit<MatchData, 'tournamentId'>) => {
-    if (!currentTournament) {
+    const tournamentId = currentTournamentRef.current;
+    if (!tournamentId) {
       console.error('No tournament ID available for sendMatchUpdate');
       return;
     }
-    ws.sendMatchUpdate({ ...matchData, tournamentId: currentTournament });
-  }, [currentTournament, ws]);
-  // Score update functions
+    ws.sendMatchUpdate({ ...matchData, tournamentId });
+  }, []); // Remove dependencies to prevent re-creation
+  
+  // Score update functions - Use currentTournament ref to avoid dependency
   const sendScoreUpdate = useCallback((scoreData: Omit<ScoreData, 'tournamentId'>) => {
-    if (!currentTournament) {
+    const tournamentId = currentTournamentRef.current;
+    if (!tournamentId) {
       console.error('No tournament ID available for sendScoreUpdate');
       return;
     }
-    ws.sendScoreUpdate({ ...scoreData, tournamentId: currentTournament });
-  }, [currentTournament, ws]);
-  // Match state change functions
+    ws.sendScoreUpdate({ ...scoreData, tournamentId });
+  }, []); // Remove dependencies to prevent re-creation
+  
+  // Match state change functions - Use currentTournament ref to avoid dependency
   const sendMatchStateChange = useCallback((stateData: Omit<MatchStateData, 'tournamentId'>) => {
-    if (!currentTournament) {
+    const tournamentId = currentTournamentRef.current;
+    if (!tournamentId) {
       console.error('No tournament ID available for sendMatchStateChange');
       return;
     }
-    ws.sendMatchStateChange({ ...stateData, tournamentId: currentTournament });
-  }, [currentTournament, ws]);  // Timer control functions
+    ws.sendMatchStateChange({ ...stateData, tournamentId });
+  }, []); // Remove dependencies to prevent re-creation  // Timer control functions - Use currentTournament ref to avoid dependency
   const startTimer = useCallback((timerData: Omit<TimerData, 'tournamentId'>) => {
-    if (!currentTournament) {
+    const tournamentId = currentTournamentRef.current;
+    if (!tournamentId) {
       console.error('No tournament ID available for startTimer');
       return;
     }
     // Don't override isRunning or startedAt - let the backend handle these
-    ws.startTimer({ ...timerData, tournamentId: currentTournament });
-  }, [currentTournament, ws]);
+    ws.startTimer({ ...timerData, tournamentId });
+  }, []); // Remove dependencies to prevent re-creation
+  
   const pauseTimer = useCallback((timerData: Omit<TimerData, 'tournamentId'>) => {
-    if (!currentTournament) {
+    const tournamentId = currentTournamentRef.current;
+    if (!tournamentId) {
       console.error('No tournament ID available for pauseTimer');
       return;
     }
-    ws.pauseTimer({ ...timerData, tournamentId: currentTournament });
-  }, [currentTournament, ws]);
+    ws.pauseTimer({ ...timerData, tournamentId });
+  }, []); // Remove dependencies to prevent re-creation
+  
   const resetTimer = useCallback((timerData: Omit<TimerData, 'tournamentId'>) => {
-    if (!currentTournament) {
+    const tournamentId = currentTournamentRef.current;
+    if (!tournamentId) {
       console.error('No tournament ID available for resetTimer');
       return;
     }
-    ws.resetTimer({ ...timerData, tournamentId: currentTournament });
-  }, [currentTournament, ws]);  // Announcement functions
+    ws.resetTimer({ ...timerData, tournamentId });
+  }, []); // Remove dependencies to prevent re-creation
+
+  // Announcement functions - Use currentTournament ref to avoid dependency
   const sendAnnouncement = useCallback((message: string, duration?: number, fieldId?: string) => {
-    if (!currentTournament) {
+    const tournamentId = currentTournamentRef.current;
+    if (!tournamentId) {
       console.error('No tournament ID available for sendAnnouncement');
       return;
     }
     ws.sendAnnouncement({ 
       message, 
       duration, 
-      tournamentId: currentTournament,
+      tournamentId,
       fieldId // Include fieldId if provided
     });
-  }, [currentTournament, ws]);
-  // Field room join/leave for field-specific context
+  }, []); // Remove dependencies to prevent re-creation// Field room join/leave for field-specific context
   const joinFieldRoom = useCallback((fieldId: string) => {
     ws.joinFieldRoom(fieldId);
-  }, [ws]);
+  }, []); // No dependencies - ws is stable singleton
+  
   const leaveFieldRoom = useCallback((fieldId: string) => {
     ws.leaveFieldRoom(fieldId);
-  }, [ws]);
-
-  // Setup connection tracking
+  }, []); // No dependencies - ws is stable singleton  // Setup connection tracking using event-driven status updates
   useEffect(() => {
-    const checkConnectionStatus = () => {
-      setIsConnected(ws.isConnected());
+    // Callback to update local connection state (regular function, not useCallback)
+    const handleConnectionStatus = (status: { connected: boolean; }) => {
+      setIsConnected(status.connected);
     };
-    const intervalId = setInterval(checkConnectionStatus, 1000);
-    if (autoConnect) connect();
-    checkConnectionStatus();
-    return () => { clearInterval(intervalId); };
-  }, [autoConnect, connect, ws]);
+
+    // Subscribe to connection status updates from the WebSocket service
+    const unsubscribeStatus = ws.onConnectionStatus(handleConnectionStatus);
+
+    // Initial check and connect if autoConnect is true
+    setIsConnected(ws.isConnected()); // Set initial state
+    if (autoConnect && !ws.isConnected()) {
+      connect();
+    }
+
+    // Cleanup: unsubscribe from status updates
+    return () => {
+      unsubscribeStatus();
+    };
+  }, [autoConnect, connect]); // Removed ws since it's now a stable reference
 
   return {
     isConnected,

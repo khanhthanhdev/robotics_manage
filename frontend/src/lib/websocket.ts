@@ -270,6 +270,10 @@ class ConnectionManager implements IConnectionManager {
 class EventEmitter implements IEventEmitter {
   private listeners: Map<string, Set<(...args: any[]) => void>> = new Map();
   private errorCallbacks: Set<ErrorCallback> = new Set();
+  // Map to store the relationship between original callbacks and their wrapped versions
+  private callbackMap: Map<string, Map<(...args: any[]) => void, (...args: any[]) => void>> = new Map();
+  // Map to store master handlers for each event (optimization for multiple listeners)
+  private masterHandlers: Map<string, (...args: any[]) => void> = new Map();
 
   constructor(private connectionManager: ConnectionManager) {}
 
@@ -301,60 +305,97 @@ class EventEmitter implements IEventEmitter {
     
     console.log('Emitting WebSocket event:', { event, data });
     socket.emit(event, data);
-  }
-  on<T = any>(event: string, callback: (data: T) => void): () => void {
+  }  on<T = any>(event: string, callback: (data: T) => void): () => void {
     console.log(`🔔 [New WebSocket Service] Setting up listener for event: ${event}`);
     
+    // Initialize data structures for this event if needed
     if (!this.listeners.has(event)) {
       this.listeners.set(event, new Set());
+      this.callbackMap.set(event, new Map());
     }
 
+    // Add the original callback to our internal tracking
     this.listeners.get(event)?.add(callback);
 
     const socket = this.connectionManager.getSocket();
     if (socket) {
-      // Wrap the callback to add debugging
-      const wrappedCallback = (data: T) => {
-        console.log(`📨 [New WebSocket Service] Received event '${event}':`, data);
-        try {
-          callback(data);
-        } catch (error) {
-          console.error(`❌ [New WebSocket Service] Error in event callback for '${event}':`, error);
-          this.notifyError({
-            event,
-            message: 'Callback error',
-            data,
-            timestamp: new Date(),
-          });
-        }
-      };
-      
-      socket.on(event, wrappedCallback);
+      // Check if we need to create a master handler for this event
+      if (!this.masterHandlers.has(event)) {
+        // Create a single master handler that will call all registered callbacks
+        const masterHandler = (data: T) => {
+          console.log(`📨 [New WebSocket Service] Received event '${event}':`, data);
+          
+          // Call all registered callbacks for this event
+          const eventCallbacks = this.listeners.get(event);
+          if (eventCallbacks) {
+            eventCallbacks.forEach(cb => {
+              try {
+                cb(data);
+              } catch (error) {
+                console.error(`❌ [New WebSocket Service] Error in event callback for '${event}':`, error);
+                this.notifyError({
+                  event,
+                  message: 'Callback error',
+                  data,
+                  timestamp: new Date(),
+                });
+              }
+            });
+          }
+        };
+        
+        // Store the master handler and register it with the socket
+        this.masterHandlers.set(event, masterHandler);
+        socket.on(event, masterHandler);
+        console.log(`🎯 [New WebSocket Service] Registered master handler for event: ${event}`);
+      }
     } else {
       console.warn(`⚠️ [New WebSocket Service] No socket available when setting up listener for: ${event}`);
     }
 
+    // Return cleanup function that properly removes this specific callback
     return () => {
       const callbacks = this.listeners.get(event);
       if (callbacks) {
+        // Remove the callback from our internal tracking
         callbacks.delete(callback);
-        const socket = this.connectionManager.getSocket();
-        if (socket) {
-          socket.off(event, callback as any);
+        
+        // If this was the last callback for this event, clean up the master handler
+        if (callbacks.size === 0) {
+          const socket = this.connectionManager.getSocket();
+          if (socket) {
+            const masterHandler = this.masterHandlers.get(event);
+            if (masterHandler) {
+              socket.off(event, masterHandler);
+              console.log(`🧹 [New WebSocket Service] Removed master handler for event: ${event}`);
+            }
+          }
+          
+          // Clean up our data structures
+          this.listeners.delete(event);
+          this.callbackMap.delete(event);
+          this.masterHandlers.delete(event);
         }
       }
     };
   }
-
   off(event: string): void {
     if (this.listeners.has(event)) {
-      const callbacks = this.listeners.get(event)!;
       const socket = this.connectionManager.getSocket();
       
-      callbacks.forEach(cb => {
-        if (socket) socket.off(event, cb as any);
-      });
+      // Remove the master handler from the socket
+      if (socket) {
+        const masterHandler = this.masterHandlers.get(event);
+        if (masterHandler) {
+          socket.off(event, masterHandler);
+          console.log(`🧹 [New WebSocket Service] Removed master handler for event: ${event}`);
+        }
+      }
+      
+      // Clean up all our data structures for this event
       this.listeners.delete(event);
+      this.callbackMap.delete(event);
+      this.masterHandlers.delete(event);
     }
   }
 
