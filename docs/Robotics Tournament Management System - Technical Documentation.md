@@ -131,16 +131,20 @@ The primary source code for the backend resides within the `/backend/src` direct
 
 Prisma is used as the ORM to interact with the database. The data model is defined in the `prisma/schema.prisma` file.
 
-*   **Schema Definition:** The schema defines various models such as `User`, `Tournament`, `Stage`, `Match`, `Team`, `Alliance`, `MatchScores`, `TeamStats`, `MatchControl`, `MatchTimer`, `AudienceDisplay`, and several enums like `UserRole`, `StageType`, `MatchState`, etc. These models represent the entities in the application and their relationships.
-    *   **Key Models and Relations:**
+*   **Schema Definition:** The schema defines various models such as `User`, `Tournament`, `Stage`, `Match`, `Team`, `Alliance`, `MatchScores` (representing a potentially simpler or older scoring structure), and the newer flexible scoring system components including `ScoreConfig`, `ScoreElement`, and `MatchScore`. It also includes `TeamStats`, `MatchControl`, `MatchTimer`, `AudienceDisplay`, and several enums like `UserRole`, `StageType`, `MatchState`, etc. These models represent the entities in the application and their relationships.
+    *   **Key Models and Relations (Illustrative - refer to actual `schema.prisma` for definitive structure):**
         *   `User`: Stores user information and roles (ADMIN, HEAD_REFEREE, etc.).
-        *   `Tournament`: Represents a robotics competition, linked to an admin `User` and containing multiple `Stage`s and `Team`s.
+        *   `Tournament`: Represents a robotics competition, linked to an admin `User` and containing multiple `Stage`s, `Team`s, and `ScoreConfig`s.
+        *   `Game`: (Implicitly defined by `ScoreConfig`) Defines a specific robotics game (e.g., "VEX Over Under 2024-2025") through its scoring configuration.
+        *   `ScoreConfig`: Defines the overall scoring structure for a game/tournament, detailing scorable `ScoreElement`s. Linked to a `Tournament`.
+        *   `ScoreElement`: Represents an individual scorable item in a game (e.g., "Triball in Goal", "Autonomous Win Point"), including its type (boolean, integer), point value, and associated rules. Part of a `ScoreConfig`.
         *   `Stage`: Defines a phase of a tournament (e.g., SWISS, PLAYOFF), linked to a `Tournament` and containing `Match`es.
         *   `Team`: Represents a participating team, linked to a `Tournament`.
-        *   `Match`: Represents a single game between alliances, linked to a `Stage`, `Alliance`s, and potentially `Field` and `Schedule`.
+        *   `Match`: Represents a single game between alliances, linked to a `Stage`, `Alliance`s, and potentially `Field` and `Schedule`. It can have associated `MatchScore` records (for flexible scoring) and/or a `MatchScores` record (older/simpler scoring).
         *   `Alliance`: Represents a group of teams (e.g., Red, Blue) within a `Match`.
         *   `TeamAlliance`: A join table linking `Team`s to `Alliance`s for a specific match.
-        *   `MatchScores`: Stores detailed scores for each alliance in a `Match`.
+        *   `MatchScores`: (Potentially older/simpler scoring model) Stores an aggregated score summary for each alliance in a `Match` using predefined fields.
+        *   `MatchScore`: (New flexible scoring model) Stores the specific value or count for each `ScoreElement` for an alliance in a `Match`, providing a detailed and adaptable score breakdown. Linked to a `Match`, `Alliance`, and `ScoreElement`.
         *   `TeamStats`: Tracks statistics for each `Team` within a `Tournament` and optionally a `Stage`.
         *   `MatchControl`: Manages the real-time state of a `Match` (e.g., SCHEDULED, RUNNING, PAUSED), linked to `MatchTimer`s and `AudienceDisplay`.
         *   `MatchTimer`: Tracks various timers associated with a match (e.g., AUTO, TELEOP).
@@ -156,7 +160,7 @@ The NestJS backend exposes a RESTful API for the frontend to consume. Controller
 *   **Request/Response Payloads:** DTOs are used to define the structure of request bodies and response payloads. NestJS pipes, such as `ValidationPipe`, are often used globally or per-endpoint to validate incoming request data against these DTOs.
 *   **Authentication and Authorization:**
     *   The `AuthModule` provides endpoints like `/auth/login` for user authentication. Upon successful login, a JWT (JSON Web Token) is typically returned to the client.
-    *   The `JwtAuthGuard` is applied to routes that require authentication. It validates the JWT sent in the `Authorization` header (usually as a Bearer token).
+    *   The `JwtAuthGuard` is applied to routes that require authentication. It validates the JWT sent in the `Authorization` header (usually as a Bearer token: `Authorization: Bearer <token>`).
     *   The `RolesGuard` and `@Roles()` decorator are used to implement role-based access control, restricting access to certain endpoints or operations based on the authenticated user's role (e.g., only an ADMIN can create a tournament).
 *   **API Versioning/Prefix:** A global API prefix (e.g., `/api/v1`) might be configured in `main.ts` for all routes.
 
@@ -659,7 +663,9 @@ This comprehensive schema supports the complex data management and real-time ope
 
 ## 7. API Documentation (Consolidated)
 
-This section provides a consolidated overview of the primary RESTful API endpoints and key Socket.io events used for real-time communication in the Robotics Tournament Management System. For detailed request/response DTO structures, refer to the `dto` subdirectories within each backend module (e.g., `/backend/src/tournaments/dto`).
+A comprehensive API documentation, detailing all RESTful endpoints and Socket.io events, is crucial for both frontend development and potential third-party integrations. This documentation should be automatically generated where possible (e.g., using tools like Swagger/OpenAPI for NestJS REST endpoints) and kept up-to-date with the codebase.
+
+*Self-Review Note: For REST APIs, consider documenting common HTTP response status codes (e.g., 200 OK, 201 Created, 400 Bad Request, 401 Unauthorized, 403 Forbidden, 404 Not Found, 500 Internal Server Error), a general error response structure (e.g., `{ "statusCode": 400, "message": "Validation failed", "errors": ["field: reason"] }`), and how authentication tokens (e.g., JWT Bearer tokens) are expected in request headers.*
 
 ### 7.1. REST API Endpoints
 
@@ -797,45 +803,26 @@ This API documentation provides a high-level overview. For precise details on DT
 
 ## 8. Deployment
 
-While the provided repository does not contain specific Dockerfiles, `docker-compose.yml`, or CI/CD workflow configurations (e.g., GitHub Actions workflows), this section outlines general strategies for deploying the Next.js frontend and NestJS backend.
+This section outlines general strategies and considerations for deploying the Robotics Tournament Management System. Specific CI/CD pipelines, Docker configurations, or hosting platform details are not yet finalized but will be developed as the project matures.
 
-### 8.1. Frontend (Next.js)
+**Frontend (Next.js):**
+*   **Hosting:** Platforms like Vercel (ideal for Next.js), Netlify, AWS Amplify, or self-hosting on a Node.js server.
+*   **Build Process:** `next build` generates an optimized production build.
+*   **Key Considerations:** Environment variables for API endpoints, static site generation (SSG) or server-side rendering (SSR) strategies per page, CDN for static assets.
 
-The Next.js frontend can be deployed using several methods:
+**Backend (NestJS):**
+*   **Hosting:** Cloud platforms like AWS (EC2, Fargate, Lambda), Google Cloud (Cloud Run, App Engine), Azure (App Service), or traditional VPS/dedicated servers. Containerization with Docker is highly recommended.
+*   **Build Process:** `nest build` compiles TypeScript to JavaScript.
+*   **Key Considerations:** Environment variables for database connections, JWT secrets, and other sensitive configurations. Scalability, logging, monitoring, and database management (backups, migrations).
 
-*   **Vercel:** As the creators of Next.js, Vercel offers seamless deployment. Connecting the GitHub repository to a Vercel project typically enables automatic builds and deployments on every push to the main branch. Vercel handles optimizations like static generation, serverless functions, and CDN distribution.
-*   **Netlify:** Similar to Vercel, Netlify provides excellent support for Next.js applications with continuous deployment from a Git repository.
-*   **Node.js Server:** The Next.js application can be built using `npm run build` (or `pnpm build`) and then started using `npm run start` (or `pnpm start`) on a traditional Node.js server (e.g., an EC2 instance, a DigitalOcean droplet, or a PaaS like Heroku). A process manager like PM2 is recommended to keep the application running.
-*   **Containers (Docker):** Although no Dockerfile is provided, one could be created to containerize the Next.js application. This would involve building the application and then running the Node.js server that serves the built application. The container could then be deployed to services like AWS ECS, EKS, Google Kubernetes Engine (GKE), or Azure Kubernetes Service (AKS).
+**Database (PostgreSQL):**
+*   **Hosting:** Managed database services like AWS RDS, Google Cloud SQL, Azure Database for PostgreSQL, or self-hosted PostgreSQL instances.
+*   **Key Considerations:** Security (network access, credentials), backups, scaling, and connection pooling.
 
-Key considerations for frontend deployment:
-
-*   **Environment Variables:** Ensure that environment variables required by the frontend (e.g., `NEXT_PUBLIC_API_URL` for the backend endpoint, `NEXT_PUBLIC_SOCKET_URL` for the WebSocket server) are correctly configured in the deployment environment.
-
-### 8.2. Backend (NestJS)
-
-The NestJS backend can also be deployed in various ways:
-
-*   **Node.js Server:** Similar to Next.js, the NestJS application can be built (`npm run build` or `pnpm build`) and run (`npm run start:prod` or `pnpm start:prod`) on a Node.js server. PM2 is highly recommended for managing the process.
-*   **Containers (Docker):** A Dockerfile can be created to containerize the NestJS application. This typically involves copying the `package.json`, `dist` folder (after building), and `node_modules` (or installing them within the container) and then running the application. This container can be deployed to various container orchestration platforms.
-*   **Serverless Functions:** Parts of a NestJS application can be deployed as serverless functions (e.g., AWS Lambda, Google Cloud Functions), though this often requires specific architectural considerations.
-*   **PaaS (Platform as a Service):** Platforms like Heroku, Render, or Fly.io can host NestJS applications, often simplifying the deployment process.
-
-Key considerations for backend deployment:
-
-*   **Database:** The chosen database (PostgreSQL as per `schema.prisma`) needs to be accessible from the deployed backend. This could be a managed database service (e.g., AWS RDS, Google Cloud SQL, ElephantSQL) or a self-hosted instance.
-*   **Environment Variables:** Critical environment variables must be set in the deployment environment, including:
-    *   `DATABASE_URL`: The connection string for the Prisma database.
-    *   `JWT_SECRET`: The secret key for signing and verifying JSON Web Tokens.
-    *   `PORT`: The port the NestJS application should listen on (often provided by the hosting environment).
-    *   Any other API keys or configuration values.
-*   **Prisma Migrations:** Before running the application in a new environment, Prisma migrations (`npx prisma migrate deploy` or `pnpm prisma migrate deploy`) must be applied to set up the database schema.
-*   **CORS:** Ensure Cross-Origin Resource Sharing (CORS) is correctly configured in the NestJS application (`app.enableCors()` in `main.ts`) to allow requests from the deployed frontend domain.
-
-### 8.3. General Considerations
-
-*   **Domain Names and SSL/TLS:** Configure appropriate domain names for both frontend and backend, and ensure SSL/TLS certificates are set up for HTTPS communication.
-*   **Logging and Monitoring:** Implement logging and monitoring solutions to track application health and diagnose issues in production.
+**General Considerations:**
+*   **CI/CD:** Implement a CI/CD pipeline (e.g., GitHub Actions, GitLab CI, Jenkins) to automate testing, building, and deployment.
+*   **Environment Management:** Separate configurations for development, staging, and production environments.
+*   **Monitoring and Logging:** Set up comprehensive logging and monitoring for both frontend and backend to track errors and performance.
 
 ## 9. Conclusion
 

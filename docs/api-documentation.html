@@ -1,0 +1,2441 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Robotics Tournament API Documentation</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <h1 id="robotics-tournament-api-documentation">Robotics Tournament API Documentation</h1>
+<h2 id="overview">Overview</h2>
+<p>This API provides endpoints for managing robotics tournaments, including users, teams, tournaments, stages, matches, match scores, and match scheduling. The API follows RESTful principles and uses JSON for data exchange.</p>
+<p><strong>Base URL</strong>: <code>http://localhost:3000/api</code>
+<strong>Swagger UI</strong>: <code>/api/docs</code></p>
+<hr>
+<h2 id="authentication">Authentication</h2>
+<ul>
+<li>Uses JWT (JSON Web Token) for authentication and role-based access control.</li>
+<li>After login, JWT is set as an HTTP-only cookie named <code>token</code>.</li>
+<li>Use the cookie for all authenticated requests.</li>
+<li>Common error responses include <code>401 Unauthorized</code> for authentication failures, <code>403 Forbidden</code> for authorization issues, <code>409 Conflict</code> for resource conflicts (e.g., duplicate username), and <code>400 Bad Request</code> for invalid input.</li>
+</ul>
+<h3 id="endpoints">Endpoints</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Endpoint</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td>/auth/register</td>
+<td>Register a new user</td>
+</tr>
+<tr>
+<td>POST</td>
+<td>/auth/login</td>
+<td>Login and receive JWT cookie</td>
+</tr>
+<tr>
+<td>POST</td>
+<td>/auth/logout</td>
+<td>Logout and clear cookie</td>
+</tr>
+<tr>
+<td>GET</td>
+<td>/auth/init-admin</td>
+<td>Initialize default admin</td>
+</tr>
+<tr>
+<td>GET</td>
+<td>/auth/check-auth</td>
+<td>Check authentication (JWT needed)</td>
+</tr>
+<tr>
+<td>GET</td>
+<td>/auth/check-admin</td>
+<td>Check admin role (JWT needed)</td>
+</tr>
+</tbody>
+</table>
+<h4 id="register">Register</h4>
+<ul>
+<li><strong>POST /auth/register</strong></li>
+<li><strong>Body:</strong></li>
+</ul>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;username&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;password&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;email&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// optional</span>
+  <span class="hljs-attr">&quot;role&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;ADMIN | HEAD_REFEREE | ALLIANCE_REFEREE | COMMON&quot;</span> <span class="hljs-comment">// optional, defaults to COMMON</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<ul>
+<li><strong>Response:</strong></li>
+</ul>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;username&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;role&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;COMMON&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// Or the role provided in the request</span>
+  <span class="hljs-attr">&quot;createdAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;timestamp&quot;</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h4 id="login">Login</h4>
+<ul>
+<li><strong>POST /auth/login</strong></li>
+<li><strong>Body:</strong></li>
+</ul>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;username&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;password&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<ul>
+<li><strong>Response:</strong></li>
+</ul>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;user&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;username&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;role&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;ADMIN | HEAD_REFEREE | ALLIANCE_REFEREE | COMMON&quot;</span>
+  <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Login successful&quot;</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<ul>
+<li><strong>Cookie:</strong>
+<ul>
+<li>Name: <code>token</code></li>
+<li>httpOnly: true</li>
+<li>maxAge: 7 days</li>
+</ul>
+</li>
+</ul>
+<h4 id="logout">Logout</h4>
+<ul>
+<li><strong>POST /auth/logout</strong></li>
+<li><strong>Response:</strong></li>
+</ul>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span> <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Logged out&quot;</span> <span class="hljs-punctuation">}</span>
+</code></pre>
+<h4 id="initialize-default-admin">Initialize Default Admin</h4>
+<ul>
+<li><strong>GET /auth/init-admin</strong></li>
+<li><strong>Description:</strong> Creates a default admin user if one doesn't already exist. Uses <code>ADMIN_USERNAME</code> and <code>ADMIN_PASSWORD</code> from environment variables (defaults to <code>admin</code> and <code>admin123</code>).</li>
+<li><strong>Status Code:</strong> <code>201 Created</code> (if admin is created or already exists)</li>
+<li><strong>Response (Admin Created):</strong></li>
+</ul>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Default admin user created successfully (username: admin)&quot;</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<ul>
+<li><strong>Response (Admin Already Exists):</strong></li>
+</ul>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Admin user already exists&quot;</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h4 id="check-auth">Check Auth</h4>
+<ul>
+<li><strong>GET /auth/check-auth</strong></li>
+<li><strong>Headers:</strong>
+<ul>
+<li>Cookie: <code>token=...</code></li>
+</ul>
+</li>
+<li><strong>Response:</strong></li>
+</ul>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;authenticated&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;user&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span> <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;username&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;role&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span> <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Your authentication is working correctly&quot;</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h4 id="check-admin">Check Admin</h4>
+<ul>
+<li><strong>GET /auth/check-admin</strong></li>
+<li><strong>Headers:</strong>
+<ul>
+<li>Cookie: <code>token=...</code></li>
+</ul>
+</li>
+<li><strong>Response:</strong></li>
+</ul>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;authenticated&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;role&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;ADMIN&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;hasAdminAccess&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Your ADMIN role is working correctly&quot;</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<hr>
+<h2 id="users">Users</h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Endpoint</th>
+<th>Description</th>
+<th>Authorization</th>
+<th>Body/Params</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td>/users</td>
+<td>List all users</td>
+<td>Public (or check global guards)</td>
+<td></td>
+</tr>
+<tr>
+<td>GET</td>
+<td>/users/:id</td>
+<td>Get user by ID</td>
+<td>Public (or check global guards)</td>
+<td></td>
+</tr>
+<tr>
+<td>POST</td>
+<td>/users</td>
+<td>Create user</td>
+<td>Admin</td>
+<td>JSON body</td>
+</tr>
+<tr>
+<td>PATCH</td>
+<td>/users/:id</td>
+<td>Update user</td>
+<td>Admin</td>
+<td>JSON body</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td>/users/:id</td>
+<td>Delete user</td>
+<td>Admin</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h4 id="create-user">Create User</h4>
+<ul>
+<li><strong>POST /users</strong></li>
+<li><strong>Authorization:</strong> Requires <code>ADMIN</code> role.</li>
+<li><strong>Body:</strong></li>
+</ul>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;username&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (min 3 chars)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;password&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (min 6 chars)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;role&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;ADMIN | HEAD_REFEREE | ALLIANCE_REFEREE | COMMON&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;createdById&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span> <span class="hljs-comment">// optional</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<ul>
+<li><strong>Response (201 Created):</strong></li>
+</ul>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;username&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;role&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;ADMIN | HEAD_REFEREE | ALLIANCE_REFEREE | COMMON&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;createdById&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// null if not provided</span>
+  <span class="hljs-attr">&quot;createdAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;timestamp&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;updatedAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;timestamp&quot;</span>
+  <span class="hljs-comment">// Note: Password is not returned.</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h4 id="update-user">Update User</h4>
+<ul>
+<li><strong>PATCH /users/:id</strong></li>
+<li><strong>Authorization:</strong> Requires <code>ADMIN</code> role.</li>
+<li><strong>Body:</strong></li>
+</ul>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;username&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (min 3 chars)&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// optional</span>
+  <span class="hljs-attr">&quot;password&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (min 6 chars)&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// optional</span>
+  <span class="hljs-attr">&quot;role&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;ADMIN | HEAD_REFEREE | ALLIANCE_REFEREE | COMMON&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// optional</span>
+  <span class="hljs-attr">&quot;createdById&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span> <span class="hljs-comment">// optional, though typically not updated via this DTO</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<ul>
+<li><strong>Response (200 OK):</strong></li>
+</ul>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;username&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;role&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;ADMIN | HEAD_REFEREE | ALLIANCE_REFEREE | COMMON&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;createdAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;timestamp&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;updatedAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;timestamp&quot;</span>
+  <span class="hljs-comment">// Note: Password is not returned. createdById is not part of the default select in the service update.</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h4 id="list-all-users">List All Users</h4>
+<ul>
+<li><strong>GET /users</strong></li>
+<li><strong>Authorization:</strong> Public (or check global guards if authentication is implicitly required).</li>
+<li><strong>Response (200 OK):</strong></li>
+</ul>
+<pre><code class="language-json"><span class="hljs-punctuation">[</span>
+  <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;username&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;role&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;ADMIN | HEAD_REFEREE | ALLIANCE_REFEREE | COMMON&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;createdAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;timestamp&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;updatedAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;timestamp&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;createdBy&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span> <span class="hljs-comment">// null if not set</span>
+      <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;username&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span>
+    <span class="hljs-punctuation">}</span>
+  <span class="hljs-punctuation">}</span>
+  <span class="hljs-comment">// ... more user objects</span>
+<span class="hljs-punctuation">]</span>
+</code></pre>
+<h4 id="get-user-by-id">Get User by ID</h4>
+<ul>
+<li><strong>GET /users/:id</strong></li>
+<li><strong>Authorization:</strong> Public (or check global guards if authentication is implicitly required).</li>
+<li><strong>Response (200 OK):</strong></li>
+</ul>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;username&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;role&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;ADMIN | HEAD_REFEREE | ALLIANCE_REFEREE | COMMON&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;createdAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;timestamp&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;updatedAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;timestamp&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;createdBy&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span> <span class="hljs-comment">// null if not set</span>
+    <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;username&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span>
+  <span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<ul>
+<li><strong>Response (404 Not Found):</strong> If user with the given ID does not exist.</li>
+</ul>
+<h4 id="delete-user">Delete User</h4>
+<ul>
+<li><strong>DELETE /users/:id</strong></li>
+<li><strong>Authorization:</strong> Requires <code>ADMIN</code> role.</li>
+<li><strong>Response (200 OK):</strong></li>
+</ul>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;username&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;role&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;ADMIN | HEAD_REFEREE | ALLIANCE_REFEREE | COMMON&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;createdAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;timestamp&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;updatedAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;timestamp&quot;</span>
+  <span class="hljs-comment">// The service returns the deleted user object.</span>
+  <span class="hljs-comment">// Alternatively, a 204 No Content response is also common.</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<ul>
+<li><strong>Response (404 Not Found):</strong> If user with the given ID does not exist.</li>
+</ul>
+<hr>
+<h2 id="teams">Teams</h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Endpoint</th>
+<th>Description</th>
+<th>Authorization</th>
+<th>Body/Params</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td>/teams</td>
+<td>List all teams</td>
+<td>Public (or check global guards)</td>
+<td>Query: <code>tournamentId</code> (optional)</td>
+</tr>
+<tr>
+<td>GET</td>
+<td>/teams/:id</td>
+<td>Get team by ID</td>
+<td>Public (or check global guards)</td>
+<td></td>
+</tr>
+<tr>
+<td>POST</td>
+<td>/teams</td>
+<td>Create team</td>
+<td>Admin</td>
+<td>JSON body</td>
+</tr>
+<tr>
+<td>PATCH</td>
+<td>/teams/:id</td>
+<td>Update team</td>
+<td>Admin</td>
+<td>JSON body</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td>/teams/:id</td>
+<td>Delete team</td>
+<td>Admin</td>
+<td></td>
+</tr>
+<tr>
+<td>POST</td>
+<td>/teams/import</td>
+<td>Import teams</td>
+<td>Admin</td>
+<td>JSON body</td>
+</tr>
+</tbody>
+</table>
+<h4 id="create-team">Create Team</h4>
+<ul>
+<li><strong>POST /teams</strong></li>
+<li><strong>Authorization:</strong> Requires <code>ADMIN</code> role.</li>
+<li><strong>Body:</strong></li>
+</ul>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (required)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;teamNumber&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// optional, auto-generated if not provided</span>
+  <span class="hljs-attr">&quot;organization&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// optional</span>
+  <span class="hljs-attr">&quot;avatar&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (URL)&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// optional</span>
+  <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// optional</span>
+  <span class="hljs-attr">&quot;teamMembers&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span> <span class="hljs-punctuation">{</span> <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (required)&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;role&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;email&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (email format)&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;phone&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span> <span class="hljs-punctuation">}</span> <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// optional, can also be a JSON string</span>
+  <span class="hljs-attr">&quot;tournamentId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span> <span class="hljs-comment">// optional</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<ul>
+<li><strong>Response (201 Created):</strong></li>
+</ul>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;teamNumber&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;organization&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// or null</span>
+  <span class="hljs-attr">&quot;avatar&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (URL)&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// or null</span>
+  <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// or null</span>
+  <span class="hljs-attr">&quot;teamMembers&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// or array of team member objects</span>
+  <span class="hljs-attr">&quot;tournamentId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// or null</span>
+  <span class="hljs-attr">&quot;createdAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;timestamp&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;updatedAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;timestamp&quot;</span>
+  <span class="hljs-comment">// Additional fields from Prisma schema might be present</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h4 id="update-team">Update Team</h4>
+<ul>
+<li><strong>PATCH /teams/:id</strong></li>
+<li><strong>Authorization:</strong> Requires <code>ADMIN</code> role.</li>
+<li><strong>Body:</strong> (All fields are optional)</li>
+</ul>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;teamNumber&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;organization&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;avatar&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (URL)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;teamMembers&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span> <span class="hljs-punctuation">{</span> <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;role&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;email&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (email format)&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;phone&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span> <span class="hljs-punctuation">}</span> <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// can also be a JSON string</span>
+  <span class="hljs-attr">&quot;tournamentId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<ul>
+<li><strong>Response (200 OK):</strong></li>
+</ul>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;teamNumber&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;organization&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// or null</span>
+  <span class="hljs-attr">&quot;avatar&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (URL)&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// or null</span>
+  <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// or null</span>
+  <span class="hljs-attr">&quot;teamMembers&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// or array of team member objects</span>
+  <span class="hljs-attr">&quot;tournamentId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// or null</span>
+  <span class="hljs-attr">&quot;createdAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;timestamp&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;updatedAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;timestamp&quot;</span>
+  <span class="hljs-comment">// Additional fields from Prisma schema might be present</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<ul>
+<li><strong>Response (404 Not Found):</strong> If team with the given ID does not exist.</li>
+</ul>
+<h4 id="delete-team">Delete Team</h4>
+<ul>
+<li><strong>DELETE /teams/:id</strong></li>
+<li><strong>Authorization:</strong> Requires <code>ADMIN</code> role.</li>
+<li><strong>Response (200 OK):</strong> (Returns the deleted team object)</li>
+</ul>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;teamNumber&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-comment">// ... other fields of the deleted team</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<ul>
+<li><strong>Response (204 No Content):</strong> Alternative successful response.</li>
+<li><strong>Response (404 Not Found):</strong> If team with the given ID does not exist.</li>
+</ul>
+<h4 id="import-teams">Import Teams</h4>
+<ul>
+<li><strong>POST /teams/import</strong></li>
+<li><strong>Authorization:</strong> Requires <code>ADMIN</code> role.</li>
+<li><strong>Body:</strong></li>
+</ul>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;content&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (required, e.g., &#x27;Team Alpha\nTeam Beta,School XYZ&#x27;)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;tournamentId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID, required)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;format&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;csv | text&quot;</span><span class="hljs-punctuation">,</span>      <span class="hljs-comment">// optional, defaults to &#x27;text&#x27;</span>
+  <span class="hljs-attr">&quot;hasHeader&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">false</span><span class="hljs-punctuation">,</span>         <span class="hljs-comment">// optional, boolean, defaults to false</span>
+  <span class="hljs-attr">&quot;delimiter&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;,&quot;</span>           <span class="hljs-comment">// optional, string, defaults to &#x27;,&#x27;</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<ul>
+<li><strong>Response (201 Created):</strong></li>
+</ul>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;success&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;count&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">2</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// Number of teams imported</span>
+  <span class="hljs-attr">&quot;teams&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+    <span class="hljs-punctuation">{</span>
+      <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;teamNumber&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Team Alpha&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-comment">// ... other team fields</span>
+    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-punctuation">{</span>
+      <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;teamNumber&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Team Beta&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-comment">// ... other team fields</span>
+    <span class="hljs-punctuation">}</span>
+  <span class="hljs-punctuation">]</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h4 id="list-all-teams">List All Teams</h4>
+<ul>
+<li><strong>GET /teams</strong></li>
+<li><strong>Authorization:</strong> Public (or check global guards if authentication is implicitly required).</li>
+<li><strong>Query Parameters:</strong>
+<ul>
+<li><code>tournamentId</code> (string, UUID, optional): Filter teams by a specific tournament.</li>
+</ul>
+</li>
+<li><strong>Response (200 OK):</strong></li>
+</ul>
+<pre><code class="language-json"><span class="hljs-punctuation">[</span>
+  <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;teamNumber&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;organization&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// or null</span>
+    <span class="hljs-attr">&quot;avatar&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (URL)&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// or null</span>
+    <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// or null</span>
+    <span class="hljs-attr">&quot;teamMembers&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// or array of team member objects</span>
+    <span class="hljs-attr">&quot;tournamentId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// or null</span>
+    <span class="hljs-attr">&quot;createdAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;timestamp&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;updatedAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;timestamp&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;tournament&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span> <span class="hljs-comment">// Included if tournamentId is valid or if team is associated</span>
+      <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-comment">// ... other tournament fields</span>
+    <span class="hljs-punctuation">}</span>
+  <span class="hljs-punctuation">}</span>
+  <span class="hljs-comment">// ... more team objects</span>
+<span class="hljs-punctuation">]</span>
+</code></pre>
+<h4 id="get-team-by-id">Get Team by ID</h4>
+<ul>
+<li><strong>GET /teams/:id</strong></li>
+<li><strong>Authorization:</strong> Public (or check global guards if authentication isimplicitly required).</li>
+<li><strong>Response (200 OK):</strong> (Response can be large due to nested includes)</li>
+</ul>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;teamNumber&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;organization&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// or null</span>
+  <span class="hljs-attr">&quot;avatar&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (URL)&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// or null</span>
+  <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// or null</span>
+  <span class="hljs-attr">&quot;teamMembers&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// or array of team member objects</span>
+  <span class="hljs-attr">&quot;tournamentId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// or null</span>
+  <span class="hljs-attr">&quot;createdAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;timestamp&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;updatedAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;timestamp&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;tournament&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-comment">// ... other tournament fields</span>
+  <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;teamAlliances&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span> <span class="hljs-comment">// Array of team participations in match alliances</span>
+    <span class="hljs-punctuation">{</span>
+      <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;teamId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;allianceId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;alliance&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+        <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;matchId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;color&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;RED | BLUE&quot;</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;match&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+          <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+          <span class="hljs-attr">&quot;matchNumber&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span>
+          <span class="hljs-attr">&quot;stageId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+          <span class="hljs-comment">// ... other match fields</span>
+          <span class="hljs-attr">&quot;stage&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+            <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+            <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
+            <span class="hljs-attr">&quot;tournamentId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+            <span class="hljs-comment">// ... other stage fields</span>
+            <span class="hljs-attr">&quot;tournament&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+              <span class="hljs-comment">// ... tournament fields (can be redundant if top-level tournament is present)</span>
+            <span class="hljs-punctuation">}</span>
+          <span class="hljs-punctuation">}</span>
+        <span class="hljs-punctuation">}</span>
+      <span class="hljs-punctuation">}</span>
+    <span class="hljs-punctuation">}</span>
+  <span class="hljs-punctuation">]</span>
+  <span class="hljs-comment">// Additional fields from Prisma schema might be present</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<ul>
+<li><strong>Response (404 Not Found):</strong> If team with the given ID does not exist.</li>
+</ul>
+<hr>
+<h2 id="tournaments">Tournaments</h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Endpoint</th>
+<th>Description</th>
+<th>Authorization</th>
+<th>Body/Params</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td>/tournaments</td>
+<td>List all tournaments</td>
+<td>Public (or check global guards)</td>
+<td></td>
+</tr>
+<tr>
+<td>GET</td>
+<td>/tournaments/:id</td>
+<td>Get tournament by ID</td>
+<td>Public (or check global guards)</td>
+<td></td>
+</tr>
+<tr>
+<td>GET</td>
+<td>/tournaments/:id/fields</td>
+<td>Get all fields for a tournament</td>
+<td>Public (or check global guards)</td>
+<td></td>
+</tr>
+<tr>
+<td>POST</td>
+<td>/tournaments</td>
+<td>Create tournament</td>
+<td>Admin</td>
+<td>JSON body</td>
+</tr>
+<tr>
+<td>PATCH</td>
+<td>/tournaments/:id</td>
+<td>Update tournament</td>
+<td>Admin</td>
+<td>JSON body</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td>/tournaments/:id</td>
+<td>Delete tournament</td>
+<td>Admin</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h4 id="create-tournament">Create Tournament</h4>
+<ul>
+<li><strong>POST /tournaments</strong></li>
+<li><strong>Authorization:</strong> Requires <code>ADMIN</code> role.</li>
+<li><strong>Body:</strong></li>
+</ul>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (required, min 1 char)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// optional</span>
+  <span class="hljs-attr">&quot;startDate&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (ISO date format, required)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;endDate&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (ISO date format, required, must be &gt;= startDate)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;adminId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID, required)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;numberOfFields&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;number (integer, min 1, max 20, defaults to 1)&quot;</span> <span class="hljs-comment">// optional</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<ul>
+<li><strong>Response (201 Created):</strong></li>
+</ul>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// or null</span>
+  <span class="hljs-attr">&quot;startDate&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (ISO date format)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;endDate&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (ISO date format)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;adminId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;numberOfFields&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;number&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;createdAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;timestamp&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;updatedAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;timestamp&quot;</span>
+  <span class="hljs-comment">// Note: Associated fields are also created based on numberOfFields.</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h4 id="update-tournament">Update Tournament</h4>
+<ul>
+<li><strong>PATCH /tournaments/:id</strong></li>
+<li><strong>Authorization:</strong> Requires <code>ADMIN</code> role.</li>
+<li><strong>Body:</strong> (All fields are optional)</li>
+</ul>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (min 1 char)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;startDate&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (ISO date format)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;endDate&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (ISO date format, must be &gt;= startDate if both provided)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-comment">// &quot;adminId&quot;: &quot;string (UUID)&quot;, // adminId update not typically handled here by default service logic</span>
+  <span class="hljs-attr">&quot;numberOfFields&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;number (integer, min 1, max 20)&quot;</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<ul>
+<li><strong>Response (200 OK):</strong></li>
+</ul>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// or null</span>
+  <span class="hljs-attr">&quot;startDate&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (ISO date format)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;endDate&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (ISO date format)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;adminId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// Unchanged by this typical update</span>
+  <span class="hljs-attr">&quot;numberOfFields&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;number&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;createdAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;timestamp&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;updatedAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;timestamp&quot;</span>
+  <span class="hljs-comment">// Note: Associated fields are updated (created/deleted) if numberOfFields changes.</span>
+  <span class="hljs-comment">// An error may be thrown if decreasing numberOfFields conflicts with existing match field assignments.</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<ul>
+<li><strong>Response (404 Not Found):</strong> If tournament with the given ID does not exist.</li>
+</ul>
+<h4 id="list-all-tournaments">List All Tournaments</h4>
+<ul>
+<li><strong>GET /tournaments</strong></li>
+<li><strong>Authorization:</strong> Public (or check global guards if authentication is implicitly required).</li>
+<li><strong>Response (200 OK):</strong></li>
+</ul>
+<pre><code class="language-json"><span class="hljs-punctuation">[</span>
+  <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// or null</span>
+    <span class="hljs-attr">&quot;startDate&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (ISO date format)&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;endDate&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (ISO date format)&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;adminId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;numberOfFields&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;number&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;createdAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;timestamp&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;updatedAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;timestamp&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;admin&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+      <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;username&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span>
+    <span class="hljs-punctuation">}</span>
+  <span class="hljs-punctuation">}</span>
+  <span class="hljs-comment">// ... more tournament objects</span>
+<span class="hljs-punctuation">]</span>
+</code></pre>
+<h4 id="get-tournament-by-id">Get Tournament by ID</h4>
+<ul>
+<li><strong>GET /tournaments/:id</strong></li>
+<li><strong>Authorization:</strong> Public (or check global guards if authentication isimplicitly required).</li>
+<li><strong>Response (200 OK):</strong> (Response can be large due to nested includes)</li>
+</ul>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// or null</span>
+  <span class="hljs-attr">&quot;startDate&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (ISO date format)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;endDate&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (ISO date format)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;adminId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;numberOfFields&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;number&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;createdAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;timestamp&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;updatedAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;timestamp&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;admin&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;username&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span>
+  <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;stages&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+    <span class="hljs-punctuation">{</span>
+      <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-comment">// ... other stage fields</span>
+      <span class="hljs-attr">&quot;matches&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+        <span class="hljs-punctuation">{</span>
+          <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+          <span class="hljs-comment">// ... other match fields</span>
+          <span class="hljs-attr">&quot;alliances&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+            <span class="hljs-punctuation">{</span>
+              <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+              <span class="hljs-comment">// ... other alliance fields</span>
+              <span class="hljs-attr">&quot;teamAlliances&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+                <span class="hljs-punctuation">{</span>
+                  <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+                  <span class="hljs-comment">// ... other teamAlliance fields</span>
+                  <span class="hljs-attr">&quot;team&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+                    <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+                    <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span>
+                    <span class="hljs-comment">// ... other team fields</span>
+                  <span class="hljs-punctuation">}</span>
+                <span class="hljs-punctuation">}</span>
+              <span class="hljs-punctuation">]</span>
+            <span class="hljs-punctuation">}</span>
+          <span class="hljs-punctuation">]</span>
+        <span class="hljs-punctuation">}</span>
+      <span class="hljs-punctuation">]</span>
+    <span class="hljs-punctuation">}</span>
+  <span class="hljs-punctuation">]</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<ul>
+<li><strong>Response (404 Not Found):</strong> If tournament with the given ID does not exist.</li>
+</ul>
+<h4 id="get-fields-by-tournament">Get Fields by Tournament</h4>
+<ul>
+<li><strong>GET /tournaments/:id/fields</strong></li>
+<li><strong>Authorization:</strong> Public (or check global guards if authentication isimplicitly required).</li>
+<li><strong>Response (200 OK):</strong></li>
+</ul>
+<pre><code class="language-json"><span class="hljs-punctuation">[</span>
+  <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;tournamentId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;number&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;number (integer)&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;createdAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;timestamp&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;updatedAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;timestamp&quot;</span>
+  <span class="hljs-punctuation">}</span>
+  <span class="hljs-comment">// ... more field objects</span>
+<span class="hljs-punctuation">]</span>
+</code></pre>
+<ul>
+<li><strong>Response (404 Not Found):</strong> If tournament with the given ID does not exist (though the service might return an empty array if the tournament exists but has no fields).</li>
+</ul>
+<h4 id="delete-tournament">Delete Tournament</h4>
+<ul>
+<li><strong>DELETE /tournaments/:id</strong></li>
+<li><strong>Authorization:</strong> Requires <code>ADMIN</code> role.</li>
+<li><strong>Response (200 OK):</strong> (Returns the deleted tournament object)</li>
+</ul>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// or null</span>
+  <span class="hljs-attr">&quot;startDate&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (ISO date format)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;endDate&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (ISO date format)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;adminId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;numberOfFields&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;number&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;createdAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;timestamp&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;updatedAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;timestamp&quot;</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<ul>
+<li><strong>Response (204 No Content):</strong> Alternative successful response if the service is changed to return no body.</li>
+<li><strong>Response (404 Not Found):</strong> If tournament with the given ID does not exist.</li>
+</ul>
+<hr>
+<h2 id="stages">Stages</h2>
+<p>The Stages API is used to manage the different phases or parts of a tournament, such as qualification rounds (Swiss, Round Robin), playoffs, or finals.</p>
+<h3 id="endpoints-summary">Endpoints Summary</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Endpoint</th>
+<th>Description</th>
+<th>Authorization</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td>/stages</td>
+<td>Create a new stage</td>
+<td>Admin</td>
+</tr>
+<tr>
+<td>GET</td>
+<td>/stages</td>
+<td>List all stages or filter by tournament ID</td>
+<td>Public</td>
+</tr>
+<tr>
+<td>GET</td>
+<td>/stages/:id</td>
+<td>Get a specific stage by ID</td>
+<td>Public</td>
+</tr>
+<tr>
+<td>PATCH</td>
+<td>/stages/:id</td>
+<td>Update an existing stage</td>
+<td>Admin</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td>/stages/:id</td>
+<td>Delete a stage</td>
+<td>Admin</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h3 id="create-stage">Create Stage</h3>
+<ul>
+<li><strong>POST /stages</strong></li>
+<li><strong>Description:</strong> Creates a new stage within a tournament.</li>
+<li><strong>Authorization:</strong> Requires <code>ADMIN</code> role.</li>
+<li><strong>Request Body:</strong> <code>CreateStageDto</code><pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (min 1 char)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;SWISS | PLAYOFF | FINAL&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;startDate&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (ISO 8601 date-time)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;endDate&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (ISO 8601 date-time, must be after startDate)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;tournamentId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+</li>
+<li><strong>Responses:</strong>
+<ul>
+<li><strong>201 Created:</strong><pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;SWISS&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;startDate&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (ISO 8601 date-time)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;endDate&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (ISO 8601 date-time)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;tournamentId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;createdAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (ISO 8601 date-time)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;updatedAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (ISO 8601 date-time)&quot;</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+</li>
+<li><strong>400 Bad Request:</strong> If validation fails (e.g., missing fields, invalid date format, endDate before startDate).<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;statusCode&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">400</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+    <span class="hljs-string">&quot;Name is required&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-string">&quot;Invalid stage type&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-string">&quot;End date must be after start date&quot;</span>
+  <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;error&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Bad Request&quot;</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+</li>
+<li><strong>401 Unauthorized:</strong> If the JWT token is missing or invalid.</li>
+<li><strong>403 Forbidden:</strong> If the authenticated user does not have the <code>ADMIN</code> role.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="list-stages">List Stages</h3>
+<ul>
+<li><strong>GET /stages</strong></li>
+<li><strong>Description:</strong> Retrieves a list of all stages. Can be optionally filtered by <code>tournamentId</code>.</li>
+<li><strong>Authorization:</strong> Public.</li>
+<li><strong>Query Parameters:</strong>
+<ul>
+<li><code>tournamentId</code> (optional, string UUID): Filters stages belonging to a specific tournament.</li>
+</ul>
+</li>
+<li><strong>Responses:</strong>
+<ul>
+<li><strong>200 OK:</strong><pre><code class="language-json"><span class="hljs-punctuation">[</span>
+  <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Qualification Round&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;SWISS&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;startDate&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (ISO 8601 date-time)&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;endDate&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (ISO 8601 date-time)&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;tournamentId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;createdAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (ISO 8601 date-time)&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;updatedAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (ISO 8601 date-time)&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;tournament&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+      <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Spring Robotics Open&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-comment">// ... other tournament fields</span>
+    <span class="hljs-punctuation">}</span>
+  <span class="hljs-punctuation">}</span>
+  <span class="hljs-comment">// ... more stage objects</span>
+<span class="hljs-punctuation">]</span>
+</code></pre>
+<em>If <code>tournamentId</code> is not provided, all stages are returned. If <code>tournamentId</code> is provided, only stages for that tournament are returned. The <code>tournament</code> object is included in each stage.</em></li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="get-stage-by-id">Get Stage by ID</h3>
+<ul>
+<li><strong>GET /stages/:id</strong></li>
+<li><strong>Description:</strong> Retrieves a specific stage by its unique ID.</li>
+<li><strong>Authorization:</strong> Public.</li>
+<li><strong>Path Parameters:</strong>
+<ul>
+<li><code>id</code> (string UUID): The ID of the stage to retrieve.</li>
+</ul>
+</li>
+<li><strong>Responses:</strong>
+<ul>
+<li><strong>200 OK:</strong><pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Playoffs&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;PLAYOFF&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;startDate&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (ISO 8601 date-time)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;endDate&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (ISO 8601 date-time)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;tournamentId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;createdAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (ISO 8601 date-time)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;updatedAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (ISO 8601 date-time)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;tournament&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Spring Robotics Open&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-comment">// ... other tournament fields</span>
+  <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;matches&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+    <span class="hljs-punctuation">{</span>
+      <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;matchNumber&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;QUALIFICATION&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-comment">// ... other match fields</span>
+      <span class="hljs-attr">&quot;alliances&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+        <span class="hljs-punctuation">{</span>
+          <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+          <span class="hljs-attr">&quot;color&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;RED&quot;</span><span class="hljs-punctuation">,</span>
+          <span class="hljs-comment">// ... other alliance fields</span>
+          <span class="hljs-attr">&quot;teamAlliances&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+            <span class="hljs-punctuation">{</span>
+              <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+              <span class="hljs-attr">&quot;teamId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+              <span class="hljs-attr">&quot;team&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+                <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+                <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;RoboWarriors&quot;</span><span class="hljs-punctuation">,</span>
+                <span class="hljs-comment">// ... other team fields</span>
+              <span class="hljs-punctuation">}</span>
+            <span class="hljs-punctuation">}</span>
+            <span class="hljs-comment">// ... other teams in alliance</span>
+          <span class="hljs-punctuation">]</span>
+        <span class="hljs-punctuation">}</span>
+        <span class="hljs-comment">// ... other alliances (e.g., BLUE)</span>
+      <span class="hljs-punctuation">]</span>
+    <span class="hljs-punctuation">}</span>
+    <span class="hljs-comment">// ... more match objects</span>
+  <span class="hljs-punctuation">]</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<em>Includes the associated <code>tournament</code> and a list of <code>matches</code> within that stage. Matches include their <code>alliances</code> and the <code>teams</code> within those alliances.</em></li>
+<li><strong>404 Not Found:</strong> If no stage with the given ID exists.<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;statusCode&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">404</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Stage with ID &lt;id&gt; not found&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// Or similar from Prisma</span>
+  <span class="hljs-attr">&quot;error&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Not Found&quot;</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="update-stage">Update Stage</h3>
+<ul>
+<li><strong>PATCH /stages/:id</strong></li>
+<li><strong>Description:</strong> Updates an existing stage. Only provided fields will be updated.</li>
+<li><strong>Authorization:</strong> Requires <code>ADMIN</code> role.</li>
+<li><strong>Path Parameters:</strong>
+<ul>
+<li><code>id</code> (string UUID): The ID of the stage to update.</li>
+</ul>
+</li>
+<li><strong>Request Body:</strong> <code>UpdateStageDto</code> (all fields are optional)<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;SWISS | PLAYOFF | FINAL&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;startDate&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (ISO 8601 date-time)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;endDate&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (ISO 8601 date-time, must be after startDate if both provided)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;tournamentId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span> <span class="hljs-comment">// Note: Typically tournamentId is not changed after creation.</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+</li>
+<li><strong>Responses:</strong>
+<ul>
+<li><strong>200 OK:</strong><pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Updated Stage Name&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;PLAYOFF&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;startDate&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (ISO 8601 date-time)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;endDate&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (ISO 8601 date-time)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;tournamentId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;createdAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (ISO 8601 date-time)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;updatedAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (ISO 8601 date-time)&quot;</span>
+  <span class="hljs-comment">// ... other fields that were updated or remained the same</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+</li>
+<li><strong>400 Bad Request:</strong> If validation fails (e.g., invalid date format, endDate before startDate).</li>
+<li><strong>401 Unauthorized:</strong> If the JWT token is missing or invalid.</li>
+<li><strong>403 Forbidden:</strong> If the authenticated user does not have the <code>ADMIN</code> role.</li>
+<li><strong>404 Not Found:</strong> If no stage with the given ID exists.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="delete-stage">Delete Stage</h3>
+<ul>
+<li><strong>DELETE /stages/:id</strong></li>
+<li><strong>Description:</strong> Deletes a stage by its ID.</li>
+<li><strong>Authorization:</strong> Requires <code>ADMIN</code> role.</li>
+<li><strong>Path Parameters:</strong>
+<ul>
+<li><code>id</code> (string UUID): The ID of the stage to delete.</li>
+</ul>
+</li>
+<li><strong>Responses:</strong>
+<ul>
+<li><strong>200 OK:</strong> (Returns the deleted stage object)<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Stage to be Deleted&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;FINAL&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;startDate&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (ISO 8601 date-time)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;endDate&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (ISO 8601 date-time)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;tournamentId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;createdAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (ISO 8601 date-time)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;updatedAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (ISO 8601 date-time)&quot;</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<em>(Alternatively, could be a 204 No Content response if the service is designed that way, but the controller shows it returns the result of <code>stagesService.remove(id)</code> which typically returns the deleted object).</em></li>
+<li><strong>401 Unauthorized:</strong> If the JWT token is missing or invalid.</li>
+<li><strong>403 Forbidden:</strong> If the authenticated user does not have the <code>ADMIN</code> role.</li>
+<li><strong>404 Not Found:</strong> If no stage with the given ID exists.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="matches">Matches</h2>
+<p>The Matches API is responsible for managing individual matches within a tournament stage, including their creation, scheduling, team assignments, and scoring status.</p>
+<h3 id="endpoints-summary-1">Endpoints Summary</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Endpoint</th>
+<th>Description</th>
+<th>Authorization</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td>/matches</td>
+<td>Create a new match</td>
+<td>Admin</td>
+</tr>
+<tr>
+<td>GET</td>
+<td>/matches</td>
+<td>List all matches, optionally filtered by stage, team, or tournament</td>
+<td>Public</td>
+</tr>
+<tr>
+<td>GET</td>
+<td>/matches/:id</td>
+<td>Get a specific match by ID</td>
+<td>Public</td>
+</tr>
+<tr>
+<td>PATCH</td>
+<td>/matches/:id</td>
+<td>Update an existing match</td>
+<td>Admin</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td>/matches/:id</td>
+<td>Delete a match</td>
+<td>Admin</td>
+</tr>
+<tr>
+<td>GET</td>
+<td>/matches/alliance/:id</td>
+<td>Get all matches for a specific alliance ID</td>
+<td>Public</td>
+</tr>
+<tr>
+<td>GET</td>
+<td>/matches/scoring/:id</td>
+<td>Get scoring status for a specific match</td>
+<td>Public</td>
+</tr>
+<tr>
+<td>PATCH</td>
+<td>/matches/scoring/:id/finalize</td>
+<td>Finalize the scores for a specific match</td>
+<td>Scorekeeper</td>
+</tr>
+<tr>
+<td>PATCH</td>
+<td>/matches/scoring/:id/unfinalize</td>
+<td>Unfinalize the scores for a specific match</td>
+<td>Admin</td>
+</tr>
+<tr>
+<td>POST</td>
+<td>/matches/bulk</td>
+<td>Create multiple matches at once</td>
+<td>Admin</td>
+</tr>
+<tr>
+<td>PATCH</td>
+<td>/matches/bulk-update-status</td>
+<td>Update the status of multiple matches at once</td>
+<td>Admin</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h3 id="data-transfer-objects-dtos">Data Transfer Objects (DTOs)</h3>
+<h4 id="creatematchdto"><code>CreateMatchDto</code></h4>
+<p>Used for creating a single match.</p>
+<pre><code class="language-typescript">{
+  <span class="hljs-string">&quot;matchNumber&quot;</span>: <span class="hljs-string">&quot;number (integer, min 1)&quot;</span>,
+  <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;QUALIFICATION | PLAYOFF | PRACTICE | OTHER&quot;</span>, <span class="hljs-comment">// Enum: MatchType</span>
+  <span class="hljs-string">&quot;status&quot;</span>: <span class="hljs-string">&quot;PENDING | ACTIVE | COMPLETED | CANCELLED&quot;</span>, <span class="hljs-comment">// Enum: MatchStatus</span>
+  <span class="hljs-string">&quot;scheduledTime&quot;</span>: <span class="hljs-string">&quot;string (ISO 8601 date-time, optional)&quot;</span>,
+  <span class="hljs-string">&quot;actualTime&quot;</span>: <span class="hljs-string">&quot;string (ISO 8601 date-time, optional)&quot;</span>,
+  <span class="hljs-string">&quot;stageId&quot;</span>: <span class="hljs-string">&quot;string (UUID)&quot;</span>,
+  <span class="hljs-string">&quot;alliances&quot;</span>: [
+    {
+      <span class="hljs-string">&quot;color&quot;</span>: <span class="hljs-string">&quot;RED | BLUE&quot;</span>, <span class="hljs-comment">// Enum: AllianceColor</span>
+      <span class="hljs-string">&quot;teams&quot;</span>: [
+        {
+          <span class="hljs-string">&quot;teamId&quot;</span>: <span class="hljs-string">&quot;string (UUID)&quot;</span>,
+          <span class="hljs-string">&quot;isSurrogate&quot;</span>: <span class="hljs-string">&quot;boolean (optional, default: false)&quot;</span>
+        }
+        <span class="hljs-comment">// ... up to N teams per alliance based on game rules</span>
+      ]
+    }
+    <span class="hljs-comment">// ... RED and BLUE alliances typically</span>
+  ]
+}
+</code></pre>
+<ul>
+<li><code>alliances</code>: Must contain at least one alliance. Each alliance must have at least one team.</li>
+</ul>
+<h4 id="updatematchdto"><code>UpdateMatchDto</code></h4>
+<p>Used for updating an existing match. All fields are optional.</p>
+<pre><code class="language-typescript">{
+  <span class="hljs-string">&quot;matchNumber&quot;</span>: <span class="hljs-string">&quot;number (integer, min 1, optional)&quot;</span>,
+  <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;QUALIFICATION | PLAYOFF | PRACTICE | OTHER (optional)&quot;</span>,
+  <span class="hljs-string">&quot;status&quot;</span>: <span class="hljs-string">&quot;PENDING | ACTIVE | COMPLETED | CANCELLED (optional)&quot;</span>,
+  <span class="hljs-string">&quot;scheduledTime&quot;</span>: <span class="hljs-string">&quot;string (ISO 8601 date-time, optional)&quot;</span>,
+  <span class="hljs-string">&quot;actualTime&quot;</span>: <span class="hljs-string">&quot;string (ISO 8601 date-time, optional)&quot;</span>,
+  <span class="hljs-string">&quot;stageId&quot;</span>: <span class="hljs-string">&quot;string (UUID, optional)&quot;</span>,
+  <span class="hljs-string">&quot;alliances&quot;</span>: [
+    {
+      <span class="hljs-string">&quot;id&quot;</span>: <span class="hljs-string">&quot;string (UUID, optional, for existing alliances)&quot;</span>,
+      <span class="hljs-string">&quot;color&quot;</span>: <span class="hljs-string">&quot;RED | BLUE (optional)&quot;</span>,
+      <span class="hljs-string">&quot;teams&quot;</span>: [
+        {
+          <span class="hljs-string">&quot;id&quot;</span>: <span class="hljs-string">&quot;string (UUID, optional, for existing team assignments)&quot;</span>,
+          <span class="hljs-string">&quot;teamId&quot;</span>: <span class="hljs-string">&quot;string (UUID, optional)&quot;</span>,
+          <span class="hljs-string">&quot;isSurrogate&quot;</span>: <span class="hljs-string">&quot;boolean (optional)&quot;</span>
+        }
+      ]
+    }
+  ]
+}
+</code></pre>
+<ul>
+<li>When updating alliances and teams, providing IDs for existing entities allows modification. Omitting IDs might imply creating new ones or replacing existing ones, depending on service logic.</li>
+</ul>
+<h4 id="bulkcreatematchdto"><code>BulkCreateMatchDto</code></h4>
+<p>Used for creating multiple matches in a single request.</p>
+<pre><code class="language-typescript">{
+  <span class="hljs-string">&quot;matches&quot;</span>: [
+    <span class="hljs-comment">// Array of CreateMatchDto objects</span>
+    {
+      <span class="hljs-string">&quot;matchNumber&quot;</span>: <span class="hljs-number">101</span>,
+      <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;QUALIFICATION&quot;</span>,
+      <span class="hljs-string">&quot;status&quot;</span>: <span class="hljs-string">&quot;PENDING&quot;</span>,
+      <span class="hljs-string">&quot;stageId&quot;</span>: <span class="hljs-string">&quot;stage-uuid-1&quot;</span>,
+      <span class="hljs-string">&quot;alliances&quot;</span>: [
+        { <span class="hljs-string">&quot;color&quot;</span>: <span class="hljs-string">&quot;RED&quot;</span>, <span class="hljs-string">&quot;teams&quot;</span>: [{ <span class="hljs-string">&quot;teamId&quot;</span>: <span class="hljs-string">&quot;team-uuid-A&quot;</span> }] },
+        { <span class="hljs-string">&quot;color&quot;</span>: <span class="hljs-string">&quot;BLUE&quot;</span>, <span class="hljs-string">&quot;teams&quot;</span>: [{ <span class="hljs-string">&quot;teamId&quot;</span>: <span class="hljs-string">&quot;team-uuid-B&quot;</span> }] }
+      ]
+    },
+    {
+      <span class="hljs-string">&quot;matchNumber&quot;</span>: <span class="hljs-number">102</span>,
+      <span class="hljs-comment">// ... other match details</span>
+    }
+  ]
+}
+</code></pre>
+<h4 id="bulkupdatematchstatusdto"><code>BulkUpdateMatchStatusDto</code></h4>
+<p>Used for updating the status of multiple matches.</p>
+<pre><code class="language-typescript">{
+  <span class="hljs-string">&quot;matchIds&quot;</span>: <span class="hljs-string">&quot;string[] (array of UUIDs)&quot;</span>,
+  <span class="hljs-string">&quot;status&quot;</span>: <span class="hljs-string">&quot;PENDING | ACTIVE | COMPLETED | CANCELLED&quot;</span> <span class="hljs-comment">// Enum: MatchStatus</span>
+}
+</code></pre>
+<hr>
+<h3 id="create-match">Create Match</h3>
+<ul>
+<li><strong>POST /matches</strong></li>
+<li><strong>Description:</strong> Creates a new match.</li>
+<li><strong>Authorization:</strong> Requires <code>ADMIN</code> role.</li>
+<li><strong>Request Body:</strong> <code>CreateMatchDto</code></li>
+<li><strong>Responses:</strong>
+<ul>
+<li><strong>201 Created:</strong> Returns the created match object, including nested alliance and team alliance details.<pre><code class="language-json"><span class="hljs-comment">// Example structure (actual fields may vary based on Prisma schema)</span>
+<span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;match-uuid-123&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;matchNumber&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;QUALIFICATION&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;status&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;PENDING&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;scheduledTime&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;2024-09-15T10:00:00.000Z&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;actualTime&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">null</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;stageId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;stage-uuid-abc&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;createdAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;2024-09-14T12:00:00.000Z&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;updatedAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;2024-09-14T12:00:00.000Z&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;alliances&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+    <span class="hljs-punctuation">{</span>
+      <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;alliance-uuid-red&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;color&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;RED&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;matchId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;match-uuid-123&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;score&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">0</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// Default score</span>
+      <span class="hljs-attr">&quot;teamAlliances&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+        <span class="hljs-punctuation">{</span>
+          <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;teamalliance-uuid-r1&quot;</span><span class="hljs-punctuation">,</span>
+          <span class="hljs-attr">&quot;teamId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;team-uuid-A&quot;</span><span class="hljs-punctuation">,</span>
+          <span class="hljs-attr">&quot;allianceId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;alliance-uuid-red&quot;</span><span class="hljs-punctuation">,</span>
+          <span class="hljs-attr">&quot;isSurrogate&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">false</span><span class="hljs-punctuation">,</span>
+          <span class="hljs-attr">&quot;team&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span> <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;team-uuid-A&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;RoboDragons&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">/* ...other team fields */</span> <span class="hljs-punctuation">}</span>
+        <span class="hljs-punctuation">}</span>
+      <span class="hljs-punctuation">]</span>
+    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-punctuation">{</span>
+      <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;alliance-uuid-blue&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;color&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;BLUE&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;matchId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;match-uuid-123&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;score&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">0</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;teamAlliances&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+        <span class="hljs-punctuation">{</span>
+          <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;teamalliance-uuid-b1&quot;</span><span class="hljs-punctuation">,</span>
+          <span class="hljs-attr">&quot;teamId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;team-uuid-B&quot;</span><span class="hljs-punctuation">,</span>
+          <span class="hljs-attr">&quot;allianceId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;alliance-uuid-blue&quot;</span><span class="hljs-punctuation">,</span>
+          <span class="hljs-attr">&quot;isSurrogate&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">false</span><span class="hljs-punctuation">,</span>
+          <span class="hljs-attr">&quot;team&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span> <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;team-uuid-B&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;CyberKnights&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">/* ...other team fields */</span> <span class="hljs-punctuation">}</span>
+        <span class="hljs-punctuation">}</span>
+      <span class="hljs-punctuation">]</span>
+    <span class="hljs-punctuation">}</span>
+  <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;stage&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span> <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;stage-uuid-abc&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Qualifiers&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">/* ...other stage fields */</span> <span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+</li>
+<li><strong>400 Bad Request:</strong> If validation fails (e.g., invalid enum values, missing required fields).</li>
+<li><strong>401 Unauthorized:</strong> JWT missing/invalid.</li>
+<li><strong>403 Forbidden:</strong> User lacks <code>ADMIN</code> role.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="list-matches">List Matches</h3>
+<ul>
+<li><strong>GET /matches</strong></li>
+<li><strong>Description:</strong> Retrieves a list of matches. Can be filtered by <code>stageId</code>, <code>teamId</code>, or <code>tournamentId</code>.</li>
+<li><strong>Authorization:</strong> Public.</li>
+<li><strong>Query Parameters:</strong>
+<ul>
+<li><code>stageId</code> (optional, string UUID): Filter by stage.</li>
+<li><code>teamId</code> (optional, string UUID): Filter by matches a specific team participated in.</li>
+<li><code>tournamentId</code> (optional, string UUID): Filter by matches within a specific tournament (requires joining through stages).</li>
+<li><code>page</code> (optional, number, default 1): For pagination.</li>
+<li><code>limit</code> (optional, number, default 10): For pagination.</li>
+</ul>
+</li>
+<li><strong>Responses:</strong>
+<ul>
+<li><strong>200 OK:</strong> Returns a paginated list of match objects with nested details.<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+    <span class="hljs-comment">// Array of match objects, similar to Create Match response structure</span>
+    <span class="hljs-punctuation">{</span>
+      <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;match-uuid-123&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-comment">// ... other match fields</span>
+      <span class="hljs-attr">&quot;alliances&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span> <span class="hljs-comment">/* ... */</span> <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;stage&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span> <span class="hljs-comment">/* ... */</span> <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;matchScores&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span> <span class="hljs-comment">/* ... if scores exist and are included */</span> <span class="hljs-punctuation">]</span>
+    <span class="hljs-punctuation">}</span>
+  <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;meta&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;totalItems&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">100</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;itemCount&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">10</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;itemsPerPage&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">10</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;totalPages&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">10</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;currentPage&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span>
+  <span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<em>The response includes <code>alliances</code> (with <code>teamAlliances</code> and <code>team</code> details), <code>stage</code> details, and potentially <code>matchScores</code> if they are part of the default include query.</em></li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="get-match-by-id">Get Match by ID</h3>
+<ul>
+<li><strong>GET /matches/:id</strong></li>
+<li><strong>Description:</strong> Retrieves a specific match by its ID.</li>
+<li><strong>Authorization:</strong> Public.</li>
+<li><strong>Path Parameters:</strong>
+<ul>
+<li><code>id</code> (string UUID): The ID of the match.</li>
+</ul>
+</li>
+<li><strong>Responses:</strong>
+<ul>
+<li><strong>200 OK:</strong> Returns the match object with full nested details (alliances, teams, stage, match scores).<pre><code class="language-json"><span class="hljs-comment">// Similar structure to the Create Match response, but potentially with more complete data</span>
+<span class="hljs-comment">// like matchScores if they exist.</span>
+<span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;match-uuid-123&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-comment">// ... other match fields</span>
+  <span class="hljs-attr">&quot;alliances&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span> <span class="hljs-comment">/* ... includes teamAlliances with team details ... */</span> <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;stage&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span> <span class="hljs-comment">/* ... stage details ... */</span> <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;matchScores&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+    <span class="hljs-punctuation">{</span>
+      <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;score-uuid-xyz&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;matchId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;match-uuid-123&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;allianceColor&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;RED&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;totalScore&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">150</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-comment">// ... other score fields and game elements</span>
+    <span class="hljs-punctuation">}</span>
+  <span class="hljs-punctuation">]</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+</li>
+<li><strong>404 Not Found:</strong> If the match with the given ID doesn't exist.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="update-match">Update Match</h3>
+<ul>
+<li><strong>PATCH /matches/:id</strong></li>
+<li><strong>Description:</strong> Updates an existing match.</li>
+<li><strong>Authorization:</strong> Requires <code>ADMIN</code> role.</li>
+<li><strong>Path Parameters:</strong>
+<ul>
+<li><code>id</code> (string UUID): The ID of the match to update.</li>
+</ul>
+</li>
+<li><strong>Request Body:</strong> <code>UpdateMatchDto</code></li>
+<li><strong>Responses:</strong>
+<ul>
+<li><strong>200 OK:</strong> Returns the updated match object.</li>
+<li><strong>400 Bad Request:</strong> Validation errors.</li>
+<li><strong>401 Unauthorized:</strong> JWT missing/invalid.</li>
+<li><strong>403 Forbidden:</strong> User lacks <code>ADMIN</code> role.</li>
+<li><strong>404 Not Found:</strong> Match not found.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="delete-match">Delete Match</h3>
+<ul>
+<li><strong>DELETE /matches/:id</strong></li>
+<li><strong>Description:</strong> Deletes a match.</li>
+<li><strong>Authorization:</strong> Requires <code>ADMIN</code> role.</li>
+<li><strong>Path Parameters:</strong>
+<ul>
+<li><code>id</code> (string UUID): The ID of the match to delete.</li>
+</ul>
+</li>
+<li><strong>Responses:</strong>
+<ul>
+<li><strong>200 OK:</strong> Returns the deleted match object.</li>
+<li><strong>401 Unauthorized:</strong> JWT missing/invalid.</li>
+<li><strong>403 Forbidden:</strong> User lacks <code>ADMIN</code> role.</li>
+<li><strong>404 Not Found:</strong> Match not found.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="get-matches-by-alliance-id">Get Matches by Alliance ID</h3>
+<ul>
+<li><strong>GET /matches/alliance/:id</strong></li>
+<li><strong>Description:</strong> Retrieves all matches associated with a specific alliance ID.</li>
+<li><strong>Authorization:</strong> Public.</li>
+<li><strong>Path Parameters:</strong>
+<ul>
+<li><code>id</code> (string UUID): The ID of the alliance.</li>
+</ul>
+</li>
+<li><strong>Responses:</strong>
+<ul>
+<li><strong>200 OK:</strong> Returns an array of match objects where the specified alliance participated.<pre><code class="language-json"><span class="hljs-punctuation">[</span>
+  <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;match-uuid-456&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-comment">// ... other match fields</span>
+    <span class="hljs-attr">&quot;alliances&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+      <span class="hljs-punctuation">{</span> <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;alliance-uuid-red&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;color&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;RED&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">/* ... */</span> <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-punctuation">{</span> <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;alliance-uuid-blue&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;color&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;BLUE&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">/* ... */</span> <span class="hljs-punctuation">}</span>
+    <span class="hljs-punctuation">]</span>
+    <span class="hljs-comment">// ... other related data</span>
+  <span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">]</span>
+</code></pre>
+</li>
+<li><strong>404 Not Found:</strong> If the alliance ID does not exist or has no associated matches (service might return empty array instead of 404 if alliance exists but has no matches).</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="get-match-scoring-status">Get Match Scoring Status</h3>
+<ul>
+<li><strong>GET /matches/scoring/:id</strong></li>
+<li><strong>Description:</strong> Retrieves the scoring status and details for a specific match.</li>
+<li><strong>Authorization:</strong> Public.</li>
+<li><strong>Path Parameters:</strong>
+<ul>
+<li><code>id</code> (string UUID): The ID of the match.</li>
+</ul>
+</li>
+<li><strong>Responses:</strong>
+<ul>
+<li><strong>200 OK:</strong> Returns an object containing scoring information.<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;matchId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;match-uuid-123&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;status&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;SCORED | PENDING_FINALIZATION | FINALIZED&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// Or similar status enum</span>
+  <span class="hljs-attr">&quot;redScore&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">150</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;blueScore&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">120</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;winner&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;RED&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// or &quot;BLUE&quot; or &quot;TIE&quot;</span>
+  <span class="hljs-attr">&quot;details&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span> <span class="hljs-comment">/* Potentially detailed breakdown from MatchScores service */</span> <span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<em>The exact structure depends on what <code>matchesService.getScoringStatus</code> returns. It likely aggregates data from the <code>MatchScores</code> entity.</em></li>
+<li><strong>404 Not Found:</strong> Match not found.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="finalize-match-scores">Finalize Match Scores</h3>
+<ul>
+<li><strong>PATCH /matches/scoring/:id/finalize</strong></li>
+<li><strong>Description:</strong> Marks the scores for a match as final. This action might trigger ranking updates or other post-match processes.</li>
+<li><strong>Authorization:</strong> Requires <code>SCOREKEEPER</code> role.</li>
+<li><strong>Path Parameters:</strong>
+<ul>
+<li><code>id</code> (string UUID): The ID of the match whose scores are to be finalized.</li>
+</ul>
+</li>
+<li><strong>Responses:</strong>
+<ul>
+<li><strong>200 OK:</strong> Returns the updated match object or a success message.<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;match-uuid-123&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;status&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;COMPLETED&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// Or a specific finalized status</span>
+  <span class="hljs-comment">// ... other match fields, potentially updated scores or status</span>
+  <span class="hljs-attr">&quot;isScoreFinalized&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span> <span class="hljs-comment">// Example field</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+</li>
+<li><strong>401 Unauthorized:</strong> JWT missing/invalid.</li>
+<li><strong>403 Forbidden:</strong> User lacks <code>SCOREKEEPER</code> role.</li>
+<li><strong>404 Not Found:</strong> Match not found.</li>
+<li><strong>409 Conflict:</strong> If scores are already finalized or not yet submitted.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="unfinalize-match-scores">Unfinalize Match Scores</h3>
+<ul>
+<li><strong>PATCH /matches/scoring/:id/unfinalize</strong></li>
+<li><strong>Description:</strong> Reverts the finalization status of match scores, allowing for corrections. This is typically a restricted administrative action.</li>
+<li><strong>Authorization:</strong> Requires <code>ADMIN</code> role.</li>
+<li><strong>Path Parameters:</strong>
+<ul>
+<li><code>id</code> (string UUID): The ID of the match.</li>
+</ul>
+</li>
+<li><strong>Responses:</strong>
+<ul>
+<li><strong>200 OK:</strong> Returns the updated match object or a success message.<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;match-uuid-123&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;status&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;ACTIVE&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// Or a status indicating scores are editable again</span>
+  <span class="hljs-comment">// ... other match fields</span>
+  <span class="hljs-attr">&quot;isScoreFinalized&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">false</span> <span class="hljs-comment">// Example field</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+</li>
+<li><strong>401 Unauthorized:</strong> JWT missing/invalid.</li>
+<li><strong>403 Forbidden:</strong> User lacks <code>ADMIN</code> role.</li>
+<li><strong>404 Not Found:</strong> Match not found.</li>
+<li><strong>409 Conflict:</strong> If scores were not previously finalized.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="bulk-create-matches">Bulk Create Matches</h3>
+<ul>
+<li><strong>POST /matches/bulk</strong></li>
+<li><strong>Description:</strong> Creates multiple matches in a single request.</li>
+<li><strong>Authorization:</strong> Requires <code>ADMIN</code> role.</li>
+<li><strong>Request Body:</strong> <code>BulkCreateMatchDto</code></li>
+<li><strong>Responses:</strong>
+<ul>
+<li><strong>201 Created:</strong> Returns an array of the created match objects.<pre><code class="language-json"><span class="hljs-punctuation">[</span>
+  <span class="hljs-comment">// Array of created match objects, similar to single Create Match response</span>
+  <span class="hljs-punctuation">{</span> <span class="hljs-comment">/* ... match 1 data ... */</span> <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-punctuation">{</span> <span class="hljs-comment">/* ... match 2 data ... */</span> <span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">]</span>
+</code></pre>
+</li>
+<li><strong>400 Bad Request:</strong> If validation fails for any of the matches in the bulk request.</li>
+<li><strong>401 Unauthorized:</strong> JWT missing/invalid.</li>
+<li><strong>403 Forbidden:</strong> User lacks <code>ADMIN</code> role.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="bulk-update-match-status">Bulk Update Match Status</h3>
+<ul>
+<li><strong>PATCH /matches/bulk-update-status</strong></li>
+<li><strong>Description:</strong> Updates the status of multiple matches simultaneously.</li>
+<li><strong>Authorization:</strong> Requires <code>ADMIN</code> role.</li>
+<li><strong>Request Body:</strong> <code>BulkUpdateMatchStatusDto</code></li>
+<li><strong>Responses:</strong>
+<ul>
+<li><strong>200 OK:</strong> Returns a count of updated matches or a success message.<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Successfully updated status for X matches to COMPLETED&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;count&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">5</span> <span class="hljs-comment">// Example: number of matches updated</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<em>(The controller returns <code>this.matchesService.bulkUpdateStatus(...)</code>. The exact response structure depends on the service method's return type, which might be a Prisma batch payload or a custom object.)</em></li>
+<li><strong>400 Bad Request:</strong> If <code>matchIds</code> is empty or <code>status</code> is invalid.</li>
+<li><strong>401 Unauthorized:</strong> JWT missing/invalid.</li>
+<li><strong>403 Forbidden:</strong> User lacks <code>ADMIN</code> role.</li>
+<li><strong>404 Not Found:</strong> If some <code>matchIds</code> do not correspond to existing matches (behavior might vary: partial success or full failure).</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="match-scores">Match Scores</h2>
+<p>The Match Scores API is used to record, retrieve, update, and manage the detailed scoring data for each match, including scores for individual game elements and overall alliance scores.</p>
+<h3 id="endpoints-summary-2">Endpoints Summary</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Endpoint</th>
+<th>Description</th>
+<th>Authorization</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td>/match-scores</td>
+<td>Create new scores for a match (typically for both alliances)</td>
+<td>Scorekeeper, Referee</td>
+</tr>
+<tr>
+<td>GET</td>
+<td>/match-scores</td>
+<td>List all match scores (admin/broader view)</td>
+<td>Admin</td>
+</tr>
+<tr>
+<td>GET</td>
+<td>/match-scores/match/:matchId</td>
+<td>Get all scores associated with a specific match ID</td>
+<td>Public</td>
+</tr>
+<tr>
+<td>GET</td>
+<td>/match-scores/:id</td>
+<td>Get a specific match score entry by its own ID</td>
+<td>Public</td>
+</tr>
+<tr>
+<td>PATCH</td>
+<td>/match-scores/:id</td>
+<td>Update an existing match score entry</td>
+<td>Scorekeeper, Referee</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td>/match-scores/:id</td>
+<td>Delete a specific match score entry (use with caution)</td>
+<td>Admin</td>
+</tr>
+<tr>
+<td>POST</td>
+<td>/match-scores/initialize/:matchId</td>
+<td>Initialize empty score sheets for a match (for RED and BLUE alliances)</td>
+<td>Scorekeeper</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h3 id="data-transfer-objects-dtos-1">Data Transfer Objects (DTOs)</h3>
+<h4 id="gameelementdto"><code>GameElementDto</code></h4>
+<p>Represents a scored game element within a match.</p>
+<pre><code class="language-typescript">{
+  <span class="hljs-string">&quot;elementId&quot;</span>: <span class="hljs-string">&quot;string (UUID of the game element definition)&quot;</span>,
+  <span class="hljs-string">&quot;count&quot;</span>: <span class="hljs-string">&quot;number (integer, min 0)&quot;</span>,
+  <span class="hljs-string">&quot;points&quot;</span>: <span class="hljs-string">&quot;number (integer, calculated or fixed based on element and count)&quot;</span>
+}
+</code></pre>
+<h4 id="creatematchscoresdto"><code>CreateMatchScoresDto</code></h4>
+<p>Used to submit scores for an alliance in a match. Typically, two such objects would be submitted per match, one for RED and one for BLUE.</p>
+<pre><code class="language-typescript">{
+  <span class="hljs-string">&quot;matchId&quot;</span>: <span class="hljs-string">&quot;string (UUID)&quot;</span>,
+  <span class="hljs-string">&quot;allianceColor&quot;</span>: <span class="hljs-string">&quot;RED | BLUE&quot;</span>, <span class="hljs-comment">// Enum: AllianceColor</span>
+  <span class="hljs-string">&quot;autonScore&quot;</span>: <span class="hljs-string">&quot;number (integer, min 0)&quot;</span>,
+  <span class="hljs-string">&quot;teleopScore&quot;</span>: <span class="hljs-string">&quot;number (integer, min 0)&quot;</span>,
+  <span class="hljs-string">&quot;penaltyPoints&quot;</span>: <span class="hljs-string">&quot;number (integer, min 0)&quot;</span>,
+  <span class="hljs-string">&quot;totalScore&quot;</span>: <span class="hljs-string">&quot;number (integer, min 0, often calculated: auton + teleop - penalty)&quot;</span>,
+  <span class="hljs-string">&quot;gameElements&quot;</span>: [
+    <span class="hljs-comment">// Array of GameElementDto</span>
+    {
+      <span class="hljs-string">&quot;elementId&quot;</span>: <span class="hljs-string">&quot;game-element-uuid-1&quot;</span>,
+      <span class="hljs-string">&quot;count&quot;</span>: <span class="hljs-number">5</span>,
+      <span class="hljs-string">&quot;points&quot;</span>: <span class="hljs-number">25</span>
+    },
+    {
+      <span class="hljs-string">&quot;elementId&quot;</span>: <span class="hljs-string">&quot;game-element-uuid-2&quot;</span>,
+      <span class="hljs-string">&quot;count&quot;</span>: <span class="hljs-number">2</span>,
+      <span class="hljs-string">&quot;points&quot;</span>: <span class="hljs-number">20</span>
+    }
+  ]
+}
+</code></pre>
+<h4 id="updatematchscoresdto"><code>UpdateMatchScoresDto</code></h4>
+<p>Used to update existing scores for an alliance in a match. All fields are optional.</p>
+<pre><code class="language-typescript">{
+  <span class="hljs-string">&quot;autonScore&quot;</span>: <span class="hljs-string">&quot;number (integer, min 0, optional)&quot;</span>,
+  <span class="hljs-string">&quot;teleopScore&quot;</span>: <span class="hljs-string">&quot;number (integer, min 0, optional)&quot;</span>,
+  <span class="hljs-string">&quot;penaltyPoints&quot;</span>: <span class="hljs-string">&quot;number (integer, min 0, optional)&quot;</span>,
+  <span class="hljs-string">&quot;totalScore&quot;</span>: <span class="hljs-string">&quot;number (integer, min 0, optional)&quot;</span>,
+  <span class="hljs-string">&quot;gameElements&quot;</span>: [
+    <span class="hljs-comment">// Array of GameElementDto, can be partial to update specific elements</span>
+    <span class="hljs-comment">// or complete to replace all elements.</span>
+    {
+      <span class="hljs-string">&quot;elementId&quot;</span>: <span class="hljs-string">&quot;game-element-uuid-1&quot;</span>,
+      <span class="hljs-string">&quot;count&quot;</span>: <span class="hljs-number">6</span>,
+      <span class="hljs-string">&quot;points&quot;</span>: <span class="hljs-number">30</span>
+    }
+  ]
+}
+</code></pre>
+<hr>
+<h3 id="create-match-scores">Create Match Scores</h3>
+<ul>
+<li><strong>POST /match-scores</strong></li>
+<li><strong>Description:</strong> Creates a new match score entry for a specific alliance in a match. This is typically called by a scorekeeper or referee after a match is played.</li>
+<li><strong>Authorization:</strong> Requires <code>SCOREKEEPER</code> or <code>REFEREE</code> role.</li>
+<li><strong>Request Body:</strong> <code>CreateMatchScoresDto</code></li>
+<li><strong>Responses:</strong>
+<ul>
+<li><strong>201 Created:</strong> Returns the created match score object, including nested game element scores.<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;match-score-uuid-123&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;matchId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;match-uuid-abc&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;allianceColor&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;RED&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;autonScore&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">50</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;teleopScore&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">80</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;penaltyPoints&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">5</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;totalScore&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">125</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;createdAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (ISO 8601 date-time)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;updatedAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (ISO 8601 date-time)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;gameElementScores&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+    <span class="hljs-punctuation">{</span>
+      <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;element-score-uuid-1&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;matchScoreId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;match-score-uuid-123&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;elementId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;game-element-uuid-1&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;count&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">5</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;points&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">25</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;gameElement&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span> <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;game-element-uuid-1&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;High Goal&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">/* ... */</span> <span class="hljs-punctuation">}</span>
+    <span class="hljs-punctuation">}</span>
+    <span class="hljs-comment">// ... other game element scores</span>
+  <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;match&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span> <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;match-uuid-abc&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;matchNumber&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">101</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">/* ... */</span> <span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+</li>
+<li><strong>400 Bad Request:</strong> Validation errors (e.g., invalid <code>allianceColor</code>, negative scores where not allowed).</li>
+<li><strong>401 Unauthorized:</strong> JWT missing/invalid.</li>
+<li><strong>403 Forbidden:</strong> User lacks <code>SCOREKEEPER</code> or <code>REFEREE</code> role.</li>
+<li><strong>404 Not Found:</strong> If the specified <code>matchId</code> or <code>elementId</code> (in <code>gameElements</code>) does not exist.</li>
+<li><strong>409 Conflict:</strong> If scores for this match and alliance already exist and the system doesn't allow overwriting via POST.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="list-all-match-scores-admin-view">List All Match Scores (Admin View)</h3>
+<ul>
+<li><strong>GET /match-scores</strong></li>
+<li><strong>Description:</strong> Retrieves a list of all match score entries across all matches. Primarily for administrative overview.</li>
+<li><strong>Authorization:</strong> Requires <code>ADMIN</code> role.</li>
+<li><strong>Query Parameters:</strong>
+<ul>
+<li><code>page</code> (optional, number, default 1): For pagination.</li>
+<li><code>limit</code> (optional, number, default 10): For pagination.</li>
+</ul>
+</li>
+<li><strong>Responses:</strong>
+<ul>
+<li><strong>200 OK:</strong> Returns a paginated list of match score objects.<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+    <span class="hljs-comment">// Array of match score objects, similar to Create Match Scores response structure</span>
+    <span class="hljs-punctuation">{</span>
+      <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;match-score-uuid-123&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-comment">// ... other fields</span>
+      <span class="hljs-attr">&quot;gameElementScores&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span> <span class="hljs-comment">/* ... */</span> <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;match&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span> <span class="hljs-comment">/* ... */</span> <span class="hljs-punctuation">}</span>
+    <span class="hljs-punctuation">}</span>
+  <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;meta&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;totalItems&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">50</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;itemCount&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">10</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;itemsPerPage&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">10</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;totalPages&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">5</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;currentPage&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span>
+  <span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+</li>
+<li><strong>401 Unauthorized / 403 Forbidden</strong></li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="get-scores-for-a-specific-match">Get Scores for a Specific Match</h3>
+<ul>
+<li><strong>GET /match-scores/match/:matchId</strong></li>
+<li><strong>Description:</strong> Retrieves all score entries (typically RED and BLUE alliance scores) for a given match ID.</li>
+<li><strong>Authorization:</strong> Public.</li>
+<li><strong>Path Parameters:</strong>
+<ul>
+<li><code>matchId</code> (string UUID): The ID of the match.</li>
+</ul>
+</li>
+<li><strong>Responses:</strong>
+<ul>
+<li><strong>200 OK:</strong> Returns an array of match score objects for the specified match.<pre><code class="language-json"><span class="hljs-punctuation">[</span>
+  <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;match-score-uuid-red&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;matchId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;match-uuid-abc&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;allianceColor&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;RED&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;totalScore&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">125</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-comment">// ... other fields and gameElementScores</span>
+  <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;match-score-uuid-blue&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;matchId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;match-uuid-abc&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;allianceColor&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;BLUE&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;totalScore&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">110</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-comment">// ... other fields and gameElementScores</span>
+  <span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">]</span>
+</code></pre>
+</li>
+<li><strong>404 Not Found:</strong> If the <code>matchId</code> does not exist or has no associated scores.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="get-specific-match-score-entry">Get Specific Match Score Entry</h3>
+<ul>
+<li><strong>GET /match-scores/:id</strong></li>
+<li><strong>Description:</strong> Retrieves a single match score entry by its unique ID.</li>
+<li><strong>Authorization:</strong> Public.</li>
+<li><strong>Path Parameters:</strong>
+<ul>
+<li><code>id</code> (string UUID): The ID of the match score entry.</li>
+</ul>
+</li>
+<li><strong>Responses:</strong>
+<ul>
+<li><strong>200 OK:</strong> Returns the specific match score object.<pre><code class="language-json"><span class="hljs-comment">// Similar structure to the Create Match Scores response</span>
+<span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;match-score-uuid-red&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-comment">// ... fields</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+</li>
+<li><strong>404 Not Found:</strong> If the match score entry with the given ID doesn't exist.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="update-match-score-entry">Update Match Score Entry</h3>
+<ul>
+<li><strong>PATCH /match-scores/:id</strong></li>
+<li><strong>Description:</strong> Updates an existing match score entry. Allows for corrections to scores before finalization.</li>
+<li><strong>Authorization:</strong> Requires <code>SCOREKEEPER</code> or <code>REFEREE</code> role.</li>
+<li><strong>Path Parameters:</strong>
+<ul>
+<li><code>id</code> (string UUID): The ID of the match score entry to update.</li>
+</ul>
+</li>
+<li><strong>Request Body:</strong> <code>UpdateMatchScoresDto</code></li>
+<li><strong>Responses:</strong>
+<ul>
+<li><strong>200 OK:</strong> Returns the updated match score object.</li>
+<li><strong>400 Bad Request:</strong> Validation errors.</li>
+<li><strong>401 Unauthorized / 403 Forbidden</strong>.</li>
+<li><strong>404 Not Found:</strong> Match score entry not found.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="delete-match-score-entry">Delete Match Score Entry</h3>
+<ul>
+<li><strong>DELETE /match-scores/:id</strong></li>
+<li><strong>Description:</strong> Deletes a specific match score entry. This is a destructive operation and should be used with caution, typically only by administrators.</li>
+<li><strong>Authorization:</strong> Requires <code>ADMIN</code> role.</li>
+<li><strong>Path Parameters:</strong>
+<ul>
+<li><code>id</code> (string UUID): The ID of the match score entry to delete.</li>
+</ul>
+</li>
+<li><strong>Responses:</strong>
+<ul>
+<li><strong>200 OK:</strong> Returns the deleted match score object.</li>
+<li><strong>401 Unauthorized / 403 Forbidden</strong>.</li>
+<li><strong>404 Not Found:</strong> Match score entry not found.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="initialize-score-sheets-for-a-match">Initialize Score Sheets for a Match</h3>
+<ul>
+<li><strong>POST /match-scores/initialize/:matchId</strong></li>
+<li><strong>Description:</strong> Creates placeholder/empty score sheets for both RED and BLUE alliances for a specified match. This is useful to set up the scoring interface before scores are actually entered.</li>
+<li><strong>Authorization:</strong> Requires <code>SCOREKEEPER</code> role.</li>
+<li><strong>Path Parameters:</strong>
+<ul>
+<li><code>matchId</code> (string UUID): The ID of the match for which to initialize scores.</li>
+</ul>
+</li>
+<li><strong>Responses:</strong>
+<ul>
+<li><strong>201 Created:</strong> Returns an array containing the two created (empty) match score objects (one for RED, one for BLUE).<pre><code class="language-json"><span class="hljs-punctuation">[</span>
+  <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;new-match-score-uuid-red&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;matchId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;match-uuid-xyz&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;allianceColor&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;RED&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;autonScore&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">0</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;teleopScore&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">0</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;penaltyPoints&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">0</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;totalScore&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">0</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;gameElementScores&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// Initially empty or pre-filled with 0-count elements</span>
+    <span class="hljs-attr">&quot;createdAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (ISO 8601 date-time)&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;updatedAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (ISO 8601 date-time)&quot;</span>
+  <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;new-match-score-uuid-blue&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;matchId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;match-uuid-xyz&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;allianceColor&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;BLUE&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;autonScore&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">0</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-comment">// ... similar empty fields</span>
+  <span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">]</span>
+</code></pre>
+</li>
+<li><strong>401 Unauthorized / 403 Forbidden</strong>.</li>
+<li><strong>404 Not Found:</strong> If the <code>matchId</code> does not exist.</li>
+<li><strong>409 Conflict:</strong> If score sheets for this match have already been initialized or if scores already exist.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="match-scheduler">Match Scheduler</h2>
+<p>The Match Scheduler API is responsible for generating match schedules for different tournament formats (e.g., FRC-style round robin, Swiss pairings, Playoffs), managing rankings, and finalizing tournament progression.</p>
+<p><strong>Authorization:</strong> All endpoints under <code>/api/match-scheduler</code> require <code>ADMIN</code> role unless otherwise specified.</p>
+<h3 id="endpoints-summary-3">Endpoints Summary</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Endpoint</th>
+<th>Description</th>
+<th>Authorization</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td>/match-scheduler/generate-frc-schedule</td>
+<td>Generates a qualification schedule based on FRC algorithm for a given stage</td>
+<td>Admin</td>
+</tr>
+<tr>
+<td>POST</td>
+<td>/match-scheduler/generate-swiss-round</td>
+<td>Generates pairings for the next Swiss round based on current rankings</td>
+<td>Admin</td>
+</tr>
+<tr>
+<td>POST</td>
+<td>/match-scheduler/update-swiss-rankings</td>
+<td>Updates Swiss rankings after a round is completed</td>
+<td>Admin</td>
+</tr>
+<tr>
+<td>GET</td>
+<td>/match-scheduler/get-swiss-rankings</td>
+<td>Retrieves the current Swiss rankings for a stage</td>
+<td>Public</td>
+</tr>
+<tr>
+<td>POST</td>
+<td>/match-scheduler/generate-playoff</td>
+<td>Generates a playoff bracket (e.g., single/double elimination)</td>
+<td>Admin</td>
+</tr>
+<tr>
+<td>POST</td>
+<td>/match-scheduler/update-playoff-brackets</td>
+<td>Updates playoff bracket based on match results</td>
+<td>Admin</td>
+</tr>
+<tr>
+<td>POST</td>
+<td>/match-scheduler/finalize-playoff-rankings</td>
+<td>Finalizes playoff rankings and determines winners</td>
+<td>Admin</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h3 id="generate-frc-qualification-schedule">Generate FRC Qualification Schedule</h3>
+<ul>
+<li><strong>POST /match-scheduler/generate-frc-schedule</strong></li>
+<li><strong>Description:</strong> Generates a qualification match schedule for a specified stage using an algorithm similar to FRC (FIRST Robotics Competition). This typically aims for balanced partner and opponent assignments.</li>
+<li><strong>Authorization:</strong> <code>ADMIN</code></li>
+<li><strong>Request Body:</strong><pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;stageId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;numMatchesPerTeam&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;number (integer, e.g., 8-12)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;numTeamsPerAlliance&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;number (integer, e.g., 2 or 3)&quot;</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+</li>
+<li><strong>Responses:</strong>
+<ul>
+<li><strong>201 Created:</strong> Returns an array of the generated <code>Match</code> objects.<pre><code class="language-json"><span class="hljs-punctuation">[</span>
+  <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;match-uuid-1&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;matchNumber&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;QUALIFICATION&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;status&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;PENDING&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;stageId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;stage-uuid-provided&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;alliances&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+      <span class="hljs-punctuation">{</span> <span class="hljs-attr">&quot;color&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;RED&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;teams&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">{</span><span class="hljs-attr">&quot;teamId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;team-A&quot;</span><span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span> <span class="hljs-punctuation">{</span><span class="hljs-attr">&quot;teamId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;team-B&quot;</span><span class="hljs-punctuation">}</span><span class="hljs-punctuation">]</span> <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-punctuation">{</span> <span class="hljs-attr">&quot;color&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;BLUE&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;teams&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">{</span><span class="hljs-attr">&quot;teamId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;team-C&quot;</span><span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span> <span class="hljs-punctuation">{</span><span class="hljs-attr">&quot;teamId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;team-D&quot;</span><span class="hljs-punctuation">}</span><span class="hljs-punctuation">]</span> <span class="hljs-punctuation">}</span>
+    <span class="hljs-punctuation">]</span>
+    <span class="hljs-comment">// ... other match fields</span>
+  <span class="hljs-punctuation">}</span>
+  <span class="hljs-comment">// ... more generated matches</span>
+<span class="hljs-punctuation">]</span>
+</code></pre>
+</li>
+<li><strong>400 Bad Request:</strong> If <code>stageId</code> is invalid, or if parameters are unsuitable for schedule generation (e.g., not enough teams for <code>numTeamsPerAlliance</code>).</li>
+<li><strong>404 Not Found:</strong> If the <code>stageId</code> does not correspond to an existing stage, or if the stage does not have registered teams.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="generate-swiss-round">Generate Swiss Round</h3>
+<ul>
+<li><strong>POST /match-scheduler/generate-swiss-round</strong></li>
+<li><strong>Description:</strong> Generates pairings for the next round of a Swiss-system tournament stage based on current team rankings. Teams with similar scores/ranking points are typically paired.</li>
+<li><strong>Authorization:</strong> <code>ADMIN</code></li>
+<li><strong>Request Body:</strong><pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;stageId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;currentRoundNumber&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;number (integer, e.g., 1, 2, ...)&quot;</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+</li>
+<li><strong>Responses:</strong>
+<ul>
+<li><strong>201 Created:</strong> Returns an array of newly created <code>Match</code> objects for the Swiss round.<pre><code class="language-json"><span class="hljs-punctuation">[</span>
+  <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;match-uuid-swiss-1&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;matchNumber&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">101</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// Or some other numbering scheme for the round</span>
+    <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;QUALIFICATION&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// Or a specific SWISS type if defined</span>
+    <span class="hljs-attr">&quot;status&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;PENDING&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;stageId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;stage-uuid-provided&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;alliances&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+      <span class="hljs-comment">// Pairings based on rankings</span>
+      <span class="hljs-punctuation">{</span> <span class="hljs-attr">&quot;color&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;RED&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;teams&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">{</span><span class="hljs-attr">&quot;teamId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;team-ranked-1&quot;</span><span class="hljs-punctuation">}</span><span class="hljs-punctuation">]</span> <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// Assuming 1v1 for simplicity</span>
+      <span class="hljs-punctuation">{</span> <span class="hljs-attr">&quot;color&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;BLUE&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;teams&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">{</span><span class="hljs-attr">&quot;teamId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;team-ranked-2&quot;</span><span class="hljs-punctuation">}</span><span class="hljs-punctuation">]</span> <span class="hljs-punctuation">}</span>
+    <span class="hljs-punctuation">]</span>
+    <span class="hljs-comment">// ... other match fields</span>
+  <span class="hljs-punctuation">}</span>
+  <span class="hljs-comment">// ... more generated matches for the round</span>
+<span class="hljs-punctuation">]</span>
+</code></pre>
+</li>
+<li><strong>400 Bad Request:</strong> Invalid <code>stageId</code>, <code>currentRoundNumber</code> issues (e.g., requesting round 1 when it already exists), or issues with fetching rankings.</li>
+<li><strong>404 Not Found:</strong> Stage not found or no teams/rankings available for the stage.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="update-swiss-rankings">Update Swiss Rankings</h3>
+<ul>
+<li><strong>POST /match-scheduler/update-swiss-rankings</strong></li>
+<li><strong>Description:</strong> Recalculates and updates the Swiss rankings for a given stage. This is typically done after all matches in a Swiss round have been played and scores finalized.</li>
+<li><strong>Authorization:</strong> <code>ADMIN</code></li>
+<li><strong>Request Body:</strong><pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;stageId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID)&quot;</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+</li>
+<li><strong>Responses:</strong>
+<ul>
+<li><strong>200 OK:</strong> Returns the updated list of team rankings for the Swiss stage.<pre><code class="language-json"><span class="hljs-punctuation">[</span>
+  <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;teamId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;team-uuid-A&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;teamName&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;RoboKings&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;rankingPoints&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">12</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;matchesPlayed&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">4</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;wins&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">3</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;losses&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;ties&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">0</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-comment">// ... other ranking metrics (e.g., tiebreaker points)</span>
+  <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;teamId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;team-uuid-B&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;teamName&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Circuit Breakers&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;rankingPoints&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">10</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-comment">// ...</span>
+  <span class="hljs-punctuation">}</span>
+  <span class="hljs-comment">// ... more ranked teams</span>
+<span class="hljs-punctuation">]</span>
+</code></pre>
+</li>
+<li><strong>400 Bad Request:</strong> If <code>stageId</code> is invalid.</li>
+<li><strong>404 Not Found:</strong> Stage not found.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="get-swiss-rankings">Get Swiss Rankings</h3>
+<ul>
+<li><strong>GET /match-scheduler/get-swiss-rankings</strong></li>
+<li><strong>Description:</strong> Retrieves the current Swiss rankings for a specified stage.</li>
+<li><strong>Authorization:</strong> Public</li>
+<li><strong>Query Parameters:</strong>
+<ul>
+<li><code>stageId</code> (string UUID, required): The ID of the Swiss stage.</li>
+</ul>
+</li>
+<li><strong>Responses:</strong>
+<ul>
+<li><strong>200 OK:</strong> Returns the list of team rankings for the Swiss stage (similar to <code>update-swiss-rankings</code> response).<pre><code class="language-json"><span class="hljs-punctuation">[</span>
+  <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;teamId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;team-uuid-A&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;teamName&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;RoboKings&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;rankingPoints&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">12</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-comment">// ... other ranking metrics</span>
+  <span class="hljs-punctuation">}</span>
+  <span class="hljs-comment">// ... more ranked teams</span>
+<span class="hljs-punctuation">]</span>
+</code></pre>
+</li>
+<li><strong>400 Bad Request:</strong> If <code>stageId</code> query parameter is missing or invalid.</li>
+<li><strong>404 Not Found:</strong> Stage not found or no rankings available.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="generate-playoff-bracket">Generate Playoff Bracket</h3>
+<ul>
+<li><strong>POST /match-scheduler/generate-playoff</strong></li>
+<li><strong>Description:</strong> Generates the initial matches for a playoff stage based on final qualification rankings (e.g., from Swiss or Round Robin) and a specified bracket type (e.g., single elimination, double elimination, round robin for top N).</li>
+<li><strong>Authorization:</strong> <code>ADMIN</code></li>
+<li><strong>Request Body:</strong><pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;stageId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID of the playoff stage)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;qualificationStageId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID of the stage providing rankings, e.g., Swiss stage)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;bracketType&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;SINGLE_ELIMINATION | DOUBLE_ELIMINATION | ROUND_ROBIN&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// Enum or string</span>
+  <span class="hljs-attr">&quot;numAdvancingTeams&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;number (integer, e.g., 8, 16 for bracket size)&quot;</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+</li>
+<li><strong>Responses:</strong>
+<ul>
+<li><strong>201 Created:</strong> Returns an array of the generated playoff <code>Match</code> objects.<pre><code class="language-json"><span class="hljs-punctuation">[</span>
+  <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;match-uuid-playoff-1&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;matchNumber&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// Or specific playoff match codes like QF1-1</span>
+    <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;PLAYOFF&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;status&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;PENDING&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;stageId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;playoff-stage-uuid-provided&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;alliances&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+      <span class="hljs-comment">// Seeded based on qualificationStageId rankings</span>
+      <span class="hljs-punctuation">{</span> <span class="hljs-attr">&quot;color&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;RED&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;teams&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">{</span><span class="hljs-attr">&quot;teamId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;team-seed-1&quot;</span><span class="hljs-punctuation">}</span><span class="hljs-punctuation">]</span> <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-punctuation">{</span> <span class="hljs-attr">&quot;color&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;BLUE&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;teams&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">{</span><span class="hljs-attr">&quot;teamId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;team-seed-8&quot;</span><span class="hljs-punctuation">}</span><span class="hljs-punctuation">]</span> <span class="hljs-punctuation">}</span>
+    <span class="hljs-punctuation">]</span>
+    <span class="hljs-comment">// ... other match fields</span>
+  <span class="hljs-punctuation">}</span>
+  <span class="hljs-comment">// ... more initial playoff matches</span>
+<span class="hljs-punctuation">]</span>
+</code></pre>
+</li>
+<li><strong>400 Bad Request:</strong> Invalid parameters, e.g., <code>numAdvancingTeams</code> not a power of 2 for elimination brackets, or issues fetching rankings from <code>qualificationStageId</code>.</li>
+<li><strong>404 Not Found:</strong> Either <code>stageId</code> or <code>qualificationStageId</code> not found.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="update-playoff-brackets">Update Playoff Brackets</h3>
+<ul>
+<li><strong>POST /match-scheduler/update-playoff-brackets</strong></li>
+<li><strong>Description:</strong> Updates the playoff bracket by advancing winners and potentially generating new matches based on the results of completed playoff matches. For example, after a quarterfinal match, the winner advances to a semifinal match which might be created or populated by this call.</li>
+<li><strong>Authorization:</strong> <code>ADMIN</code></li>
+<li><strong>Request Body:</strong><pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;stageId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID of the playoff stage)&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;completedMatchId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID of the match whose result triggers the update, optional, can be inferred if service logic supports broader updates)&quot;</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+</li>
+<li><strong>Responses:</strong>
+<ul>
+<li><strong>200 OK:</strong> Returns the current state of the playoff bracket, which might include updated existing matches and newly created matches.<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;updatedMatches&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+    <span class="hljs-comment">// Matches whose status or participants might have changed</span>
+    <span class="hljs-punctuation">{</span> <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;match-uuid-QF1-1&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;status&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;COMPLETED&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;winnerAllianceColor&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;RED&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">/* ... */</span> <span class="hljs-punctuation">}</span>
+  <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;newMatches&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+    <span class="hljs-comment">// New matches generated, e.g., semifinals</span>
+    <span class="hljs-punctuation">{</span> <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;match-uuid-SF1-1&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;PLAYOFF&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;status&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;PENDING&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">/* ... */</span> <span class="hljs-punctuation">}</span>
+  <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;bracketStatus&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (e.g., SEMIFINALS_SET, FINALS_PENDING)&quot;</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<em>(The exact response structure will depend on the service implementation. It should clearly indicate changes and new matchups.)</em></li>
+<li><strong>400 Bad Request:</strong> Invalid <code>stageId</code> or <code>completedMatchId</code>.</li>
+<li><strong>404 Not Found:</strong> Stage or completed match not found.</li>
+<li><strong>409 Conflict:</strong> If trying to update based on a match that isn't ready or if the bracket logic prevents the update.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="finalize-playoff-rankings">Finalize Playoff Rankings</h3>
+<ul>
+<li><strong>POST /match-scheduler/finalize-playoff-rankings</strong></li>
+<li><strong>Description:</strong> Determines and records the final rankings of teams based on their performance throughout the playoff bracket (e.g., 1st place, 2nd place, etc.). This marks the conclusion of the playoff stage.</li>
+<li><strong>Authorization:</strong> <code>ADMIN</code></li>
+<li><strong>Request Body:</strong><pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;stageId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string (UUID of the playoff stage)&quot;</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+</li>
+<li><strong>Responses:</strong>
+<ul>
+<li><strong>200 OK:</strong> Returns the finalized list of playoff rankings.<pre><code class="language-json"><span class="hljs-punctuation">[</span>
+  <span class="hljs-punctuation">{</span> <span class="hljs-attr">&quot;rank&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;teamId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;team-uuid-winner&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;teamName&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Tournament Champions&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">/* ... */</span> <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-punctuation">{</span> <span class="hljs-attr">&quot;rank&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">2</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;teamId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;team-uuid-runnerup&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;teamName&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Finalists&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">/* ... */</span> <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-comment">// ... other ranked teams</span>
+<span class="hljs-punctuation">]</span>
+</code></pre>
+</li>
+<li><strong>400 Bad Request:</strong> Invalid <code>stageId</code>.</li>
+<li><strong>404 Not Found:</strong> Playoff stage not found.</li>
+<li><strong>409 Conflict:</strong> If playoffs are not yet completed or all matches haven't been scored and finalized.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="usage-examples">Usage Examples</h2>
+<h3 id="record-match-scores-frontend">Record Match Scores (Frontend)</h3>
+<pre><code class="language-javascript"><span class="hljs-keyword">const</span> scoreData = {
+  <span class="hljs-attr">matchId</span>: <span class="hljs-string">&quot;cltz0982v0001g8mbadcd1234&quot;</span>,
+  <span class="hljs-attr">redAutoScore</span>: <span class="hljs-number">45</span>,
+  <span class="hljs-attr">redDriveScore</span>: <span class="hljs-number">65</span>,
+  <span class="hljs-attr">redTeamCount</span>: <span class="hljs-number">3</span>,
+  <span class="hljs-attr">blueAutoScore</span>: <span class="hljs-number">40</span>,
+  <span class="hljs-attr">blueDriveScore</span>: <span class="hljs-number">60</span>,
+  <span class="hljs-attr">blueTeamCount</span>: <span class="hljs-number">3</span>,
+  <span class="hljs-attr">redGameElements</span>: { <span class="hljs-attr">highGoal</span>: <span class="hljs-number">4</span>, <span class="hljs-attr">midGoal</span>: <span class="hljs-number">5</span>, <span class="hljs-attr">lowGoal</span>: <span class="hljs-number">2</span> },
+  <span class="hljs-attr">blueGameElements</span>: { <span class="hljs-attr">highGoal</span>: <span class="hljs-number">3</span>, <span class="hljs-attr">midGoal</span>: <span class="hljs-number">4</span>, <span class="hljs-attr">lowGoal</span>: <span class="hljs-number">3</span> },
+  <span class="hljs-attr">scoreDetails</span>: { <span class="hljs-attr">penalties</span>: { <span class="hljs-attr">red</span>: <span class="hljs-number">0</span>, <span class="hljs-attr">blue</span>: <span class="hljs-number">10</span> } }
+};
+<span class="hljs-title function_">fetch</span>(<span class="hljs-string">&#x27;/api/match-scores&#x27;</span>, {
+  <span class="hljs-attr">method</span>: <span class="hljs-string">&#x27;POST&#x27;</span>,
+  <span class="hljs-attr">headers</span>: { <span class="hljs-string">&#x27;Content-Type&#x27;</span>: <span class="hljs-string">&#x27;application/json&#x27;</span>, <span class="hljs-string">&#x27;Authorization&#x27;</span>: <span class="hljs-string">`Bearer <span class="hljs-subst">${authToken}</span>`</span> },
+  <span class="hljs-attr">body</span>: <span class="hljs-title class_">JSON</span>.<span class="hljs-title function_">stringify</span>(scoreData)
+});
+</code></pre>
+<h3 id="display-tournament-results-frontend">Display Tournament Results (Frontend)</h3>
+<pre><code class="language-javascript"><span class="hljs-keyword">async</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">loadTournamentResults</span>(<span class="hljs-params">tournamentId</span>) {
+  <span class="hljs-keyword">const</span> matches = <span class="hljs-keyword">await</span> <span class="hljs-title function_">fetch</span>(<span class="hljs-string">`/api/tournaments/<span class="hljs-subst">${tournamentId}</span>/matches`</span>).<span class="hljs-title function_">then</span>(<span class="hljs-function"><span class="hljs-params">r</span> =&gt;</span> r.<span class="hljs-title function_">json</span>());
+  <span class="hljs-keyword">const</span> completedMatches = matches.<span class="hljs-title function_">filter</span>(<span class="hljs-function"><span class="hljs-params">m</span> =&gt;</span> m.<span class="hljs-property">status</span> === <span class="hljs-string">&#x27;COMPLETED&#x27;</span>);
+  <span class="hljs-keyword">const</span> matchResults = <span class="hljs-keyword">await</span> <span class="hljs-title class_">Promise</span>.<span class="hljs-title function_">all</span>(
+    completedMatches.<span class="hljs-title function_">map</span>(<span class="hljs-keyword">async</span> match =&gt; {
+      <span class="hljs-keyword">const</span> scoreData = <span class="hljs-keyword">await</span> <span class="hljs-title function_">fetch</span>(<span class="hljs-string">`/api/match-scores/match/<span class="hljs-subst">${match.id}</span>`</span>).<span class="hljs-title function_">then</span>(<span class="hljs-function"><span class="hljs-params">r</span> =&gt;</span> r.<span class="hljs-title function_">json</span>());
+      <span class="hljs-keyword">return</span> {
+        <span class="hljs-attr">matchNumber</span>: match.<span class="hljs-property">matchNumber</span>,
+        <span class="hljs-attr">round</span>: match.<span class="hljs-property">roundNumber</span>,
+        <span class="hljs-attr">stageName</span>: match.<span class="hljs-property">stage</span>.<span class="hljs-property">name</span>,
+        <span class="hljs-attr">redTeams</span>: match.<span class="hljs-property">alliances</span>.<span class="hljs-title function_">find</span>(<span class="hljs-function"><span class="hljs-params">a</span> =&gt;</span> a.<span class="hljs-property">color</span> === <span class="hljs-string">&#x27;RED&#x27;</span>).<span class="hljs-property">teamAlliances</span>.<span class="hljs-title function_">map</span>(<span class="hljs-function"><span class="hljs-params">ta</span> =&gt;</span> ta.<span class="hljs-property">team</span>.<span class="hljs-property">teamNumber</span>).<span class="hljs-title function_">join</span>(<span class="hljs-string">&#x27;, &#x27;</span>),
+        <span class="hljs-attr">blueTeams</span>: match.<span class="hljs-property">alliances</span>.<span class="hljs-title function_">find</span>(<span class="hljs-function"><span class="hljs-params">a</span> =&gt;</span> a.<span class="hljs-property">color</span> === <span class="hljs-string">&#x27;BLUE&#x27;</span>).<span class="hljs-property">teamAlliances</span>.<span class="hljs-title function_">map</span>(<span class="hljs-function"><span class="hljs-params">ta</span> =&gt;</span> ta.<span class="hljs-property">team</span>.<span class="hljs-property">teamNumber</span>).<span class="hljs-title function_">join</span>(<span class="hljs-string">&#x27;, &#x27;</span>),
+        <span class="hljs-attr">redScore</span>: scoreData.<span class="hljs-property">redTotalScore</span>,
+        <span class="hljs-attr">blueScore</span>: scoreData.<span class="hljs-property">blueTotalScore</span>,
+        <span class="hljs-attr">winner</span>: scoreData.<span class="hljs-property">redTotalScore</span> &gt; scoreData.<span class="hljs-property">blueTotalScore</span> ? <span class="hljs-string">&#x27;RED&#x27;</span> : scoreData.<span class="hljs-property">blueTotalScore</span> &gt; scoreData.<span class="hljs-property">redTotalScore</span> ? <span class="hljs-string">&#x27;BLUE&#x27;</span> : <span class="hljs-string">&#x27;TIE&#x27;</span>
+      };
+    })
+  );
+  <span class="hljs-comment">// ...render table</span>
+}
+</code></pre>
+<hr>
+<h2 id="notes">Notes</h2>
+<ul>
+<li>All endpoints use JSON for request and response bodies unless otherwise specified.</li>
+<li>For more details, see the Swagger UI at <code>/api/docs</code>.</li>
+<li>The match scheduler implements simulated annealing for qualification, Swiss-style pairing, and elimination bracket generation.</li>
+<li>Team statistics are updated automatically when match scores are created or updated.</li>
+</ul>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+            
+        </body>
+        </html>
