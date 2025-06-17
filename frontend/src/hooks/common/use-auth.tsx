@@ -32,26 +32,43 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     setUser(data ?? null);
   }, [data]);
-
   const register = async (username: string, password: string, email?: string) => {
     try {
       await apiClient.post("/auth/register", { username, password, email });
       await login(username, password);
     } catch (error: any) {
       let errorMsg = 'Registration failed';
-      if (error?.response?.data?.message) errorMsg = error.response.data.message;
+      if (error?.response?.data?.message) {
+        // Handle validation messages that can be arrays or strings
+        const message = error.response.data.message;
+        if (Array.isArray(message)) {
+          errorMsg = message.join('. ');
+        } else {
+          errorMsg = message;
+        }
+      }
       throw new Error(errorMsg);
     }
-  }
-    // Login function
+  }  // Login function
   const login = async (username: string, password: string) => {
     try {
       await apiClient.post("/auth/login", { username, password });
       await refetch();
     } catch (error: any) {
       let errorMsg = 'Login failed';
-      if (error?.response?.data?.message) errorMsg = error.response.data.message;
-      throw new Error(errorMsg);
+      if (error?.response?.data?.message) {
+        // Handle validation messages that can be arrays or strings
+        const message = error.response.data.message;
+        if (Array.isArray(message)) {
+          errorMsg = message.join('. ');
+        } else {
+          errorMsg = message;
+        }
+      }
+      // Preserve status code for rate limiting detection
+      const loginError = new Error(errorMsg) as Error & { status?: number };
+      loginError.status = error?.status || error?.response?.status;
+      throw loginError;
     }
   };
   

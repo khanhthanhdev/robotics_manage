@@ -13,9 +13,11 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useAuth } from "@/hooks/common/use-auth";
 
-// Login form schema validation
+// Login form schema validation - Updated to match backend validation  
 const formSchema = z.object({
-  username: z.string().min(1, "Username is required"),
+  username: z.string()
+    .min(1, "Username is required")
+    .max(30, "Username must be at most 30 characters long"),
   password: z.string().min(1, "Password is required"),
 });
 
@@ -24,6 +26,7 @@ export default function LoginPage() {
   const { login } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
+  const [rateLimitWarning, setRateLimitWarning] = useState<string | null>(null);
 
   // Form definition using react-hook-form
   const form = useForm<z.infer<typeof formSchema>>({
@@ -33,11 +36,11 @@ export default function LoginPage() {
       password: "",
     },
   });
-
   // Handle form submission
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       setLoginError(null);
+      setRateLimitWarning(null);
       setIsLoading(true);
       
       // Perform login
@@ -50,8 +53,12 @@ export default function LoginPage() {
       }, 100);
       
     } catch (error: any) {
-      // Display the error message
-      setLoginError(error.message || "Login failed. Please check your credentials.");
+      // Handle specific error types
+      if (error.status === 429) {
+        setRateLimitWarning("Too many login attempts. Please wait a moment before trying again.");
+      } else {
+        setLoginError(error.message || "Login failed. Please check your credentials.");
+      }
       setIsLoading(false);
     }
   };
@@ -63,17 +70,21 @@ export default function LoginPage() {
           <CardTitle className="text-3xl font-bold">Sign In</CardTitle>
           <CardDescription>Enter your credentials to access your account</CardDescription>
         </CardHeader>
-        
-        <CardContent className="space-y-4">
-          {/* Admin account info alert */}
-          <Alert className="bg-blue-50 text-blue-800 border-blue-200">
+          <CardContent className="space-y-4">
+          {/* Admin initialization info alert */}          <Alert className="bg-blue-50 text-blue-800 border-blue-200">
             <AlertDescription className="text-sm">
-              <p className="font-medium">Default Admin Account:</p>
-              <p>Username: <code className="bg-blue-100 px-1 rounded">admin</code></p>
-              <p>Password: <code className="bg-blue-100 px-1 rounded">admin123</code></p>
-              <p className="text-xs mt-1 italic">Please change the password after first login.</p>
+              <p className="font-medium">First Time Setup:</p>
+              <p>If no admin account exists, <Link href="/admin-setup" className="text-blue-600 underline">click here to initialize one</Link>.</p>
+              <p className="text-xs mt-1 italic">Please use strong credentials for production environments.</p>
             </AlertDescription>
           </Alert>
+
+          {/* Rate limit warning */}
+          {rateLimitWarning && (
+            <Alert className="bg-yellow-50 text-yellow-800 border-yellow-200">
+              <AlertDescription>{rateLimitWarning}</AlertDescription>
+            </Alert>
+          )}
 
           {/* Error message */}
           {loginError && (
@@ -134,9 +145,8 @@ export default function LoginPage() {
             <Link href="/register" className="text-blue-600 hover:underline">
               Sign up
             </Link>
-          </div>
-          <div className="text-xs text-gray-400">
-            <p>API authentication uses JWT tokens for secure access</p>
+          </div>          <div className="text-xs text-gray-400">
+            <p>Secure authentication with JWT tokens and rate limiting protection</p>
           </div>
         </CardFooter>
       </Card>

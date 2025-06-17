@@ -64,18 +64,27 @@ class ApiClient {
 
     if (data) {
       config.body = JSON.stringify(data);
-    }
-
-    try {
+    }    try {
       const response = await fetch(url, config);
-      const responseData = await response.json();
+      
+      // Handle non-JSON responses (like 429 rate limit responses)
+      let responseData;
+      try {
+        responseData = await response.json();
+      } catch (jsonError) {
+        responseData = { message: response.statusText || 'Request failed' };
+      }
 
       if (!response.ok) {
-        // Handle API errors
+        // Handle API errors with proper status code propagation
         const error = new Error(
           responseData.message || 'An error occurred during the API request.'
-        ) as Error & { status?: number };
+        ) as Error & { status?: number; response?: { status: number; data: any } };
         error.status = response.status;
+        error.response = {
+          status: response.status,
+          data: responseData
+        };
         throw error;
       }
 

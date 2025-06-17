@@ -1,64 +1,54 @@
-import { Controller, Request, Post, UseGuards, Body, Get, UnauthorizedException, Res, HttpCode } from '@nestjs/common';
+import { Controller, Request, Post, UseGuards, Body, Get, UnauthorizedException, Res, HttpCode, ValidationPipe, Ip, Logger } from '@nestjs/common';
 import { Response } from 'express';
 import { AuthService } from './auth.service';
 import { UserRole } from '../utils/prisma-types';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { RolesGuard } from './roles.guard';
 import { Roles } from './roles.decorator';
+import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
+import { RegisterDto } from './dto/register.dto';
+import { LoginDto } from './dto/login.dto';
 
 @Controller('auth')
+@UseGuards(ThrottlerGuard)
 export class AuthController {
-  constructor(private authService: AuthService) { }
+  private readonly logger = new Logger(AuthController.name);
 
+  constructor(private authService: AuthService) {}
   @Post('register')
-  async register(@Body() registerDto: {
-    username: string;
-    password: string;
-    email?: string;
-    role?: UserRole;
-  }) {
+  @Throttle({ default: { limit: 3, ttl: 60000 } }) // 3 attempts per minute
+  async register(@Body(ValidationPipe) registerDto: RegisterDto) {
     return this.authService.register(registerDto);
   }
-
   @Post('login')
+  @Throttle({ default: { limit: 5, ttl: 60000 } }) // 5 attempts per minute
   async login(
-    @Body() loginDto: { username: string; password: string },
-    @Res({ passthrough: true }) res: Response
+    @Body(ValidationPipe) loginDto: LoginDto,
+    @Res({ passthrough: true }) res: Response,
+    @Ip() clientIp: string
   ) {
-    // Validate input
-    if (!loginDto.username || !loginDto.password) {
-      throw new UnauthorizedException('Invalid credentials');
-    }
-
-    const user = await this.authService.validateUser(loginDto.username, loginDto.password);
-
-    if (!user) {
-      // Always return the same error for invalid credentials
-      throw new UnauthorizedException('Invalid credentials');
-    }
-
+    const user = await this.authService.validateUser(loginDto.username, loginDto.password, clientIp);
     const { access_token, user: userInfo } = await this.authService.login(user);
 
     // Set JWT as HTTP-only cookie
     res.cookie('token', access_token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 1 week
+      sameSite: 'strict', // Enhanced CSRF protection
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
     });
 
-    // Do not return the token in the response body for security
+    this.logger.log(`User logged in: ${userInfo.username}`);
     return { user: userInfo, message: 'Login successful' };
   }
-
   @Post('logout')
   logout(@Res({ passthrough: true }) res: Response) {
     res.clearCookie('token', {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      sameSite: 'strict',
     });
-    return { message: 'Logged out' };
+    return { message: 'Logged out successfully' };
   }
 
   @Get('init-admin')

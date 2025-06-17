@@ -1,74 +1,80 @@
-import { Injectable, UnauthorizedException, ConflictException, BadRequestException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, ConflictException, BadRequestException, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma.service';
 import * as bcrypt from 'bcrypt';
 import { UserRole } from '../utils/prisma-types';
+import { AuthSecurityService } from './auth-security.service';
+import { RegisterDto } from './dto/register.dto';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService,
+    private authSecurityService: AuthSecurityService,
   ) {}
+  async validateUser(username: string, password: string, clientIp: string): Promise<any> {
+    // Check if account is locked
+    if (await this.authSecurityService.isAccountLocked(username)) {
+      await this.authSecurityService.recordFailedAttempt(username, clientIp);
+      throw new UnauthorizedException('Account temporarily locked due to too many failed attempts. Try again later.');
+    }
 
-  async validateUser(username: string, password: string): Promise<any> {
     const user = await this.prisma.user.findUnique({
       where: { username },
     });
 
-    if (user && await bcrypt.compare(password, user.password)) {
-      const { password, ...result } = user;
-      return result;
+    if (!user) {
+      await this.authSecurityService.recordFailedAttempt(username, clientIp);
+      // Use generic message to prevent username enumeration
+      throw new UnauthorizedException('Invalid credentials');
     }
-    return null;
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    
+    if (!isPasswordValid) {
+      await this.authSecurityService.recordFailedAttempt(username, clientIp);
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    // Record successful login
+    await this.authSecurityService.recordSuccessfulLogin(username, clientIp);
+    
+    const { password: _, ...result } = user;
+    return result;
   }
-
-  async register(registerDto: { username: string; password: string; email?: string; role?: UserRole }) {
-    // Check if username is already taken
-    const existingUser = await this.prisma.user.findUnique({
-      where: { username: registerDto.username },
-    });
-
-    if (existingUser) {
-      throw new ConflictException('Username already exists');
-    }
-
-    // Check if email is already taken (if provided)
-    if (registerDto.email) {
-      try {
-        const existingEmail = await this.prisma.user.findFirst({
-          where: { email: registerDto.email },
-        });
-
-        if (existingEmail) {
-          throw new ConflictException('Email already exists');
-        }
-      } catch (error) {
-        // If email query fails, likely means email field doesn't exist in schema
-        console.warn('Email check skipped, field might not exist in schema');
-      }
-    }
-
-    // Default role to COMMON if not specified
-    const role = registerDto.role || UserRole.COMMON;
-
+  async register(registerDto: RegisterDto): Promise<any> {
     try {
-      // Hash password
-      const hashedPassword = await bcrypt.hash(registerDto.password, 10);
+      // Check for existing username or email with generic error
+      const existingUser = await this.prisma.user.findFirst({
+        where: {
+          OR: [
+            { username: registerDto.username },
+            ...(registerDto.email ? [{ email: registerDto.email }] : []),
+          ],
+        },
+      });
 
-      // Create user data object
+      if (existingUser) {
+        // Generic error to prevent enumeration
+        throw new ConflictException('Registration failed. Please try different credentials.');
+      }
+
+      const role = registerDto.role || UserRole.COMMON;
+      const hashedPassword = await bcrypt.hash(registerDto.password, 12); // Increased rounds
+
       const userData: any = {
         username: registerDto.username,
         password: hashedPassword,
         role: role,
       };
 
-      // Only add email if provided
       if (registerDto.email) {
         userData.email = registerDto.email;
       }
 
-      // Create new user
       const newUser = await this.prisma.user.create({
         data: userData,
         select: {
@@ -79,9 +85,15 @@ export class AuthService {
         },
       });
 
+      this.logger.log(`New user registered: ${newUser.username} with role ${newUser.role}`);
       return newUser;
     } catch (error) {
-      throw new BadRequestException('Could not create user: ' + error.message);
+      if (error instanceof ConflictException) {
+        throw error;
+      }
+      
+      this.logger.error('Registration failed', error);
+      throw new BadRequestException('Registration failed. Please try again.');
     }
   }
 
@@ -101,10 +113,8 @@ export class AuthService {
 
       if (existingAdmin) {
         return { message: 'Admin user already exists' };
-      }
-
-      // Create default admin user
-      const hashedPassword = await bcrypt.hash(adminPassword, 10);
+      }      // Create default admin user
+      const hashedPassword = await bcrypt.hash(adminPassword, 12);
       await this.prisma.user.create({
         data: {
           username: adminUsername,
