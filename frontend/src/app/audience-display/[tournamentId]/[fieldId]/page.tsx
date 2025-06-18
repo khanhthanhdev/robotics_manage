@@ -22,6 +22,7 @@ import { ConnectionStatus } from "../../../../components/features/audience-displ
 import { MatchDisplay } from "../../../../components/features/audience-display/displays/match-display";
 import { useMatchesByTournament } from "@/hooks/features/use-matches-by-tournament";
 import { SwissRankingsDisplay } from "../../../../components/features/audience-display/displays/swiss-rankings-display";
+import { formatDateRange, formatTimeMsPad } from '@/lib/utils';
 
 export default function LiveFieldDisplayPage() {
   const router = useRouter();
@@ -883,8 +884,11 @@ export default function LiveFieldDisplayPage() {
         onBack={() => router.push(`/audience-display/${tournamentId}`)}
       />
     );
-  }  return (
-    <div className="min-h-screen bg-gray-50">
+  }
+
+  // --- UI Layout ---
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       {/* Enhanced Connection Status with Fallback Support (Steps 10-12) */}
       <ConnectionStatus
         isConnected={isConnected}
@@ -900,52 +904,56 @@ export default function LiveFieldDisplayPage() {
         announcementCountdown={announcementCountdown}
       />
       {/* Header with tournament and field info */}
-      <header className="mb-6 px-6 pt-6">
-        <div className="container mx-auto">
-          <div className="bg-white border border-gray-200 shadow-lg p-6 rounded-xl">
-            <h1 className="text-3xl font-bold text-center mb-3 text-gray-900">
-              {tournament?.name || "Tournament"} - Field{" "}
-              {field?.number || field?.name || fieldId}
+      <header className="mb-6 px-6 pt-8">
+        <div className="container mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+          <div>
+            <h1 className="text-3xl md:text-4xl font-extrabold text-blue-900 drop-shadow-lg mb-1">
+              {tournament?.name || 'Tournament'}
             </h1>
-            <p className="text-center text-sm">
-              {isConnected ? (
-                <span className="text-green-800 bg-green-50 border border-green-200 px-3 py-1 rounded-full font-medium">
-                  <span className="inline-block w-2 h-2 rounded-full bg-green-500 animate-pulse mr-2"></span>
-                  Connected to Field {field?.number || field?.name || fieldId}
-                </span>
-              ) : (
-                <span className="text-red-800 bg-red-50 border border-red-200 px-3 py-1 rounded-full font-medium">
-                  <span className="inline-block w-2 h-2 rounded-full bg-red-500 mr-2"></span>
-                  Disconnected - Attempting to reconnect...
-                </span>
-              )}
-            </p>
-            {process.env.NODE_ENV === "development" && (
-              <p className="text-center text-xs text-blue-800 bg-blue-50 border border-blue-200 px-3 py-1 rounded-full mt-2 inline-block">
-                WebSocket testing interface available at{" "}
-                <code className="bg-blue-100 px-1 rounded">window.audienceDisplayWS</code>
-              </p>
+            <div className="text-lg text-gray-700 font-semibold">
+              Field: <span className="text-blue-700 font-bold">{field?.name || fieldId}</span>
+            </div>
+            <div className="text-sm text-gray-500 font-medium mt-1">
+              Dates: <span className="text-gray-900 font-semibold">{tournament ? formatDateRange(tournament.startDate, tournament.endDate) : ''}</span>
+            </div>
+          </div>
+          <div className="flex flex-col items-end gap-2">
+            {matchState?.matchNumber && (
+              <div className="text-2xl font-bold text-green-700 bg-green-100 px-6 py-2 rounded-xl shadow-md border-2 border-green-300">
+                Match #{matchState.matchNumber}
+              </div>
+            )}
+            {matchState?.status && (
+              <div className={`text-sm font-bold px-4 py-1 rounded-full border-2 shadow-sm mt-1
+                ${matchState.status === 'IN_PROGRESS' ? 'bg-blue-100 text-blue-800 border-blue-300' : ''}
+                ${matchState.status === 'COMPLETED' ? 'bg-green-100 text-green-800 border-green-300' : ''}
+                ${matchState.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800 border-yellow-300' : ''}
+                ${!['IN_PROGRESS','COMPLETED','PENDING'].includes(matchState.status) ? 'bg-gray-100 text-gray-800 border-gray-300' : ''}
+              `}>
+                {matchState.status.replace('_', ' ').toLowerCase().replace(/\b\w/g, (c: string) => c.toUpperCase())}
+              </div>
+            )}
+            {timer && (
+              <div className="text-4xl font-mono font-extrabold text-blue-700 bg-white px-8 py-2 rounded-xl shadow-lg border-2 border-blue-200 mt-2">
+                {timer.remaining !== undefined ? formatTimeMsPad(timer.remaining) : '--:--'}
+              </div>
+            )}
+            {matchState?.currentPeriod && (
+              <div className="text-lg font-bold uppercase text-indigo-800 bg-indigo-100 px-4 py-1 rounded-full border border-indigo-200 mt-2 tracking-widest">
+                {matchState.currentPeriod}
+              </div>
             )}
           </div>
         </div>
-      </header>{" "}      {/* Main content area */}
-      <main className="container mx-auto bg-white border border-gray-200 rounded-xl shadow-lg p-8">
+      </header>
+      {/* Main content area */}
+      <main className="container mx-auto bg-white border-2 border-gray-200 rounded-2xl shadow-2xl p-10 mt-2 mb-8">
         {connectionError ? (
-          <div
-            className="bg-red-50 border border-red-200 text-red-800 p-6 mb-6 rounded-xl"
-            role="alert"
-          >
-            <p className="font-bold text-lg">Connection Error</p>
-            <p className="text-red-700">{connectionError}</p>
+          <div className="text-center text-red-800 bg-red-50 border border-red-200 rounded-xl p-8 font-semibold text-lg">
+            {connectionError}
           </div>
         ) : fieldError ? (
-          <div
-            className="bg-red-50 border border-red-200 text-red-800 p-6 mb-6 rounded-xl"
-            role="alert"
-          >
-            <p className="font-bold text-lg">Field Not Found</p>
-            <p className="text-red-700">{fieldError}</p>
-          </div>
+          <FieldNotFound fieldError={fieldError} onBack={() => router.push(`/audience-display/${tournamentId}`)} />
         ) : (
           renderContent()
         )}
@@ -953,7 +961,7 @@ export default function LiveFieldDisplayPage() {
       {/* Footer */}{" "}
       <footer className="container mx-auto mt-8 text-center text-sm text-gray-600 pb-6">
         <p>
-          © {new Date().getFullYear()} Robotics Tournament Management System
+          © Robotics Tournament Management System
         </p>
       </footer>
     </div>

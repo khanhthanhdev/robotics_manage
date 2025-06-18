@@ -2,6 +2,7 @@
 import { useRouter, useParams } from "next/navigation";
 import { useTournament } from "@/hooks/api/use-tournaments";
 import FieldSelectDropdown, { useTournamentFields } from "@/components/fields/FieldSelectDropdown";
+import { formatDateRange } from '@/lib/utils';
 
 export default function FieldSelectionPage() {
   const router = useRouter();
@@ -20,27 +21,28 @@ export default function FieldSelectionPage() {
     }
   };
   return (
-    <div className="min-h-screen bg-gray-50 py-10 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-10 px-4 w-full">
       <button
-        className="mb-6 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-700 font-semibold shadow-sm transition-colors duration-200"
+        className="mb-8 px-4 py-2 bg-white border-2 border-blue-200 rounded-xl hover:bg-blue-50 text-blue-800 font-bold shadow-md transition-colors duration-200"
         onClick={() => router.push("/audience-display")}
       >
         ← Back to Tournament List
       </button>
-      <div className="max-w-xl mx-auto bg-white border border-gray-200 rounded-xl shadow-lg p-8">        {isLoadingTournament ? (
-          <div className="text-center text-blue-800 text-xl font-semibold">Loading tournament...</div>
+      <div className="max-w-2xl mx-auto bg-white border-2 border-blue-200 rounded-2xl shadow-2xl p-10">
+        {isLoadingTournament ? (
+          <div className="text-center text-blue-800 text-2xl font-bold py-12">Loading tournament...</div>
         ) : isErrorTournament || !tournament ? (
-          <div className="text-center text-red-800 bg-red-50 border border-red-200 rounded-xl p-6 font-semibold text-lg">Could not load tournament details.</div>
+          <div className="text-center text-red-800 bg-red-50 border border-red-200 rounded-xl p-8 font-semibold text-lg">Could not load tournament details.</div>
         ) : (
           <>
-            <h1 className="text-3xl font-bold text-center mb-4 text-gray-900">
-              {tournament.name} - Select Field
+            <h1 className="text-4xl font-extrabold text-center mb-4 text-blue-900 drop-shadow-lg">
+              {tournament.name}
             </h1>
-            <div className="text-center text-gray-700 mb-6">
-              <span className="font-semibold text-gray-900">Dates:</span> {formatDateRange(tournament.startDate, tournament.endDate)}
+            <div className="text-center text-lg text-gray-700 mb-6 font-semibold">
+              <span className="text-gray-900 font-bold">Dates:</span> <span className="text-blue-800">{formatDateRange(tournament.startDate, tournament.endDate)}</span>
             </div>
-            <div className="mb-8">
-              <label className="block text-gray-900 font-semibold mb-3 text-lg">Select a Field to View</label>
+            <div className="mb-10">
+              <label className="block text-blue-900 font-bold mb-3 text-lg">Select a Field to View</label>
               <FieldSelectDropdown
                 tournamentId={tournamentId}
                 selectedFieldId={null}
@@ -48,8 +50,9 @@ export default function FieldSelectionPage() {
                 showAllFieldsOption={false}
                 disabled={isLoadingFields}
               />
-            </div>            {isLoadingFields ? (
-              <div className="text-center text-blue-800 font-semibold">Loading fields...</div>
+            </div>
+            {isLoadingFields ? (
+              <div className="text-center text-blue-800 font-semibold py-6">Loading fields...</div>
             ) : isErrorFields ? (
               <div className="text-center text-red-800 bg-red-50 border border-red-200 rounded-xl p-4 font-semibold">Could not load fields for this tournament.</div>
             ) : fields.length === 0 ? (
@@ -62,11 +65,4 @@ export default function FieldSelectionPage() {
   );
 }
 
-function formatDateRange(start: string, end: string) {
-  const s = new Date(start);
-  const e = new Date(end);
-  if (isNaN(s.getTime()) || isNaN(e.getTime())) return '';
-  const opts: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'short', day: 'numeric' };
-  if (s.toDateString() === e.toDateString()) return s.toLocaleDateString(undefined, opts);
-  return `${s.toLocaleDateString(undefined, opts)} - ${e.toLocaleDateString(undefined, opts)}`;
-}
+

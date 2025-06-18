@@ -234,13 +234,13 @@ export default function StagesPage() {
   const getMatchStatusBadge = (status: string) => {
     switch (status) {
       case "PENDING":
-        return <Badge variant="outline">Pending</Badge>;
+        return <Badge variant="default" className="bg-yellow-100 text-yellow-800 border border-yellow-300 font-semibold">Pending</Badge>;
       case "IN_PROGRESS":
-        return <Badge variant="default" className="bg-blue-500">In Progress</Badge>;
+        return <Badge variant="default" className="bg-blue-600 text-white border border-blue-700 font-semibold">In Progress</Badge>;
       case "COMPLETED":
-        return <Badge variant="default" className="bg-green-500">Completed</Badge>;
+        return <Badge variant="default" className="bg-green-600 text-white border border-green-700 font-semibold">Completed</Badge>;
       default:
-        return <Badge variant="outline">{status}</Badge>;
+        return <Badge variant="outline" className="bg-gray-100 text-gray-800 border border-gray-300 font-semibold">{status}</Badge>;
     }
   };
 

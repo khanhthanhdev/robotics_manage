@@ -8,7 +8,7 @@ import { MatchStatus } from "@/lib/types";
 import { useTournaments } from "@/hooks/api/use-tournaments";
 import { MatchData } from "@/lib/types";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+
 import {
   Select,
   SelectTrigger,

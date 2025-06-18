@@ -81,6 +81,29 @@ export function formatRelativeTime(date: Date): string {
   return `${diffDays}d ago`;
 }
 
+/**
+ * Formats a date range as a string (e.g. Jun 1, 2025 - Jun 3, 2025)
+ */
+export function formatDateRange(start: string, end: string): string {
+  const s = new Date(start);
+  const e = new Date(end);
+  if (isNaN(s.getTime()) || isNaN(e.getTime())) return '';
+  const opts: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'short', day: 'numeric' };
+  if (s.toDateString() === e.toDateString()) return s.toLocaleDateString(undefined, opts);
+  return `${s.toLocaleDateString(undefined, opts)} - ${e.toLocaleDateString(undefined, opts)}`;
+}
+
+/**
+ * Formats a time in ms as mm:ss (e.g. 02:30)
+ */
+export function formatTimeMsPad(ms: number): string {
+  if (typeof ms !== 'number' || isNaN(ms)) return '--:--';
+  const totalSeconds = Math.max(0, Math.floor(ms / 1000));
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+}
+
 // Utility functions for audience display
 export function formatTimeMs(ms: number): string {
   if (typeof ms !== "number" || isNaN(ms) || ms < 0) ms = 0;

@@ -75,56 +75,45 @@ export default function AudienceDisplayController() {
   };
 
   return (
-    <div className="container mx-auto py-8 px-4">
-      <h1 className="text-3xl font-bold mb-8">Audience Display Control</h1>
-
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_350px] gap-8">
-        <Card>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-10 px-4 w-full">
+      <h1 className="text-4xl font-extrabold text-center mb-10 text-gray-900 drop-shadow-lg tracking-tight">
+        Audience Display Control
+      </h1>
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-10 max-w-6xl mx-auto">
+        {/* Display Settings Card */}
+        <Card className="bg-white border-2 border-blue-200 shadow-xl rounded-2xl">
           <CardHeader>
-            <CardTitle>Display Settings</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-2xl font-bold text-blue-900">Display Settings</CardTitle>
+            <CardDescription className="text-gray-700">
               Control what appears on the audience display screens
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="mb-6">
+            <div className="mb-8 space-y-4">
               <RadioGroup
                 value={displayMode}
                 onValueChange={handleDisplayModeChange}
                 className="space-y-4"
               >
-                <div className="flex items-center space-x-2">
+                <div className={`flex items-center gap-3 p-3 rounded-xl border-2 transition-all ${displayMode==='intro' ? 'border-blue-500 bg-blue-50 shadow-md' : 'border-gray-200 bg-white hover:border-blue-300'}` }>
                   <RadioGroupItem value="intro" id="intro" />
-                  <Label htmlFor="intro" className="cursor-pointer">
-                    <div className="font-medium">Tournament Introduction</div>
-                    <div className="text-sm text-muted-foreground">
-                      Display tournament welcome screen
-                    </div>
+                  <Label htmlFor="intro" className="cursor-pointer w-full">
+                    <div className="font-semibold text-lg text-blue-900">Tournament Introduction</div>
+                    <div className="text-sm text-gray-500">Display tournament welcome screen</div>
                   </Label>
                 </div>
-
-                <div className="flex items-center space-x-2">
+                <div className={`flex items-center gap-3 p-3 rounded-xl border-2 transition-all ${displayMode==='queue' ? 'border-blue-500 bg-blue-50 shadow-md' : 'border-gray-200 bg-white hover:border-blue-300'}` }>
                   <RadioGroupItem value="queue" id="queue" />
-                  <Label htmlFor="queue" className="cursor-pointer">
-                    <div className="font-medium">Upcoming Matches</div>
-                    <div className="text-sm text-muted-foreground">
-                      Show queue of next matches
-                    </div>
+                  <Label htmlFor="queue" className="cursor-pointer w-full">
+                    <div className="font-semibold text-lg text-blue-900">Upcoming Matches</div>
+                    <div className="text-sm text-gray-500">Show queue of next matches</div>
                   </Label>
                 </div>
-
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem 
-                    value="match" 
-                    id="match"
-                    disabled={!selectedMatchId} 
-                  />
-                  <Label 
-                    htmlFor="match" 
-                    className={`cursor-pointer ${!selectedMatchId ? 'opacity-50' : ''}`}
-                  >
-                    <div className="font-medium">Active Match</div>
-                    <div className="text-sm text-muted-foreground">
+                <div className={`flex items-center gap-3 p-3 rounded-xl border-2 transition-all ${displayMode==='match' ? 'border-green-500 bg-green-50 shadow-md' : 'border-gray-200 bg-white hover:border-green-300'}` }>
+                  <RadioGroupItem value="match" id="match" disabled={!selectedMatchId} />
+                  <Label htmlFor="match" className={`cursor-pointer w-full ${!selectedMatchId ? 'opacity-50' : ''}`}>
+                    <div className="font-semibold text-lg text-green-900">Active Match</div>
+                    <div className="text-sm text-gray-500">
                       {selectedMatchId 
                         ? `Show match #${activeMatch?.matchNumber || '...'}`
                         : "Select a match first"
@@ -132,61 +121,52 @@ export default function AudienceDisplayController() {
                     </div>
                   </Label>
                 </div>
-
-                <div className="flex items-center space-x-2">
+                <div className={`flex items-center gap-3 p-3 rounded-xl border-2 transition-all ${displayMode==='results' ? 'border-purple-500 bg-purple-50 shadow-md' : 'border-gray-200 bg-white hover:border-purple-300'}` }>
                   <RadioGroupItem value="results" id="results" />
-                  <Label htmlFor="results" className="cursor-pointer">
-                    <div className="font-medium">Match Results</div>
-                    <div className="text-sm text-muted-foreground">
-                      Show results from completed matches
-                    </div>
+                  <Label htmlFor="results" className="cursor-pointer w-full">
+                    <div className="font-semibold text-lg text-purple-900">Match Results</div>
+                    <div className="text-sm text-gray-500">Show results from completed matches</div>
                   </Label>
                 </div>
-
-                <div className="flex items-center space-x-2">
+                <div className={`flex items-center gap-3 p-3 rounded-xl border-2 transition-all ${displayMode==='standings' ? 'border-yellow-500 bg-yellow-50 shadow-md' : 'border-gray-200 bg-white hover:border-yellow-300'}` }>
                   <RadioGroupItem value="standings" id="standings" />
-                  <Label htmlFor="standings" className="cursor-pointer">
-                    <div className="font-medium">Tournament Standings</div>
-                    <div className="text-sm text-muted-foreground">
-                      Display current tournament standings
-                    </div>
+                  <Label htmlFor="standings" className="cursor-pointer w-full">
+                    <div className="font-semibold text-lg text-yellow-900">Tournament Standings</div>
+                    <div className="text-sm text-gray-500">Display current tournament standings</div>
                   </Label>
                 </div>
-
-                <div className="flex items-center space-x-2">
+                <div className={`flex items-center gap-3 p-3 rounded-xl border-2 transition-all ${displayMode==='awards' ? 'border-pink-500 bg-pink-50 shadow-md' : 'border-gray-200 bg-white hover:border-pink-300'}` }>
                   <RadioGroupItem value="awards" id="awards" />
-                  <Label htmlFor="awards" className="cursor-pointer">
-                    <div className="font-medium">Awards Ceremony</div>
-                    <div className="text-sm text-muted-foreground">
-                      Display for awards presentations
-                    </div>
+                  <Label htmlFor="awards" className="cursor-pointer w-full">
+                    <div className="font-semibold text-lg text-pink-900">Awards Ceremony</div>
+                    <div className="text-sm text-gray-500">Display for awards presentations</div>
                   </Label>
                 </div>
               </RadioGroup>
             </div>
-
-            <div className="flex items-center gap-4 mt-8">
+            <div className="flex items-center gap-4 mt-10 justify-end">
               <Button 
                 onClick={handlePreview} 
                 variant="outline"
+                className="border-blue-400 text-blue-700 font-semibold shadow-sm hover:bg-blue-50"
               >
                 Preview
               </Button>
               <Button 
                 onClick={handleApply}
                 disabled={updateAudienceDisplay.isPending}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-bold shadow-md px-6 py-2 rounded-lg"
               >
                 {updateAudienceDisplay.isPending ? "Applying..." : "Apply to Audience Screens"}
               </Button>
             </div>
           </CardContent>
         </Card>
-
-        {/* Match Selection */}
-        <Card>
+        {/* Match Selection Card */}
+        <Card className="bg-white border-2 border-green-200 shadow-xl rounded-2xl">
           <CardHeader>
-            <CardTitle>Select Match</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-2xl font-bold text-green-900">Select Match</CardTitle>
+            <CardDescription className="text-gray-700">
               Choose a match to display
             </CardDescription>
           </CardHeader>
@@ -197,40 +177,35 @@ export default function AudienceDisplayController() {
                 <TabsTrigger value="in-progress" className="flex-1">In Progress</TabsTrigger>
                 <TabsTrigger value="completed" className="flex-1">Completed</TabsTrigger>
               </TabsList>
-
-              <TabsContent value="scheduled" className="space-y-2 max-h-[400px] overflow-y-auto">
+              <TabsContent value="scheduled" className="space-y-2 max-h-[400px] overflow-y-auto pr-1">
                 {isLoadingScheduled ? (
-                  <div className="py-8 text-center text-muted-foreground">Loading matches...</div>
+                  <div className="py-8 text-center text-gray-400 font-semibold">Loading matches...</div>
                 ) : scheduledMatches && scheduledMatches.length > 0 ? (
                   scheduledMatches.map((match: { id: string; matchNumber: number; status: string; stage?: { name: string } }) => (
                     <div 
                       key={match.id}
-                      className={`p-3 border rounded-md cursor-pointer transition-colors ${
-                        selectedMatchId === match.id ? 'border-primary bg-primary/5' : 'hover:bg-accent'
-                      }`}
+                      className={`p-4 border-2 rounded-xl cursor-pointer transition-all flex flex-col gap-1 shadow-sm ${selectedMatchId === match.id ? 'border-green-500 bg-green-50 ring-2 ring-green-200' : 'border-gray-200 bg-white hover:border-green-400 hover:bg-green-50'}`}
                       onClick={() => handleMatchSelect(match.id)}
                     >
                       <div className="flex justify-between items-center">
-                        <span className="font-medium">Match #{match.matchNumber}</span>
-                        <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded-full">
+                        <span className="font-bold text-lg text-green-900">Match #{match.matchNumber}</span>
+                        <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded-full font-semibold">
                           {match.status}
                         </span>
                       </div>
-                      <div className="text-sm text-muted-foreground mt-1">
+                      <div className="text-sm text-gray-500 mt-1">
                         {match.stage?.name}
                       </div>
                     </div>
                   ))
                 ) : (
-                  <div className="py-8 text-center text-muted-foreground">No scheduled matches found</div>
+                  <div className="py-8 text-center text-gray-400 font-semibold">No scheduled matches found</div>
                 )}
               </TabsContent>
-
-              {/* Other tabs would have similar content structure */}
-              <TabsContent value="in-progress" className="py-8 text-center text-muted-foreground">
+              <TabsContent value="in-progress" className="py-8 text-center text-gray-400 font-semibold">
                 No matches currently in progress
               </TabsContent>
-              <TabsContent value="completed" className="py-8 text-center text-muted-foreground">
+              <TabsContent value="completed" className="py-8 text-center text-gray-400 font-semibold">
                 No completed matches found
               </TabsContent>
             </Tabs>
