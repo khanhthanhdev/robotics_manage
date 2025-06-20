@@ -1,5 +1,5 @@
 import { PrismaService } from '../prisma.service';
-import { Match as PrismaMatch } from '../utils/prisma-types';
+import { Match as PrismaMatch, AllianceColor } from '../utils/prisma-types';
 
 /**
  * Swiss-style round generation and ranking logic.
@@ -71,11 +71,19 @@ export class SwissScheduler {
         opponents: new Set<string>()
       });
     }
-    for (const match of matches) {
-      const scoreRed = match.matchScores?.redTotalScore ?? 0;
-      const scoreBlue = match.matchScores?.blueTotalScore ?? 0;
-      const redTeams = match.alliances.find(a => a.color === 'RED')?.teamAlliances.map(ta => ta.teamId) ?? [];
-      const blueTeams = match.alliances.find(a => a.color === 'BLUE')?.teamAlliances.map(ta => ta.teamId) ?? [];
+    for (const match of matches) {      const redTeams = match.alliances.find(a => a.color === AllianceColor.RED)?.teamAlliances.map(ta => ta.teamId) ?? [];
+      const blueTeams = match.alliances.find(a => a.color === AllianceColor.BLUE)?.teamAlliances.map(ta => ta.teamId) ?? [];
+      
+      // Calculate scores from flexible scoring system
+      const redAllianceScores = match.matchScores?.filter(score => 
+        match.alliances.find(a => a.id === score.allianceId)?.color === AllianceColor.RED
+      ) ?? [];
+      const blueAllianceScores = match.matchScores?.filter(score => 
+        match.alliances.find(a => a.id === score.allianceId)?.color === AllianceColor.BLUE
+      ) ?? [];
+      
+      const scoreRed = redAllianceScores.reduce((sum, score) => sum + score.totalPoints, 0);
+      const scoreBlue = blueAllianceScores.reduce((sum, score) => sum + score.totalPoints, 0);
       for (const teamId of redTeams) {
         const result = teamResults.get(teamId);
         if (!result) continue;

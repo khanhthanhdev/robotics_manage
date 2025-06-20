@@ -3,7 +3,7 @@ import { PrismaService } from '../prisma.service';
 import { FrcScheduler } from './frc-scheduler';
 import { SwissScheduler } from './swiss-scheduler';
 import { PlayoffScheduler } from './playoff-scheduler';
-import { Match as PrismaMatch, StageType } from '../utils/prisma-types';
+import { Match as PrismaMatch, StageType, MatchState, AllianceColor } from '../utils/prisma-types';
 
 
 @Injectable()
@@ -21,47 +21,7 @@ export class MatchSchedulerService {
     this.frcScheduler = new FrcScheduler(prisma);
     this.swissScheduler = new SwissScheduler(prisma);
     this.playoffScheduler = new PlayoffScheduler(prisma);
-  }
-  
-  /**
-   * Helper method to create initial match scores with 0-0 for all new matches
-   * This ensures that score data is always available when requested
-   * 
-   * @param matchId ID of the match to create scores for
-   * @returns Created match score record
-   */
-  private async createInitialMatchScore(matchId: string) {
-    return this.prisma.matchScores.create({
-      data: {
-        matchId,
-        redAutoScore: 0,
-        redDriveScore: 0,
-        redTotalScore: 0,
-        blueAutoScore: 0,
-        blueDriveScore: 0,
-        blueTotalScore: 0,
-        redTeamCount: 0,
-        blueTeamCount: 0,
-        redMultiplier: 1.0,
-        blueMultiplier: 1.0,
-        redGameElements: {},
-        blueGameElements: {},
-        scoreDetails: {
-          penalties: {
-            red: 0,
-            blue: 0
-          },
-          specialScoring: {
-            endgameClimb: {
-              red: 0,
-              blue: 0
-            }
-          }
-        }
-      }
-    });
-  }
-
+  }  
   /**
    * Updates Swiss-style rankings for all teams in a stage.
    * Call this after each round.
@@ -311,21 +271,19 @@ export class MatchSchedulerService {
       let chosenIdx = candidateIndexes[Math.floor(Math.random() * candidateIndexes.length)];
       let chosenField = shuffledFields[chosenIdx];
       fieldAssignmentCounts[chosenIdx]++;
-      
-      // Create the match
+        // Create the match
       const dbMatch = await this.prisma.match.create({
         data: {
           stageId,
           matchNumber: matchNumber++,
           roundNumber: nextRoundNumber,
-          scheduledTime: new Date(Date.now() + ((matchNumber - 1) * 6 * 60 * 1000)), // Schedule 6 minutes apart
-          status: 'PENDING',
+          scheduledTime: new Date(Date.now() + ((matchNumber - 1) * 6 * 60 * 1000)), // Schedule 6 minutes apart          status: MatchState.PENDING,
           fieldId: chosenField.id,
-          fieldNumber: chosenField.number,
+          // fieldNumber removed as it's redundant (can get from field.number)
           alliances: {
             create: [
               {
-                color: 'RED',
+                color: AllianceColor.RED,
                 teamAlliances: {
                   create: redTeams.map((ts, idx) => ({
                     teamId: ts.teamId,
@@ -334,7 +292,7 @@ export class MatchSchedulerService {
                 }
               },
               {
-                color: 'BLUE',
+                color: AllianceColor.BLUE,
                 teamAlliances: {
                   create: blueTeams.map((ts, idx) => ({
                     teamId: ts.teamId,
@@ -355,11 +313,10 @@ export class MatchSchedulerService {
               }
             }
           }
-        }
-      });
+        }      });
       
-      // Create initial match score record
-      await this.createInitialMatchScore(dbMatch.id);
+      // No need to create initial match scores with the new flexible scoring system
+      // Scores will be created when actually entered through the scoring interface
       
       matches.push(dbMatch as any);
     }

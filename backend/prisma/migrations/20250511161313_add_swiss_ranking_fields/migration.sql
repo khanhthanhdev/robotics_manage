@@ -1,6 +1,0 @@
--- AlterTable
-ALTER TABLE "TeamStats" ADD COLUMN     "opponentWinPercentage" DOUBLE PRECISION NOT NULL DEFAULT 0,
-ADD COLUMN     "pointDifferential" INTEGER NOT NULL DEFAULT 0,
-ADD COLUMN     "pointsConceded" INTEGER NOT NULL DEFAULT 0,
-ADD COLUMN     "pointsScored" INTEGER NOT NULL DEFAULT 0,
-ADD COLUMN     "rankingPoints" INTEGER NOT NULL DEFAULT 0;

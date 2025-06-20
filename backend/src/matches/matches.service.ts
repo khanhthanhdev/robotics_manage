@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { CreateMatchDto, CreateAllianceDto } from './dto/create-match.dto';
-import { UpdateMatchDto, UpdateAllianceDto, UpdateAllianceScoringDto } from './dto/update-match.dto';
+import { UpdateMatchDto, UpdateAllianceDto } from './dto/update-match.dto';
 import { MatchScoresService } from '../match-scores/match-scores.service';
+import { MatchState, MatchType } from '../utils/prisma-types';
 
 @Injectable()
 export class MatchesService {
@@ -17,24 +18,18 @@ export class MatchesService {
     // Create the match
     const match = await this.prisma.match.create({
       data: {
-        matchNumber: matchData.matchNumber,
-        status: matchData.status || 'PENDING',
+        matchNumber: matchData.matchNumber,        status: matchData.status || MatchState.PENDING,
         startTime: matchData.startTime ? new Date(matchData.startTime) : null,
         endTime: matchData.endTime ? new Date(matchData.endTime) : null,
         stageId: matchData.stageId,
-        matchType: matchType || 'FULL', // Set matchType, default to 'FULL'
+        matchType: matchType || MatchType.FULL, // Set matchType, default to 'FULL'
       },
-    });
-
-    // If alliances are provided, create them
+    });    // If alliances are provided, create them
     if (alliances && Array.isArray(alliances) && alliances.length > 0) {
       for (const allianceData of alliances) {
         await this.createAlliance(match.id, allianceData);
       }
     }
-
-    // Initialize match scores with zero values
-    await this.matchScoresService.initializeForMatch(match.id);
 
     return this.findOne(match.id);
   }
@@ -46,9 +41,7 @@ export class MatchesService {
         color: allianceData.color,
         matchId,
       },
-    });
-
-    // Create team alliances (connecting teams to this alliance)
+    });    // Create team alliances (connecting teams to this alliance)
     for (const teamId of allianceData.teamIds) {
       await this.prisma.teamAlliance.create({
         data: {
@@ -58,20 +51,12 @@ export class MatchesService {
       });
     }
 
-    // Create the alliance scoring record
-    await this.prisma.allianceScoring.create({
-      data: {
-        allianceId: alliance.id,
-      },
-    });
-
     return alliance;
   }
 
   /**
    * Find all matches, optionally filtered by fieldId or fieldNumber
-   */
-  findAll(params?: { fieldId?: string; fieldNumber?: number }) {
+   */  findAll(params?: { fieldId?: string; fieldNumber?: number }) {
     const { fieldId, fieldNumber } = params || {};
     const where: any = {};
     if (fieldId) where.fieldId = fieldId;
@@ -91,7 +76,7 @@ export class MatchesService {
                 team: true,
               },
             },
-            allianceScoring: true,
+            matchScores: true,
           },
         },
         scoredBy: {
@@ -104,7 +89,6 @@ export class MatchesService {
       },
     });
   }
-
   findOne(id: string) {
     return this.prisma.match.findUnique({
       where: { id },
@@ -121,7 +105,7 @@ export class MatchesService {
                 team: true,
               },
             },
-            allianceScoring: true,
+            matchScores: true,
           },
         },
         scoredBy: {
@@ -215,34 +199,6 @@ export class MatchesService {
       data,
     });
   }
-
-  async updateAllianceScoring(
-    id: string, 
-    refereeId: string,
-    updateAllianceScoringDto: UpdateAllianceScoringDto
-  ) {
-    const data: any = {
-      refereeId,
-    };
-    
-    if (updateAllianceScoringDto.scoreDetails) {
-      data.scoreDetails = updateAllianceScoringDto.scoreDetails;
-    }
-    
-    if (updateAllianceScoringDto.card) {
-      data.card = updateAllianceScoringDto.card;
-    }
-    
-    if (updateAllianceScoringDto.notes) {
-      data.notes = updateAllianceScoringDto.notes;
-    }
-    
-    return this.prisma.allianceScoring.update({
-      where: { id },
-      data,
-    });
-  }
-
   remove(id: string) {
     return this.prisma.match.delete({
       where: { id },

@@ -1,6 +1,7 @@
-import { IsString, IsNotEmpty, IsOptional, IsArray, ValidateNested, IsNumber } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsArray, ValidateNested, IsNumber, IsEnum } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
+import { ElementType } from '../../utils/prisma-types';
 
 export class CreateScoreElementDto {
   @ApiProperty({ description: 'Name of the score element' })
@@ -29,11 +30,9 @@ export class CreateScoreElementDto {
   @IsString()
   @IsOptional()
   category?: string;
-
-  @ApiProperty({ description: 'Type of element: counter or boolean' })
-  @IsString()
-  @IsNotEmpty()
-  elementType: 'counter' | 'boolean';
+  @ApiProperty({ description: 'Type of element: COUNTER, BOOLEAN, or TIMER', enum: ElementType })
+  @IsEnum(ElementType)
+  elementType: ElementType;
   @ApiProperty({ description: 'Display order in UI', required: false })
   @IsNumber()
   @IsOptional()

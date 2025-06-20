@@ -6,7 +6,8 @@ import {
   Patch, 
   Param, 
   UseGuards,
-  HttpStatus
+  HttpStatus,
+  NotFoundException
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -98,7 +99,6 @@ export class ScoreConfigController {
       scoreData.scoreConfigId,
     );
   }
-
   @Get('match-score/:matchId/:allianceId')
   @ApiOperation({ summary: 'Get calculated scores for a match alliance' })
   @ApiResponse({ status: HttpStatus.OK, description: 'Match scores retrieved successfully' })
@@ -106,24 +106,28 @@ export class ScoreConfigController {
     @Param('matchId') matchId: string,
     @Param('allianceId') allianceId: string,
   ) {
-    const matchScore = await this.scoreCalculationService['prisma'].matchScore.findUnique({
+    // Get all score elements for this match and alliance
+    const matchScores = await this.scoreCalculationService['prisma'].matchScore.findMany({
       where: {
-        matchId_allianceId: {
-          matchId,
-          allianceId,
-        },
+        matchId,
+        allianceId,
       },
       include: {
-        scoreConfig: {
-          include: {
-            scoreElements: true,
-            bonusConditions: true,
-            penaltyConditions: true,
-          },
-        },
+        scoreElement: true,
       },
     });
 
-    return matchScore;
+    if (!matchScores || matchScores.length === 0) {
+      throw new NotFoundException(`No match scores found for match ${matchId} and alliance ${allianceId}`);
+    }
+
+    // Calculate total score
+    const totalScore = matchScores.reduce((sum, score) => sum + score.totalPoints, 0);
+
+    return {
+      matchId,
+      allianceId,      scores: matchScores,
+      totalScore,
+    };
   }
 }

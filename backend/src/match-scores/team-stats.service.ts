@@ -1,4 +1,5 @@
 import { PrismaService } from '../prisma.service';
+import { MatchState } from '../utils/prisma-types';
 
 export class TeamStatsService {
   constructor(private readonly prisma: PrismaService) {}
@@ -15,7 +16,7 @@ export class TeamStatsService {
             },
           },
         },
-        status: 'COMPLETED',
+        status: MatchState.COMPLETED,
       },
       include: {
         alliances: {
@@ -37,11 +38,10 @@ export class TeamStatsService {
       }
     }
     const statsUpdates: Promise<any>[] = [];
-    for (const [teamId, teamMatches] of matchesByTeam.entries()) {
-      let wins = 0, losses = 0, ties = 0;
+    for (const [teamId, teamMatches] of matchesByTeam.entries()) {      let wins = 0, losses = 0, ties = 0;
       const matchesPlayed = teamMatches.length;
       for (const teamMatch of teamMatches) {
-        if (teamMatch.winningAlliance === 'TIE') ties++;
+        if (teamMatch.winningAlliance === null) ties++; // null means tie
         else if (teamMatch.winningAlliance === teamMatch.teamAllianceColor) wins++;
         else losses++;
       }

@@ -1,17 +1,17 @@
 import { z } from 'zod';
 import { createZodDto } from 'nestjs-zod';
-import { MatchType } from '../../utils/prisma-types';
+import { MatchType, MatchState, AllianceColor } from '../../utils/prisma-types';
 
 // Define the Alliance schema
 const CreateAllianceSchema = z.object({
-  color: z.string().min(1, 'Alliance color is required'),
+  color: z.nativeEnum(AllianceColor, { required_error: 'Alliance color is required' }),
   teamIds: z.array(z.string().uuid('Team ID must be a valid UUID')),
 });
 
 // Define the Zod schema for match creation
 export const CreateMatchSchema = z.object({
   matchNumber: z.number().int().positive('Match number must be a positive integer'),
-  status: z.enum(['PENDING', 'IN_PROGRESS', 'COMPLETED']).default('PENDING').optional(),
+  status: z.nativeEnum(MatchState).default(MatchState.PENDING).optional(),
   startTime: z.coerce.date().optional(),
   endTime: z.coerce.date().optional(),
   stageId: z.string().uuid('Stage ID must be a valid UUID'),

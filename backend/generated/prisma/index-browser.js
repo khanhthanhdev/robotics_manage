@@ -151,7 +151,6 @@ exports.Prisma.StageScalarFieldEnum = {
   endDate: 'endDate',
   tournamentId: 'tournamentId',
   teamsPerAlliance: 'teamsPerAlliance',
-  teamsPerMatch: 'teamsPerMatch',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -171,10 +170,8 @@ exports.Prisma.MatchScalarFieldEnum = {
   roundType: 'roundType',
   scheduleId: 'scheduleId',
   fieldId: 'fieldId',
-  fieldNumber: 'fieldNumber',
   matchType: 'matchType',
   matchDuration: 'matchDuration',
-  createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
 
@@ -197,17 +194,6 @@ exports.Prisma.AllianceScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
-exports.Prisma.AllianceScoringScalarFieldEnum = {
-  id: 'id',
-  allianceId: 'allianceId',
-  refereeId: 'refereeId',
-  scoreDetails: 'scoreDetails',
-  card: 'card',
-  notes: 'notes',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
 exports.Prisma.TeamScalarFieldEnum = {
   id: 'id',
   teamNumber: 'teamNumber',
@@ -215,6 +201,8 @@ exports.Prisma.TeamScalarFieldEnum = {
   organization: 'organization',
   avatar: 'avatar',
   description: 'description',
+  teamLead: 'teamLead',
+  teamLeadId: 'teamLeadId',
   teamMembers: 'teamMembers',
   tournamentId: 'tournamentId',
   createdAt: 'createdAt',
@@ -227,27 +215,6 @@ exports.Prisma.TeamAllianceScalarFieldEnum = {
   allianceId: 'allianceId',
   stationPosition: 'stationPosition',
   isSurrogate: 'isSurrogate',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.MatchScoresScalarFieldEnum = {
-  id: 'id',
-  matchId: 'matchId',
-  redAutoScore: 'redAutoScore',
-  redDriveScore: 'redDriveScore',
-  redTotalScore: 'redTotalScore',
-  blueAutoScore: 'blueAutoScore',
-  blueDriveScore: 'blueDriveScore',
-  blueTotalScore: 'blueTotalScore',
-  redGameElements: 'redGameElements',
-  blueGameElements: 'blueGameElements',
-  redTeamCount: 'redTeamCount',
-  redMultiplier: 'redMultiplier',
-  blueTeamCount: 'blueTeamCount',
-  blueMultiplier: 'blueMultiplier',
-  fieldId: 'fieldId',
-  scoreDetails: 'scoreDetails',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -273,15 +240,6 @@ exports.Prisma.TeamStatsScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
-exports.Prisma.ScheduleScalarFieldEnum = {
-  id: 'id',
-  stageId: 'stageId',
-  createdAt: 'createdAt',
-  algorithm: 'algorithm',
-  quality: 'quality',
-  params: 'params'
-};
-
 exports.Prisma.FieldScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -293,55 +251,14 @@ exports.Prisma.FieldScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
-exports.Prisma.MatchControlScalarFieldEnum = {
+exports.Prisma.FieldDisplayScalarFieldEnum = {
   id: 'id',
-  matchId: 'matchId',
-  currentState: 'currentState',
-  stateHistory: 'stateHistory',
-  controlledBy: 'controlledBy',
-  lockToken: 'lockToken',
-  lockTimestamp: 'lockTimestamp',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.MatchTimerScalarFieldEnum = {
-  id: 'id',
-  matchControlId: 'matchControlId',
-  timerType: 'timerType',
-  duration: 'duration',
-  remaining: 'remaining',
-  isRunning: 'isRunning',
-  startedAt: 'startedAt',
-  pausedAt: 'pausedAt',
-  completedAt: 'completedAt',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.MatchErrorScalarFieldEnum = {
-  id: 'id',
-  matchControlId: 'matchControlId',
-  errorType: 'errorType',
-  description: 'description',
-  severity: 'severity',
-  status: 'status',
-  reportedBy: 'reportedBy',
-  resolvedBy: 'resolvedBy',
-  resolvedAt: 'resolvedAt',
-  affectedAlliance: 'affectedAlliance',
-  affectedTeamId: 'affectedTeamId',
-  notes: 'notes',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.AudienceDisplayScalarFieldEnum = {
-  id: 'id',
-  matchControlId: 'matchControlId',
-  currentState: 'currentState',
+  fieldId: 'fieldId',
+  displayState: 'displayState',
+  currentMatchId: 'currentMatchId',
   customMessage: 'customMessage',
-  customData: 'customData',
+  lastUpdatedBy: 'lastUpdatedBy',
+  autoAdvance: 'autoAdvance',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -362,7 +279,6 @@ exports.Prisma.ScoreElementScalarFieldEnum = {
   code: 'code',
   description: 'description',
   pointsPerUnit: 'pointsPerUnit',
-  maxUnits: 'maxUnits',
   category: 'category',
   elementType: 'elementType',
   displayOrder: 'displayOrder',
@@ -396,12 +312,9 @@ exports.Prisma.MatchScoreScalarFieldEnum = {
   id: 'id',
   matchId: 'matchId',
   allianceId: 'allianceId',
-  scoreConfigId: 'scoreConfigId',
-  elementScores: 'elementScores',
-  bonusesEarned: 'bonusesEarned',
-  penaltiesIncurred: 'penaltiesIncurred',
-  calculationLog: 'calculationLog',
-  totalScore: 'totalScore',
+  scoreElementId: 'scoreElementId',
+  units: 'units',
+  totalPoints: 'totalPoints',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -439,10 +352,32 @@ exports.UserRole = exports.$Enums.UserRole = {
   ADMIN: 'ADMIN',
   HEAD_REFEREE: 'HEAD_REFEREE',
   ALLIANCE_REFEREE: 'ALLIANCE_REFEREE',
+  TEAM_LEADER: 'TEAM_LEADER',
+  TEAM_MEMBER: 'TEAM_MEMBER',
   COMMON: 'COMMON'
 };
 
 exports.StageType = exports.$Enums.StageType = {
+  SWISS: 'SWISS',
+  PLAYOFF: 'PLAYOFF',
+  FINAL: 'FINAL'
+};
+
+exports.MatchState = exports.$Enums.MatchState = {
+  PENDING: 'PENDING',
+  IN_PROGRESS: 'IN_PROGRESS',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED',
+  ERROR: 'ERROR'
+};
+
+exports.AllianceColor = exports.$Enums.AllianceColor = {
+  RED: 'RED',
+  BLUE: 'BLUE'
+};
+
+exports.MatchRoundType = exports.$Enums.MatchRoundType = {
+  QUALIFICATION: 'QUALIFICATION',
   SWISS: 'SWISS',
   PLAYOFF: 'PLAYOFF',
   FINAL: 'FINAL'
@@ -453,50 +388,20 @@ exports.MatchType = exports.$Enums.MatchType = {
   TELEOP_ENDGAME: 'TELEOP_ENDGAME'
 };
 
-exports.RefereeRole = exports.$Enums.RefereeRole = {
-  HEAD_REFEREE: 'HEAD_REFEREE',
-  ALLIANCE_REFEREE: 'ALLIANCE_REFEREE'
-};
-
-exports.CardType = exports.$Enums.CardType = {
-  NONE: 'NONE',
-  YELLOW: 'YELLOW',
-  RED: 'RED'
-};
-
-exports.MatchState = exports.$Enums.MatchState = {
-  SCHEDULED: 'SCHEDULED',
-  READY: 'READY',
-  RUNNING: 'RUNNING',
-  PAUSED: 'PAUSED',
-  COMPLETED: 'COMPLETED',
-  CANCELLED: 'CANCELLED',
-  ERROR: 'ERROR'
-};
-
-exports.ErrorSeverity = exports.$Enums.ErrorSeverity = {
-  LOW: 'LOW',
-  MEDIUM: 'MEDIUM',
-  HIGH: 'HIGH',
-  CRITICAL: 'CRITICAL'
-};
-
-exports.ErrorStatus = exports.$Enums.ErrorStatus = {
-  OPEN: 'OPEN',
-  ACKNOWLEDGED: 'ACKNOWLEDGED',
-  RESOLVED: 'RESOLVED',
-  CLOSED: 'CLOSED'
-};
-
 exports.DisplayState = exports.$Enums.DisplayState = {
-  STANDBY: 'STANDBY',
-  STARTING_SOON: 'STARTING_SOON',
+  TEAM_LIST: 'TEAM_LIST',
+  RANKING: 'RANKING',
+  SCHEDULE: 'SCHEDULE',
   LIVE: 'LIVE',
-  MATCH_RESULTS: 'MATCH_RESULTS',
+  FINAL_RESULTS: 'FINAL_RESULTS',
   FINISHED: 'FINISHED',
-  CANCELLED: 'CANCELLED',
-  ERROR: 'ERROR',
   CUSTOM_MESSAGE: 'CUSTOM_MESSAGE'
+};
+
+exports.ElementType = exports.$Enums.ElementType = {
+  COUNTER: 'COUNTER',
+  BOOLEAN: 'BOOLEAN',
+  TIMER: 'TIMER'
 };
 
 exports.Prisma.ModelName = {
@@ -506,17 +411,11 @@ exports.Prisma.ModelName = {
   Match: 'Match',
   MatchReferee: 'MatchReferee',
   Alliance: 'Alliance',
-  AllianceScoring: 'AllianceScoring',
   Team: 'Team',
   TeamAlliance: 'TeamAlliance',
-  MatchScores: 'MatchScores',
   TeamStats: 'TeamStats',
-  Schedule: 'Schedule',
   Field: 'Field',
-  MatchControl: 'MatchControl',
-  MatchTimer: 'MatchTimer',
-  MatchError: 'MatchError',
-  AudienceDisplay: 'AudienceDisplay',
+  FieldDisplay: 'FieldDisplay',
   ScoreConfig: 'ScoreConfig',
   ScoreElement: 'ScoreElement',
   BonusCondition: 'BonusCondition',

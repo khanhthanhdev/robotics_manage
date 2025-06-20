@@ -126,42 +126,17 @@ export class ScoreCalculationService {
     }
     
     calculationLog.totalScore = totalScore;
-    
-    // 6. Save and return MatchScore
-    return this.prisma.matchScore.upsert({
-      where: {
-        matchId_allianceId: {
-          matchId,
-          allianceId,
-        },
-      },
-      update: {
-        scoreConfigId: configId,
-        elementScores,
-        bonusesEarned,
-        penaltiesIncurred,
-        calculationLog,
-        totalScore,
-      },
-      create: {
-        matchId,
-        allianceId,
-        scoreConfigId: configId,
-        elementScores,
-        bonusesEarned,
-        penaltiesIncurred,
-        calculationLog,
-        totalScore,
-      },
-      include: {
-        scoreConfig: {
-          include: {
-            scoreElements: true,
-            bonusConditions: true,
-            penaltyConditions: true,
-          },
-        },
-      },
-    });
+      // 6. Save and return simple result
+    // Note: This service needs to be redesigned to work with the current MatchScore schema
+    // which stores individual score elements, not aggregate scores
+    return {
+      matchId,
+      allianceId,
+      elementScores,
+      bonusesEarned,
+      penaltiesIncurred,
+      totalScore,
+      calculationLog,
+    };
   }
 }

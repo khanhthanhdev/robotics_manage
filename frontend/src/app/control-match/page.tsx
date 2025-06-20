@@ -7,6 +7,7 @@ import { useMatchesByTournament } from "@/hooks/features/use-matches-by-tourname
 import { MatchStatus } from "@/lib/types";
 import { useTournaments } from "@/hooks/api/use-tournaments";
 import { MatchData } from "@/lib/types";
+import { webSocketService } from "@/lib/websocket";
 import { Card } from "@/components/ui/card";
 
 import {
@@ -131,6 +132,40 @@ export default function ControlMatchPage() {
     selectedMatchId || ""
   );
 
+  // Send match update to audience display when selected match data loads
+  useEffect(() => {
+    if (!selectedMatch || !selectedMatchId || isLoadingMatchDetails) return;
+    
+    console.log("📡 Broadcasting match update for selected match:", selectedMatchId, selectedMatch);
+    
+    const matchData: Omit<MatchData, "tournamentId"> = {
+      id: selectedMatchId,
+      matchNumber:
+        typeof selectedMatch.matchNumber === "string"
+          ? parseInt(selectedMatch.matchNumber, 10)
+          : selectedMatch.matchNumber,
+      status: selectedMatch.status,
+    };
+
+    const redTeams = getRedTeams(selectedMatch).map(
+      (teamNumber: string | number) => ({
+        name: teamNumber,
+      })
+    );
+
+    const blueTeams = getBlueTeams(selectedMatch).map(
+      (teamNumber: string | number) => ({
+        name: teamNumber,
+      })
+    );    webSocketService.sendMatchUpdate({
+      ...matchData,
+      fieldId: selectedFieldId || undefined,
+      redTeams,
+      blueTeams,
+      scheduledTime: selectedMatch.scheduledTime,
+    } as any);
+  }, [selectedMatch, selectedMatchId, isLoadingMatchDetails, selectedFieldId]);
+
   // Helper function to extract red teams from alliances
   const getRedTeams = (match?: any): string[] => {
     if (!match?.alliances) return [];
@@ -246,41 +281,11 @@ export default function ControlMatchPage() {
       showTimer,
       showScores,
       showTeams,
-      tournamentId,
-      fieldId: match.fieldId || selectedFieldId || undefined,
+      tournamentId,      fieldId: match.fieldId || selectedFieldId || undefined,
     });
-
-    // Also send a match_update event to synchronize match data with audience display
-    if (selectedMatch) {
-      const matchData: Omit<MatchData, "tournamentId"> = {
-        id: match.id,
-        matchNumber:
-          typeof match.matchNumber === "string"
-            ? parseInt(match.matchNumber, 10)
-            : match.matchNumber,
-        status: selectedMatch.status,
-      };
-
-      const redTeams = getRedTeams(selectedMatch).map(
-        (teamNumber: string | number) => ({
-          name: teamNumber,
-        })
-      );
-
-      const blueTeams = getBlueTeams(selectedMatch).map(
-        (teamNumber: string | number) => ({
-          name: teamNumber,
-        })
-      );
-
-      sendMatchUpdate({
-        ...matchData,
-        fieldId: match.fieldId || selectedFieldId || undefined,
-        redTeams,
-        blueTeams,
-        scheduledTime: selectedMatch.scheduledTime,
-      } as any);
-    }
+    
+    // Note: Match update is now handled by useEffect when selectedMatch data loads
+    // This prevents sending stale match data
   };
 
   // Handle display mode change

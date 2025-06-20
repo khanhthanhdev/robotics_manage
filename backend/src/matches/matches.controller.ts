@@ -1,11 +1,11 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
 import { MatchesService } from './matches.service';
 import { CreateMatchDto } from './dto/create-match.dto';
-import { UpdateMatchDto, UpdateAllianceDto, UpdateAllianceScoringDto } from './dto/update-match.dto';
+import { UpdateMatchDto, UpdateAllianceDto } from './dto/update-match.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
-import { UserRole } from '../utils/prisma-types';
+import { UserRole, MatchState } from '../utils/prisma-types';
 
 @Controller('matches')
 export class MatchesController {
@@ -46,21 +46,10 @@ export class MatchesController {
   ) {
     return this.matchesService.updateAlliance(id, updateAllianceDto);
   }
-
-  @Patch('scoring/:id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN)
-  updateAllianceScoring(
-    @Param('id') id: string,
-    @Body() body: { refereeId: string, data: UpdateAllianceScoringDto }
-  ) {
-    return this.matchesService.updateAllianceScoring(id, body.refereeId, body.data);
-  }
-
   @Patch(':id/status')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
-  updateStatus(@Param('id') id: string, @Body() body: { status: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' }) {
+  updateStatus(@Param('id') id: string, @Body() body: { status: MatchState }) {
     // Only allow status update
     return this.matchesService.update(id, { status: body.status });
   }

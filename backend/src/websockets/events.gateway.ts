@@ -13,6 +13,7 @@ import { Server, Socket } from 'socket.io';
 import { Logger, Injectable } from '@nestjs/common';
 import { MatchScoresService } from '../match-scores/match-scores.service';
 import { GameElementDto } from '../match-scores/dto/create-match-scores.dto';
+import { MatchState } from '../utils/prisma-types';
 import {
   ScoreUpdateDto,
   PersistScoresDto,
@@ -32,7 +33,7 @@ interface TimerData {
 interface MatchData {
   id: string;
   matchNumber: number;
-  status: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED';
+  status: MatchState;
   tournamentId: string;
   fieldId?: string;
   // Other match properties
@@ -53,7 +54,7 @@ interface ScoreData {
 
 interface MatchStateData {
   matchId: string;
-  status: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED';
+  status: MatchState;
   currentPeriod?: 'auto' | 'teleop' | 'endgame' | null;
   tournamentId: string;
   fieldId?: string;
@@ -250,15 +251,15 @@ export class EventsGateway
     }
     // No DB write here: this is real-time only
   }
-
   // Handle score persistence requests (NEW: for database saves when explicitly triggered)
   @SubscribeMessage('persistScores')
   async handlePersistScores(
     @ConnectedSocket() client: Socket,
     @MessageBody() payload: PersistScoresDto
-  ): Promise<void> {
+  ): Promise<WsResponse<PersistenceResultDto>> {
     this.logger.log(`Score persistence request received: ${JSON.stringify(payload)}`);
-      // Validate payload type
+
+    // Validate payload type
     if (payload.type !== 'persist') {
       this.logger.warn('Invalid payload type for score persistence:', payload.type);
       const errorResponse: PersistenceResultDto = {
@@ -267,51 +268,35 @@ export class EventsGateway
         error: 'Invalid payload type for score persistence',
         timestamp: Date.now(),
       };
-      client.emit('persistenceResult', errorResponse);
-      return;
+      return { event: 'persistenceResult', data: errorResponse };
     }
 
     try {
-      let result;
-      
-      // Check if we need to create or update scores
-      const existingScores = await this.matchScoresService.findByMatchId(payload.matchId).catch(() => null);
-      
-      if (existingScores) {        // Update existing scores
-        result = await this.matchScoresService.update(existingScores.id, {
-          redAutoScore: payload.redAutoScore,
-          redDriveScore: payload.redDriveScore,
-          blueAutoScore: payload.blueAutoScore,
-          blueDriveScore: payload.blueDriveScore,
-          redTeamCount: payload.redTeamCount,
-          blueTeamCount: payload.blueTeamCount,
-          redGameElements: this.convertGameElementsToDto(payload.redGameElements),
-          blueGameElements: this.convertGameElementsToDto(payload.blueGameElements),
-          scoreDetails: payload.scoreDetails,
-        });
-      } else {        // Create new scores
-        result = await this.matchScoresService.create({
-          matchId: payload.matchId,
-          redAutoScore: payload.redAutoScore || 0,
-          redDriveScore: payload.redDriveScore || 0,
-          blueAutoScore: payload.blueAutoScore || 0,
-          blueDriveScore: payload.blueDriveScore || 0,
-          redTeamCount: payload.redTeamCount || 0,
-          blueTeamCount: payload.blueTeamCount || 0,
-          redGameElements: this.convertGameElementsToDto(payload.redGameElements),
-          blueGameElements: this.convertGameElementsToDto(payload.blueGameElements),
-          scoreDetails: payload.scoreDetails || {},
-        });
-      }      // Send success response to the requesting client
+      // Since our create method handles both new and updates, just call create
+      const result = await this.matchScoresService.create({
+        matchId: payload.matchId,
+        redAutoScore: payload.redAutoScore || 0,
+        redDriveScore: payload.redDriveScore || 0,
+        blueAutoScore: payload.blueAutoScore || 0,
+        blueDriveScore: payload.blueDriveScore || 0,
+        redTeamCount: payload.redTeamCount || 0,
+        blueTeamCount: payload.blueTeamCount || 0,
+        redGameElements: this.convertGameElementsToDto(payload.redGameElements),
+        blueGameElements: this.convertGameElementsToDto(payload.blueGameElements),
+        scoreDetails: payload.scoreDetails || {},
+      });
+
+      // Prepare success response
       const successResponse: PersistenceResultDto = {
         matchId: payload.matchId,
         success: true,
         data: result,
         timestamp: Date.now(),
       };
-      client.emit('persistenceResult', successResponse);
       
-      // Broadcast persistence success to all connected clients
+      this.logger.log(`Scores persisted successfully for match: ${payload.matchId}`);
+      
+      // Broadcast persistence success to all connected clients (except sender)
       const persistenceEvent = {
         ...payload,
         persistedAt: Date.now(),
@@ -330,18 +315,19 @@ export class EventsGateway
         this.server.emit('scoresPersisted', persistenceEvent);
       }
       
-      this.logger.log(`Scores persisted successfully for match: ${payload.matchId}`);
+      // Return success response directly to the requesting client
+      return { event: 'persistenceResult', data: successResponse };
+      
     } catch (error: any) {
       this.logger.error(`Failed to persist scores for match ${payload.matchId}:`, error);
       
-      // Send error response to the requesting client
+      // Prepare error response
       const errorResponse: PersistenceResultDto = {
         matchId: payload.matchId,
         success: false,
         error: error.message || 'Failed to persist scores',
         timestamp: Date.now(),
       };
-      client.emit('persistenceResult', errorResponse);
       
       // Optionally broadcast persistence failure
       const failureEvent = {
@@ -360,6 +346,9 @@ export class EventsGateway
       } else if (payload.tournamentId) {
         this.server.to(payload.tournamentId).emit('scoresPersistenceFailed', failureEvent);
       }
+      
+      // Return error response directly to the requesting client
+      return { event: 'persistenceResult', data: errorResponse };
     }
   }
 

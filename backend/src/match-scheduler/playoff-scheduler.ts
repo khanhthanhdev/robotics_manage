@@ -1,5 +1,5 @@
 import { PrismaService } from '../prisma.service';
-import { Match as PrismaMatch, StageType } from '../utils/prisma-types';
+import { Match as PrismaMatch, StageType, AllianceColor, MatchState } from '../utils/prisma-types';
 import { BracketAdvancement } from './match-scheduler.types';
 
 /**
@@ -9,7 +9,7 @@ import { BracketAdvancement } from './match-scheduler.types';
 export class PlayoffScheduler {
   private bracketAdvancements: BracketAdvancement[] = [];
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async generatePlayoffSchedule(stage: any, numberOfRounds: number): Promise<PrismaMatch[]> {
     if (stage.type !== StageType.PLAYOFF) {
@@ -43,18 +43,19 @@ export class PlayoffScheduler {
               stageId: stage.id,
               matchNumber: i + 1,
               roundNumber: round,
-              scheduledTime: new Date(Date.now() + ((i + 1) * 15 * 60 * 1000)),
-              status: 'PENDING',
+              scheduledTime: new Date(Date.now() + ((i + 1) * 15 * 60 * 1000)), status: MatchState.PENDING,
               alliances: {
                 create: [
                   {
-                    color: 'RED',
+                    color: AllianceColor.RED,
+
+
                     teamAlliances: {
                       create: [{ teamId: highSeed.teamId, stationPosition: 1 }]
                     }
                   },
                   {
-                    color: 'BLUE',
+                    color: AllianceColor.BLUE,
                     teamAlliances: {
                       create: [{ teamId: lowSeed.teamId, stationPosition: 1 }]
                     }
@@ -79,12 +80,11 @@ export class PlayoffScheduler {
                   stageId: stage.id,
                   matchNumber: nextMatchNumber + matchesInRound,
                   roundNumber: round + 1,
-                  scheduledTime: new Date(Date.now() + ((nextMatchNumber + matchesInRound) * 15 * 60 * 1000)),
-                  status: 'PENDING',
+                  scheduledTime: new Date(Date.now() + ((nextMatchNumber + matchesInRound) * 15 * 60 * 1000)), status: MatchState.PENDING,
                   alliances: {
                     create: [
-                      { color: 'RED', teamAlliances: { create: [] } },
-                      { color: 'BLUE', teamAlliances: { create: [] } }
+                      { color: AllianceColor.RED, teamAlliances: { create: [] } },
+                      { color: AllianceColor.BLUE, teamAlliances: { create: [] } }
                     ]
                   }
                 },
@@ -97,7 +97,7 @@ export class PlayoffScheduler {
             this.bracketAdvancements.push({
               matchId: dbMatch.id,
               nextMatchId: matches[matches.length - (i % 2 === 0 ? 1 : 2)].id,
-              advancesAs: i % 2 === 0 ? 'RED' : 'BLUE'
+              advancesAs: i % 2 === 0 ? AllianceColor.RED : AllianceColor.BLUE
             });
           }
         }
@@ -115,7 +115,7 @@ export class PlayoffScheduler {
       }
     });
     if (!match) throw new Error(`Match with ID ${matchId} not found`);
-    if (match.status !== 'COMPLETED') throw new Error(`Match ${matchId} is not completed`);
+    if (match.status !== MatchState.COMPLETED) throw new Error(`Match ${matchId} is not completed`);
     if (!match.winningAlliance) throw new Error(`Match ${matchId} has no winning alliance`);
     const advancement = this.bracketAdvancements.find(adv => adv.matchId === matchId);
     if (!advancement) throw new Error(`No advancement information for match ${matchId}`);
@@ -166,7 +166,7 @@ export class PlayoffScheduler {
       ]
     });
     if (matches.length === 0) throw new Error(`No matches found for stage ${stageId}`);
-    const incompleteMatches = matches.filter(match => match.status !== 'COMPLETED');
+    const incompleteMatches = matches.filter(match => match.status !== MatchState.COMPLETED);
     if (incompleteMatches.length > 0) throw new Error(`Cannot finalize rankings: ${incompleteMatches.length} matches are still incomplete`);
     const teamRankings = new Map<string, number>();
     for (const match of matches) {

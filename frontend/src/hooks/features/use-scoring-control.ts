@@ -160,18 +160,18 @@ export function useScoringControl({
   const [blueMultiplier, setBlueMultiplier] = useState<number>(1.0);
   const [scoreDetails, setScoreDetails] = useState<any>(null);
   const [isAddingRedElement, setIsAddingRedElement] = useState<boolean>(false);
-  const [isAddingBlueElement, setIsAddingBlueElement] = useState<boolean>(false);
-  // Add user activity tracking
+  const [isAddingBlueElement, setIsAddingBlueElement] = useState<boolean>(false);  // Add user activity tracking
   const userActiveRef = useRef<NodeJS.Timeout | null>(null);
   const isUserActiveRef = useRef(false);
-
+  const justSentRealtimeUpdateRef = useRef(false);
+  const lastBroadcastedMatchIdRef = useRef<string | null>(null);
   // Mark user as active when any score state changes
   const markUserActive = useCallback(() => {
     isUserActiveRef.current = true;
     if (userActiveRef.current) clearTimeout(userActiveRef.current);
     userActiveRef.current = setTimeout(() => {
       isUserActiveRef.current = false;
-    }, 2000); // 2 seconds of inactivity
+    }, 5000); // Increase to 5 seconds of inactivity to prevent premature syncing
   }, []);
 
   // Wrap setters to mark user activity
@@ -216,39 +216,54 @@ export function useScoringControl({
 
   // Add states for total scores
   const [redTotalScore, setRedTotalScore] = useState<number>(0);
-  const [blueTotalScore, setBlueTotalScore] = useState<number>(0);
-  // Sync local state with match scores data from React Query
+  const [blueTotalScore, setBlueTotalScore] = useState<number>(0);  // Sync local state with match scores data from React Query
   useEffect(() => {
     if (matchScores && !isUserActiveRef.current) {
       console.log("✅ Syncing form data with API data (user not actively typing)");
-      // Update all score-related states from fetched data
-      setRedAutoScore(matchScores.redAutoScore || 0);
-      setRedDriveScore(matchScores.redDriveScore || 0);
-      setBlueAutoScore(matchScores.blueAutoScore || 0);
-      setBlueDriveScore(matchScores.blueDriveScore || 0);
-      setRedTotalScore(matchScores.redTotalScore || 0);
-      setBlueTotalScore(matchScores.blueTotalScore || 0);
+        // Only sync if the base score data (auto/drive) is different from current state
+      const hasChanges = 
+        (matchScores.redAutoScore || 0) !== redAutoScore ||
+        (matchScores.redDriveScore || 0) !== redDriveScore ||
+        (matchScores.blueAutoScore || 0) !== blueAutoScore ||
+        (matchScores.blueDriveScore || 0) !== blueDriveScore;
+        if (hasChanges) {
+        console.log("📝 API data differs from current state, syncing...");
+        setRedAutoScore(matchScores.redAutoScore || 0);
+        setRedDriveScore(matchScores.redDriveScore || 0);
+        setBlueAutoScore(matchScores.blueAutoScore || 0);
+        setBlueDriveScore(matchScores.blueDriveScore || 0);
+        
+        // Only sync total scores if they exist in API data and are non-zero,
+        // or if the auto/drive scores changed (requiring recalculation)
+        const autoScoresChanged = 
+          (matchScores.redAutoScore || 0) !== redAutoScore ||
+          (matchScores.redDriveScore || 0) !== redDriveScore ||
+          (matchScores.blueAutoScore || 0) !== blueAutoScore ||
+          (matchScores.blueDriveScore || 0) !== blueDriveScore;
+          
+        if (autoScoresChanged || (matchScores.redTotalScore && matchScores.redTotalScore > 0)) {
+          setRedTotalScore(matchScores.redTotalScore || 0);
+        }
+        if (autoScoresChanged || (matchScores.blueTotalScore && matchScores.blueTotalScore > 0)) {
+          setBlueTotalScore(matchScores.blueTotalScore || 0);
+        }
+      } else {
+        console.log("📋 API data matches current state, no sync needed");
+      }
 
-      // Team counts and multipliers
+      // Keep the enhanced features for UI compatibility, but initialize to defaults if not in API response
       setRedTeamCount(matchScores.redTeamCount || 0);
       setBlueTeamCount(matchScores.blueTeamCount || 0);
       setRedMultiplier(matchScores.redMultiplier || 1.0);
       setBlueMultiplier(matchScores.blueMultiplier || 1.0);
-
-      // Game elements - convert from object to array if needed
-      setRedGameElements(
-        objectToArrayGameElements(matchScores.redGameElements)
-      );
-      setBlueGameElements(
-        objectToArrayGameElements(matchScores.blueGameElements)
-      );
-
-      // Score details
+      setRedGameElements(objectToArrayGameElements(matchScores.redGameElements) || []);
+      setBlueGameElements(objectToArrayGameElements(matchScores.blueGameElements) || []);
       setScoreDetails(matchScores.scoreDetails || {});
     } else if (matchScores && isUserActiveRef.current) {
       console.log("🚫 Skipping form data sync (user actively typing)");
     } else if (!isLoadingScores && selectedMatchId) {
       // If we finished loading and there are no scores yet, reset to default values
+      console.log("🔄 No scores found, resetting to defaults");
       setRedAutoScore(0);
       setRedDriveScore(0);
       setBlueAutoScore(0);
@@ -263,7 +278,36 @@ export function useScoringControl({
       setBlueGameElements([]);
       setScoreDetails(null);
     }
-  }, [matchScores, isLoadingScores, selectedMatchId]);
+  }, [matchScores, isLoadingScores, selectedMatchId, redAutoScore, redDriveScore, blueAutoScore, blueDriveScore]);  // Send initial scores to audience display when match changes (only on match ID change)
+  useEffect(() => {
+    if (!selectedMatchId || isLoadingScores) return;
+    
+    // Prevent duplicate broadcasts for the same match
+    if (lastBroadcastedMatchIdRef.current === selectedMatchId) {
+      console.log("📡 Skipping broadcast - already sent for match:", selectedMatchId);
+      return;
+    }
+    
+    // Only broadcast when we have a definitive match ID and loading is complete
+    // This prevents infinite loops by not depending on matchScores changes
+    const currentScores = {
+      matchId: selectedMatchId,
+      fieldId: selectedFieldId || undefined,
+      tournamentId,
+      redAutoScore: matchScores?.redAutoScore || 0,
+      redDriveScore: matchScores?.redDriveScore || 0,
+      redTotalScore: matchScores?.redTotalScore || 0,
+      blueAutoScore: matchScores?.blueAutoScore || 0,
+      blueDriveScore: matchScores?.blueDriveScore || 0,
+      blueTotalScore: matchScores?.blueTotalScore || 0,
+    };
+    
+    console.log("📡 Broadcasting initial scores for match change:", selectedMatchId, currentScores);
+    webSocketService.sendRealtimeScoreUpdate(currentScores);
+    
+    // Track that we've broadcasted for this match
+    lastBroadcastedMatchIdRef.current = selectedMatchId;
+  }, [selectedMatchId, isLoadingScores]); // Only depend on match ID and loading state
 
   // Subscribe to WebSocket score updates and update React Query cache
   useEffect(() => {
@@ -295,20 +339,26 @@ export function useScoringControl({
       }
       
       if (data.matchId === selectedMatchId) {
-        console.log("Score update received for selected match:", data);
-          // Update the React Query cache directly
+        console.log("Score update received for selected match:", data);        // Update the React Query cache directly
         queryClient.setQueryData(
           ["match-scores", selectedMatchId],
           (oldData: Record<string, any> | undefined) => ({
             ...(oldData || {}),
             ...data,
           })
-        );
-
-        // Only refetch if user is not actively typing to prevent form resets
-        if (!isUserActiveRef.current) {
-          console.log("✅ Refetching scores (user not actively typing)");
-          refetchScores();
+        );        // Only refetch if user is not actively typing AND we didn't just send this update ourselves
+        if (!isUserActiveRef.current && !justSentRealtimeUpdateRef.current) {
+          console.log("✅ Refetching scores (user not actively typing and not our own update)");
+          // Add a small delay to ensure the backend has processed the update
+          setTimeout(() => {
+            refetchScores();
+          }, 100);
+        } else if (justSentRealtimeUpdateRef.current) {
+          console.log("🚫 Skipping refetch (this is our own real-time update)");
+          // Reset the flag after a short delay
+          setTimeout(() => {
+            justSentRealtimeUpdateRef.current = false;
+          }, 500);
         } else {
           console.log("🚫 Skipping refetch (user actively typing)");
         }
@@ -318,99 +368,103 @@ export function useScoringControl({
 
     return () => {
       if (unsubscribe) unsubscribe();
-    };  }, [selectedMatchId, queryClient, refetchScores, selectedFieldId]);
-  // Send real-time update function (no DB persistence)
+    };  }, [selectedMatchId, queryClient, refetchScores, selectedFieldId]);  // Send real-time update function (no DB persistence, but immediate UI feedback)
   const sendRealtimeUpdate = () => {
-    if (!selectedMatchId) return;
-
-    // Calculate totals
+    if (!selectedMatchId) return;    // Calculate totals from current auto and drive scores
     const redTotal = (redAutoScore || 0) + (redDriveScore || 0);
     const blueTotal = (blueAutoScore || 0) + (blueDriveScore || 0);
+    
+    console.log("Calculating totals for real-time update:", { 
+      redAuto: redAutoScore, 
+      redDrive: redDriveScore, 
+      redTotal,
+      blueAuto: blueAutoScore, 
+      blueDrive: blueDriveScore, 
+      blueTotal 
+    });
 
-    // Convert game elements to GameElementDto[] for WebSocket (same as persistence function)
-    const toGameElementDtoArray = (gameElements: Record<string, number> | GameElement[]): { element: string; count: number; pointsEach: number; totalPoints: number; operation: 'multiply' | 'add'; }[] => {
-      if (Array.isArray(gameElements)) {
-        return gameElements.map(g => ({ ...g, operation: 'multiply' as const }));
-      }
-      return Object.entries(gameElements).map(([element, count]) => ({
-        element,
-        count: Number(count),
-        pointsEach: 1,
-        totalPoints: Number(count),
-        operation: 'multiply' as const,
-      }));
-    };
+    // Immediately update UI with calculated totals for instant feedback
+    setRedTotalScore(redTotal);
+    setBlueTotalScore(blueTotal);
 
     const realtimeData = {
       matchId: selectedMatchId,
       fieldId: selectedFieldId || undefined,
       tournamentId,
-      redAutoScore,
-      redDriveScore,
+      redAutoScore: redAutoScore || 0,
+      redDriveScore: redDriveScore || 0,
       redTotalScore: redTotal,
-      blueAutoScore,
-      blueDriveScore,
+      blueAutoScore: blueAutoScore || 0,
+      blueDriveScore: blueDriveScore || 0,
       blueTotalScore: blueTotal,
-      redGameElements: toGameElementDtoArray(redGameElements),
-      blueGameElements: toGameElementDtoArray(blueGameElements),
-      redTeamCount,
-      blueTeamCount,
-      redMultiplier,
-      blueMultiplier,
-      scoreDetails,
-    };
-
-    console.log("Sending real-time score update (no DB persist):", realtimeData);
+    };    console.log("Sending simplified real-time score update:", realtimeData);
+      // Mark that we just sent a real-time update to prevent refetch loops
+    justSentRealtimeUpdateRef.current = true;
     
-    // Only send real-time WebSocket update, no DB persistence
+    // Reset the flag after 2 seconds as a failsafe (in case WebSocket doesn't come back)
+    setTimeout(() => {
+      justSentRealtimeUpdateRef.current = false;
+    }, 2000);
+    
+    // Send real-time WebSocket update to other displays
     webSocketService.sendRealtimeScoreUpdate(realtimeData);
+    
+    // Reset user activity state so the UI can receive future updates
+    isUserActiveRef.current = false;
+    if (userActiveRef.current) {
+      clearTimeout(userActiveRef.current);
+      userActiveRef.current = null;
+    }
   };
-
   // Save scores function (DB persistence)
   const saveScores = async () => {
-    if (!selectedMatchId) return;
+    if (!selectedMatchId) return;    // Calculate totals from current auto and drive scores
+    const redTotal = (redAutoScore || 0) + (redDriveScore || 0);
+    const blueTotal = (blueAutoScore || 0) + (blueDriveScore || 0);
 
-    // Convert game elements to GameElementDto[] for persistence (backend expects operation: 'multiply' | 'add')
-    const toGameElementDtoArray = (gameElements: Record<string, number> | GameElement[]): { element: string; count: number; pointsEach: number; totalPoints: number; operation: 'multiply' | 'add'; }[] => {
-      if (Array.isArray(gameElements)) {
-        return gameElements.map(g => ({ ...g, operation: 'multiply' as const }));
-      }
-      return Object.entries(gameElements).map(([element, count]) => ({
-        element,
-        count: Number(count),
-        pointsEach: 1,
-        totalPoints: Number(count),
-        operation: 'multiply' as const,
-      }));
-    };
-
+    // Simplified score data to match the new schema
     const scoreData = {
       matchId: selectedMatchId,
-      redAutoScore,
-      redDriveScore,
-      redTotalScore,
-      blueAutoScore,
-      blueDriveScore,
-      blueTotalScore,
-      redGameElements: toGameElementDtoArray(redGameElements),
-      blueGameElements: toGameElementDtoArray(blueGameElements),
-      redTeamCount,
-      blueTeamCount,
-      redMultiplier,
-      blueMultiplier,
-      scoreDetails,
-      fieldId: selectedFieldId || undefined,
-      tournamentId,
-      type: 'persist',
+      redAutoScore: redAutoScore || 0,
+      redDriveScore: redDriveScore || 0,
+      redTotalScore: redTotal,
+      blueAutoScore: blueAutoScore || 0,
+      blueDriveScore: blueDriveScore || 0,
+      blueTotalScore: blueTotal,
     };
 
-    // Debug logging for field ID tracking
-    console.log("Saving scores with fieldId:", selectedFieldId, "for match:", selectedMatchId);
-    try {
-      // Emit persistScores event via WebSocket for final DB save
-      const result = await webSocketService.persistScores(scoreData);
-      if (!result.success) throw new Error(result.error || 'Failed to persist scores');
-      // Optionally: handle result, show toast, etc.
+    console.log("Saving simplified scores:", scoreData);
+      try {
+      // Use the existing match scores API instead of WebSocket for persistence
+      if (matchScores?.id) {
+        // Update existing scores
+        await updateMatchScores.mutateAsync({
+          id: matchScores.id,
+          ...scoreData,
+        });
+      } else {
+        // Create new scores
+        await createMatchScores.mutateAsync(scoreData);
+      }      console.log("Scores saved successfully");
+      
+      // Force an immediate update of the UI state with the saved data
+      // This ensures the UI reflects the persisted data even if user is still "active"
+      setRedAutoScore(scoreData.redAutoScore);
+      setRedDriveScore(scoreData.redDriveScore);
+      setRedTotalScore(scoreData.redTotalScore);
+      setBlueAutoScore(scoreData.blueAutoScore);
+      setBlueDriveScore(scoreData.blueDriveScore);
+      setBlueTotalScore(scoreData.blueTotalScore);
+        // Reset user activity state so future data syncs work properly
+      isUserActiveRef.current = false;
+      if (userActiveRef.current) {
+        clearTimeout(userActiveRef.current);
+        userActiveRef.current = null;
+      }
+      
+      // Also refetch to get the latest data from the server
+      await refetchScores();
+      
     } catch (error) {
       console.error("Failed to save scores:", error);
       throw error;

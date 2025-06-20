@@ -1,5 +1,5 @@
 import { PrismaService } from '../prisma.service';
-import { Match as PrismaMatch } from '../utils/prisma-types';
+import { Match as PrismaMatch, MatchState, AllianceColor } from '../utils/prisma-types';
 import { Match, Schedule } from './match-scheduler.types';
 
 /**
@@ -56,23 +56,21 @@ export class FrcScheduler {
       let minCount = Math.min(...fieldAssignmentCounts);
       let candidateIndexes = fieldAssignmentCounts
         .map((count, idx) => (count === minCount ? idx : -1))
-        .filter(idx => idx !== -1);
-      let chosenIdx = candidateIndexes[Math.floor(Math.random() * candidateIndexes.length)];
+        .filter(idx => idx !== -1);      let chosenIdx = candidateIndexes[Math.floor(Math.random() * candidateIndexes.length)];
       let chosenField = shuffledFields[chosenIdx];
       fieldAssignmentCounts[chosenIdx]++;
       const dbMatch = await this.prisma.match.create({
         data: {
           stageId: stage.id,
-          matchNumber: matchNumber++,
-          roundNumber: 1,
+          matchNumber: matchNumber++,          roundNumber: 1,
           scheduledTime: new Date(Date.now() + ((matchNumber - 1) * 6 * 60 * 1000)),
-          status: 'PENDING',
+          status: MatchState.PENDING,
           fieldId: chosenField.id,
-          fieldNumber: chosenField.number,
+          // fieldNumber removed - can access via match.field.number relationship
           alliances: {
             create: [
               {
-                color: 'RED',
+                color: AllianceColor.RED,
                 teamAlliances: {
                   create: redTeamIds.map((teamId, idx) => ({
                     stationPosition: idx + 1,
@@ -80,9 +78,8 @@ export class FrcScheduler {
                     team: { connect: { id: teamId } },
                   })),
                 },
-              },
-              {
-                color: 'BLUE',
+              },              {
+                color: AllianceColor.BLUE,
                 teamAlliances: {
                   create: blueTeamIds.map((teamId, idx) => ({
                     stationPosition: idx + 1,
