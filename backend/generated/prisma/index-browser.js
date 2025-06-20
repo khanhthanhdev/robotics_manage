@@ -189,6 +189,8 @@ exports.Prisma.AllianceScalarFieldEnum = {
   id: 'id',
   color: 'color',
   score: 'score',
+  autoScore: 'autoScore',
+  driveScore: 'driveScore',
   matchId: 'matchId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

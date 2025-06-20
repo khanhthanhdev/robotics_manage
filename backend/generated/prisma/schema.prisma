@@ -202,7 +202,9 @@ model MatchReferee {
 model Alliance {
   id            String         @id @default(uuid())
   color         AllianceColor // e.g., "RED", "BLUE"
-  score         Int            @default(0)
+  score         Int            @default(0) // Total score (auto + drive)
+  autoScore     Int            @default(0) // Autonomous period score
+  driveScore    Int            @default(0) // Driver-controlled period score
   matchId       String
   match         Match          @relation(fields: [matchId], references: [id], onDelete: Cascade)
   teamAlliances TeamAlliance[]

@@ -164,6 +164,15 @@ export default function ControlMatchPage() {
       blueTeams,
       scheduledTime: selectedMatch.scheduledTime,
     } as any);
+
+    // Also send through legacy WebSocket for backward compatibility
+    webSocketService.sendLegacyMatchUpdate({
+      ...matchData,
+      fieldId: selectedFieldId || undefined,
+      redTeams,
+      blueTeams,
+      scheduledTime: selectedMatch.scheduledTime,
+    } as any);
   }, [selectedMatch, selectedMatchId, isLoadingMatchDetails, selectedFieldId]);
 
   // Helper function to extract red teams from alliances

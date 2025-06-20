@@ -9132,16 +9132,22 @@ export namespace Prisma {
 
   export type AllianceAvgAggregateOutputType = {
     score: number | null
+    autoScore: number | null
+    driveScore: number | null
   }
 
   export type AllianceSumAggregateOutputType = {
     score: number | null
+    autoScore: number | null
+    driveScore: number | null
   }
 
   export type AllianceMinAggregateOutputType = {
     id: string | null
     color: $Enums.AllianceColor | null
     score: number | null
+    autoScore: number | null
+    driveScore: number | null
     matchId: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -9151,6 +9157,8 @@ export namespace Prisma {
     id: string | null
     color: $Enums.AllianceColor | null
     score: number | null
+    autoScore: number | null
+    driveScore: number | null
     matchId: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -9160,6 +9168,8 @@ export namespace Prisma {
     id: number
     color: number
     score: number
+    autoScore: number
+    driveScore: number
     matchId: number
     createdAt: number
     updatedAt: number
@@ -9169,16 +9179,22 @@ export namespace Prisma {
 
   export type AllianceAvgAggregateInputType = {
     score?: true
+    autoScore?: true
+    driveScore?: true
   }
 
   export type AllianceSumAggregateInputType = {
     score?: true
+    autoScore?: true
+    driveScore?: true
   }
 
   export type AllianceMinAggregateInputType = {
     id?: true
     color?: true
     score?: true
+    autoScore?: true
+    driveScore?: true
     matchId?: true
     createdAt?: true
     updatedAt?: true
@@ -9188,6 +9204,8 @@ export namespace Prisma {
     id?: true
     color?: true
     score?: true
+    autoScore?: true
+    driveScore?: true
     matchId?: true
     createdAt?: true
     updatedAt?: true
@@ -9197,6 +9215,8 @@ export namespace Prisma {
     id?: true
     color?: true
     score?: true
+    autoScore?: true
+    driveScore?: true
     matchId?: true
     createdAt?: true
     updatedAt?: true
@@ -9293,6 +9313,8 @@ export namespace Prisma {
     id: string
     color: $Enums.AllianceColor
     score: number
+    autoScore: number
+    driveScore: number
     matchId: string
     createdAt: Date
     updatedAt: Date
@@ -9321,6 +9343,8 @@ export namespace Prisma {
     id?: boolean
     color?: boolean
     score?: boolean
+    autoScore?: boolean
+    driveScore?: boolean
     matchId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -9334,6 +9358,8 @@ export namespace Prisma {
     id?: boolean
     color?: boolean
     score?: boolean
+    autoScore?: boolean
+    driveScore?: boolean
     matchId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -9344,6 +9370,8 @@ export namespace Prisma {
     id?: boolean
     color?: boolean
     score?: boolean
+    autoScore?: boolean
+    driveScore?: boolean
     matchId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -9354,12 +9382,14 @@ export namespace Prisma {
     id?: boolean
     color?: boolean
     score?: boolean
+    autoScore?: boolean
+    driveScore?: boolean
     matchId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type AllianceOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "color" | "score" | "matchId" | "createdAt" | "updatedAt", ExtArgs["result"]["alliance"]>
+  export type AllianceOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "color" | "score" | "autoScore" | "driveScore" | "matchId" | "createdAt" | "updatedAt", ExtArgs["result"]["alliance"]>
   export type AllianceInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     match?: boolean | MatchDefaultArgs<ExtArgs>
     teamAlliances?: boolean | Alliance$teamAlliancesArgs<ExtArgs>
@@ -9384,6 +9414,8 @@ export namespace Prisma {
       id: string
       color: $Enums.AllianceColor
       score: number
+      autoScore: number
+      driveScore: number
       matchId: string
       createdAt: Date
       updatedAt: Date
@@ -9816,6 +9848,8 @@ export namespace Prisma {
     readonly id: FieldRef<"Alliance", 'String'>
     readonly color: FieldRef<"Alliance", 'AllianceColor'>
     readonly score: FieldRef<"Alliance", 'Int'>
+    readonly autoScore: FieldRef<"Alliance", 'Int'>
+    readonly driveScore: FieldRef<"Alliance", 'Int'>
     readonly matchId: FieldRef<"Alliance", 'String'>
     readonly createdAt: FieldRef<"Alliance", 'DateTime'>
     readonly updatedAt: FieldRef<"Alliance", 'DateTime'>
@@ -22192,6 +22226,8 @@ export namespace Prisma {
     id: 'id',
     color: 'color',
     score: 'score',
+    autoScore: 'autoScore',
+    driveScore: 'driveScore',
     matchId: 'matchId',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
@@ -23086,6 +23122,8 @@ export namespace Prisma {
     id?: StringFilter<"Alliance"> | string
     color?: EnumAllianceColorFilter<"Alliance"> | $Enums.AllianceColor
     score?: IntFilter<"Alliance"> | number
+    autoScore?: IntFilter<"Alliance"> | number
+    driveScore?: IntFilter<"Alliance"> | number
     matchId?: StringFilter<"Alliance"> | string
     createdAt?: DateTimeFilter<"Alliance"> | Date | string
     updatedAt?: DateTimeFilter<"Alliance"> | Date | string
@@ -23098,6 +23136,8 @@ export namespace Prisma {
     id?: SortOrder
     color?: SortOrder
     score?: SortOrder
+    autoScore?: SortOrder
+    driveScore?: SortOrder
     matchId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -23113,6 +23153,8 @@ export namespace Prisma {
     NOT?: AllianceWhereInput | AllianceWhereInput[]
     color?: EnumAllianceColorFilter<"Alliance"> | $Enums.AllianceColor
     score?: IntFilter<"Alliance"> | number
+    autoScore?: IntFilter<"Alliance"> | number
+    driveScore?: IntFilter<"Alliance"> | number
     matchId?: StringFilter<"Alliance"> | string
     createdAt?: DateTimeFilter<"Alliance"> | Date | string
     updatedAt?: DateTimeFilter<"Alliance"> | Date | string
@@ -23125,6 +23167,8 @@ export namespace Prisma {
     id?: SortOrder
     color?: SortOrder
     score?: SortOrder
+    autoScore?: SortOrder
+    driveScore?: SortOrder
     matchId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -23142,6 +23186,8 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"Alliance"> | string
     color?: EnumAllianceColorWithAggregatesFilter<"Alliance"> | $Enums.AllianceColor
     score?: IntWithAggregatesFilter<"Alliance"> | number
+    autoScore?: IntWithAggregatesFilter<"Alliance"> | number
+    driveScore?: IntWithAggregatesFilter<"Alliance"> | number
     matchId?: StringWithAggregatesFilter<"Alliance"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Alliance"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Alliance"> | Date | string
@@ -24524,6 +24570,8 @@ export namespace Prisma {
     id?: string
     color: $Enums.AllianceColor
     score?: number
+    autoScore?: number
+    driveScore?: number
     createdAt?: Date | string
     updatedAt?: Date | string
     match: MatchCreateNestedOneWithoutAlliancesInput
@@ -24535,6 +24583,8 @@ export namespace Prisma {
     id?: string
     color: $Enums.AllianceColor
     score?: number
+    autoScore?: number
+    driveScore?: number
     matchId: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -24546,6 +24596,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     color?: EnumAllianceColorFieldUpdateOperationsInput | $Enums.AllianceColor
     score?: IntFieldUpdateOperationsInput | number
+    autoScore?: IntFieldUpdateOperationsInput | number
+    driveScore?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     match?: MatchUpdateOneRequiredWithoutAlliancesNestedInput
@@ -24557,6 +24609,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     color?: EnumAllianceColorFieldUpdateOperationsInput | $Enums.AllianceColor
     score?: IntFieldUpdateOperationsInput | number
+    autoScore?: IntFieldUpdateOperationsInput | number
+    driveScore?: IntFieldUpdateOperationsInput | number
     matchId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -24568,6 +24622,8 @@ export namespace Prisma {
     id?: string
     color: $Enums.AllianceColor
     score?: number
+    autoScore?: number
+    driveScore?: number
     matchId: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -24577,6 +24633,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     color?: EnumAllianceColorFieldUpdateOperationsInput | $Enums.AllianceColor
     score?: IntFieldUpdateOperationsInput | number
+    autoScore?: IntFieldUpdateOperationsInput | number
+    driveScore?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -24585,6 +24643,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     color?: EnumAllianceColorFieldUpdateOperationsInput | $Enums.AllianceColor
     score?: IntFieldUpdateOperationsInput | number
+    autoScore?: IntFieldUpdateOperationsInput | number
+    driveScore?: IntFieldUpdateOperationsInput | number
     matchId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -26180,6 +26240,8 @@ export namespace Prisma {
     id?: SortOrder
     color?: SortOrder
     score?: SortOrder
+    autoScore?: SortOrder
+    driveScore?: SortOrder
     matchId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -26187,12 +26249,16 @@ export namespace Prisma {
 
   export type AllianceAvgOrderByAggregateInput = {
     score?: SortOrder
+    autoScore?: SortOrder
+    driveScore?: SortOrder
   }
 
   export type AllianceMaxOrderByAggregateInput = {
     id?: SortOrder
     color?: SortOrder
     score?: SortOrder
+    autoScore?: SortOrder
+    driveScore?: SortOrder
     matchId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -26202,6 +26268,8 @@ export namespace Prisma {
     id?: SortOrder
     color?: SortOrder
     score?: SortOrder
+    autoScore?: SortOrder
+    driveScore?: SortOrder
     matchId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -26209,6 +26277,8 @@ export namespace Prisma {
 
   export type AllianceSumOrderByAggregateInput = {
     score?: SortOrder
+    autoScore?: SortOrder
+    driveScore?: SortOrder
   }
 
   export type EnumAllianceColorWithAggregatesFilter<$PrismaModel = never> = {
@@ -30085,6 +30155,8 @@ export namespace Prisma {
     id?: string
     color: $Enums.AllianceColor
     score?: number
+    autoScore?: number
+    driveScore?: number
     createdAt?: Date | string
     updatedAt?: Date | string
     teamAlliances?: TeamAllianceCreateNestedManyWithoutAllianceInput
@@ -30095,6 +30167,8 @@ export namespace Prisma {
     id?: string
     color: $Enums.AllianceColor
     score?: number
+    autoScore?: number
+    driveScore?: number
     createdAt?: Date | string
     updatedAt?: Date | string
     teamAlliances?: TeamAllianceUncheckedCreateNestedManyWithoutAllianceInput
@@ -30331,6 +30405,8 @@ export namespace Prisma {
     id?: StringFilter<"Alliance"> | string
     color?: EnumAllianceColorFilter<"Alliance"> | $Enums.AllianceColor
     score?: IntFilter<"Alliance"> | number
+    autoScore?: IntFilter<"Alliance"> | number
+    driveScore?: IntFilter<"Alliance"> | number
     matchId?: StringFilter<"Alliance"> | string
     createdAt?: DateTimeFilter<"Alliance"> | Date | string
     updatedAt?: DateTimeFilter<"Alliance"> | Date | string
@@ -31118,6 +31194,8 @@ export namespace Prisma {
     id?: string
     color: $Enums.AllianceColor
     score?: number
+    autoScore?: number
+    driveScore?: number
     createdAt?: Date | string
     updatedAt?: Date | string
     match: MatchCreateNestedOneWithoutAlliancesInput
@@ -31128,6 +31206,8 @@ export namespace Prisma {
     id?: string
     color: $Enums.AllianceColor
     score?: number
+    autoScore?: number
+    driveScore?: number
     matchId: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -31197,6 +31277,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     color?: EnumAllianceColorFieldUpdateOperationsInput | $Enums.AllianceColor
     score?: IntFieldUpdateOperationsInput | number
+    autoScore?: IntFieldUpdateOperationsInput | number
+    driveScore?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     match?: MatchUpdateOneRequiredWithoutAlliancesNestedInput
@@ -31207,6 +31289,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     color?: EnumAllianceColorFieldUpdateOperationsInput | $Enums.AllianceColor
     score?: IntFieldUpdateOperationsInput | number
+    autoScore?: IntFieldUpdateOperationsInput | number
+    driveScore?: IntFieldUpdateOperationsInput | number
     matchId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -32465,6 +32549,8 @@ export namespace Prisma {
     id?: string
     color: $Enums.AllianceColor
     score?: number
+    autoScore?: number
+    driveScore?: number
     createdAt?: Date | string
     updatedAt?: Date | string
     match: MatchCreateNestedOneWithoutAlliancesInput
@@ -32475,6 +32561,8 @@ export namespace Prisma {
     id?: string
     color: $Enums.AllianceColor
     score?: number
+    autoScore?: number
+    driveScore?: number
     matchId: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -32591,6 +32679,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     color?: EnumAllianceColorFieldUpdateOperationsInput | $Enums.AllianceColor
     score?: IntFieldUpdateOperationsInput | number
+    autoScore?: IntFieldUpdateOperationsInput | number
+    driveScore?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     match?: MatchUpdateOneRequiredWithoutAlliancesNestedInput
@@ -32601,6 +32691,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     color?: EnumAllianceColorFieldUpdateOperationsInput | $Enums.AllianceColor
     score?: IntFieldUpdateOperationsInput | number
+    autoScore?: IntFieldUpdateOperationsInput | number
+    driveScore?: IntFieldUpdateOperationsInput | number
     matchId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -33364,6 +33456,8 @@ export namespace Prisma {
     id?: string
     color: $Enums.AllianceColor
     score?: number
+    autoScore?: number
+    driveScore?: number
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -33402,6 +33496,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     color?: EnumAllianceColorFieldUpdateOperationsInput | $Enums.AllianceColor
     score?: IntFieldUpdateOperationsInput | number
+    autoScore?: IntFieldUpdateOperationsInput | number
+    driveScore?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     teamAlliances?: TeamAllianceUpdateManyWithoutAllianceNestedInput
@@ -33412,6 +33508,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     color?: EnumAllianceColorFieldUpdateOperationsInput | $Enums.AllianceColor
     score?: IntFieldUpdateOperationsInput | number
+    autoScore?: IntFieldUpdateOperationsInput | number
+    driveScore?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     teamAlliances?: TeamAllianceUncheckedUpdateManyWithoutAllianceNestedInput
@@ -33422,6 +33520,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     color?: EnumAllianceColorFieldUpdateOperationsInput | $Enums.AllianceColor
     score?: IntFieldUpdateOperationsInput | number
+    autoScore?: IntFieldUpdateOperationsInput | number
+    driveScore?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

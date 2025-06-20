@@ -287,6 +287,64 @@ export default function LiveFieldDisplayPage() {
     };
   }, [tournamentId, fieldId]);
 
+  // Subscribe to match updates from the new WebSocket service for better timing
+  useEffect(() => {
+    if (!tournamentId) return;
+
+    const handleNewMatchUpdate = (data: any) => {
+      console.log("🆕 [New WebSocket Service] Match update received:", data, "for field:", fieldId);
+      
+      // Accept updates if:
+      // 1. No fieldId filtering needed (selectedFieldId is null), OR
+      // 2. fieldId matches, OR  
+      // 3. No fieldId in update (tournament-wide)
+      const shouldAccept = 
+        !fieldId || // No field selected
+        !data.fieldId || // No fieldId in update (tournament-wide)
+        data.fieldId === fieldId; // Exact field match
+      
+      if (!shouldAccept) {
+        console.log(`🚫 [New WebSocket] Ignoring match update for different field: ${data.fieldId} (expected: ${fieldId})`);
+        return;
+      }
+
+      const newMatchId = data.matchId || data.id;
+      
+      console.log("✅ [New WebSocket] Processing match update for field:", fieldId, "matchId:", newMatchId);
+
+      // Update match state immediately - this ensures the useRealtimeScores hook
+      // gets the correct matchId before score updates arrive
+      setMatchState((prevState: any) => ({
+        ...prevState,
+        ...data,
+        matchId: newMatchId || prevState?.matchId,
+        matchNumber: data.matchNumber || prevState?.matchNumber,
+        status: data.status || prevState?.status,
+        redTeams: data.redTeams || prevState?.redTeams || [],
+        blueTeams: data.blueTeams || prevState?.blueTeams || [],
+      }));
+
+      // Switch to match display mode if not already
+      if (displaySettings.displayMode !== "match") {
+        setDisplaySettings({
+          ...displaySettings,
+          displayMode: "match",
+          matchId: newMatchId,
+          updatedAt: Date.now(),
+        });
+      }
+    };
+
+    console.log("🔔 [New WebSocket Service] Setting up match update subscription");
+    const unsubscribeNewMatchUpdate = webSocketService.onMatchUpdate(handleNewMatchUpdate);
+
+    return () => {
+      if (unsubscribeNewMatchUpdate) {
+        unsubscribeNewMatchUpdate();
+      }
+    };
+  }, [tournamentId, fieldId, displaySettings]);
+
   // Track connection status and attempts
   const [connectionAttempts, setConnectionAttempts] = useState<number>(0);
 
@@ -958,8 +1016,7 @@ export default function LiveFieldDisplayPage() {
           renderContent()
         )}
       </main>
-      {/* Footer */}{" "}
-      <footer className="container mx-auto mt-8 text-center text-sm text-gray-600 pb-6">
+      {/* Footer */}{" "}      <footer className="container mx-auto mt-8 text-center text-sm text-gray-600 pb-6">
         <p>
           © Robotics Tournament Management System
         </p>

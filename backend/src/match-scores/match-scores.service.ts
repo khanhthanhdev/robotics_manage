@@ -52,21 +52,39 @@ export class MatchScoresService {
 
       if (!redAlliance || !blueAlliance) {
         throw new BadRequestException('Match must have both RED and BLUE alliances');
-      }      // Update alliance scores directly without flexible scoring system
-      const redScore = (createMatchScoresDto as any).redTotalScore || 
-                       ((createMatchScoresDto as any).redAutoScore || 0) + ((createMatchScoresDto as any).redDriveScore || 0);
-      const blueScore = (createMatchScoresDto as any).blueTotalScore || 
-                        ((createMatchScoresDto as any).blueAutoScore || 0) + ((createMatchScoresDto as any).blueDriveScore || 0);
+      }      // Calculate scores from auto and drive components
+      const redAutoScore = (createMatchScoresDto as any).redAutoScore || 0;
+      const redDriveScore = (createMatchScoresDto as any).redDriveScore || 0;
+      const blueAutoScore = (createMatchScoresDto as any).blueAutoScore || 0;
+      const blueDriveScore = (createMatchScoresDto as any).blueDriveScore || 0;
 
-      // Update alliance scores
-      await this.prisma.alliance.update({
-        where: { id: redAlliance.id },
-        data: { score: redScore }
+      // Calculate total scores
+      const redScore = (createMatchScoresDto as any).redTotalScore || (redAutoScore + redDriveScore);
+      const blueScore = (createMatchScoresDto as any).blueTotalScore || (blueAutoScore + blueDriveScore);
+
+      console.log(`Updating alliance scores for match ${createMatchScoresDto.matchId}:`, {
+        red: { auto: redAutoScore, drive: redDriveScore, total: redScore },
+        blue: { auto: blueAutoScore, drive: blueDriveScore, total: blueScore }
       });
 
+      // Update red alliance with auto, drive, and total scores
+      await this.prisma.alliance.update({
+        where: { id: redAlliance.id },
+        data: { 
+          autoScore: redAutoScore,
+          driveScore: redDriveScore,
+          score: redScore 
+        }
+      });
+
+      // Update blue alliance with auto, drive, and total scores
       await this.prisma.alliance.update({
         where: { id: blueAlliance.id },
-        data: { score: blueScore }
+        data: { 
+          autoScore: blueAutoScore,
+          driveScore: blueDriveScore,
+          score: blueScore 
+        }
       });
 
       // Determine winning alliance
@@ -161,12 +179,14 @@ export class MatchScoresService {
 
     if (!match) {
       throw new NotFoundException(`Match with ID ${matchId} not found`);
-    }
-
-    // Reset all alliance scores to 0
+    }    // Reset all alliance scores to 0
     await this.prisma.alliance.updateMany({
       where: { matchId },
-      data: { score: 0 },
+      data: { 
+        score: 0,
+        autoScore: 0,
+        driveScore: 0
+      },
     });
 
     // Reset match winning alliance
@@ -176,7 +196,7 @@ export class MatchScoresService {
     });
 
     return { message: `Reset scores for match ${matchId}` };
-  }/**
+  }  /**
    * Converts alliance scores to legacy format
    */
   private async convertToLegacyFormat(matchId: string) {
@@ -194,18 +214,29 @@ export class MatchScoresService {
     const redAlliance = match.alliances.find(a => a.color === AllianceColor.RED);
     const blueAlliance = match.alliances.find(a => a.color === AllianceColor.BLUE);
 
-    const redTotal = redAlliance?.score || 0;
-    const blueTotal = blueAlliance?.score || 0;
+    // Extract auto, drive, and total scores from the database
+    const redAutoScore = redAlliance?.autoScore || 0;
+    const redDriveScore = redAlliance?.driveScore || 0;
+    const redTotalScore = redAlliance?.score || 0;
+    
+    const blueAutoScore = blueAlliance?.autoScore || 0;
+    const blueDriveScore = blueAlliance?.driveScore || 0;
+    const blueTotalScore = blueAlliance?.score || 0;
+
+    // console.log(`Converting to legacy format for match ${matchId}:`, {
+    //   red: { auto: redAutoScore, drive: redDriveScore, total: redTotalScore },
+    //   blue: { auto: blueAutoScore, drive: blueDriveScore, total: blueTotalScore }
+    // });
 
     return {
       id: matchId, // Using matchId as the score ID for compatibility
       matchId,
-      redAutoScore: 0, // These breakdown fields are not needed for simplified scoring
-      redDriveScore: redTotal, // Put total in drive score for compatibility
-      redTotalScore: redTotal,
-      blueAutoScore: 0,
-      blueDriveScore: blueTotal,
-      blueTotalScore: blueTotal,
+      redAutoScore,
+      redDriveScore,
+      redTotalScore,
+      blueAutoScore,
+      blueDriveScore,
+      blueTotalScore,
       createdAt: new Date(),
       updatedAt: new Date(),
     };

@@ -33,6 +33,8 @@ interface IScoreManager {
   persistScores(data: BaseScoreData): Promise<PersistenceResultData>;
   onScoreUpdate(callback: ScoreUpdateCallback): () => void;
   onScoresPersisted(callback: PersistenceResultCallback): () => void;
+  sendMatchUpdate(data: any): void;
+  onMatchUpdate(callback: (data: any) => void): () => void;
 }
 
 interface ILegacySupport {
@@ -488,9 +490,15 @@ class ScoreManager implements IScoreManager {
     
     return this.eventEmitter.on('scoreUpdateRealtime', callback);
   }
-
   onScoresPersisted(callback: PersistenceResultCallback): () => void {
     return this.eventEmitter.on('scoresPersisted', callback);
+  }
+  sendMatchUpdate(data: any): void {
+    this.eventEmitter.emit('matchUpdate', data);
+  }
+
+  onMatchUpdate(callback: (data: any) => void): () => void {
+    return this.eventEmitter.on('matchUpdate', callback);
   }
 }
 
@@ -645,6 +653,14 @@ class WebSocketService implements IWebSocketService {
     return this.scoreManager.onScoresPersisted(callback);
   }
 
+  sendMatchUpdate(data: any): void {
+    this.scoreManager.sendMatchUpdate(data);
+  }
+
+  onMatchUpdate(callback: (data: any) => void): () => void {
+    return this.scoreManager.onMatchUpdate(callback);
+  }
+
   // === Legacy Support (Delegation) ===
   joinTournament(id: string): void {
     this.legacySupport.joinTournament(id);
@@ -661,12 +677,14 @@ class WebSocketService implements IWebSocketService {
   leaveFieldRoom(fieldId: string): void {
     this.legacySupport.leaveFieldRoom(fieldId);
   }
-
   sendDisplayModeChange(settings: any): void {
     this.legacySupport.sendDisplayModeChange(settings);
   }
 
-  sendMatchUpdate(data: any): void {
+  // Note: sendMatchUpdate is handled by scoreManager (new service) to ensure timing with scores
+  // Legacy match updates go through sendLegacyMatchUpdate for backward compatibility
+
+  sendLegacyMatchUpdate(data: any): void {
     this.legacySupport.sendMatchUpdate(data);
   }
 
