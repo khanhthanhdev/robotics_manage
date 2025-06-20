@@ -1,242 +1,157 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
-import { PrismaService } from '../prisma.service';
+import { Injectable, NotFoundException, BadRequestException, Inject } from '@nestjs/common';
 import { CreateMatchScoresDto, UpdateMatchScoresDto } from './dto';
-import { ScoreCalculationService } from '../score-config/score-calculation.service';
-import { TeamStatsService } from './team-stats.service';
-import { MatchSchedulerService } from '../match-scheduler/match-scheduler.service';
-import { AllianceColor } from '../utils/prisma-types';
+import { ScoreCalculationService } from './services/score-calculation.service';
+import { AllianceRepository } from './services/alliance.repository';
+import { MatchResultService } from './services/match-result.service';
+import { ITeamStatsService } from './interfaces/team-stats.interface';
+import { ScoreDataDto } from './dto/score-data.dto';
 
-/**
- * Service for managing match scores using the new flexible scoring system
- * Provides backward compatibility with legacy match scores format
- */
+
 @Injectable()
 export class MatchScoresService {
-  private readonly teamStatsService: TeamStatsService;
-
   constructor(
-    private readonly prisma: PrismaService,
     private readonly scoreCalculationService: ScoreCalculationService,
-    private readonly matchSchedulerService: MatchSchedulerService
-  ) {
-    this.teamStatsService = new TeamStatsService(prisma);
-  }
-
+    private readonly allianceRepository: AllianceRepository,
+    private readonly matchResultService: MatchResultService,
+    @Inject('ITeamStatsService') private readonly teamStatsService: ITeamStatsService
+  ) {}
   /**
-   * Creates match scores using the new flexible scoring system
-   * @param createMatchScoresDto - DTO with legacy match score data
+   * Creates match scores using the new SOLID architecture
+   * @param createMatchScoresDto - DTO with match score data
    * @returns Legacy format match scores for backward compatibility
    */
   async create(createMatchScoresDto: CreateMatchScoresDto) {
     try {
-      if (!createMatchScoresDto.matchId) {
-        throw new BadRequestException('Match ID is required to create match scores');
-      }
+      // Step 1: Validate and extract score data
+      const scoreData = ScoreDataDto.fromCreateDto(createMatchScoresDto);
+      scoreData.validate();
 
-      // Get match with alliances and tournament info
-      const match = await this.prisma.match.findUnique({
-        where: { id: createMatchScoresDto.matchId },
-        include: { 
-          alliances: true,
-          stage: { include: { tournament: true } }
-        },
+      // Step 2: Validate match has required alliances
+      const { red: redAlliance, blue: blueAlliance } = 
+        await this.allianceRepository.validateMatchAlliances(scoreData.matchId);
+
+      // Step 3: Calculate scores and determine winner
+      const matchScores = this.scoreCalculationService.calculateMatchScores(
+        scoreData.redAutoScore,
+        scoreData.redDriveScore,
+        scoreData.blueAutoScore,
+        scoreData.blueDriveScore
+      );
+
+      console.log(`Updating alliance scores for match ${scoreData.matchId}:`, {
+        red: matchScores.redScores,
+        blue: matchScores.blueScores,
+        winner: matchScores.winningAlliance
       });
 
-      if (!match) {
-        throw new NotFoundException(`Match with ID ${createMatchScoresDto.matchId} not found`);
-      }
+      // Step 4: Update alliance scores
+      await this.allianceRepository.updateAllianceScores(redAlliance.id, matchScores.redScores);
+      await this.allianceRepository.updateAllianceScores(blueAlliance.id, matchScores.blueScores);
 
-      // Find red and blue alliances
-      const redAlliance = match.alliances.find(a => a.color === AllianceColor.RED);
-      const blueAlliance = match.alliances.find(a => a.color === AllianceColor.BLUE);
+      // Step 5: Update match winner
+      await this.matchResultService.updateMatchWinner(scoreData.matchId, matchScores.winningAlliance);
 
-      if (!redAlliance || !blueAlliance) {
-        throw new BadRequestException('Match must have both RED and BLUE alliances');
-      }      // Calculate scores from auto and drive components
-      const redAutoScore = (createMatchScoresDto as any).redAutoScore || 0;
-      const redDriveScore = (createMatchScoresDto as any).redDriveScore || 0;
-      const blueAutoScore = (createMatchScoresDto as any).blueAutoScore || 0;
-      const blueDriveScore = (createMatchScoresDto as any).blueDriveScore || 0;
+      // Step 6: Update team statistics
+      await this.updateTeamStatistics(scoreData.matchId);
 
-      // Calculate total scores
-      const redScore = (createMatchScoresDto as any).redTotalScore || (redAutoScore + redDriveScore);
-      const blueScore = (createMatchScoresDto as any).blueTotalScore || (blueAutoScore + blueDriveScore);
-
-      console.log(`Updating alliance scores for match ${createMatchScoresDto.matchId}:`, {
-        red: { auto: redAutoScore, drive: redDriveScore, total: redScore },
-        blue: { auto: blueAutoScore, drive: blueDriveScore, total: blueScore }
-      });
-
-      // Update red alliance with auto, drive, and total scores
-      await this.prisma.alliance.update({
-        where: { id: redAlliance.id },
-        data: { 
-          autoScore: redAutoScore,
-          driveScore: redDriveScore,
-          score: redScore 
-        }
-      });
-
-      // Update blue alliance with auto, drive, and total scores
-      await this.prisma.alliance.update({
-        where: { id: blueAlliance.id },
-        data: { 
-          autoScore: blueAutoScore,
-          driveScore: blueDriveScore,
-          score: blueScore 
-        }
-      });
-
-      // Determine winning alliance
-      const winningAlliance = redScore > blueScore ? AllianceColor.RED : 
-                             blueScore > redScore ? AllianceColor.BLUE : null;await this.prisma.match.update({
-        where: { id: createMatchScoresDto.matchId },
-        data: { winningAlliance },
-      });
-
-      // Update team stats using the correct method
-      const matchWithDetails = await this.prisma.match.findUnique({
-        where: { id: createMatchScoresDto.matchId },
-        include: {
-          stage: { include: { tournament: true } },
-          alliances: {
-            include: {
-              teamAlliances: { where: { isSurrogate: false } }
-            }
-          }
-        }
-      });
-
-      if (matchWithDetails) {
-        const teamIds = matchWithDetails.alliances.flatMap(
-          alliance => alliance.teamAlliances.map(ta => ta.teamId)
-        );
-        await this.teamStatsService.recalculateTeamStats(matchWithDetails, teamIds);
-      }
-
-      // Return legacy format for backward compatibility
-      return this.convertToLegacyFormat(createMatchScoresDto.matchId);
+      // Step 7: Return legacy format for backward compatibility
+      return scoreData.toLegacyFormat();
 
     } catch (error) {
-      throw error;
+      // Add context to the error
+      throw new BadRequestException(`Failed to create match scores: ${error.message}`);
     }
   }
+
   /**
+   * Updates team statistics after score changes
+   */
+  private async updateTeamStatistics(matchId: string): Promise<void> {
+    const matchWithDetails = await this.matchResultService.getMatchWithDetails(matchId);
+    
+    if (matchWithDetails) {
+      const teamIds = this.matchResultService.extractTeamIds(matchWithDetails);
+      await this.teamStatsService.recalculateTeamStats(matchWithDetails, teamIds);
+    }
+  }  /**
    * Finds match scores by match ID
    */
   async findByMatchId(matchId: string) {
-    const match = await this.prisma.match.findUnique({
-      where: { id: matchId },
-      include: {
-        alliances: true,
-      },
-    });
-
-    if (!match) {
-      throw new NotFoundException(`Match with ID ${matchId} not found`);
+    try {
+      const alliances = await this.allianceRepository.getAlliancesForMatch(matchId);
+      return this.convertAlliancesToLegacyFormat(matchId, alliances);
+    } catch (error) {
+      throw new NotFoundException(`Failed to find match scores for match ${matchId}: ${error.message}`);
     }
-
-    return this.convertToLegacyFormat(matchId);
   }
   /**
    * Find all match scores - returns legacy format for backward compatibility
    */
   async findAll() {
-    const matches = await this.prisma.match.findMany({
-      include: {
-        alliances: true
-      }
-    });
-
-    return Promise.all(matches.map(match => this.convertToLegacyFormat(match.id)));
+    try {
+      const matchesWithAlliances = await this.allianceRepository.getAllMatchesWithAlliances();
+      
+      return matchesWithAlliances.map(({ matchId, alliances }) => 
+        this.convertAlliancesToLegacyFormat(matchId, alliances)
+      );
+    } catch (error) {
+      throw new BadRequestException(`Failed to retrieve all match scores: ${error.message}`);
+    }
   }
 
   /**
    * Find match scores by ID - returns legacy format for backward compatibility
    */
   async findOne(id: string) {
-    return this.convertToLegacyFormat(id);
+    return this.findByMatchId(id);
   }
+
   /**
    * Updates match scores using the simplified Alliance-based scoring
    */
   async update(id: string, updateMatchScoresDto: UpdateMatchScoresDto) {
-    // For the simplified approach, just call create which will update the alliance scores
     return this.create({
       ...updateMatchScoresDto,
       matchId: updateMatchScoresDto.matchId || id,
     } as CreateMatchScoresDto);
   }
+
   /**
    * Resets alliance scores to zero for a match
    */
   async remove(matchId: string) {
-    // Get the match with alliances
-    const match = await this.prisma.match.findUnique({
-      where: { id: matchId },
-      include: { alliances: true },
-    });
+    try {
+      // Validate match exists
+      await this.allianceRepository.getAlliancesForMatch(matchId);
 
-    if (!match) {
-      throw new NotFoundException(`Match with ID ${matchId} not found`);
-    }    // Reset all alliance scores to 0
-    await this.prisma.alliance.updateMany({
-      where: { matchId },
-      data: { 
-        score: 0,
-        autoScore: 0,
-        driveScore: 0
-      },
-    });
+      // Reset alliance scores
+      await this.allianceRepository.resetAllianceScores(matchId);
 
-    // Reset match winning alliance
-    await this.prisma.match.update({
-      where: { id: matchId },
-      data: { winningAlliance: null },
-    });
+      // Reset match winner
+      await this.matchResultService.resetMatchWinner(matchId);
 
-    return { message: `Reset scores for match ${matchId}` };
-  }  /**
-   * Converts alliance scores to legacy format
-   */
-  private async convertToLegacyFormat(matchId: string) {
-    const match = await this.prisma.match.findUnique({
-      where: { id: matchId },
-      include: {
-        alliances: true,
-      },
-    });
-
-    if (!match) {
-      throw new NotFoundException(`Match with ID ${matchId} not found`);
+      return { message: `Reset scores for match ${matchId}` };
+    } catch (error) {
+      throw new BadRequestException(`Failed to reset match scores: ${error.message}`);
     }
+  }
 
-    const redAlliance = match.alliances.find(a => a.color === AllianceColor.RED);
-    const blueAlliance = match.alliances.find(a => a.color === AllianceColor.BLUE);
-
-    // Extract auto, drive, and total scores from the database
-    const redAutoScore = redAlliance?.autoScore || 0;
-    const redDriveScore = redAlliance?.driveScore || 0;
-    const redTotalScore = redAlliance?.score || 0;
-    
-    const blueAutoScore = blueAlliance?.autoScore || 0;
-    const blueDriveScore = blueAlliance?.driveScore || 0;
-    const blueTotalScore = blueAlliance?.score || 0;
-
-    // console.log(`Converting to legacy format for match ${matchId}:`, {
-    //   red: { auto: redAutoScore, drive: redDriveScore, total: redTotalScore },
-    //   blue: { auto: blueAutoScore, drive: blueDriveScore, total: blueTotalScore }
-    // });
+  /**
+   * Converts alliance data to legacy format
+   */
+  private convertAlliancesToLegacyFormat(matchId: string, alliances: any[]) {
+    const redAlliance = alliances.find(a => a.color === 'RED');
+    const blueAlliance = alliances.find(a => a.color === 'BLUE');
 
     return {
-      id: matchId, // Using matchId as the score ID for compatibility
+      id: matchId,
       matchId,
-      redAutoScore,
-      redDriveScore,
-      redTotalScore,
-      blueAutoScore,
-      blueDriveScore,
-      blueTotalScore,
+      redAutoScore: redAlliance?.autoScore || 0,
+      redDriveScore: redAlliance?.driveScore || 0,
+      redTotalScore: redAlliance?.totalScore || 0,
+      blueAutoScore: blueAlliance?.autoScore || 0,
+      blueDriveScore: blueAlliance?.driveScore || 0,
+      blueTotalScore: blueAlliance?.totalScore || 0,
       createdAt: new Date(),
       updatedAt: new Date(),
     };

@@ -1,7 +1,10 @@
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { MatchState } from '../utils/prisma-types';
+import { ITeamStatsService } from './interfaces/team-stats.interface';
 
-export class TeamStatsService {
+@Injectable()
+export class TeamStatsService implements ITeamStatsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async recalculateTeamStats(match: any, teamIds: string[]): Promise<void> {
