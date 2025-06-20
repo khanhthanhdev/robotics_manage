@@ -1,10 +1,17 @@
 import { useState, useEffect } from "react";
 import { useWebSocket } from "@/hooks/common/use-websocket";
+import { MatchStatus } from "@/lib/types";
 
 interface UseTimerControlProps {
   tournamentId: string;
   selectedFieldId: string | null;
   initialDuration?: number;
+  selectedMatchId?: string;
+  sendMatchStateChange?: (params: {
+    matchId: string;
+    status: MatchStatus;
+    currentPeriod: string | null;
+  }) => void;
 }
 
 interface TimerControlReturn {
@@ -31,6 +38,8 @@ export function useTimerControl({
   tournamentId,
   selectedFieldId,
   initialDuration = 150000, // 2:30 in ms
+  selectedMatchId,
+  sendMatchStateChange,
 }: UseTimerControlProps): TimerControlReturn {
   // Timer configuration state
   const [timerDuration, setTimerDuration] = useState<number>(initialDuration);
@@ -80,13 +89,75 @@ export function useTimerControl({
     };
 
     // Subscribe to timer updates using the subscribe method from useWebSocket
-    const unsubscribe = subscribe("timer_update", handleTimerUpdate);
-
-    // Cleanup subscription when component unmounts
+    const unsubscribe = subscribe("timer_update", handleTimerUpdate);    // Cleanup subscription when component unmounts
     return () => {
       if (unsubscribe) unsubscribe();
     };
-  }, [subscribe, selectedFieldId]);  // Timer control handlers
+  }, [subscribe, selectedFieldId]);
+
+  // Period transition logic - matches the FRC timing
+  useEffect(() => {
+    if (!timerIsRunning) return;
+    
+    const elapsedTime = timerDuration - timerRemaining;
+    
+    console.log('[useTimerControl Period Logic]', {
+      matchPeriod,
+      elapsedTime,
+      timerRemaining,
+      timerDuration,
+      elapsedSeconds: Math.floor(elapsedTime / 1000),
+      remainingSeconds: Math.floor(timerRemaining / 1000),
+    });
+    
+    // For FRC match timing:
+    // - Auto: 0-30 seconds elapsed (2:30 to 2:00 remaining for 2:30 match)
+    // - Teleop: 30-120 seconds elapsed (2:00 to 0:30 remaining)  
+    // - Endgame: 120+ seconds elapsed (last 30 seconds, 0:30 to 0:00 remaining)
+    
+    // Transition to teleop after 30 seconds (when 2:00 remains for 2:30 match)
+    if (matchPeriod === "auto" && elapsedTime >= 30000) {
+      console.log('[useTimerControl] Transitioning from auto to teleop at', elapsedTime/1000, 'seconds elapsed (', timerRemaining/1000, 'seconds remaining)');
+      setMatchPeriod("teleop");
+      
+      // Broadcast match state change
+      if (sendMatchStateChange && selectedMatchId) {
+        sendMatchStateChange({
+          matchId: selectedMatchId,
+          status: MatchStatus.IN_PROGRESS,
+          currentPeriod: "teleop",
+        });
+      }
+    }
+    // Transition to endgame in the last 30 seconds (when 0:30 remains)
+    else if ((matchPeriod === "auto" || matchPeriod === "teleop") && timerRemaining <= 30000 && timerRemaining > 0) {
+      console.log('[useTimerControl] Transitioning to endgame at', timerRemaining/1000, 'seconds remaining');
+      setMatchPeriod("endgame");
+      
+      // Broadcast match state change
+      if (sendMatchStateChange && selectedMatchId) {
+        sendMatchStateChange({
+          matchId: selectedMatchId,
+          status: MatchStatus.IN_PROGRESS,
+          currentPeriod: "endgame",
+        });
+      }
+    }
+    // Set match status to COMPLETED when timer reaches 0
+    else if (timerRemaining <= 0 && matchPeriod !== "completed") {
+      console.log('[useTimerControl] Match completed');
+      setMatchPeriod("completed");
+      
+      // Broadcast match state change
+      if (sendMatchStateChange && selectedMatchId) {
+        sendMatchStateChange({
+          matchId: selectedMatchId,
+          status: MatchStatus.COMPLETED,
+          currentPeriod: null,
+        });
+      }
+    }
+  }, [timerIsRunning, timerRemaining, matchPeriod, timerDuration, selectedMatchId, sendMatchStateChange, setMatchPeriod]);  // Timer control handlers
   const handleStartTimer = () => {
     const timerData = {
       duration: timerDuration,
@@ -95,6 +166,18 @@ export function useTimerControl({
       fieldId: selectedFieldId || undefined,
     };
     startTimer(timerData);
+    
+    // Set to auto period when starting
+    setMatchPeriod("auto");
+    
+    // Broadcast match state change
+    if (sendMatchStateChange && selectedMatchId) {
+      sendMatchStateChange({
+        matchId: selectedMatchId,
+        status: MatchStatus.IN_PROGRESS,
+        currentPeriod: "auto",
+      });
+    }
   };
 
   const handlePauseTimer = () => {
@@ -117,6 +200,16 @@ export function useTimerControl({
     resetTimer(timerData);
     setTimerRemaining(timerDuration);
     setTimerIsRunning(false);
+    setMatchPeriod("auto");
+    
+    // Broadcast match state change to reset
+    if (sendMatchStateChange && selectedMatchId) {
+      sendMatchStateChange({
+        matchId: selectedMatchId,
+        status: MatchStatus.PENDING,
+        currentPeriod: "auto",
+      });
+    }
   };
 
   return {

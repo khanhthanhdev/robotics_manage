@@ -196,32 +196,8 @@ export default function ControlMatchPage() {
     if (!blueAlliance?.teamAlliances) return [];
     return blueAlliance.teamAlliances.map(
       (ta: any) => ta.team?.teamNumber || ta.team?.name || "Unknown"
-    );
-  };
+    );  };
 
-  // Initialize timer control hook
-  const {
-    timerDuration,
-    timerRemaining,
-    timerIsRunning,
-    matchPeriod,
-    setTimerDuration,
-    setMatchPeriod,
-    handleStartTimer,
-    handlePauseTimer,
-    handleResetTimer,
-    formatTime,
-  } = useTimerControl({
-    tournamentId,
-    selectedFieldId,
-  });
-
-  // Initialize scoring control hook
-  const scoringControl = useScoringControl({
-    tournamentId,
-    selectedMatchId,
-    selectedFieldId,
-  });
   // State for tracking active match and match state from WebSocket
   const [activeMatch, setActiveMatch] = useState<any>(null);
   const [matchState, setMatchState] = useState<any>(null);
@@ -246,6 +222,7 @@ export default function ControlMatchPage() {
   const handleMatchStateChange = useCallback((data: any) => {
     setMatchState(data);
   }, []);
+
   // Initialize WebSocket subscriptions with optimized implementation
   const {
     isConnected,
@@ -266,6 +243,31 @@ export default function ControlMatchPage() {
     onScoreUpdate: handleScoreUpdate,
     onMatchUpdate: handleMatchUpdate,
     onMatchStateChange: handleMatchStateChange,
+  });
+  // Initialize timer control hook
+  const {
+    timerDuration,
+    timerRemaining,
+    timerIsRunning,
+    matchPeriod,
+    setTimerDuration,
+    setMatchPeriod,
+    handleStartTimer,
+    handlePauseTimer,
+    handleResetTimer,
+    formatTime,
+  } = useTimerControl({
+    tournamentId,
+    selectedFieldId,
+    selectedMatchId,
+    sendMatchStateChange,
+  });
+
+  // Initialize scoring control hook
+  const scoringControl = useScoringControl({
+    tournamentId,
+    selectedMatchId,
+    selectedFieldId,
   });
 
   // Get the match status update mutation
@@ -311,11 +313,10 @@ export default function ControlMatchPage() {
   };
 
   // Enhanced timer controls with match state changes
-  const handleEnhancedStartTimer = () => {
-    handleStartTimer();
+  const handleEnhancedStartTimer = () => {    handleStartTimer();
     sendMatchStateChange({
       matchId: selectedMatchId,
-      status: "IN_PROGRESS",
+      status: MatchStatus.IN_PROGRESS,
       currentPeriod: matchPeriod as any,
       fieldId: selectedFieldId,
     } as any);
@@ -324,12 +325,11 @@ export default function ControlMatchPage() {
       status: MatchStatus.IN_PROGRESS,
     });
   };
-
   const handleEnhancedResetTimer = () => {
     handleResetTimer();
     sendMatchStateChange({
       matchId: selectedMatchId,
-      status: "PENDING",
+      status: MatchStatus.PENDING,
       currentPeriod: null,
       fieldId: selectedFieldId,
     } as any);
@@ -338,14 +338,13 @@ export default function ControlMatchPage() {
       status: MatchStatus.PENDING,
     });
   };
-
   // Handle submitting final scores and completing the match
   const handleSubmitScores = async () => {
     try {
       await scoringControl.saveScores();
       sendMatchStateChange({
         matchId: selectedMatchId,
-        status: "COMPLETED",
+        status: MatchStatus.COMPLETED,
         currentPeriod: null,
         fieldId: selectedFieldId,
       } as any);

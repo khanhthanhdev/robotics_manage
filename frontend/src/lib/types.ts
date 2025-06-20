@@ -236,7 +236,7 @@ export interface ScoreData {
 
 export interface MatchStateData {
   matchId: string;
-  status: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED';
+  status: MatchStatus;
   currentPeriod?: 'auto' | 'teleop' | 'endgame' | null;
   tournamentId: string;
 }

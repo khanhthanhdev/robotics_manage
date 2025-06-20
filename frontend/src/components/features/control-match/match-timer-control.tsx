@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -26,10 +26,9 @@ interface CombinedMatchTimerControlProps {
   selectedMatchId: string;
   setSelectedMatchId: (id: string) => void;
   matchPeriod: string;
-  setMatchPeriod: (period: string) => void;
-  sendMatchStateChange: (params: {
+  setMatchPeriod: (period: string) => void;  sendMatchStateChange: (params: {
     matchId: string;
-    status: "PENDING" | "IN_PROGRESS" | "COMPLETED";
+    status: MatchStatus;
     currentPeriod: string | null;
   }) => void;
   selectedMatch: any | null;
@@ -61,9 +60,8 @@ const CombinedMatchTimerControl: React.FC<CombinedMatchTimerControlProps> = ({
 }) => {
   const prevTimerRunning = useRef(timerIsRunning);
   const updateMatchStatus = useUpdateMatchStatus();
-
   // Helper to update match status both server and websocket
-  const handleMatchStatusChange = (status: MatchStatus, currentPeriod: string | null) => {
+  const handleMatchStatusChange = useCallback((status: MatchStatus, currentPeriod: string | null) => {
     if (!selectedMatchId) return;
     sendMatchStateChange({
       matchId: selectedMatchId,
@@ -71,40 +69,57 @@ const CombinedMatchTimerControl: React.FC<CombinedMatchTimerControlProps> = ({
       currentPeriod,
     });
     updateMatchStatus.mutate({ matchId: selectedMatchId, status });
-  };
+  }, [selectedMatchId, sendMatchStateChange, updateMatchStatus]);
 
   useEffect(() => {
     if (!prevTimerRunning.current && timerIsRunning) {
       setMatchPeriod("auto");
     }
     prevTimerRunning.current = timerIsRunning;
-  }, [timerIsRunning, setMatchPeriod]);
-
-  useEffect(() => {
+  }, [timerIsRunning, setMatchPeriod]);  useEffect(() => {
     if (!timerIsRunning) return;
-    // Transition to teleop at 2:00 (120000 ms)
-    if (matchPeriod === "auto" && timerRemaining <= 120000 && timerRemaining > 30000) {
+    
+    const elapsedTime = timerDuration - timerRemaining;
+    
+    console.log('[Timer Logic]', {
+      matchPeriod,
+      elapsedTime,
+      timerRemaining,
+      timerDuration,
+      elapsedSeconds: Math.floor(elapsedTime / 1000),
+      remainingSeconds: Math.floor(timerRemaining / 1000),
+    });
+    
+    // For FRC match timing:
+    // - Auto: 0-30 seconds elapsed (2:30 to 2:00 remaining for 2:30 match)
+    // - Teleop: 30-120 seconds elapsed (2:00 to 0:30 remaining)  
+    // - Endgame: 120+ seconds elapsed (last 30 seconds, 0:30 to 0:00 remaining)
+    
+    // Transition to teleop after 30 seconds (when 2:00 remains for 2:30 match)
+    if (matchPeriod === "auto" && elapsedTime >= 30000) {
+      console.log('[Timer Logic] Transitioning from auto to teleop at', elapsedTime/1000, 'seconds elapsed (', timerRemaining/1000, 'seconds remaining)');
       setMatchPeriod("teleop");
       handleMatchStatusChange(MatchStatus.IN_PROGRESS, "teleop");
     }
-    // Transition to endgame at 0:30 (30000 ms)
-    if ((matchPeriod === "auto" || matchPeriod === "teleop") && timerRemaining <= 30000 && timerRemaining > 0) {
+    // Transition to endgame in the last 30 seconds (when 0:30 remains)
+    else if ((matchPeriod === "auto" || matchPeriod === "teleop") && timerRemaining <= 30000 && timerRemaining > 0) {
+      console.log('[Timer Logic] Transitioning to endgame at', timerRemaining/1000, 'seconds remaining');
       setMatchPeriod("endgame");
       handleMatchStatusChange(MatchStatus.IN_PROGRESS, "endgame");
     }
-    // Set match status to COMPLETED at 0
-    if (timerRemaining <= 0 && matchPeriod !== "completed") {
+    // Set match status to COMPLETED when timer reaches 0
+    else if (timerRemaining <= 0 && matchPeriod !== "completed") {
+      console.log('[Timer Logic] Match completed');
       setMatchPeriod("completed");
       handleMatchStatusChange(MatchStatus.COMPLETED, null);
     }
-  }, [timerIsRunning, timerRemaining, matchPeriod, selectedMatchId]);
-
+  }, [timerIsRunning, timerRemaining, matchPeriod, selectedMatchId, timerDuration, handleMatchStatusChange]);
   const handleReset = () => {
     handleResetTimer();
     setMatchPeriod("auto");
     sendMatchStateChange({
       matchId: selectedMatchId,
-      status: "PENDING",
+      status: MatchStatus.PENDING,
       currentPeriod: "auto",
     });
     updateMatchStatus.mutate({ matchId: selectedMatchId, status: MatchStatus.PENDING });
