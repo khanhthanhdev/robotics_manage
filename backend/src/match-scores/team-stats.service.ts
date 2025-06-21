@@ -39,20 +39,55 @@ export class TeamStatsService implements ITeamStatsService {
           matchesByTeam.set(teamAlliance.teamId, matches);
         }
       }
-    }
-    const statsUpdates: Promise<any>[] = [];
-    for (const [teamId, teamMatches] of matchesByTeam.entries()) {      let wins = 0, losses = 0, ties = 0;
+    }    const statsUpdates: Promise<any>[] = [];
+    for (const [teamId, teamMatches] of matchesByTeam.entries()) {
+      let wins = 0, losses = 0, ties = 0;
+      let pointsScored = 0, pointsConceded = 0;
       const matchesPlayed = teamMatches.length;
+      
       for (const teamMatch of teamMatches) {
+        // Calculate wins/losses/ties
         if (teamMatch.winningAlliance === null) ties++; // null means tie
         else if (teamMatch.winningAlliance === teamMatch.teamAllianceColor) wins++;
         else losses++;
+        
+        // Calculate points scored and conceded
+        const teamAlliance = teamMatch.alliances.find((a: any) => a.color === teamMatch.teamAllianceColor);
+        const opponentAlliance = teamMatch.alliances.find((a: any) => a.color !== teamMatch.teamAllianceColor);
+        
+        if (teamAlliance) {
+          pointsScored += teamAlliance.totalScore || 0;
+        }
+        if (opponentAlliance) {
+          pointsConceded += opponentAlliance.totalScore || 0;
+        }
       }
+      
+      const pointDifferential = pointsScored - pointsConceded;
+      
       statsUpdates.push(
         this.prisma.teamStats.upsert({
           where: { teamId_tournamentId: { teamId, tournamentId: match.stage.tournament.id } },
-          create: { teamId, tournamentId: match.stage.tournament.id, wins, losses, ties, matchesPlayed },
-          update: { wins, losses, ties, matchesPlayed },
+          create: { 
+            teamId, 
+            tournamentId: match.stage.tournament.id, 
+            wins, 
+            losses, 
+            ties, 
+            matchesPlayed,
+            pointsScored,
+            pointsConceded,
+            pointDifferential
+          },
+          update: { 
+            wins, 
+            losses, 
+            ties, 
+            matchesPlayed,
+            pointsScored,
+            pointsConceded,
+            pointDifferential
+          },
         })
       );
     }

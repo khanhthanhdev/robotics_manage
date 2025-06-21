@@ -825,6 +825,12 @@ export default function LiveFieldDisplayPage() {
     }
   }, [matchState]);
 
+  // Reset timer state when match changes to ensure timer updates correctly for new match
+  useEffect(() => {
+    // When matchId changes, reset timer to null (or a default value)
+    setTimer(null);
+  }, [matchState.matchId]);
+
   // Render content based on display mode
   const renderContent = () => {
     // Force a key update every time display mode changes to ensure full re-render
