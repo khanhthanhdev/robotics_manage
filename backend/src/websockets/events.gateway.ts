@@ -398,19 +398,25 @@ export class EventsGateway
     @MessageBody() payload: AudienceDisplaySettings
   ): void {
     this.logger.log(`Display mode change received: ${JSON.stringify(payload)}`);
-    
     // Store the latest settings for this tournament
     this.audienceDisplaySettings.set(payload.tournamentId, payload);
-    
-    // Broadcast to all clients in the tournament room including the sender
-    this.server.to(payload.tournamentId).emit('display_mode_change', payload);
+    if (payload.tournamentId === "all") {
+      // Special case: broadcast to ALL connected clients when tournamentId is "all"
+      this.logger.log(`Broadcasting display mode change to ALL clients (tournamentId: "all")`);
+      this.logger.log(`Total connected clients: ${this.server.sockets.sockets.size}`);
+      this.server.emit('display_mode_change', payload);
+    } else {
+      // Broadcast to all clients in the tournament room including the sender
+      this.logger.log(`Sending display mode change to tournament room: ${payload.tournamentId}`);
+      this.logger.log(`Number of clients in tournament ${payload.tournamentId}: ${this.server.sockets.adapter.rooms.get(payload.tournamentId)?.size || 0}`);
+      this.server.to(payload.tournamentId).emit('display_mode_change', payload);
+    }
   }
     // Handle announcements (control panel -> audience display)
   @SubscribeMessage('announcement')
   handleAnnouncement(
     @ConnectedSocket() client: Socket,
-    @MessageBody() payload: AnnouncementData
-  ): void {
+    @MessageBody() payload: AnnouncementData  ): void {
     this.logger.log(`Announcement received: ${JSON.stringify(payload)}`);
     
     // If fieldId is provided, emit to that specific field, otherwise broadcast to tournament
@@ -418,15 +424,25 @@ export class EventsGateway
       // Create a unique room ID for this field
       const fieldRoomId = `field:${payload.fieldId}`;
       this.logger.log(`Sending field-specific announcement to ${fieldRoomId}`);
+      this.logger.log(`Number of clients in ${fieldRoomId}: ${this.server.sockets.adapter.rooms.get(fieldRoomId)?.size || 0}`);
       
       // Emit to field-specific room
       this.server.to(fieldRoomId).emit('announcement', payload);
       
       // Also emit to tournament for archiving/history purposes
+      this.logger.log(`Also sending to tournament room: ${payload.tournamentId}`);
+      this.logger.log(`Number of clients in tournament ${payload.tournamentId}: ${this.server.sockets.adapter.rooms.get(payload.tournamentId)?.size || 0}`);
       this.server.to(payload.tournamentId).emit('announcement', payload);
+    } else if (payload.tournamentId === "all") {
+      // Special case: broadcast to ALL connected clients when tournamentId is "all"
+      this.logger.log(`Broadcasting announcement to ALL clients (tournamentId: "all")`);
+      this.logger.log(`Total connected clients: ${this.server.sockets.sockets.size}`);
+      this.server.emit('announcement', payload);
     } else {
       // Broadcast to all clients in the tournament room including the sender
-      client.to(payload.tournamentId).emit('announcement', payload);
+      this.logger.log(`Sending tournament-wide announcement to: ${payload.tournamentId}`);
+      this.logger.log(`Number of clients in tournament ${payload.tournamentId}: ${this.server.sockets.adapter.rooms.get(payload.tournamentId)?.size || 0}`);
+      this.server.to(payload.tournamentId).emit('announcement', payload);
     }
   }
     // Start a timer for a match (control panel)

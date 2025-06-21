@@ -19,7 +19,7 @@ interface WebSocketSubscriptionsReturn {
   joinFieldRoom: (fieldId: string) => void;
   leaveFieldRoom: (fieldId: string) => void;
   changeDisplayMode: (settings: any) => void; // Updated to match useWebSocket signature
-  sendAnnouncement: (message: string) => void;
+  sendAnnouncement: (message: string, duration?: number, fieldId?: string) => void;
   sendMatchUpdate: (data: any) => void;
   sendMatchStateChange: (data: any) => void;
   sendScoreUpdate: (data: any) => void;

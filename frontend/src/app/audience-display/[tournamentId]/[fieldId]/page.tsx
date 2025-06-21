@@ -579,18 +579,19 @@ export default function LiveFieldDisplayPage() {
           }
         );
       }
-    });
-
-    // Announcements - can be tournament-wide or field-specific
+    });    // Announcements - can be tournament-wide or field-specific
     const unsubAnnouncement = subscribe<{
       message: string;
       duration?: number;
       fieldId?: string;
       tournamentId: string;
     }>("announcement", (data) => {
+      console.log("🔔 Announcement received on audience display:", data);
+      console.log("Current field:", fieldId, "Announcement fieldId:", data.fieldId);
+      
       // Show if it's a tournament-wide announcement or specific to this field
       if (!data.fieldId || data.fieldId === fieldId) {
-        console.log("Displaying announcement for field:", fieldId, data);
+        console.log("✅ Displaying announcement for field:", fieldId, data);
         setAnnouncement(data.message);
         setShowAnnouncement(true);
 
@@ -605,6 +606,8 @@ export default function LiveFieldDisplayPage() {
 
         // Clear timeout if component unmounts while announcement is showing
         return () => clearTimeout(timerId);
+      } else {
+        console.log("❌ Ignoring announcement for different field. Current:", fieldId, "Announcement:", data.fieldId);
       }
     });
     return () => {

@@ -3,7 +3,6 @@ import { Alliance, ScoreType, MatchScoreData } from '../types/index';
 
 /**
  * Example custom scoring strategy for VEX Robotics competitions
- * This demonstrates how to extend the system with game-specific rules
  */
 export class VEXScoringStrategy implements IScoringStrategy {
   calculateScore(

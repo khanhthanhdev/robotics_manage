@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useMemo, useCallback } from "react";
-import { useQueryClient, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useMatch, useUpdateMatchStatus, useMatches } from "@/hooks/api/use-matches";
 import { useMatchesByTournament } from "@/hooks/features/use-matches-by-tournament";
 import { MatchStatus } from "@/lib/types";
