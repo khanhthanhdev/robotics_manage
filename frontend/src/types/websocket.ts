@@ -20,6 +20,8 @@ export interface BaseScoreData {
   blueAutoScore: number;
   blueDriveScore: number;
   blueTotalScore: number;
+  redPenalty?: number;
+  bluePenalty?: number;
   redGameElements?: GameElementDto[];
   blueGameElements?: GameElementDto[];
   redTeamCount?: number;

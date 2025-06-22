@@ -46,5 +46,5 @@ export const teamLeaderboardColumns: ColumnDef<TeamLeaderboardRow, any>[] = [
     enableSorting: true,
     enableColumnFilter: true,
   },
-  // Add more columns for componentScores if needed
+  
 ];

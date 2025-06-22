@@ -29,6 +29,8 @@ interface ScoreState {
   redDriveScore?: number;
   blueAutoScore?: number;
   blueDriveScore?: number;
+  redPenalty?: number;
+  bluePenalty?: number;
 }
 
 interface MatchDisplayProps {
@@ -193,17 +195,20 @@ export const MatchDisplay: React.FC<MatchDisplayProps> = ({ matchState, timer, s
             <div className="text-9xl font-extrabold">
               {score?.blueTotalScore || 0}
             </div>
-          </div>
-          {/* Score Breakdown */}
+          </div>          {/* Score Breakdown */}
           <div className="bg-red-50 border-r border-gray-200 p-6">
             <div className="grid grid-cols-2 gap-4">
               <div className="text-left">
                 <p className="text-lg font-bold text-red-800">Auto:</p>
                 <p className="text-lg font-bold text-red-800">TeleOp:</p>
+                <p className="text-lg font-bold text-red-800">Penalties:</p>
+                <p className="text-sm text-red-600 mt-1">(from Blue)</p>
               </div>
               <div className="text-right">
                 <p className="text-lg font-bold text-red-900">{score?.redAutoScore || 0}</p>
                 <p className="text-lg font-bold text-red-900">{score?.redDriveScore || 0}</p>
+                <p className="text-lg font-bold text-red-900">+{score?.bluePenalty || 0}</p>
+                <p className="text-sm text-red-600 mt-1">&nbsp;</p>
               </div>
             </div>
           </div>
@@ -212,10 +217,14 @@ export const MatchDisplay: React.FC<MatchDisplayProps> = ({ matchState, timer, s
               <div className="text-left">
                 <p className="text-lg font-bold text-blue-800">Auto:</p>
                 <p className="text-lg font-bold text-blue-800">TeleOp:</p>
+                <p className="text-lg font-bold text-blue-800">Penalties:</p>
+                <p className="text-sm text-blue-600 mt-1">(from Red)</p>
               </div>
               <div className="text-right">
                 <p className="text-lg font-bold text-blue-900">{score?.blueAutoScore || 0}</p>
                 <p className="text-lg font-bold text-blue-900">{score?.blueDriveScore || 0}</p>
+                <p className="text-lg font-bold text-blue-900">+{score?.redPenalty || 0}</p>
+                <p className="text-sm text-blue-600 mt-1">&nbsp;</p>
               </div>
             </div>
           </div>

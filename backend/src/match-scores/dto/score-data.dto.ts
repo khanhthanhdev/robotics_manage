@@ -12,7 +12,9 @@ export class ScoreDataDto {
     public readonly redTotalScore: number,
     public readonly blueAutoScore: number,
     public readonly blueDriveScore: number,
-    public readonly blueTotalScore: number
+    public readonly blueTotalScore: number,
+    public readonly redPenalty: number = 0,
+    public readonly bluePenalty: number = 0
   ) {}
 
   /**
@@ -28,6 +30,10 @@ export class ScoreDataDto {
     const redTotalScore = (dto as any).redTotalScore || (redAutoScore + redDriveScore);
     const blueTotalScore = (dto as any).blueTotalScore || (blueAutoScore + blueDriveScore);
 
+    // Extract penalties from scoreDetails if present
+    const redPenalty = dto.scoreDetails?.penalties?.red ?? 0;
+    const bluePenalty = dto.scoreDetails?.penalties?.blue ?? 0;
+
     return new ScoreDataDto(
       dto.matchId,
       redAutoScore,
@@ -35,7 +41,9 @@ export class ScoreDataDto {
       redTotalScore,
       blueAutoScore,
       blueDriveScore,
-      blueTotalScore
+      blueTotalScore,
+      redPenalty,
+      bluePenalty
     );
   }
 

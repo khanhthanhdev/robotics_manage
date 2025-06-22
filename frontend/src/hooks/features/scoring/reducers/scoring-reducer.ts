@@ -19,6 +19,7 @@ export const initialScoringState: MatchScoreData = {
     gameElements: [],
     teamCount: 0,
     multiplier: 1.0,
+    penalty: 0,
   },
   blueAlliance: {
     autoScore: 0,
@@ -27,6 +28,7 @@ export const initialScoringState: MatchScoreData = {
     gameElements: [],
     teamCount: 0,
     multiplier: 1.0,
+    penalty: 0,
   },
   scoreDetails: {},
   isAddingRedElement: false,
@@ -34,11 +36,12 @@ export const initialScoringState: MatchScoreData = {
 };
 
 export function scoringReducer(state: MatchScoreData, action: ScoringAction): MatchScoreData {
-  switch (action.type) {
-    case 'SET_SCORE': {
+  switch (action.type) {    case 'SET_SCORE': {
       const { alliance, scoreType, value } = action.payload;
       const allianceKey = alliance === 'red' ? 'redAlliance' : 'blueAlliance';
-      const scoreKey = `${scoreType}Score` as keyof typeof state.redAlliance;
+      
+      // Handle penalty separately since its field name is different
+      const scoreKey = scoreType === 'penalty' ? 'penalty' : `${scoreType}Score` as keyof typeof state.redAlliance;
       
       // Check if value is actually different to prevent unnecessary updates
       if (state[allianceKey][scoreKey] === value) {
@@ -55,7 +58,7 @@ export function scoringReducer(state: MatchScoreData, action: ScoringAction): Ma
       
       // Auto-calculate totals after score update
       return calculateTotals(newState);
-    }    case 'SET_GAME_ELEMENTS': {
+    }case 'SET_GAME_ELEMENTS': {
       const { alliance, elements } = action.payload;
       const allianceKey = alliance === 'red' ? 'redAlliance' : 'blueAlliance';
       
@@ -168,9 +171,7 @@ export function scoringReducer(state: MatchScoreData, action: ScoringAction): Ma
           console.error("Error converting game elements:", error, gameElements);
           return [];
         }
-      };
-
-      const newState = {
+      };      const newState = {
         ...state,
         redAlliance: {
           ...state.redAlliance,
@@ -180,6 +181,7 @@ export function scoringReducer(state: MatchScoreData, action: ScoringAction): Ma
           gameElements: objectToArrayGameElements(apiData.redGameElements),
           teamCount: apiData.redTeamCount || 0,
           multiplier: apiData.redMultiplier || 1.0,
+          penalty: apiData.redPenalty || 0,
         },
         blueAlliance: {
           ...state.blueAlliance,
@@ -189,6 +191,7 @@ export function scoringReducer(state: MatchScoreData, action: ScoringAction): Ma
           gameElements: objectToArrayGameElements(apiData.blueGameElements),
           teamCount: apiData.blueTeamCount || 0,
           multiplier: apiData.blueMultiplier || 1.0,
+          penalty: apiData.bluePenalty || 0,
         },
         scoreDetails: apiData.scoreDetails || {},
       };
@@ -210,8 +213,9 @@ export function scoringReducer(state: MatchScoreData, action: ScoringAction): Ma
 }
 
 function calculateTotals(state: MatchScoreData): MatchScoreData {
-  const redTotal = (state.redAlliance.autoScore || 0) + (state.redAlliance.driveScore || 0);
-  const blueTotal = (state.blueAlliance.autoScore || 0) + (state.blueAlliance.driveScore || 0);
+  // Calculate base scores and add opponent's penalties
+  const redTotal = (state.redAlliance.autoScore || 0) + (state.redAlliance.driveScore || 0) + (state.blueAlliance.penalty || 0);
+  const blueTotal = (state.blueAlliance.autoScore || 0) + (state.blueAlliance.driveScore || 0) + (state.redAlliance.penalty || 0);
 
   // Only update state if totals have actually changed
   const redTotalChanged = state.redAlliance.totalScore !== redTotal;

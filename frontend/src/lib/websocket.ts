@@ -12,7 +12,7 @@ import {
   ErrorCallback 
 } from '@/types/websocket';
 
-// === INTERFACES (Interface Segregation Principle) ===
+// === INTERFACES ===
 
 interface IConnectionManager {
   connect(url?: string): void;
@@ -52,7 +52,7 @@ interface ILegacySupport {
   sendAnnouncement(data: any): void;
 }
 
-// === VALIDATION SERVICE (Single Responsibility Principle) ===
+// === VALIDATION SERVICE ===
 
 class ScoreDataValidator {
   static validate(data: BaseScoreData): void {
@@ -69,7 +69,6 @@ class ScoreDataValidator {
       throw new Error('Drive scores must be numbers');
     }
   }
-
   static sanitize(data: BaseScoreData): BaseScoreData {
     return {
       ...data,
@@ -79,11 +78,13 @@ class ScoreDataValidator {
       blueDriveScore: Number(data.blueDriveScore) || 0,
       redTotalScore: Number(data.redTotalScore) || 0,
       blueTotalScore: Number(data.blueTotalScore) || 0,
+      redPenalty: Number(data.redPenalty) || 0,
+      bluePenalty: Number(data.bluePenalty) || 0,
     };
   }
 }
 
-// === CONNECTION MANAGER (Single Responsibility Principle) ===
+// === CONNECTION MANAGER ===
 
 class ConnectionManager implements IConnectionManager {
   private socket: Socket | null = null;
@@ -267,7 +268,7 @@ class ConnectionManager implements IConnectionManager {
   }
 }
 
-// === EVENT EMITTER (Single Responsibility Principle) ===
+// === EVENT EMITTER  ===
 
 class EventEmitter implements IEventEmitter {
   private listeners: Map<string, Set<(...args: any[]) => void>> = new Map();
@@ -413,7 +414,7 @@ class EventEmitter implements IEventEmitter {
   }
 }
 
-// === SCORE MANAGER (Single Responsibility Principle) ===
+// === SCORE MANAGER===
 
 class ScoreManager implements IScoreManager {
   constructor(
@@ -502,7 +503,7 @@ class ScoreManager implements IScoreManager {
   }
 }
 
-// === LEGACY SUPPORT (Single Responsibility Principle) ===
+// === LEGACY SUPPORT===
 
 class LegacySupport implements ILegacySupport {
   constructor(private eventEmitter: EventEmitter) {}
@@ -557,7 +558,7 @@ class LegacySupport implements ILegacySupport {
   }
 }
 
-// === MAIN WEBSOCKET CLIENT (Composition + Dependency Inversion) ===
+// === MAIN WEBSOCKET CLIENT  ===
 
 export interface IWebSocketService extends 
   IConnectionManager, 
@@ -577,7 +578,7 @@ class WebSocketService implements IWebSocketService {
   private legacySupport: LegacySupport;
 
   private constructor() {
-    // Dependency Injection - compose the service from smaller, focused components
+  
     this.connectionManager = new ConnectionManager();
     this.eventEmitter = new EventEmitter(this.connectionManager);
     this.scoreManager = new ScoreManager(this.eventEmitter, this.connectionManager);
@@ -636,7 +637,7 @@ class WebSocketService implements IWebSocketService {
     return this.eventEmitter.onError(callback);
   }
 
-  // === Score Management (Delegation) ===
+  // === Score Management  ===
   async sendRealtimeScoreUpdate(data: BaseScoreData): Promise<void> {
     return this.scoreManager.sendRealtimeScoreUpdate(data);
   }
@@ -661,7 +662,7 @@ class WebSocketService implements IWebSocketService {
     return this.scoreManager.onMatchUpdate(callback);
   }
 
-  // === Legacy Support (Delegation) ===
+  // === Legacy Support  ===
   joinTournament(id: string): void {
     this.legacySupport.joinTournament(id);
   }
@@ -713,7 +714,7 @@ class WebSocketService implements IWebSocketService {
   }
 }
 
-// Export both the singleton instance and the class for flexibility
+
 export const webSocketService = WebSocketService.getInstance();
 export default webSocketService;
 

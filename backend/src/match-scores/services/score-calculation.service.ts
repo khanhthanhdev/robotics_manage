@@ -15,7 +15,7 @@ export interface MatchScores {
 
 /**
  * Service responsible for calculating match scores and determining winners
- * Follows Single Responsibility Principle - only handles score calculations
+
  */
 @Injectable()
 export class ScoreCalculationService {

@@ -22,6 +22,10 @@ interface ScoringPanelProps {
   redTotalScore: number;
   blueTotalScore: number;
   
+  // Penalty states
+  redPenalty: number;
+  bluePenalty: number;
+  
   // Game elements
   redGameElements: GameElement[];
   blueGameElements: GameElement[];
@@ -43,6 +47,8 @@ interface ScoringPanelProps {
   setBlueDriveScore: (score: number) => void;
   setIsAddingRedElement: (adding: boolean) => void;
   setIsAddingBlueElement: (adding: boolean) => void;
+  setRedPenalty: (score: number) => void;
+  setBluePenalty: (score: number) => void;
   
   // Actions
   onUpdateScores: () => void;
@@ -90,6 +96,10 @@ export function ScoringPanel({
   selectedMatchId,
   isLoading = false,
   disabled = false,
+  redPenalty,
+  bluePenalty,
+  setRedPenalty,
+  setBluePenalty,
 }: ScoringPanelProps) {
   const isDisabled = disabled || !selectedMatchId || isLoading;
 
@@ -289,6 +299,42 @@ export function ScoringPanel({
                     </div>
                   </div>
                 )}
+              </div>              {/* Penalties */}
+              <div>
+                <label className="block text-sm font-semibold mb-2 text-gray-800">
+                  Penalties (Red gives to Blue)
+                </label>
+                <Input
+                  type="number"
+                  min={0}
+                  value={redPenalty || 0}
+                  onChange={(e) => setRedPenalty(Number(e.target.value) || 0)}
+                  disabled={isDisabled}
+                  className="text-center bg-white border border-red-300 rounded-lg font-mono text-lg focus:ring-2 focus:ring-red-300"
+                />
+                <div className="flex gap-2 mt-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setRedPenalty((redPenalty || 0) + 10)}
+                    disabled={isDisabled}
+                    className="border-red-300 text-red-700 hover:bg-red-100 flex-1"
+                  >
+                    +10
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setRedPenalty((redPenalty || 0) + 20)}
+                    disabled={isDisabled}
+                    className="border-red-300 text-red-700 hover:bg-red-100 flex-1"
+                  >
+                    +20
+                  </Button>``
+                </div>
+                <div className="text-xs text-gray-500 mt-1">
+                  Blue receives <span className="font-bold text-blue-600">+{redPenalty || 0}</span> points from Red's penalties
+                </div>
               </div>
 
               {/* Total Score */}
@@ -480,6 +526,42 @@ export function ScoringPanel({
                     </div>
                   </div>
                 )}
+              </div>              {/* Penalties */}
+              <div>
+                <label className="block text-sm font-semibold mb-2 text-gray-800">
+                  Penalties (Blue gives to Red)
+                </label>
+                <Input
+                  type="number"
+                  min={0}
+                  value={bluePenalty || 0}
+                  onChange={(e) => setBluePenalty(Number(e.target.value) || 0)}
+                  disabled={isDisabled}
+                  className="text-center bg-white border border-blue-300 rounded-lg font-mono text-lg focus:ring-2 focus:ring-blue-300"
+                />
+                <div className="flex gap-2 mt-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setBluePenalty((bluePenalty || 0) + 10)}
+                    disabled={isDisabled}
+                    className="border-blue-300 text-blue-700 hover:bg-blue-100 flex-1"
+                  >
+                    +10
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setBluePenalty((bluePenalty || 0) + 20)}
+                    disabled={isDisabled}
+                    className="border-blue-300 text-blue-700 hover:bg-blue-100 flex-1"
+                  >
+                    +20
+                  </Button>
+                </div>
+                <div className="text-xs text-gray-500 mt-1">
+                  Red receives <span className="font-bold text-red-600">+{bluePenalty || 0}</span> points from Blue's penalties
+                </div>
               </div>
 
               {/* Total Score */}

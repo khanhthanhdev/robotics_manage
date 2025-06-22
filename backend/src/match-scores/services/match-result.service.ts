@@ -4,7 +4,7 @@ import { AllianceColor } from '../../utils/prisma-types';
 
 /**
  * Service responsible for updating match results
- * Follows Single Responsibility Principle - only handles match result operations
+
  */
 @Injectable()
 export class MatchResultService {

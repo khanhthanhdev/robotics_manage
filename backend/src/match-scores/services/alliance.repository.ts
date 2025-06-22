@@ -13,7 +13,7 @@ export interface AllianceData {
 
 /**
  * Repository service for alliance data operations
- * Follows Single Responsibility Principle - only handles alliance data access
+
  */
 @Injectable()
 export class AllianceRepository {

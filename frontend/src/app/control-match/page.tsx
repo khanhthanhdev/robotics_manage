@@ -36,7 +36,7 @@ import { ScoringPanel } from "@/components/features/control-match/scoring-panel"
 import { AnnouncementPanel } from "@/components/features/control-match/announcement-panel";
 import { MatchStatusDisplay } from "@/components/features/control-match/match-status-display";
 
-// Client component using WebSockets - REFACTORED following SOLID principles
+
 export default function ControlMatchPage() {
   // Tournament selection state
   const { data: tournaments = [], isLoading: tournamentsLoading } =

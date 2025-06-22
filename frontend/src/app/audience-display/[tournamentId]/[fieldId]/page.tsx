@@ -399,7 +399,8 @@ export default function LiveFieldDisplayPage() {
     // --- WebSocket Event Subscriptions for Audience Display ---
     // Only listen to 'scoreUpdateRealtime' for real-time score updates.
     // Legacy events like 'score_update' are now ignored to avoid race conditions and ensure clean, scalable real-time flow.
-    // See WebSocket-Score-Sync-Plan.md for details.
+
+    
     const unsubDisplayMode = subscribe<AudienceDisplaySettings>(
       "display_mode_change",
       (data) => {
@@ -537,9 +538,7 @@ export default function LiveFieldDisplayPage() {
 
       // Accept real-time score updates if they're for the current match
       if (data.matchId && data.matchId === matchState?.matchId) {
-        console.log("Applying real-time score update for match:", data.matchId);
-
-        // Convert real-time score format to display format
+        console.log("Applying real-time score update for match:", data.matchId);        // Convert real-time score format to display format
         const realtimeScoreData = {
           matchId: data.matchId,
           redAutoScore: data.redAutoScore || 0,
@@ -548,6 +547,8 @@ export default function LiveFieldDisplayPage() {
           blueAutoScore: data.blueAutoScore || 0,
           blueDriveScore: data.blueDriveScore || 0,
           blueTotalScore: data.blueTotalScore || 0,
+          redPenalty: data.redPenalty || 0,
+          bluePenalty: data.bluePenalty || 0,
           redTeamCount: data.redTeamCount || 2,
           blueTeamCount: data.blueTeamCount || 2,
           redMultiplier: data.redMultiplier || 1,
@@ -899,8 +900,7 @@ export default function LiveFieldDisplayPage() {
           </div>
         );
       case "match":
-      default:
-        // Use real-time scores if available and recent, otherwise fall back to legacy scores
+      default:        // Use real-time scores if available and recent, otherwise fall back to legacy scores
         const displayScore =
           wsConnected && lastUpdateTime
             ? {
@@ -910,6 +910,8 @@ export default function LiveFieldDisplayPage() {
                 redDriveScore: realtimeScores.red.drive,
                 blueAutoScore: realtimeScores.blue.auto,
                 blueDriveScore: realtimeScores.blue.drive,
+                redPenalty: realtimeScores.red.penalty || 0,
+                bluePenalty: realtimeScores.blue.penalty || 0,
               }
             : score;
         console.log("Displaying scores:", {

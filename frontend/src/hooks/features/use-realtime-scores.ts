@@ -2,18 +2,19 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { webSocketService } from '@/lib/websocket';
 import type { BaseScoreData } from '@/types/websocket';
 
-// === INTERFACES (Interface Segregation Principle) ===
 
 interface IScoreState {
   red: {
     auto: number;
     drive: number;
     total: number;
+    penalty: number;
   };
   blue: {
     auto: number;
     drive: number;
     total: number;
+    penalty: number;
   };
 }
 
@@ -38,7 +39,6 @@ interface IScoreUpdater {
   resetScores(): void;
 }
 
-// === FALLBACK MANAGER (Single Responsibility Principle) ===
 
 class FallbackManager implements IFallbackManager {
   private fallbackActive = false;
@@ -48,7 +48,7 @@ class FallbackManager implements IFallbackManager {
   constructor(
     private onScoreUpdate: (data: any, source: 'database') => void,
     private onError: (error: Error) => void
-  ) {}
+  ) { }
   enableFallback(): void {
     this.fallbackActive = true;
     console.warn('🔄 Switching to database fallback mode');
@@ -65,16 +65,16 @@ class FallbackManager implements IFallbackManager {
       return;
     }
 
-    // SOLUTION: Don't start polling if real-time mode is working
+    //  Don't start polling if real-time mode is working
     // Database polling should only happen when WebSocket completely fails
     console.log('🔄 Fallback mode detected, but prioritizing real-time scores over database polling');
     console.warn('Database fallback polling is disabled to prevent overriding real-time scores');
     return;
 
     this.stopPolling(); // Ensure no duplicate intervals
-    
+
     console.log(`🔁 Starting database polling for match ${matchId} (interval: ${this.pollingIntervalMs}ms)`);
-    
+
     this.pollingInterval = setInterval(async () => {
       if (!this.fallbackActive) {
         console.log('⏹️ Stopping polling - fallback no longer active');
@@ -84,7 +84,7 @@ class FallbackManager implements IFallbackManager {
 
       try {
         console.log('📊 Polling database for match scores:', matchId);
-        
+
         // Fetch scores from database - adjust endpoint as needed
         const response = await fetch(`/api/match-scores/match/${matchId}`, {
           method: 'GET',
@@ -99,7 +99,7 @@ class FallbackManager implements IFallbackManager {
 
         const data = await response.json();
         this.onScoreUpdate(data, 'database');
-        
+
       } catch (error) {
         console.error('💥 Database fallback failed:', error);
         this.onError(error as Error);
@@ -125,27 +125,28 @@ class FallbackManager implements IFallbackManager {
   }
 }
 
-// === SCORE UPDATER (Single Responsibility Principle) ===
+
 
 class ScoreUpdater implements IScoreUpdater {
   private lastRealtimeUpdate: number = 0;
-  
+
   constructor(
     private setScores: (scores: IScoreState) => void,
     private setLastUpdateTime: (time: number) => void,
     private setSource: (source: 'websocket' | 'database' | 'none') => void
-  ) {}
-  updateScores(data: BaseScoreData): void {
+  ) { } updateScores(data: BaseScoreData): void {
     const scores: IScoreState = {
       red: {
         auto: data.redAutoScore || 0,
         drive: data.redDriveScore || 0,
-        total: data.redTotalScore || 0
+        total: data.redTotalScore || 0,
+        penalty: data.redPenalty || 0
       },
       blue: {
         auto: data.blueAutoScore || 0,
         drive: data.blueDriveScore || 0,
-        total: data.blueTotalScore || 0
+        total: data.blueTotalScore || 0,
+        penalty: data.bluePenalty || 0
       }
     };
 
@@ -153,58 +154,56 @@ class ScoreUpdater implements IScoreUpdater {
     this.setLastUpdateTime(Date.now());
     this.setSource('websocket');
     this.lastRealtimeUpdate = Date.now(); // Track real-time updates
-    
+
     console.log('Real-time scores updated:', scores);
   }
   updateFromDatabase(data: any): void {
-    // SOLUTION: Only update from database if no recent real-time updates
+    //  Only update from database if no recent real-time updates
     const timeSinceLastUpdate = Date.now() - (this.lastRealtimeUpdate || 0);
     const REALTIME_PRIORITY_WINDOW = 5000; // 5 seconds
-    
+
     if (timeSinceLastUpdate < REALTIME_PRIORITY_WINDOW) {
       console.log('🚫 Ignoring database update - recent real-time update detected');
       return;
-    }
-
-    const scores: IScoreState = {
+    } const scores: IScoreState = {
       red: {
         auto: data.redAutoScore || 0,
         drive: data.redDriveScore || 0,
-        total: data.redTotalScore || 0
+        total: data.redTotalScore || 0,
+        penalty: data.redPenalty || 0
       },
       blue: {
         auto: data.blueAutoScore || 0,
         drive: data.blueDriveScore || 0,
-        total: data.blueTotalScore || 0
+        total: data.blueTotalScore || 0,
+        penalty: data.bluePenalty || 0
       }
     };
 
     this.setScores(scores);
     this.setLastUpdateTime(Date.now());
     this.setSource('database');
-    
+
     console.log('Database scores updated:', scores);
   }
-
   resetScores(): void {
     this.setScores({
-      red: { auto: 0, drive: 0, total: 0 },
-      blue: { auto: 0, drive: 0, total: 0 }
+      red: { auto: 0, drive: 0, total: 0, penalty: 0 },
+      blue: { auto: 0, drive: 0, total: 0, penalty: 0 }
     });
     this.setLastUpdateTime(0);
     this.setSource('none');
   }
 }
 
-// === MAIN HOOK (Composition + Clean Architecture) ===
 
-export function useRealtimeScores(matchId: string) {
-  // State management
+
+export function useRealtimeScores(matchId: string) {  // State management
   const [realtimeScores, setRealtimeScores] = useState<IScoreState>({
-    red: { auto: 0, drive: 0, total: 0 },
-    blue: { auto: 0, drive: 0, total: 0 }
+    red: { auto: 0, drive: 0, total: 0, penalty: 0 },
+    blue: { auto: 0, drive: 0, total: 0, penalty: 0 }
   });
-  
+
   const [connectionState, setConnectionState] = useState<IConnectionState>({
     isConnected: false,
     fallbackMode: false,
@@ -235,7 +234,7 @@ export function useRealtimeScores(matchId: string) {
   // Initialize managers once
   useEffect(() => {
     console.log('🚀 Initializing useRealtimeScores for matchId:', matchId);
-    
+
     const handleDatabaseUpdate = (data: any, source: 'database') => {
       scoreUpdaterRef.current?.updateFromDatabase(data);
     };
@@ -250,7 +249,7 @@ export function useRealtimeScores(matchId: string) {
     // Check initial connection status
     const isCurrentlyConnected = webSocketService.isConnected();
     console.log('🔍 Initial WebSocket connection status:', isCurrentlyConnected);
-    
+
     if (isCurrentlyConnected) {
       console.log('✅ WebSocket connected on initialization - ensuring fallback is disabled');
       setIsConnected(true);
@@ -270,13 +269,13 @@ export function useRealtimeScores(matchId: string) {
   // === STEP 12: Graceful Degradation Implementation ===
   // Handle fallback mode changes
   useEffect(() => {
-    if (!fallbackManagerRef.current) return;    const handleFallback = (reason: string) => {
+    if (!fallbackManagerRef.current) return; const handleFallback = (reason: string) => {
       console.log('Fallback mode change:', reason);
-      
+
       if (reason === 'websocket_failure') {
         console.log('WebSocket failure detected, but keeping real-time mode active');
         console.log('Database fallback is disabled to prevent score conflicts');
-        // SOLUTION: Don't enable fallback for transient failures
+        //  Don't enable fallback for transient failures
         // Only enable if WebSocket is completely unavailable for extended period
         return;
       } else if (reason === 'reconnected') {
@@ -300,9 +299,9 @@ export function useRealtimeScores(matchId: string) {
   }, [matchId, connectionState.fallbackMode]);
   // Handle WebSocket score updates
   useEffect(() => {
-    if (!matchId || !scoreUpdaterRef.current) return;    const handleScoreUpdate = (data: BaseScoreData) => {
+    if (!matchId || !scoreUpdaterRef.current) return; const handleScoreUpdate = (data: BaseScoreData) => {
       console.log("🟢 [New WebSocket Service] Real-time score update received:", data, "for matchId:", matchId);
-      
+
       if (data.matchId === matchId) {
         console.log("✅ Score update matches current matchId - applying update");
         scoreUpdaterRef.current?.updateScores(data);
@@ -317,7 +316,7 @@ export function useRealtimeScores(matchId: string) {
     const handleConnect = () => {
       console.log('WebSocket connected - disabling fallback mode');
       setIsConnected(true);
-      
+
       // Immediately disable fallback when WebSocket connects
       if (fallbackManagerRef.current) {
         fallbackManagerRef.current.disableFallback();
@@ -334,11 +333,11 @@ export function useRealtimeScores(matchId: string) {
     const unsubscribeScoreUpdate = webSocketService.onScoreUpdate(handleScoreUpdate);
     const unsubscribeConnect = webSocketService.on('connect', handleConnect);
     const unsubscribeDisconnect = webSocketService.on('disconnect', handleDisconnect);
-    
+
     // Check initial connection status and disable fallback if connected
     const isCurrentlyConnected = webSocketService.isConnected();
     setIsConnected(isCurrentlyConnected);
-    
+
     if (isCurrentlyConnected && fallbackManagerRef.current) {
       console.log('WebSocket already connected on mount - disabling fallback');
       fallbackManagerRef.current.disableFallback();

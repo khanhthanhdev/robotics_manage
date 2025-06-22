@@ -39,20 +39,19 @@ export function useScoringControl({
     selectedMatchId,
     stateService,
     isUserActive: userActivityService.isUserActive(),
-  });
-  // Broadcast scores when match changes (but not when state changes)
+  });  // Broadcast scores when match changes (but not when state changes)
   useEffect(() => {
     if (matchScores && selectedMatchId) {
       // Only broadcast when match changes, not when internal state changes
       // Use matchScores data instead of internal state to prevent loops
-      const scoreDataFromAPI = {
-        redAlliance: {
+      const scoreDataFromAPI = {        redAlliance: {
           autoScore: matchScores.redAutoScore || 0,
           driveScore: matchScores.redDriveScore || 0,
           totalScore: matchScores.redTotalScore || 0,
           gameElements: [],
           teamCount: matchScores.redTeamCount || 0,
           multiplier: matchScores.redMultiplier || 1.0,
+          penalty: matchScores.redPenalties || 0,
         },
         blueAlliance: {
           autoScore: matchScores.blueAutoScore || 0,
@@ -61,6 +60,7 @@ export function useScoringControl({
           gameElements: [],
           teamCount: matchScores.blueTeamCount || 0,
           multiplier: matchScores.blueMultiplier || 1.0,
+          penalty: matchScores.bluePenalties || 0,
         },
         scoreDetails: matchScores.scoreDetails || {},
         isAddingRedElement: false,
@@ -112,6 +112,8 @@ export function useScoringControl({
     blueDriveScore: state.blueAlliance.driveScore,
     redTotalScore: state.redAlliance.totalScore,
     blueTotalScore: state.blueAlliance.totalScore,
+    redPenalty: state.redAlliance.penalty,
+    bluePenalty: state.blueAlliance.penalty,
     
     // Game elements
     redGameElements: state.redAlliance.gameElements,
@@ -137,6 +139,8 @@ export function useScoringControl({
     setBlueDriveScore: createScoreSetter('blue', 'drive'),
     setRedTotalScore: createScoreSetter('red', 'total'),
     setBlueTotalScore: createScoreSetter('blue', 'total'),
+    setRedPenalty: createScoreSetter('red', 'penalty'),
+    setBluePenalty: createScoreSetter('blue', 'penalty'),
     setRedGameElements: createSimpleSetter((elements: GameElement[]) => 
       stateService.updateGameElements('red', elements)
     ),

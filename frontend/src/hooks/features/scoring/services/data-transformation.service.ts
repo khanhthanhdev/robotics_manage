@@ -61,7 +61,6 @@ export class DataTransformationService implements IDataTransformationService {
       operation: 'multiply' as const,
     }));
   }
-
   transformToApiFormat(scoreData: MatchScoreData, config: { matchId: string }): ApiScoreData {
     return {
       matchId: config.matchId,
@@ -77,10 +76,11 @@ export class DataTransformationService implements IDataTransformationService {
       blueTeamCount: scoreData.blueAlliance.teamCount,
       redMultiplier: scoreData.redAlliance.multiplier,
       blueMultiplier: scoreData.blueAlliance.multiplier,
+      redPenalty: scoreData.redAlliance.penalty,
+      bluePenalty: scoreData.blueAlliance.penalty,
       scoreDetails: scoreData.scoreDetails,
     };
   }
-
   transformToPersistFormat(
     scoreData: MatchScoreData, 
     config: { matchId: string; fieldId?: string; tournamentId: string }
@@ -99,12 +99,13 @@ export class DataTransformationService implements IDataTransformationService {
       blueTeamCount: scoreData.blueAlliance.teamCount,
       redMultiplier: scoreData.redAlliance.multiplier,
       blueMultiplier: scoreData.blueAlliance.multiplier,
+      redPenalty: scoreData.redAlliance.penalty,
+      bluePenalty: scoreData.blueAlliance.penalty,
       scoreDetails: scoreData.scoreDetails,
       fieldId: config.fieldId,
       tournamentId: config.tournamentId,
     };
   }
-
   transformToRealtimeFormat(
     scoreData: MatchScoreData, 
     config: { matchId: string; fieldId?: string; tournamentId: string }
@@ -125,6 +126,8 @@ export class DataTransformationService implements IDataTransformationService {
       blueTeamCount: scoreData.blueAlliance.teamCount,
       redMultiplier: scoreData.redAlliance.multiplier,
       blueMultiplier: scoreData.blueAlliance.multiplier,
+      redPenalty: scoreData.redAlliance.penalty,
+      bluePenalty: scoreData.blueAlliance.penalty,
       scoreDetails: scoreData.scoreDetails,
     };
   }

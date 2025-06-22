@@ -10,21 +10,21 @@ import type {
   AudienceDisplaySettings,
 } from '@/lib/types';
 
-// SOLID: Interface for WebSocket connection strategy
+//  Interface for WebSocket connection strategy
 interface IWebSocketConnection {
   connect(url?: string): void;
   disconnect(): void;
   isConnectedToServer(): boolean;
 }
 
-// SOLID: Interface for event emitter/listener
+// Interface for event emitter/listener
 interface IWebSocketEventManager {
   on<T>(eventName: WebSocketEvent, callback: EventCallback<T>): () => void;
   off(eventName: WebSocketEvent): void;
   emit<T>(eventName: WebSocketEvent, data: T): void;
 }
 
-// SOLID: Concrete implementation for Socket.IO
+//  Concrete implementation for Socket.IO
 class SocketIOConnection implements IWebSocketConnection, IWebSocketEventManager {
   private socket: Socket | null = null;
   private isConnected = false;
@@ -128,7 +128,7 @@ class SocketIOConnection implements IWebSocketConnection, IWebSocketEventManager
   }
 }
 
-// SOLID: WebSocketService as a facade
+// WebSocketService as a facade
 class WebSocketService {
   private connection: IWebSocketConnection & IWebSocketEventManager;
   constructor(connection: IWebSocketConnection & IWebSocketEventManager) {
@@ -154,6 +154,6 @@ class WebSocketService {
   resetTimer(timerData: TimerData) { this.emit('timer_update', { ...timerData, isRunning: false, remaining: timerData.duration }); }
 }
 
-// Singleton instance
+
 const webSocketService = new WebSocketService(new SocketIOConnection());
 export default webSocketService;

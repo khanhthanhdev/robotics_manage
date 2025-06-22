@@ -1,4 +1,4 @@
-// Legacy file - now using the refactored SOLID version
+
 import { GameElement, useScoringControl as useScoringControlRefactored } from './scoring/index';
 
 interface UseScoringControlProps {
@@ -15,6 +15,8 @@ interface ScoringControlReturn {
   blueDriveScore: number;
   redTotalScore: number;
   blueTotalScore: number;
+  redPenalty: number;
+  bluePenalty: number;
   
   // Game elements
   redGameElements: GameElement[];
@@ -40,6 +42,8 @@ interface ScoringControlReturn {
   setBlueDriveScore: (score: number) => void;
   setRedTotalScore: (score: number) => void;
   setBlueTotalScore: (score: number) => void;
+  setRedPenalty: (penalty: number) => void;
+  setBluePenalty: (penalty: number) => void;
   setRedGameElements: (elements: GameElement[]) => void;
   setBlueGameElements: (elements: GameElement[]) => void;
   setRedTeamCount: (count: number) => void;

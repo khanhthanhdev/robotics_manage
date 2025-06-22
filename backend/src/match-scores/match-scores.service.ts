@@ -16,7 +16,6 @@ export class MatchScoresService {
     @Inject('ITeamStatsService') private readonly teamStatsService: ITeamStatsService
   ) {}
   /**
-   * Creates match scores using the new SOLID architecture
    * @param createMatchScoresDto - DTO with match score data
    * @returns Legacy format match scores for backward compatibility
    */
@@ -30,33 +29,50 @@ export class MatchScoresService {
       const { red: redAlliance, blue: blueAlliance } = 
         await this.allianceRepository.validateMatchAlliances(scoreData.matchId);
 
-      // Step 3: Calculate scores and determine winner
-      const matchScores = this.scoreCalculationService.calculateMatchScores(
-        scoreData.redAutoScore,
-        scoreData.redDriveScore,
-        scoreData.blueAutoScore,
-        scoreData.blueDriveScore
-      );
+      // Step 3: Calculate scores and determine winner (with penalties)
+      const redPenalty = Number(scoreData.redPenalty || 0);
+      const bluePenalty = Number(scoreData.bluePenalty || 0);
+      const redTotalScore = Number(scoreData.redAutoScore) + Number(scoreData.redDriveScore) + bluePenalty;
+      const blueTotalScore = Number(scoreData.blueAutoScore) + Number(scoreData.blueDriveScore) + redPenalty;
+      let winningAlliance: 'RED' | 'BLUE' | null = null;
+      if (redTotalScore > blueTotalScore) winningAlliance = 'RED';
+      else if (blueTotalScore > redTotalScore) winningAlliance = 'BLUE';
 
-      console.log(`Updating alliance scores for match ${scoreData.matchId}:`, {
-        red: matchScores.redScores,
-        blue: matchScores.blueScores,
-        winner: matchScores.winningAlliance
+      // Step 4: Update alliance scores (only valid fields)
+      await this.allianceRepository.updateAllianceScores(redAlliance.id, {
+        autoScore: scoreData.redAutoScore,
+        driveScore: scoreData.redDriveScore,
+        totalScore: redTotalScore,
+      });
+      await this.allianceRepository.updateAllianceScores(blueAlliance.id, {
+        autoScore: scoreData.blueAutoScore,
+        driveScore: scoreData.blueDriveScore,
+        totalScore: blueTotalScore,
       });
 
-      // Step 4: Update alliance scores
-      await this.allianceRepository.updateAllianceScores(redAlliance.id, matchScores.redScores);
-      await this.allianceRepository.updateAllianceScores(blueAlliance.id, matchScores.blueScores);
-
       // Step 5: Update match winner
-      await this.matchResultService.updateMatchWinner(scoreData.matchId, matchScores.winningAlliance);
+      await this.matchResultService.updateMatchWinner(scoreData.matchId, winningAlliance as any);
 
       // Step 6: Update team statistics
       await this.updateTeamStatistics(scoreData.matchId);
 
       // Step 7: Return legacy format for backward compatibility
-      return scoreData.toLegacyFormat();
-
+      return {
+        id: scoreData.matchId,
+        matchId: scoreData.matchId,
+        redAutoScore: scoreData.redAutoScore,
+        redDriveScore: scoreData.redDriveScore,
+        redPenaltyScore: bluePenalty,
+        redPenaltyGiven: redPenalty,
+        redTotalScore,
+        blueAutoScore: scoreData.blueAutoScore,
+        blueDriveScore: scoreData.blueDriveScore,
+        bluePenaltyScore: redPenalty,
+        bluePenaltyGiven: bluePenalty,
+        blueTotalScore,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
     } catch (error) {
       // Add context to the error
       throw new BadRequestException(`Failed to create match scores: ${error.message}`);

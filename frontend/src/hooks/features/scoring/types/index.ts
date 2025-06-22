@@ -13,6 +13,7 @@ export interface AllianceScores {
   gameElements: GameElement[];
   teamCount: number;
   multiplier: number;
+  penalty: number;
 }
 
 export interface MatchScoreData {
@@ -45,6 +46,8 @@ export interface RealtimeScoreUpdate {
   blueTeamCount?: number;
   redMultiplier?: number;
   blueMultiplier?: number;
+  redPenalty?: number;
+  bluePenalty?: number;
   scoreDetails?: any;
 }
 
@@ -70,6 +73,8 @@ export interface PersistScoreData {
   blueTeamCount: number;
   redMultiplier: number;
   blueMultiplier: number;
+  redPenalty: number;
+  bluePenalty: number;
   scoreDetails: any;
   fieldId?: string;
   tournamentId: string;
@@ -89,11 +94,13 @@ export interface ApiScoreData {
   blueTeamCount: number;
   redMultiplier: number;
   blueMultiplier: number;
+  redPenalty: number;
+  bluePenalty: number;
   scoreDetails: any;
 }
 
 export type Alliance = 'red' | 'blue';
-export type ScoreType = 'auto' | 'drive' | 'total';
+export type ScoreType = 'auto' | 'drive' | 'total' | 'penalty';
 
 export interface UserActivity {
   isActive: boolean;

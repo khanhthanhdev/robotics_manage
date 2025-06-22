@@ -12,11 +12,11 @@ import {
 
 
 /**
- * React hook for using the WebSocket service (SOLID: depends on interface)
+ * React hook for using the WebSocket service 
  * Optimized to minimize re-renders and function recreations
  */
 export function useWebSocket(options: UseWebSocketOptions = {}) {
-  // Always use the singleton service to avoid reference changes
+  
   const ws = websocketService;
   const { autoConnect = true, url, tournamentId } = options;
 
@@ -40,7 +40,7 @@ export function useWebSocket(options: UseWebSocketOptions = {}) {
   // Disconnect from the WebSocket server
   const disconnect = useCallback(() => {
     ws.disconnect();
-  }, []); // No dependencies - ws is stable singleton
+  }, []); 
     // Join a tournament room
   const joinTournament = useCallback((id: string) => {
     ws.joinTournament(id);
@@ -58,12 +58,12 @@ export function useWebSocket(options: UseWebSocketOptions = {}) {
   // Subscribe to WebSocket events
   const subscribe = useCallback(<T>(eventName: string, callback: (data: T) => void) => {
     return ws.on<T>(eventName, callback);
-  }, []); // No dependencies - ws is stable singleton
+  }, []); 
   
   // Unsubscribe from WebSocket events
   const unsubscribe = useCallback((eventName: string) => {
     ws.off(eventName);
-  }, []); // No dependencies - ws is stable singleton  // Display mode control functions - Use currentTournament ref to avoid dependency
+  }, []);  // Display mode control functions - Use currentTournament ref to avoid dependency
   const changeDisplayMode = useCallback((settings: Omit<AudienceDisplaySettings, 'updatedAt'>) => {
     const tournamentId = currentTournamentRef.current;
     if (!tournamentId && !settings.tournamentId) {
@@ -150,11 +150,11 @@ export function useWebSocket(options: UseWebSocketOptions = {}) {
   }, []); // Remove dependencies to prevent re-creation// Field room join/leave for field-specific context
   const joinFieldRoom = useCallback((fieldId: string) => {
     ws.joinFieldRoom(fieldId);
-  }, []); // No dependencies - ws is stable singleton
+  }, []); 
   
   const leaveFieldRoom = useCallback((fieldId: string) => {
     ws.leaveFieldRoom(fieldId);
-  }, []); // No dependencies - ws is stable singleton  // Setup connection tracking using event-driven status updates
+  }, []);  // Setup connection tracking using event-driven status updates
   useEffect(() => {
     // Callback to update local connection state (regular function, not useCallback)
     const handleConnectionStatus = (status: { connected: boolean; }) => {

@@ -13,7 +13,7 @@ import type {
   TimerState,
 } from '@/lib/types';
 
-// --- SOLID: Service Layer for Match Control ---
+// ---  Service Layer for Match Control ---
 class MatchControlService {
   static async fetchMatches(): Promise<Match[]> {
     return apiClient.get<Match[]>('/matches');
