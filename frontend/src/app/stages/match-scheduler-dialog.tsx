@@ -75,8 +75,7 @@ export default function MatchSchedulerDialog({
       setError(null);
     }
   }, [isOpen, stageType]);
-
-  // Fetch teams by tournament ID - only when teams view is active
+  // Fetch teams by tournament ID - only when teams view is active AND not Swiss
   const { 
     data: teams = [], 
     isLoading: isLoadingTeams, 
@@ -93,7 +92,7 @@ export default function MatchSchedulerDialog({
         return [];
       }
     },
-    enabled: !!tournamentId && isOpen && activeView === "teams",
+    enabled: !!tournamentId && isOpen && activeView === "teams" && schedulerType !== "swiss",
     staleTime: 1000 * 60,
   });
 
@@ -138,10 +137,10 @@ export default function MatchSchedulerDialog({
       });
     }
   };
-
   // Function to schedule matches
   const handleSchedule = async () => {
-    if (selectedTeams.length === 0) {
+    // For Swiss tournaments, no team selection is required
+    if (schedulerType !== "swiss" && selectedTeams.length === 0) {
       toast.error("Please select at least one team");
       return;
     }
@@ -152,16 +151,17 @@ export default function MatchSchedulerDialog({
     try {
       let endpoint = "";
       let requestBody: any = {
-        stageId,
-        teamIds: selectedTeams
+        stageId
       };
       
       if (schedulerType === "swiss") {
         endpoint = "/match-scheduler/generate-swiss-round";
         requestBody.currentRoundNumber = currentRoundNumber;
+        // Swiss tournaments don't require team selection - backend uses all teams
       } else if (schedulerType === "playoff") {
         endpoint = "/match-scheduler/generate-playoff";
         requestBody.numberOfRounds = numberOfRounds;
+        requestBody.teamIds = selectedTeams; // Only add teamIds for non-Swiss tournaments
       }
 
       const response = await apiClient.post(endpoint, requestBody);
@@ -195,9 +195,7 @@ export default function MatchSchedulerDialog({
           <DialogDescription className="text-gray-600">
             Generate matches for {stageName} ({stageType.toLowerCase()} stage)
           </DialogDescription>
-        </DialogHeader>
-
-        {/* Navigation tabs */}
+        </DialogHeader>        {/* Navigation tabs */}
         <div className="flex border-b border-gray-200">
           <div
             className={`px-4 py-2 cursor-pointer rounded-t-lg transition-colors ${
@@ -209,16 +207,18 @@ export default function MatchSchedulerDialog({
           >
             1. Configuration
           </div>
-          <div
-            className={`px-4 py-2 cursor-pointer rounded-t-lg transition-colors ${
-              activeView === "teams" 
-                ? "border-b-2 border-blue-500 font-semibold text-blue-600" 
-                : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-            }`}
-            onClick={() => setActiveView("teams")}
-          >
-            2. Select Teams
-          </div>
+          {schedulerType !== "swiss" && (
+            <div
+              className={`px-4 py-2 cursor-pointer rounded-t-lg transition-colors ${
+                activeView === "teams" 
+                  ? "border-b-2 border-blue-500 font-semibold text-blue-600" 
+                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+              }`}
+              onClick={() => setActiveView("teams")}
+            >
+              2. Select Teams
+            </div>
+          )}
           {scheduledMatches.length > 0 && (
             <div
               className={`px-4 py-2 cursor-pointer rounded-t-lg transition-colors ${
@@ -228,10 +228,10 @@ export default function MatchSchedulerDialog({
               }`}
               onClick={() => setActiveView("results")}
             >
-              3. Results
+              {schedulerType === "swiss" ? "2. Results" : "3. Results"}
             </div>
           )}
-        </div>        {/* Content based on active view */}
+        </div>{/* Content based on active view */}
         {activeView === "config" && (
           <div className="py-2 space-y-4">
             <div className="space-y-2">
@@ -248,10 +248,9 @@ export default function MatchSchedulerDialog({
                   onClick={() => {
                     if (stageType === "SWISS") setSchedulerType("swiss");
                   }}
-                >
-                  <div className="font-medium">Swiss Tournament</div>
+                >                  <div className="font-medium">Swiss Tournament</div>
                   <div className="text-xs text-gray-600">
-                    Multiple rounds where teams face opponents with similar records
+                    Automatic pairing based on team performance - no team selection needed
                   </div>
                 </div>
                 <div
@@ -273,8 +272,7 @@ export default function MatchSchedulerDialog({
                 </div>
               </div>
             </div>
-            
-            {schedulerType === "swiss" && (
+              {schedulerType === "swiss" && (
               <div className="space-y-2">
                 <Label htmlFor="currentRoundNumber" className="text-gray-700 font-medium">Current Round Number</Label>
                 <Input
@@ -286,9 +284,18 @@ export default function MatchSchedulerDialog({
                   placeholder="Enter the current round number (0 for first round)"
                   className="bg-white border border-gray-300 text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 rounded-lg"
                 />
-                <p className="text-xs text-gray-600">
-                  Enter 0 for the first round. For subsequent rounds, enter the last completed round number.
-                </p>
+                <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
+                  <div className="text-sm text-blue-800">
+                    <div className="font-medium mb-1">Swiss Tournament Guide:</div>
+                    <ul className="text-xs space-y-1 text-blue-700">
+                      <li>• Enter <strong>0</strong> for the very first round</li>
+                      <li>• For subsequent rounds, enter the <strong>last completed round number</strong></li>
+                      <li>• Teams are automatically paired based on their performance</li>
+                      <li>• No team selection is required - all teams participate</li>
+                      <li>• Update rankings after each round before generating the next</li>
+                    </ul>
+                  </div>
+                </div>
               </div>
             )}
 
@@ -473,12 +480,30 @@ export default function MatchSchedulerDialog({
               <Button variant="outline" onClick={onClose} className="border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-gray-900 focus:ring-2 focus:ring-blue-100 focus:border-blue-300 rounded-lg">
                 Cancel
               </Button>
-              <Button 
-                onClick={() => setActiveView("teams")}
-                className="bg-blue-500 text-white font-semibold rounded-lg px-5 py-2.5 shadow-md hover:bg-blue-600 focus:ring-2 focus:ring-blue-400 focus:outline-none transition-colors duration-200"
-              >
-                Next: Select Teams
-              </Button>
+              {schedulerType === "swiss" ? (
+                <Button
+                  onClick={handleSchedule}
+                  disabled={isLoading}
+                  className="bg-blue-500 text-white font-semibold rounded-lg px-5 py-2.5 shadow-md hover:bg-blue-600 focus:ring-2 focus:ring-blue-400 focus:outline-none transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isLoading ? (
+                    <>
+                      <div className="animate-spin h-4 w-4 border-2 border-current border-t-transparent rounded-full mr-2"></div>
+                      Creating...
+                    </>
+                  ) : (
+                    "Generate Swiss Round"
+                  )}
+                </Button>
+              ) : (
+                <Button 
+                  onClick={() => setActiveView("teams")}
+                  className="bg-blue-500 text-white font-semibold rounded-lg px-5 py-2.5 shadow-md hover:bg-blue-600 focus:ring-2 focus:ring-blue-400 focus:outline-none transition-colors duration-200"
+                >
+                  <ArrowRightIcon className="h-4 w-4 mr-1" />
+                  Next: Select Teams
+                </Button>
+              )}
             </>
           )}
 

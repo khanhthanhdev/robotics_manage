@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { MatchSchedulerService } from './match-scheduler.service';
 import { PrismaService } from '../prisma.service';
+import { StageType } from '../utils/prisma-types';
 import { mockDeep, DeepMockProxy } from 'jest-mock-extended';
 
 describe('MatchSchedulerService', () => {
@@ -26,11 +27,10 @@ describe('MatchSchedulerService', () => {
       await expect(service.generateSwissRound('stage1', 1)).rejects.toThrow('Stage with ID stage1 not found');
     });
 
-    const baseTeams = Array.from({ length: 16 }, (_, i) => ({ id: `team${i+1}`, teamNumber: `${i+1}` }));
-    const baseStage = {
+    const baseTeams = Array.from({ length: 16 }, (_, i) => ({ id: `team${i + 1}`, teamNumber: `${i + 1}` })); const baseStage = {
       id: 'stage1',
       name: 'Stage 1',
-      type: 'SWISS',
+      type: StageType.SWISS,
       startDate: new Date(),
       endDate: new Date(),
       tournamentId: 't1',
@@ -67,7 +67,7 @@ describe('MatchSchedulerService', () => {
         tournament: { ...baseStage.tournament, fields },
       } as any);
       prisma.teamStats.findMany.mockResolvedValue(baseTeams.map((t, i) => ({
-        id: `stat${i+1}`,
+        id: `stat${i + 1}`,
         tournamentId: 't1',
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -83,16 +83,14 @@ describe('MatchSchedulerService', () => {
         tiebreaker1: 0,
         tiebreaker2: 0,
         team: t,
-      } as any)));
-      prisma.match.findMany.mockResolvedValue([]);
-      let matchIdx = 0;
+      } as any))); prisma.match.findMany.mockResolvedValue([]);
       prisma.match.create.mockImplementation(({ data }) => Promise.resolve({
         ...data,
         id: Math.random().toString(),
         stage: { name: 'Stage 1' },
         alliances: [],
       }) as any);
-      prisma.matchScores.create.mockResolvedValue({
+      prisma.matchScore.create.mockResolvedValue({
         id: 'score1',
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -120,9 +118,7 @@ describe('MatchSchedulerService', () => {
       }
       expect(Object.values(fieldCounts)).toHaveLength(2);
       expect(Object.values(fieldCounts).every(count => count === 2)).toBe(true);
-    });
-
-    it('distributes 4 matches equally across 4 fields', async () => {
+    }); it('distributes 4 matches equally across 4 fields', async () => {
       const fields = [
         { id: 'fieldA', number: 1 },
         { id: 'fieldB', number: 2 },
@@ -134,7 +130,7 @@ describe('MatchSchedulerService', () => {
         tournament: { ...baseStage.tournament, fields },
       } as any);
       prisma.teamStats.findMany.mockResolvedValue(baseTeams.map((t, i) => ({
-        id: `stat${i+1}`,
+        id: `stat${i + 1}`,
         tournamentId: 't1',
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -158,7 +154,7 @@ describe('MatchSchedulerService', () => {
         stage: { name: 'Stage 1' },
         alliances: [],
       }) as any);
-      prisma.matchScores.create.mockResolvedValue({
+      prisma.matchScore.create.mockResolvedValue({
         id: 'score1',
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -218,8 +214,8 @@ describe('MatchSchedulerService', () => {
       prisma.teamStats.findMany.mockResolvedValue([]);
       prisma.stage.findUnique.mockResolvedValue({
         id: 'stage1',
-        name: 'Stage 1',
-        type: 'SWISS',
+        name: 'Stage 1', 
+        type: StageType.SWISS,
         startDate: new Date(),
         endDate: new Date(),
         tournamentId: 't1',
@@ -290,11 +286,10 @@ describe('MatchSchedulerService', () => {
   });
 
   describe('generateFrcSchedule', () => {
-    const baseTeams = Array.from({ length: 16 }, (_, i) => ({ id: `team${i+1}`, teamNumber: `${i+1}` }));
-    const baseStage = {
+    const baseTeams = Array.from({ length: 16 }, (_, i) => ({ id: `team${i + 1}`, teamNumber: `${i + 1}` })); const baseStage = {
       id: 'stage1',
       name: 'Stage 1',
-      type: 'QUALIFICATION',
+      type: StageType.SWISS,
       startDate: new Date(),
       endDate: new Date(),
       tournamentId: 't1',
@@ -336,7 +331,7 @@ describe('MatchSchedulerService', () => {
         stage: { name: 'Stage 1' },
         alliances: [],
       }) as any);
-      prisma.matchScores.create.mockResolvedValue({
+      prisma.matchScore.create.mockResolvedValue({
         id: 'score1',
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -352,7 +347,7 @@ describe('MatchSchedulerService', () => {
         blueTeamCount: 0,
         redMultiplier: 1,
         blueMultiplier: 1,
-       } as any);
+      } as any);
 
       // 16 teams, 1 round, 2 alliances per match = 4 matches
       const matches = await service.generateFrcSchedule('stage1', 1, 2);
@@ -385,7 +380,7 @@ describe('MatchSchedulerService', () => {
         stage: { name: 'Stage 1' },
         alliances: [],
       }) as any);
-      prisma.matchScores.create.mockResolvedValue({
+      prisma.matchScore.create.mockResolvedValue({
         id: 'score1',
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -401,9 +396,7 @@ describe('MatchSchedulerService', () => {
         blueTeamCount: 0,
         redMultiplier: 1,
         blueMultiplier: 1,
-      } as any);
-
-      // 16 teams, 1 round, 2 alliances per match = 4 matches
+      } as any);      // 16 teams, 1 round, 2 alliances per match = 4 matches
       const matches = await service.generateFrcSchedule('stage1', 1, 2);
       expect(matches).toHaveLength(4);
       // Count matches per field
