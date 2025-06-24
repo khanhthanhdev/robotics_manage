@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { Match as PrismaMatch, AllianceColor } from '../utils/prisma-types';
 
@@ -5,6 +6,7 @@ import { Match as PrismaMatch, AllianceColor } from '../utils/prisma-types';
  * Swiss-style round generation and ranking logic.
  * Extracted from MatchSchedulerService for separation of concerns.
  */
+@Injectable()
 export class SwissScheduler {
   constructor(private readonly prisma: PrismaService) {}
 
@@ -147,5 +149,129 @@ export class SwissScheduler {
       ],
       include: { team: true }
     });
+  }
+
+  /**
+   * Generates a new Swiss round by pairing teams based on their current standings
+   * @param stageId The stage ID
+   * @param currentRoundNumber The current round number (0-based)
+   * @returns Array of created matches
+   */
+  async generateSwissRound(stageId: string, currentRoundNumber: number): Promise<PrismaMatch[]> {
+    // Validate stage exists
+    const stage = await this.prisma.stage.findUnique({
+      where: { id: stageId },
+      include: {
+        tournament: {
+          include: {
+            teams: true,
+            fields: true,
+          },
+        },
+        teams: true,
+      },
+    });
+
+    if (!stage) {
+      throw new Error(`Stage with ID ${stageId} not found`);
+    }
+
+    // Get current rankings
+    const rankings = await this.getSwissRankings(stageId);
+    
+    // If no rankings exist yet, create initial team stats
+    if (rankings.length === 0) {
+      await this.updateSwissRankings(stageId);
+      // Get rankings again after creating team stats
+      const newRankings = await this.getSwissRankings(stageId);
+      return this.createMatches(stageId, newRankings, currentRoundNumber + 1);
+    }
+
+    return this.createMatches(stageId, rankings, currentRoundNumber + 1);
+  }
+
+  /**
+   * Creates matches for Swiss tournament based on current rankings
+   * @param stageId The stage ID
+   * @param rankings Current team rankings
+   * @param roundNumber Round number for the new matches
+   * @returns Array of created matches
+   */
+  private async createMatches(stageId: string, rankings: any[], roundNumber: number): Promise<PrismaMatch[]> {
+    // Group teams by similar performance (Swiss pairing)
+    const matches: PrismaMatch[] = [];
+    const usedTeams = new Set<string>();
+    
+    // Sort teams by ranking points, then by tiebreakers
+    const sortedTeams = [...rankings].sort((a, b) => {
+      if (b.rankingPoints !== a.rankingPoints) return b.rankingPoints - a.rankingPoints;
+      if (b.opponentWinPercentage !== a.opponentWinPercentage) return b.opponentWinPercentage - a.opponentWinPercentage;
+      return b.pointDifferential - a.pointDifferential;
+    });
+
+    // Pair teams (2v2 format)
+    for (let i = 0; i < sortedTeams.length - 3; i += 4) {
+      if (usedTeams.has(sortedTeams[i].teamId) || 
+          usedTeams.has(sortedTeams[i + 1].teamId) ||
+          usedTeams.has(sortedTeams[i + 2].teamId) ||
+          usedTeams.has(sortedTeams[i + 3].teamId)) {
+        continue;
+      }
+
+      // Create match with top 4 available teams
+      const redTeam1 = sortedTeams[i];
+      const redTeam2 = sortedTeams[i + 1];
+      const blueTeam1 = sortedTeams[i + 2];
+      const blueTeam2 = sortedTeams[i + 3];
+
+      const match = await this.prisma.match.create({
+        data: {
+          stageId,          roundNumber,
+          matchNumber: matches.length + 1,
+          status: 'PENDING',
+          alliances: {
+            create: [
+              {
+                color: AllianceColor.RED,
+                teamAlliances: {
+                  create: [
+                    { teamId: redTeam1.teamId, stationPosition: 1 },
+                    { teamId: redTeam2.teamId, stationPosition: 2 },
+                  ],
+                },
+              },
+              {
+                color: AllianceColor.BLUE,
+                teamAlliances: {
+                  create: [
+                    { teamId: blueTeam1.teamId, stationPosition: 1 },
+                    { teamId: blueTeam2.teamId, stationPosition: 2 },
+                  ],
+                },
+              },
+            ],
+          },
+        },
+        include: {
+          alliances: {
+            include: {
+              teamAlliances: {
+                include: {
+                  team: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+      matches.push(match);
+      usedTeams.add(redTeam1.teamId);
+      usedTeams.add(redTeam2.teamId);
+      usedTeams.add(blueTeam1.teamId);
+      usedTeams.add(blueTeam2.teamId);
+    }
+
+    return matches;
   }
 }

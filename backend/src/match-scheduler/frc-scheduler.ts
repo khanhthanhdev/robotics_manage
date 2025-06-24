@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { Match as PrismaMatch, MatchState, AllianceColor } from '../utils/prisma-types';
 import { Match, Schedule } from './match-scheduler.types';
@@ -6,6 +7,7 @@ import { Match, Schedule } from './match-scheduler.types';
  * FRC-style schedule generation and optimization logic.
  * Extracted from MatchSchedulerService for separation of concerns.
  */
+@Injectable()
 export class FrcScheduler {
   private readonly RED_ALLIANCE_SIZE = 2;
   private readonly BLUE_ALLIANCE_SIZE = 2;

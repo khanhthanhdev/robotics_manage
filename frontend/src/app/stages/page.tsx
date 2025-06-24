@@ -47,9 +47,10 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { PlusIcon, PencilIcon, TrashIcon, InfoIcon, CalendarIcon, ArrowLeftIcon, ListIcon, ClipboardIcon, BarChart3Icon, AlarmClock, Medal } from "lucide-react";
+import { PlusIcon, PencilIcon, TrashIcon, InfoIcon, CalendarIcon, ArrowLeftIcon, ListIcon, ClipboardIcon, BarChart3Icon, AlarmClock, Medal, Crown } from "lucide-react";
 import StageDialog from "./stage-dialog";
 import MatchSchedulerDialog from "./match-scheduler-dialog";
+import EndStageDialog from "@/components/stages/end-stage-dialog";
 import { MatchService } from "@/services/match-service";
 
 export default function StagesPage() {
@@ -106,6 +107,9 @@ export default function StagesPage() {
 
   // State for match scheduler dialog
   const [isMatchSchedulerDialogOpen, setIsMatchSchedulerDialogOpen] = useState(false);
+
+  // State for end stage dialog
+  const [isEndStageDialogOpen, setIsEndStageDialogOpen] = useState(false);
 
   // Add state for match scores map
   const [matchScoresMap, setMatchScoresMap] = useState<Record<string, { redTotalScore: number, blueTotalScore: number }>>({});
@@ -364,6 +368,15 @@ export default function StagesPage() {
               >
                 <PencilIcon size={16} className="mr-1" />
                 Edit Stage
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="border-green-300 text-green-600 hover:bg-green-50 hover:text-green-700 focus:ring-2 focus:ring-green-100 focus:border-green-400"
+                onClick={() => setIsEndStageDialogOpen(true)}
+              >
+                <Crown size={16} className="mr-1" />
+                End Stage
               </Button>
               <Button
                 variant="outline"
@@ -730,6 +743,24 @@ export default function StagesPage() {
           stageName={stageDetails.name}
           stageType={stageDetails.type}
           tournamentId={stageDetails.tournamentId || selectedTournamentId}
+        />
+      )}
+
+      {/* End Stage Dialog */}
+      {stageDetails && (
+        <EndStageDialog
+          isOpen={isEndStageDialogOpen}
+          onClose={() => setIsEndStageDialogOpen(false)}
+          stageId={stageDetails.id}
+          stageName={stageDetails.name}
+          stageType={stageDetails.type}
+          tournamentId={stageDetails.tournamentId || selectedTournamentId}
+          onAdvancementComplete={() => {
+            // Refresh stage data and potentially navigate to the new stage
+            setIsEndStageDialogOpen(false);
+            // Optionally refresh the page or navigate to tournaments
+            window.location.reload();
+          }}
         />
       )}
     </div>

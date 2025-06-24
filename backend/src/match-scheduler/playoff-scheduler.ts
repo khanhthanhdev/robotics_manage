@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { Match as PrismaMatch, StageType, AllianceColor, MatchState } from '../utils/prisma-types';
 import { BracketAdvancement } from './match-scheduler.types';
@@ -6,6 +7,7 @@ import { BracketAdvancement } from './match-scheduler.types';
  * Playoff bracket generation and advancement logic.
  * Extracted from MatchSchedulerService for separation of concerns.
  */
+@Injectable()
 export class PlayoffScheduler {
   private bracketAdvancements: BracketAdvancement[] = [];
 
