@@ -45,22 +45,17 @@ export class SwissSchedulingStrategy implements ISchedulingStrategy {
     
     // Initialize field assignment tracking
     const shuffledFields = this.fieldAssignmentService.shuffleFields(stage.tournament.fields);
-    let fieldAssignmentCounts = this.fieldAssignmentService.initializeFieldCounts(shuffledFields);
-
-    // Get team rankings
+    let fieldAssignmentCounts = this.fieldAssignmentService.initializeFieldCounts(shuffledFields);    // Get team rankings
     const teamStats = await this.getOrCreateTeamStats(stage.id);
-    
-    // Group teams by record
-    const recordGroups = this.groupTeamsByRecord(teamStats);
     
     // Get previous matchup history
     const previousOpponents = await this.matchupHistoryService.getPreviousOpponents(stage.id);
     
-    // Generate matches
+    // Generate matches using closest performance pairing
     const matches = await this.generateSwissMatches(
       stage.id,
       currentRoundNumber + 1,
-      recordGroups,
+      teamStats,
       previousOpponents,
       shuffledFields,
       fieldAssignmentCounts
@@ -106,100 +101,53 @@ export class SwissSchedulingStrategy implements ISchedulingStrategy {
     );
     
     return recordGroups;
-  }
-
-  /**
-   * Generates Swiss matches for all record groups
+  }  /**
+   * Generates Swiss matches using closest performance pairing
    */
   private async generateSwissMatches(
     stageId: string,
     nextRoundNumber: number,
-    recordGroups: Map<string, any[]>,
+    teamStats: any[],
     previousOpponents: Map<string, Set<string>>,
     shuffledFields: any[],
     initialFieldCounts: number[]
   ): Promise<Match[]> {
     const matches: Match[] = [];
     const paired = new Set<string>();
-    let matchNumber = 1;
+    
+    // Get the highest match number already used in this stage
+    const existingMatches = await this.prisma.match.findMany({
+      where: { stageId },
+      select: { matchNumber: true },
+      orderBy: { matchNumber: 'desc' },
+      take: 1
+    });
+    
+    let matchNumber = existingMatches.length > 0 ? existingMatches[0].matchNumber + 1 : 1;
     let fieldAssignmentCounts = [...initialFieldCounts];
 
-    // Sort record groups by performance (best records first)
-    const sortedRecordGroups = this.sortRecordGroups(recordGroups);
-
-    // Process each record group for pairing
-    for (const [record, teams] of sortedRecordGroups) {
-      console.log(`\nProcessing ${record} group with ${teams.length} teams`);
-      
-      const recordMatches = await this.processRecordGroup(
-        stageId,
-        record,
-        teams,
-        paired,
-        previousOpponents,
-        shuffledFields,
-        fieldAssignmentCounts,
-        matchNumber,
-        nextRoundNumber
-      );
-      
-      matches.push(...recordMatches);
-      matchNumber += recordMatches.length;
-    }
-
-    console.log(`\nGenerated ${matches.length} Swiss matches for round ${nextRoundNumber}`);
-    return matches;
-  }
-
-  /**
-   * Sorts record groups by performance
-   */
-  private sortRecordGroups(recordGroups: Map<string, any[]>): [string, any[]][] {
-    return Array.from(recordGroups.entries()).sort(([recordA], [recordB]) => {
-      const [winsA, lossesA, tiesA] = recordA.split('-').map(Number);
-      const [winsB, lossesB, tiesB] = recordB.split('-').map(Number);
-      
-      // Compare by ranking points (wins * 2 + ties)
-      const rpA = winsA * 2 + tiesA;
-      const rpB = winsB * 2 + tiesB;
-      
-      return rpB - rpA; // Descending order (best first)
-    });
-  }
-
-  /**
-   * Processes a single record group to create matches
-   */
-  private async processRecordGroup(
-    stageId: string,
-    record: string,
-    teams: any[],
-    paired: Set<string>,
-    previousOpponents: Map<string, Set<string>>,
-    shuffledFields: any[],
-    fieldAssignmentCounts: number[],
-    startMatchNumber: number,
-    roundNumber: number
-  ): Promise<Match[]> {
-    const matches: Match[] = [];
-    let matchNumber = startMatchNumber;
-
-    // Sort teams within the group by tiebreakers
-    const sortedTeams = this.sortTeamsByTiebreakers(teams);
+    // Sort teams by performance (best to worst)
+    const sortedTeams = this.sortTeamsByTiebreakers(teamStats);
     
-    // Get available teams (not yet paired)
-    const availableTeams = sortedTeams.filter(team => !paired.has(team.teamId));
-    
-    // Create matches from available teams
-    for (let i = 0; i < availableTeams.length; i += this.TEAMS_PER_MATCH) {
-      if (i + this.TEAMS_PER_MATCH > availableTeams.length) {
-        console.log(`Not enough teams for complete match in ${record} group, skipping remaining ${availableTeams.length - i} teams`);
+    console.log(`\nGenerating Swiss matches with closest performance pairing for ${sortedTeams.length} teams`);
+
+    // Create matches by pairing teams with closest performance
+    for (let i = 0; i < sortedTeams.length; i += this.TEAMS_PER_MATCH) {
+      if (i + this.TEAMS_PER_MATCH > sortedTeams.length) {
+        console.log(`Not enough teams for complete match, skipping remaining ${sortedTeams.length - i} teams`);
+        break;
+      }
+        // Get 4 teams with closest performance that haven't been paired yet
+      const availableTeams = sortedTeams.filter(team => !paired.has(team.teamId));
+      
+      if (availableTeams.length < this.TEAMS_PER_MATCH) {
+        console.log(`Only ${availableTeams.length} unpaired teams remaining, stopping match generation`);
         break;
       }
       
-      const matchTeams = availableTeams.slice(i, i + this.TEAMS_PER_MATCH);
+      const matchTeams = availableTeams.slice(0, this.TEAMS_PER_MATCH);
       
-      // Optimize alliance assignment
+      // Optimize alliance assignment to minimize repeat matchups
       const [redTeams, blueTeams] = this.matchupHistoryService.optimizeAllianceAssignment(
         matchTeams, 
         previousOpponents,
@@ -220,7 +168,7 @@ export class SwissSchedulingStrategy implements ISchedulingStrategy {
       const dbMatch = await this.createSwissMatch(
         stageId,
         matchNumber++,
-        roundNumber,
+        nextRoundNumber,
         redTeams,
         blueTeams,
         field
@@ -231,9 +179,9 @@ export class SwissSchedulingStrategy implements ISchedulingStrategy {
       console.log(`Created match ${matchNumber - 1}: [${redTeams.map(t => t.team.teamNumber).join(',')}] vs [${blueTeams.map(t => t.team.teamNumber).join(',')}] on ${field.name}`);
     }
 
+    console.log(`\nGenerated ${matches.length} Swiss matches for round ${nextRoundNumber}`);
     return matches;
   }
-
   /**
    * Sorts teams by tiebreakers
    */
