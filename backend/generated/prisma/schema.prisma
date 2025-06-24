@@ -29,6 +29,11 @@ enum StageType {
   FINAL
 }
 
+enum StageStatus {
+  ACTIVE
+  COMPLETED
+}
+
 enum CardType {
   NONE
   YELLOW
@@ -135,6 +140,7 @@ model Stage {
   id               String      @id @default(uuid())
   name             String
   type             StageType
+  status           StageStatus @default(ACTIVE) // Use proper enum instead of string
   startDate        DateTime
   endDate          DateTime
   tournamentId     String
@@ -142,8 +148,12 @@ model Stage {
   matches          Match[]
   teamStats        TeamStats[] // Added relation field for TeamStats
   teamsPerAlliance Int         @default(2) // Number of teams per alliance (2v2, 3v3, etc.)
-  createdAt        DateTime    @default(now())
-  updatedAt        DateTime    @updatedAt
+
+  // Add relationship to teams in this stage
+  teams Team[] @relation("StageTeams")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([tournamentId])
 }
@@ -216,23 +226,29 @@ model Alliance {
 }
 
 model Team {
-  id            String         @id @default(uuid())
-  teamNumber    String         @unique
-  name          String
-  organization  String?
-  avatar        String? // URL to team avatar image
-  description   String? // Team description
-  teamLead      String? // Team lead name
-  teamLeadId    String? // Optional link to user ID for team lead
-  teamMembers   Json? // Store team members as a JSON array
-  tournamentId  String? // Optional link to tournament
-  tournament    Tournament?    @relation(fields: [tournamentId], references: [id], onDelete: SetNull)
+  id           String      @id @default(uuid())
+  teamNumber   String      @unique
+  name         String
+  organization String?
+  avatar       String? // URL to team avatar image
+  description  String? // Team description
+  teamLead     String? // Team lead name
+  teamLeadId   String? // Optional link to user ID for team lead
+  teamMembers  Json? // Store team members as a JSON array
+  tournamentId String? // Optional link to tournament
+  tournament   Tournament? @relation(fields: [tournamentId], references: [id], onDelete: SetNull)
+
+  // Add stage relationship for team advancement
+  currentStageId String? // Which stage this team is currently in
+  currentStage   Stage?  @relation("StageTeams", fields: [currentStageId], references: [id], onDelete: SetNull)
+
   teamAlliances TeamAlliance[]
   teamStats     TeamStats[] // New relation to track team statistics
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
 
   @@index([tournamentId])
+  @@index([currentStageId]) // Add index for stage queries
 }
 
 model TeamAlliance {

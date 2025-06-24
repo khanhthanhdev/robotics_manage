@@ -119,6 +119,14 @@ export const StageType: {
 export type StageType = (typeof StageType)[keyof typeof StageType]
 
 
+export const StageStatus: {
+  ACTIVE: 'ACTIVE',
+  COMPLETED: 'COMPLETED'
+};
+
+export type StageStatus = (typeof StageStatus)[keyof typeof StageStatus]
+
+
 export const CardType: {
   NONE: 'NONE',
   YELLOW: 'YELLOW',
@@ -214,6 +222,10 @@ export const UserRole: typeof $Enums.UserRole
 export type StageType = $Enums.StageType
 
 export const StageType: typeof $Enums.StageType
+
+export type StageStatus = $Enums.StageStatus
+
+export const StageStatus: typeof $Enums.StageStatus
 
 export type CardType = $Enums.CardType
 
@@ -2527,11 +2539,13 @@ export namespace Prisma {
   export type StageCountOutputType = {
     matches: number
     teamStats: number
+    teams: number
   }
 
   export type StageCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     matches?: boolean | StageCountOutputTypeCountMatchesArgs
     teamStats?: boolean | StageCountOutputTypeCountTeamStatsArgs
+    teams?: boolean | StageCountOutputTypeCountTeamsArgs
   }
 
   // Custom InputTypes
@@ -2557,6 +2571,13 @@ export namespace Prisma {
    */
   export type StageCountOutputTypeCountTeamStatsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: TeamStatsWhereInput
+  }
+
+  /**
+   * StageCountOutputType without action
+   */
+  export type StageCountOutputTypeCountTeamsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TeamWhereInput
   }
 
 
@@ -5420,6 +5441,7 @@ export namespace Prisma {
     id: string | null
     name: string | null
     type: $Enums.StageType | null
+    status: $Enums.StageStatus | null
     startDate: Date | null
     endDate: Date | null
     tournamentId: string | null
@@ -5432,6 +5454,7 @@ export namespace Prisma {
     id: string | null
     name: string | null
     type: $Enums.StageType | null
+    status: $Enums.StageStatus | null
     startDate: Date | null
     endDate: Date | null
     tournamentId: string | null
@@ -5444,6 +5467,7 @@ export namespace Prisma {
     id: number
     name: number
     type: number
+    status: number
     startDate: number
     endDate: number
     tournamentId: number
@@ -5466,6 +5490,7 @@ export namespace Prisma {
     id?: true
     name?: true
     type?: true
+    status?: true
     startDate?: true
     endDate?: true
     tournamentId?: true
@@ -5478,6 +5503,7 @@ export namespace Prisma {
     id?: true
     name?: true
     type?: true
+    status?: true
     startDate?: true
     endDate?: true
     tournamentId?: true
@@ -5490,6 +5516,7 @@ export namespace Prisma {
     id?: true
     name?: true
     type?: true
+    status?: true
     startDate?: true
     endDate?: true
     tournamentId?: true
@@ -5589,6 +5616,7 @@ export namespace Prisma {
     id: string
     name: string
     type: $Enums.StageType
+    status: $Enums.StageStatus
     startDate: Date
     endDate: Date
     tournamentId: string
@@ -5620,6 +5648,7 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     type?: boolean
+    status?: boolean
     startDate?: boolean
     endDate?: boolean
     tournamentId?: boolean
@@ -5629,6 +5658,7 @@ export namespace Prisma {
     tournament?: boolean | TournamentDefaultArgs<ExtArgs>
     matches?: boolean | Stage$matchesArgs<ExtArgs>
     teamStats?: boolean | Stage$teamStatsArgs<ExtArgs>
+    teams?: boolean | Stage$teamsArgs<ExtArgs>
     _count?: boolean | StageCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["stage"]>
 
@@ -5636,6 +5666,7 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     type?: boolean
+    status?: boolean
     startDate?: boolean
     endDate?: boolean
     tournamentId?: boolean
@@ -5649,6 +5680,7 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     type?: boolean
+    status?: boolean
     startDate?: boolean
     endDate?: boolean
     tournamentId?: boolean
@@ -5662,6 +5694,7 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     type?: boolean
+    status?: boolean
     startDate?: boolean
     endDate?: boolean
     tournamentId?: boolean
@@ -5670,11 +5703,12 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type StageOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "type" | "startDate" | "endDate" | "tournamentId" | "teamsPerAlliance" | "createdAt" | "updatedAt", ExtArgs["result"]["stage"]>
+  export type StageOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "type" | "status" | "startDate" | "endDate" | "tournamentId" | "teamsPerAlliance" | "createdAt" | "updatedAt", ExtArgs["result"]["stage"]>
   export type StageInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     tournament?: boolean | TournamentDefaultArgs<ExtArgs>
     matches?: boolean | Stage$matchesArgs<ExtArgs>
     teamStats?: boolean | Stage$teamStatsArgs<ExtArgs>
+    teams?: boolean | Stage$teamsArgs<ExtArgs>
     _count?: boolean | StageCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type StageIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -5690,11 +5724,13 @@ export namespace Prisma {
       tournament: Prisma.$TournamentPayload<ExtArgs>
       matches: Prisma.$MatchPayload<ExtArgs>[]
       teamStats: Prisma.$TeamStatsPayload<ExtArgs>[]
+      teams: Prisma.$TeamPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       name: string
       type: $Enums.StageType
+      status: $Enums.StageStatus
       startDate: Date
       endDate: Date
       tournamentId: string
@@ -6098,6 +6134,7 @@ export namespace Prisma {
     tournament<T extends TournamentDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TournamentDefaultArgs<ExtArgs>>): Prisma__TournamentClient<$Result.GetResult<Prisma.$TournamentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     matches<T extends Stage$matchesArgs<ExtArgs> = {}>(args?: Subset<T, Stage$matchesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MatchPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     teamStats<T extends Stage$teamStatsArgs<ExtArgs> = {}>(args?: Subset<T, Stage$teamStatsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeamStatsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    teams<T extends Stage$teamsArgs<ExtArgs> = {}>(args?: Subset<T, Stage$teamsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeamPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6130,6 +6167,7 @@ export namespace Prisma {
     readonly id: FieldRef<"Stage", 'String'>
     readonly name: FieldRef<"Stage", 'String'>
     readonly type: FieldRef<"Stage", 'StageType'>
+    readonly status: FieldRef<"Stage", 'StageStatus'>
     readonly startDate: FieldRef<"Stage", 'DateTime'>
     readonly endDate: FieldRef<"Stage", 'DateTime'>
     readonly tournamentId: FieldRef<"Stage", 'String'>
@@ -6577,6 +6615,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: TeamStatsScalarFieldEnum | TeamStatsScalarFieldEnum[]
+  }
+
+  /**
+   * Stage.teams
+   */
+  export type Stage$teamsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Team
+     */
+    select?: TeamSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Team
+     */
+    omit?: TeamOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeamInclude<ExtArgs> | null
+    where?: TeamWhereInput
+    orderBy?: TeamOrderByWithRelationInput | TeamOrderByWithRelationInput[]
+    cursor?: TeamWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TeamScalarFieldEnum | TeamScalarFieldEnum[]
   }
 
   /**
@@ -10335,6 +10397,7 @@ export namespace Prisma {
     teamLead: string | null
     teamLeadId: string | null
     tournamentId: string | null
+    currentStageId: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -10349,6 +10412,7 @@ export namespace Prisma {
     teamLead: string | null
     teamLeadId: string | null
     tournamentId: string | null
+    currentStageId: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -10364,6 +10428,7 @@ export namespace Prisma {
     teamLeadId: number
     teamMembers: number
     tournamentId: number
+    currentStageId: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -10380,6 +10445,7 @@ export namespace Prisma {
     teamLead?: true
     teamLeadId?: true
     tournamentId?: true
+    currentStageId?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -10394,6 +10460,7 @@ export namespace Prisma {
     teamLead?: true
     teamLeadId?: true
     tournamentId?: true
+    currentStageId?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -10409,6 +10476,7 @@ export namespace Prisma {
     teamLeadId?: true
     teamMembers?: true
     tournamentId?: true
+    currentStageId?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -10497,6 +10565,7 @@ export namespace Prisma {
     teamLeadId: string | null
     teamMembers: JsonValue | null
     tournamentId: string | null
+    currentStageId: string | null
     createdAt: Date
     updatedAt: Date
     _count: TeamCountAggregateOutputType | null
@@ -10529,9 +10598,11 @@ export namespace Prisma {
     teamLeadId?: boolean
     teamMembers?: boolean
     tournamentId?: boolean
+    currentStageId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     tournament?: boolean | Team$tournamentArgs<ExtArgs>
+    currentStage?: boolean | Team$currentStageArgs<ExtArgs>
     teamAlliances?: boolean | Team$teamAlliancesArgs<ExtArgs>
     teamStats?: boolean | Team$teamStatsArgs<ExtArgs>
     _count?: boolean | TeamCountOutputTypeDefaultArgs<ExtArgs>
@@ -10548,9 +10619,11 @@ export namespace Prisma {
     teamLeadId?: boolean
     teamMembers?: boolean
     tournamentId?: boolean
+    currentStageId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     tournament?: boolean | Team$tournamentArgs<ExtArgs>
+    currentStage?: boolean | Team$currentStageArgs<ExtArgs>
   }, ExtArgs["result"]["team"]>
 
   export type TeamSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -10564,9 +10637,11 @@ export namespace Prisma {
     teamLeadId?: boolean
     teamMembers?: boolean
     tournamentId?: boolean
+    currentStageId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     tournament?: boolean | Team$tournamentArgs<ExtArgs>
+    currentStage?: boolean | Team$currentStageArgs<ExtArgs>
   }, ExtArgs["result"]["team"]>
 
   export type TeamSelectScalar = {
@@ -10580,28 +10655,33 @@ export namespace Prisma {
     teamLeadId?: boolean
     teamMembers?: boolean
     tournamentId?: boolean
+    currentStageId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type TeamOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "teamNumber" | "name" | "organization" | "avatar" | "description" | "teamLead" | "teamLeadId" | "teamMembers" | "tournamentId" | "createdAt" | "updatedAt", ExtArgs["result"]["team"]>
+  export type TeamOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "teamNumber" | "name" | "organization" | "avatar" | "description" | "teamLead" | "teamLeadId" | "teamMembers" | "tournamentId" | "currentStageId" | "createdAt" | "updatedAt", ExtArgs["result"]["team"]>
   export type TeamInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     tournament?: boolean | Team$tournamentArgs<ExtArgs>
+    currentStage?: boolean | Team$currentStageArgs<ExtArgs>
     teamAlliances?: boolean | Team$teamAlliancesArgs<ExtArgs>
     teamStats?: boolean | Team$teamStatsArgs<ExtArgs>
     _count?: boolean | TeamCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type TeamIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     tournament?: boolean | Team$tournamentArgs<ExtArgs>
+    currentStage?: boolean | Team$currentStageArgs<ExtArgs>
   }
   export type TeamIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     tournament?: boolean | Team$tournamentArgs<ExtArgs>
+    currentStage?: boolean | Team$currentStageArgs<ExtArgs>
   }
 
   export type $TeamPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Team"
     objects: {
       tournament: Prisma.$TournamentPayload<ExtArgs> | null
+      currentStage: Prisma.$StagePayload<ExtArgs> | null
       teamAlliances: Prisma.$TeamAlliancePayload<ExtArgs>[]
       teamStats: Prisma.$TeamStatsPayload<ExtArgs>[]
     }
@@ -10616,6 +10696,7 @@ export namespace Prisma {
       teamLeadId: string | null
       teamMembers: Prisma.JsonValue | null
       tournamentId: string | null
+      currentStageId: string | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["team"]>
@@ -11013,6 +11094,7 @@ export namespace Prisma {
   export interface Prisma__TeamClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     tournament<T extends Team$tournamentArgs<ExtArgs> = {}>(args?: Subset<T, Team$tournamentArgs<ExtArgs>>): Prisma__TournamentClient<$Result.GetResult<Prisma.$TournamentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    currentStage<T extends Team$currentStageArgs<ExtArgs> = {}>(args?: Subset<T, Team$currentStageArgs<ExtArgs>>): Prisma__StageClient<$Result.GetResult<Prisma.$StagePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     teamAlliances<T extends Team$teamAlliancesArgs<ExtArgs> = {}>(args?: Subset<T, Team$teamAlliancesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeamAlliancePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     teamStats<T extends Team$teamStatsArgs<ExtArgs> = {}>(args?: Subset<T, Team$teamStatsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeamStatsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
@@ -11054,6 +11136,7 @@ export namespace Prisma {
     readonly teamLeadId: FieldRef<"Team", 'String'>
     readonly teamMembers: FieldRef<"Team", 'Json'>
     readonly tournamentId: FieldRef<"Team", 'String'>
+    readonly currentStageId: FieldRef<"Team", 'String'>
     readonly createdAt: FieldRef<"Team", 'DateTime'>
     readonly updatedAt: FieldRef<"Team", 'DateTime'>
   }
@@ -11468,6 +11551,25 @@ export namespace Prisma {
      */
     include?: TournamentInclude<ExtArgs> | null
     where?: TournamentWhereInput
+  }
+
+  /**
+   * Team.currentStage
+   */
+  export type Team$currentStageArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Stage
+     */
+    select?: StageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Stage
+     */
+    omit?: StageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StageInclude<ExtArgs> | null
+    where?: StageWhereInput
   }
 
   /**
@@ -22175,6 +22277,7 @@ export namespace Prisma {
     id: 'id',
     name: 'name',
     type: 'type',
+    status: 'status',
     startDate: 'startDate',
     endDate: 'endDate',
     tournamentId: 'tournamentId',
@@ -22247,6 +22350,7 @@ export namespace Prisma {
     teamLeadId: 'teamLeadId',
     teamMembers: 'teamMembers',
     tournamentId: 'tournamentId',
+    currentStageId: 'currentStageId',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -22518,6 +22622,20 @@ export namespace Prisma {
    * Reference to a field of type 'StageType[]'
    */
   export type ListEnumStageTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StageType[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'StageStatus'
+   */
+  export type EnumStageStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StageStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'StageStatus[]'
+   */
+  export type ListEnumStageStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StageStatus[]'>
     
 
 
@@ -22835,6 +22953,7 @@ export namespace Prisma {
     id?: StringFilter<"Stage"> | string
     name?: StringFilter<"Stage"> | string
     type?: EnumStageTypeFilter<"Stage"> | $Enums.StageType
+    status?: EnumStageStatusFilter<"Stage"> | $Enums.StageStatus
     startDate?: DateTimeFilter<"Stage"> | Date | string
     endDate?: DateTimeFilter<"Stage"> | Date | string
     tournamentId?: StringFilter<"Stage"> | string
@@ -22844,12 +22963,14 @@ export namespace Prisma {
     tournament?: XOR<TournamentScalarRelationFilter, TournamentWhereInput>
     matches?: MatchListRelationFilter
     teamStats?: TeamStatsListRelationFilter
+    teams?: TeamListRelationFilter
   }
 
   export type StageOrderByWithRelationInput = {
     id?: SortOrder
     name?: SortOrder
     type?: SortOrder
+    status?: SortOrder
     startDate?: SortOrder
     endDate?: SortOrder
     tournamentId?: SortOrder
@@ -22859,6 +22980,7 @@ export namespace Prisma {
     tournament?: TournamentOrderByWithRelationInput
     matches?: MatchOrderByRelationAggregateInput
     teamStats?: TeamStatsOrderByRelationAggregateInput
+    teams?: TeamOrderByRelationAggregateInput
   }
 
   export type StageWhereUniqueInput = Prisma.AtLeast<{
@@ -22868,6 +22990,7 @@ export namespace Prisma {
     NOT?: StageWhereInput | StageWhereInput[]
     name?: StringFilter<"Stage"> | string
     type?: EnumStageTypeFilter<"Stage"> | $Enums.StageType
+    status?: EnumStageStatusFilter<"Stage"> | $Enums.StageStatus
     startDate?: DateTimeFilter<"Stage"> | Date | string
     endDate?: DateTimeFilter<"Stage"> | Date | string
     tournamentId?: StringFilter<"Stage"> | string
@@ -22877,12 +23000,14 @@ export namespace Prisma {
     tournament?: XOR<TournamentScalarRelationFilter, TournamentWhereInput>
     matches?: MatchListRelationFilter
     teamStats?: TeamStatsListRelationFilter
+    teams?: TeamListRelationFilter
   }, "id">
 
   export type StageOrderByWithAggregationInput = {
     id?: SortOrder
     name?: SortOrder
     type?: SortOrder
+    status?: SortOrder
     startDate?: SortOrder
     endDate?: SortOrder
     tournamentId?: SortOrder
@@ -22903,6 +23028,7 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"Stage"> | string
     name?: StringWithAggregatesFilter<"Stage"> | string
     type?: EnumStageTypeWithAggregatesFilter<"Stage"> | $Enums.StageType
+    status?: EnumStageStatusWithAggregatesFilter<"Stage"> | $Enums.StageStatus
     startDate?: DateTimeWithAggregatesFilter<"Stage"> | Date | string
     endDate?: DateTimeWithAggregatesFilter<"Stage"> | Date | string
     tournamentId?: StringWithAggregatesFilter<"Stage"> | string
@@ -23207,9 +23333,11 @@ export namespace Prisma {
     teamLeadId?: StringNullableFilter<"Team"> | string | null
     teamMembers?: JsonNullableFilter<"Team">
     tournamentId?: StringNullableFilter<"Team"> | string | null
+    currentStageId?: StringNullableFilter<"Team"> | string | null
     createdAt?: DateTimeFilter<"Team"> | Date | string
     updatedAt?: DateTimeFilter<"Team"> | Date | string
     tournament?: XOR<TournamentNullableScalarRelationFilter, TournamentWhereInput> | null
+    currentStage?: XOR<StageNullableScalarRelationFilter, StageWhereInput> | null
     teamAlliances?: TeamAllianceListRelationFilter
     teamStats?: TeamStatsListRelationFilter
   }
@@ -23225,9 +23353,11 @@ export namespace Prisma {
     teamLeadId?: SortOrderInput | SortOrder
     teamMembers?: SortOrderInput | SortOrder
     tournamentId?: SortOrderInput | SortOrder
+    currentStageId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     tournament?: TournamentOrderByWithRelationInput
+    currentStage?: StageOrderByWithRelationInput
     teamAlliances?: TeamAllianceOrderByRelationAggregateInput
     teamStats?: TeamStatsOrderByRelationAggregateInput
   }
@@ -23246,9 +23376,11 @@ export namespace Prisma {
     teamLeadId?: StringNullableFilter<"Team"> | string | null
     teamMembers?: JsonNullableFilter<"Team">
     tournamentId?: StringNullableFilter<"Team"> | string | null
+    currentStageId?: StringNullableFilter<"Team"> | string | null
     createdAt?: DateTimeFilter<"Team"> | Date | string
     updatedAt?: DateTimeFilter<"Team"> | Date | string
     tournament?: XOR<TournamentNullableScalarRelationFilter, TournamentWhereInput> | null
+    currentStage?: XOR<StageNullableScalarRelationFilter, StageWhereInput> | null
     teamAlliances?: TeamAllianceListRelationFilter
     teamStats?: TeamStatsListRelationFilter
   }, "id" | "teamNumber">
@@ -23264,6 +23396,7 @@ export namespace Prisma {
     teamLeadId?: SortOrderInput | SortOrder
     teamMembers?: SortOrderInput | SortOrder
     tournamentId?: SortOrderInput | SortOrder
+    currentStageId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: TeamCountOrderByAggregateInput
@@ -23285,6 +23418,7 @@ export namespace Prisma {
     teamLeadId?: StringNullableWithAggregatesFilter<"Team"> | string | null
     teamMembers?: JsonNullableWithAggregatesFilter<"Team">
     tournamentId?: StringNullableWithAggregatesFilter<"Team"> | string | null
+    currentStageId?: StringNullableWithAggregatesFilter<"Team"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Team"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Team"> | Date | string
   }
@@ -24258,6 +24392,7 @@ export namespace Prisma {
     id?: string
     name: string
     type: $Enums.StageType
+    status?: $Enums.StageStatus
     startDate: Date | string
     endDate: Date | string
     teamsPerAlliance?: number
@@ -24266,12 +24401,14 @@ export namespace Prisma {
     tournament: TournamentCreateNestedOneWithoutStagesInput
     matches?: MatchCreateNestedManyWithoutStageInput
     teamStats?: TeamStatsCreateNestedManyWithoutStageInput
+    teams?: TeamCreateNestedManyWithoutCurrentStageInput
   }
 
   export type StageUncheckedCreateInput = {
     id?: string
     name: string
     type: $Enums.StageType
+    status?: $Enums.StageStatus
     startDate: Date | string
     endDate: Date | string
     tournamentId: string
@@ -24280,12 +24417,14 @@ export namespace Prisma {
     updatedAt?: Date | string
     matches?: MatchUncheckedCreateNestedManyWithoutStageInput
     teamStats?: TeamStatsUncheckedCreateNestedManyWithoutStageInput
+    teams?: TeamUncheckedCreateNestedManyWithoutCurrentStageInput
   }
 
   export type StageUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     type?: EnumStageTypeFieldUpdateOperationsInput | $Enums.StageType
+    status?: EnumStageStatusFieldUpdateOperationsInput | $Enums.StageStatus
     startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     endDate?: DateTimeFieldUpdateOperationsInput | Date | string
     teamsPerAlliance?: IntFieldUpdateOperationsInput | number
@@ -24294,12 +24433,14 @@ export namespace Prisma {
     tournament?: TournamentUpdateOneRequiredWithoutStagesNestedInput
     matches?: MatchUpdateManyWithoutStageNestedInput
     teamStats?: TeamStatsUpdateManyWithoutStageNestedInput
+    teams?: TeamUpdateManyWithoutCurrentStageNestedInput
   }
 
   export type StageUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     type?: EnumStageTypeFieldUpdateOperationsInput | $Enums.StageType
+    status?: EnumStageStatusFieldUpdateOperationsInput | $Enums.StageStatus
     startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     endDate?: DateTimeFieldUpdateOperationsInput | Date | string
     tournamentId?: StringFieldUpdateOperationsInput | string
@@ -24308,12 +24449,14 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     matches?: MatchUncheckedUpdateManyWithoutStageNestedInput
     teamStats?: TeamStatsUncheckedUpdateManyWithoutStageNestedInput
+    teams?: TeamUncheckedUpdateManyWithoutCurrentStageNestedInput
   }
 
   export type StageCreateManyInput = {
     id?: string
     name: string
     type: $Enums.StageType
+    status?: $Enums.StageStatus
     startDate: Date | string
     endDate: Date | string
     tournamentId: string
@@ -24326,6 +24469,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     type?: EnumStageTypeFieldUpdateOperationsInput | $Enums.StageType
+    status?: EnumStageStatusFieldUpdateOperationsInput | $Enums.StageStatus
     startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     endDate?: DateTimeFieldUpdateOperationsInput | Date | string
     teamsPerAlliance?: IntFieldUpdateOperationsInput | number
@@ -24337,6 +24481,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     type?: EnumStageTypeFieldUpdateOperationsInput | $Enums.StageType
+    status?: EnumStageStatusFieldUpdateOperationsInput | $Enums.StageStatus
     startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     endDate?: DateTimeFieldUpdateOperationsInput | Date | string
     tournamentId?: StringFieldUpdateOperationsInput | string
@@ -24663,6 +24808,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     tournament?: TournamentCreateNestedOneWithoutTeamsInput
+    currentStage?: StageCreateNestedOneWithoutTeamsInput
     teamAlliances?: TeamAllianceCreateNestedManyWithoutTeamInput
     teamStats?: TeamStatsCreateNestedManyWithoutTeamInput
   }
@@ -24678,6 +24824,7 @@ export namespace Prisma {
     teamLeadId?: string | null
     teamMembers?: NullableJsonNullValueInput | InputJsonValue
     tournamentId?: string | null
+    currentStageId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     teamAlliances?: TeamAllianceUncheckedCreateNestedManyWithoutTeamInput
@@ -24697,6 +24844,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     tournament?: TournamentUpdateOneWithoutTeamsNestedInput
+    currentStage?: StageUpdateOneWithoutTeamsNestedInput
     teamAlliances?: TeamAllianceUpdateManyWithoutTeamNestedInput
     teamStats?: TeamStatsUpdateManyWithoutTeamNestedInput
   }
@@ -24712,6 +24860,7 @@ export namespace Prisma {
     teamLeadId?: NullableStringFieldUpdateOperationsInput | string | null
     teamMembers?: NullableJsonNullValueInput | InputJsonValue
     tournamentId?: NullableStringFieldUpdateOperationsInput | string | null
+    currentStageId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     teamAlliances?: TeamAllianceUncheckedUpdateManyWithoutTeamNestedInput
@@ -24729,6 +24878,7 @@ export namespace Prisma {
     teamLeadId?: string | null
     teamMembers?: NullableJsonNullValueInput | InputJsonValue
     tournamentId?: string | null
+    currentStageId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -24758,6 +24908,7 @@ export namespace Prisma {
     teamLeadId?: NullableStringFieldUpdateOperationsInput | string | null
     teamMembers?: NullableJsonNullValueInput | InputJsonValue
     tournamentId?: NullableStringFieldUpdateOperationsInput | string | null
+    currentStageId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -25921,6 +26072,13 @@ export namespace Prisma {
     not?: NestedEnumStageTypeFilter<$PrismaModel> | $Enums.StageType
   }
 
+  export type EnumStageStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.StageStatus | EnumStageStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.StageStatus[] | ListEnumStageStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.StageStatus[] | ListEnumStageStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumStageStatusFilter<$PrismaModel> | $Enums.StageStatus
+  }
+
   export type TournamentScalarRelationFilter = {
     is?: TournamentWhereInput
     isNot?: TournamentWhereInput
@@ -25930,6 +26088,7 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     type?: SortOrder
+    status?: SortOrder
     startDate?: SortOrder
     endDate?: SortOrder
     tournamentId?: SortOrder
@@ -25946,6 +26105,7 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     type?: SortOrder
+    status?: SortOrder
     startDate?: SortOrder
     endDate?: SortOrder
     tournamentId?: SortOrder
@@ -25958,6 +26118,7 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     type?: SortOrder
+    status?: SortOrder
     startDate?: SortOrder
     endDate?: SortOrder
     tournamentId?: SortOrder
@@ -25978,6 +26139,16 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumStageTypeFilter<$PrismaModel>
     _max?: NestedEnumStageTypeFilter<$PrismaModel>
+  }
+
+  export type EnumStageStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.StageStatus | EnumStageStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.StageStatus[] | ListEnumStageStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.StageStatus[] | ListEnumStageStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumStageStatusWithAggregatesFilter<$PrismaModel> | $Enums.StageStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumStageStatusFilter<$PrismaModel>
+    _max?: NestedEnumStageStatusFilter<$PrismaModel>
   }
 
   export type IntNullableFilter<$PrismaModel = never> = {
@@ -26319,6 +26490,11 @@ export namespace Prisma {
     isNot?: TournamentWhereInput | null
   }
 
+  export type StageNullableScalarRelationFilter = {
+    is?: StageWhereInput | null
+    isNot?: StageWhereInput | null
+  }
+
   export type TeamCountOrderByAggregateInput = {
     id?: SortOrder
     teamNumber?: SortOrder
@@ -26330,6 +26506,7 @@ export namespace Prisma {
     teamLeadId?: SortOrder
     teamMembers?: SortOrder
     tournamentId?: SortOrder
+    currentStageId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -26344,6 +26521,7 @@ export namespace Prisma {
     teamLead?: SortOrder
     teamLeadId?: SortOrder
     tournamentId?: SortOrder
+    currentStageId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -26358,6 +26536,7 @@ export namespace Prisma {
     teamLead?: SortOrder
     teamLeadId?: SortOrder
     tournamentId?: SortOrder
+    currentStageId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -26463,11 +26642,6 @@ export namespace Prisma {
     gt?: number | FloatFieldRefInput<$PrismaModel>
     gte?: number | FloatFieldRefInput<$PrismaModel>
     not?: NestedFloatFilter<$PrismaModel> | number
-  }
-
-  export type StageNullableScalarRelationFilter = {
-    is?: StageWhereInput | null
-    isNot?: StageWhereInput | null
   }
 
   export type TeamStatsTeamIdTournamentIdCompoundUniqueInput = {
@@ -27531,6 +27705,13 @@ export namespace Prisma {
     connect?: TeamStatsWhereUniqueInput | TeamStatsWhereUniqueInput[]
   }
 
+  export type TeamCreateNestedManyWithoutCurrentStageInput = {
+    create?: XOR<TeamCreateWithoutCurrentStageInput, TeamUncheckedCreateWithoutCurrentStageInput> | TeamCreateWithoutCurrentStageInput[] | TeamUncheckedCreateWithoutCurrentStageInput[]
+    connectOrCreate?: TeamCreateOrConnectWithoutCurrentStageInput | TeamCreateOrConnectWithoutCurrentStageInput[]
+    createMany?: TeamCreateManyCurrentStageInputEnvelope
+    connect?: TeamWhereUniqueInput | TeamWhereUniqueInput[]
+  }
+
   export type MatchUncheckedCreateNestedManyWithoutStageInput = {
     create?: XOR<MatchCreateWithoutStageInput, MatchUncheckedCreateWithoutStageInput> | MatchCreateWithoutStageInput[] | MatchUncheckedCreateWithoutStageInput[]
     connectOrCreate?: MatchCreateOrConnectWithoutStageInput | MatchCreateOrConnectWithoutStageInput[]
@@ -27545,8 +27726,19 @@ export namespace Prisma {
     connect?: TeamStatsWhereUniqueInput | TeamStatsWhereUniqueInput[]
   }
 
+  export type TeamUncheckedCreateNestedManyWithoutCurrentStageInput = {
+    create?: XOR<TeamCreateWithoutCurrentStageInput, TeamUncheckedCreateWithoutCurrentStageInput> | TeamCreateWithoutCurrentStageInput[] | TeamUncheckedCreateWithoutCurrentStageInput[]
+    connectOrCreate?: TeamCreateOrConnectWithoutCurrentStageInput | TeamCreateOrConnectWithoutCurrentStageInput[]
+    createMany?: TeamCreateManyCurrentStageInputEnvelope
+    connect?: TeamWhereUniqueInput | TeamWhereUniqueInput[]
+  }
+
   export type EnumStageTypeFieldUpdateOperationsInput = {
     set?: $Enums.StageType
+  }
+
+  export type EnumStageStatusFieldUpdateOperationsInput = {
+    set?: $Enums.StageStatus
   }
 
   export type TournamentUpdateOneRequiredWithoutStagesNestedInput = {
@@ -27585,6 +27777,20 @@ export namespace Prisma {
     deleteMany?: TeamStatsScalarWhereInput | TeamStatsScalarWhereInput[]
   }
 
+  export type TeamUpdateManyWithoutCurrentStageNestedInput = {
+    create?: XOR<TeamCreateWithoutCurrentStageInput, TeamUncheckedCreateWithoutCurrentStageInput> | TeamCreateWithoutCurrentStageInput[] | TeamUncheckedCreateWithoutCurrentStageInput[]
+    connectOrCreate?: TeamCreateOrConnectWithoutCurrentStageInput | TeamCreateOrConnectWithoutCurrentStageInput[]
+    upsert?: TeamUpsertWithWhereUniqueWithoutCurrentStageInput | TeamUpsertWithWhereUniqueWithoutCurrentStageInput[]
+    createMany?: TeamCreateManyCurrentStageInputEnvelope
+    set?: TeamWhereUniqueInput | TeamWhereUniqueInput[]
+    disconnect?: TeamWhereUniqueInput | TeamWhereUniqueInput[]
+    delete?: TeamWhereUniqueInput | TeamWhereUniqueInput[]
+    connect?: TeamWhereUniqueInput | TeamWhereUniqueInput[]
+    update?: TeamUpdateWithWhereUniqueWithoutCurrentStageInput | TeamUpdateWithWhereUniqueWithoutCurrentStageInput[]
+    updateMany?: TeamUpdateManyWithWhereWithoutCurrentStageInput | TeamUpdateManyWithWhereWithoutCurrentStageInput[]
+    deleteMany?: TeamScalarWhereInput | TeamScalarWhereInput[]
+  }
+
   export type MatchUncheckedUpdateManyWithoutStageNestedInput = {
     create?: XOR<MatchCreateWithoutStageInput, MatchUncheckedCreateWithoutStageInput> | MatchCreateWithoutStageInput[] | MatchUncheckedCreateWithoutStageInput[]
     connectOrCreate?: MatchCreateOrConnectWithoutStageInput | MatchCreateOrConnectWithoutStageInput[]
@@ -27611,6 +27817,20 @@ export namespace Prisma {
     update?: TeamStatsUpdateWithWhereUniqueWithoutStageInput | TeamStatsUpdateWithWhereUniqueWithoutStageInput[]
     updateMany?: TeamStatsUpdateManyWithWhereWithoutStageInput | TeamStatsUpdateManyWithWhereWithoutStageInput[]
     deleteMany?: TeamStatsScalarWhereInput | TeamStatsScalarWhereInput[]
+  }
+
+  export type TeamUncheckedUpdateManyWithoutCurrentStageNestedInput = {
+    create?: XOR<TeamCreateWithoutCurrentStageInput, TeamUncheckedCreateWithoutCurrentStageInput> | TeamCreateWithoutCurrentStageInput[] | TeamUncheckedCreateWithoutCurrentStageInput[]
+    connectOrCreate?: TeamCreateOrConnectWithoutCurrentStageInput | TeamCreateOrConnectWithoutCurrentStageInput[]
+    upsert?: TeamUpsertWithWhereUniqueWithoutCurrentStageInput | TeamUpsertWithWhereUniqueWithoutCurrentStageInput[]
+    createMany?: TeamCreateManyCurrentStageInputEnvelope
+    set?: TeamWhereUniqueInput | TeamWhereUniqueInput[]
+    disconnect?: TeamWhereUniqueInput | TeamWhereUniqueInput[]
+    delete?: TeamWhereUniqueInput | TeamWhereUniqueInput[]
+    connect?: TeamWhereUniqueInput | TeamWhereUniqueInput[]
+    update?: TeamUpdateWithWhereUniqueWithoutCurrentStageInput | TeamUpdateWithWhereUniqueWithoutCurrentStageInput[]
+    updateMany?: TeamUpdateManyWithWhereWithoutCurrentStageInput | TeamUpdateManyWithWhereWithoutCurrentStageInput[]
+    deleteMany?: TeamScalarWhereInput | TeamScalarWhereInput[]
   }
 
   export type StageCreateNestedOneWithoutMatchesInput = {
@@ -27987,6 +28207,12 @@ export namespace Prisma {
     connect?: TournamentWhereUniqueInput
   }
 
+  export type StageCreateNestedOneWithoutTeamsInput = {
+    create?: XOR<StageCreateWithoutTeamsInput, StageUncheckedCreateWithoutTeamsInput>
+    connectOrCreate?: StageCreateOrConnectWithoutTeamsInput
+    connect?: StageWhereUniqueInput
+  }
+
   export type TeamAllianceCreateNestedManyWithoutTeamInput = {
     create?: XOR<TeamAllianceCreateWithoutTeamInput, TeamAllianceUncheckedCreateWithoutTeamInput> | TeamAllianceCreateWithoutTeamInput[] | TeamAllianceUncheckedCreateWithoutTeamInput[]
     connectOrCreate?: TeamAllianceCreateOrConnectWithoutTeamInput | TeamAllianceCreateOrConnectWithoutTeamInput[]
@@ -28023,6 +28249,16 @@ export namespace Prisma {
     delete?: TournamentWhereInput | boolean
     connect?: TournamentWhereUniqueInput
     update?: XOR<XOR<TournamentUpdateToOneWithWhereWithoutTeamsInput, TournamentUpdateWithoutTeamsInput>, TournamentUncheckedUpdateWithoutTeamsInput>
+  }
+
+  export type StageUpdateOneWithoutTeamsNestedInput = {
+    create?: XOR<StageCreateWithoutTeamsInput, StageUncheckedCreateWithoutTeamsInput>
+    connectOrCreate?: StageCreateOrConnectWithoutTeamsInput
+    upsert?: StageUpsertWithoutTeamsInput
+    disconnect?: StageWhereInput | boolean
+    delete?: StageWhereInput | boolean
+    connect?: StageWhereUniqueInput
+    update?: XOR<XOR<StageUpdateToOneWithWhereWithoutTeamsInput, StageUpdateWithoutTeamsInput>, StageUncheckedUpdateWithoutTeamsInput>
   }
 
   export type TeamAllianceUpdateManyWithoutTeamNestedInput = {
@@ -28771,6 +29007,13 @@ export namespace Prisma {
     not?: NestedEnumStageTypeFilter<$PrismaModel> | $Enums.StageType
   }
 
+  export type NestedEnumStageStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.StageStatus | EnumStageStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.StageStatus[] | ListEnumStageStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.StageStatus[] | ListEnumStageStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumStageStatusFilter<$PrismaModel> | $Enums.StageStatus
+  }
+
   export type NestedEnumStageTypeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.StageType | EnumStageTypeFieldRefInput<$PrismaModel>
     in?: $Enums.StageType[] | ListEnumStageTypeFieldRefInput<$PrismaModel>
@@ -28779,6 +29022,16 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumStageTypeFilter<$PrismaModel>
     _max?: NestedEnumStageTypeFilter<$PrismaModel>
+  }
+
+  export type NestedEnumStageStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.StageStatus | EnumStageStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.StageStatus[] | ListEnumStageStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.StageStatus[] | ListEnumStageStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumStageStatusWithAggregatesFilter<$PrismaModel> | $Enums.StageStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumStageStatusFilter<$PrismaModel>
+    _max?: NestedEnumStageStatusFilter<$PrismaModel>
   }
 
   export type NestedEnumMatchStateFilter<$PrismaModel = never> = {
@@ -29502,6 +29755,7 @@ export namespace Prisma {
     id?: string
     name: string
     type: $Enums.StageType
+    status?: $Enums.StageStatus
     startDate: Date | string
     endDate: Date | string
     teamsPerAlliance?: number
@@ -29509,12 +29763,14 @@ export namespace Prisma {
     updatedAt?: Date | string
     matches?: MatchCreateNestedManyWithoutStageInput
     teamStats?: TeamStatsCreateNestedManyWithoutStageInput
+    teams?: TeamCreateNestedManyWithoutCurrentStageInput
   }
 
   export type StageUncheckedCreateWithoutTournamentInput = {
     id?: string
     name: string
     type: $Enums.StageType
+    status?: $Enums.StageStatus
     startDate: Date | string
     endDate: Date | string
     teamsPerAlliance?: number
@@ -29522,6 +29778,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     matches?: MatchUncheckedCreateNestedManyWithoutStageInput
     teamStats?: TeamStatsUncheckedCreateNestedManyWithoutStageInput
+    teams?: TeamUncheckedCreateNestedManyWithoutCurrentStageInput
   }
 
   export type StageCreateOrConnectWithoutTournamentInput = {
@@ -29546,6 +29803,7 @@ export namespace Prisma {
     teamMembers?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
+    currentStage?: StageCreateNestedOneWithoutTeamsInput
     teamAlliances?: TeamAllianceCreateNestedManyWithoutTeamInput
     teamStats?: TeamStatsCreateNestedManyWithoutTeamInput
   }
@@ -29560,6 +29818,7 @@ export namespace Prisma {
     teamLead?: string | null
     teamLeadId?: string | null
     teamMembers?: NullableJsonNullValueInput | InputJsonValue
+    currentStageId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     teamAlliances?: TeamAllianceUncheckedCreateNestedManyWithoutTeamInput
@@ -29762,6 +30021,7 @@ export namespace Prisma {
     id?: StringFilter<"Stage"> | string
     name?: StringFilter<"Stage"> | string
     type?: EnumStageTypeFilter<"Stage"> | $Enums.StageType
+    status?: EnumStageStatusFilter<"Stage"> | $Enums.StageStatus
     startDate?: DateTimeFilter<"Stage"> | Date | string
     endDate?: DateTimeFilter<"Stage"> | Date | string
     tournamentId?: StringFilter<"Stage"> | string
@@ -29800,6 +30060,7 @@ export namespace Prisma {
     teamLeadId?: StringNullableFilter<"Team"> | string | null
     teamMembers?: JsonNullableFilter<"Team">
     tournamentId?: StringNullableFilter<"Team"> | string | null
+    currentStageId?: StringNullableFilter<"Team"> | string | null
     createdAt?: DateTimeFilter<"Team"> | Date | string
     updatedAt?: DateTimeFilter<"Team"> | Date | string
   }
@@ -30045,6 +30306,50 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type TeamCreateWithoutCurrentStageInput = {
+    id?: string
+    teamNumber: string
+    name: string
+    organization?: string | null
+    avatar?: string | null
+    description?: string | null
+    teamLead?: string | null
+    teamLeadId?: string | null
+    teamMembers?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    tournament?: TournamentCreateNestedOneWithoutTeamsInput
+    teamAlliances?: TeamAllianceCreateNestedManyWithoutTeamInput
+    teamStats?: TeamStatsCreateNestedManyWithoutTeamInput
+  }
+
+  export type TeamUncheckedCreateWithoutCurrentStageInput = {
+    id?: string
+    teamNumber: string
+    name: string
+    organization?: string | null
+    avatar?: string | null
+    description?: string | null
+    teamLead?: string | null
+    teamLeadId?: string | null
+    teamMembers?: NullableJsonNullValueInput | InputJsonValue
+    tournamentId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    teamAlliances?: TeamAllianceUncheckedCreateNestedManyWithoutTeamInput
+    teamStats?: TeamStatsUncheckedCreateNestedManyWithoutTeamInput
+  }
+
+  export type TeamCreateOrConnectWithoutCurrentStageInput = {
+    where: TeamWhereUniqueInput
+    create: XOR<TeamCreateWithoutCurrentStageInput, TeamUncheckedCreateWithoutCurrentStageInput>
+  }
+
+  export type TeamCreateManyCurrentStageInputEnvelope = {
+    data: TeamCreateManyCurrentStageInput | TeamCreateManyCurrentStageInput[]
+    skipDuplicates?: boolean
+  }
+
   export type TournamentUpsertWithoutStagesInput = {
     update: XOR<TournamentUpdateWithoutStagesInput, TournamentUncheckedUpdateWithoutStagesInput>
     create: XOR<TournamentCreateWithoutStagesInput, TournamentUncheckedCreateWithoutStagesInput>
@@ -30120,10 +30425,27 @@ export namespace Prisma {
     data: XOR<TeamStatsUpdateManyMutationInput, TeamStatsUncheckedUpdateManyWithoutStageInput>
   }
 
+  export type TeamUpsertWithWhereUniqueWithoutCurrentStageInput = {
+    where: TeamWhereUniqueInput
+    update: XOR<TeamUpdateWithoutCurrentStageInput, TeamUncheckedUpdateWithoutCurrentStageInput>
+    create: XOR<TeamCreateWithoutCurrentStageInput, TeamUncheckedCreateWithoutCurrentStageInput>
+  }
+
+  export type TeamUpdateWithWhereUniqueWithoutCurrentStageInput = {
+    where: TeamWhereUniqueInput
+    data: XOR<TeamUpdateWithoutCurrentStageInput, TeamUncheckedUpdateWithoutCurrentStageInput>
+  }
+
+  export type TeamUpdateManyWithWhereWithoutCurrentStageInput = {
+    where: TeamScalarWhereInput
+    data: XOR<TeamUpdateManyMutationInput, TeamUncheckedUpdateManyWithoutCurrentStageInput>
+  }
+
   export type StageCreateWithoutMatchesInput = {
     id?: string
     name: string
     type: $Enums.StageType
+    status?: $Enums.StageStatus
     startDate: Date | string
     endDate: Date | string
     teamsPerAlliance?: number
@@ -30131,12 +30453,14 @@ export namespace Prisma {
     updatedAt?: Date | string
     tournament: TournamentCreateNestedOneWithoutStagesInput
     teamStats?: TeamStatsCreateNestedManyWithoutStageInput
+    teams?: TeamCreateNestedManyWithoutCurrentStageInput
   }
 
   export type StageUncheckedCreateWithoutMatchesInput = {
     id?: string
     name: string
     type: $Enums.StageType
+    status?: $Enums.StageStatus
     startDate: Date | string
     endDate: Date | string
     tournamentId: string
@@ -30144,6 +30468,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     teamStats?: TeamStatsUncheckedCreateNestedManyWithoutStageInput
+    teams?: TeamUncheckedCreateNestedManyWithoutCurrentStageInput
   }
 
   export type StageCreateOrConnectWithoutMatchesInput = {
@@ -30360,6 +30685,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     type?: EnumStageTypeFieldUpdateOperationsInput | $Enums.StageType
+    status?: EnumStageStatusFieldUpdateOperationsInput | $Enums.StageStatus
     startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     endDate?: DateTimeFieldUpdateOperationsInput | Date | string
     teamsPerAlliance?: IntFieldUpdateOperationsInput | number
@@ -30367,12 +30693,14 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     tournament?: TournamentUpdateOneRequiredWithoutStagesNestedInput
     teamStats?: TeamStatsUpdateManyWithoutStageNestedInput
+    teams?: TeamUpdateManyWithoutCurrentStageNestedInput
   }
 
   export type StageUncheckedUpdateWithoutMatchesInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     type?: EnumStageTypeFieldUpdateOperationsInput | $Enums.StageType
+    status?: EnumStageStatusFieldUpdateOperationsInput | $Enums.StageStatus
     startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     endDate?: DateTimeFieldUpdateOperationsInput | Date | string
     tournamentId?: StringFieldUpdateOperationsInput | string
@@ -30380,6 +30708,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     teamStats?: TeamStatsUncheckedUpdateManyWithoutStageNestedInput
+    teams?: TeamUncheckedUpdateManyWithoutCurrentStageNestedInput
   }
 
   export type AllianceUpsertWithWhereUniqueWithoutMatchInput = {
@@ -31000,6 +31329,41 @@ export namespace Prisma {
     create: XOR<TournamentCreateWithoutTeamsInput, TournamentUncheckedCreateWithoutTeamsInput>
   }
 
+  export type StageCreateWithoutTeamsInput = {
+    id?: string
+    name: string
+    type: $Enums.StageType
+    status?: $Enums.StageStatus
+    startDate: Date | string
+    endDate: Date | string
+    teamsPerAlliance?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    tournament: TournamentCreateNestedOneWithoutStagesInput
+    matches?: MatchCreateNestedManyWithoutStageInput
+    teamStats?: TeamStatsCreateNestedManyWithoutStageInput
+  }
+
+  export type StageUncheckedCreateWithoutTeamsInput = {
+    id?: string
+    name: string
+    type: $Enums.StageType
+    status?: $Enums.StageStatus
+    startDate: Date | string
+    endDate: Date | string
+    tournamentId: string
+    teamsPerAlliance?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    matches?: MatchUncheckedCreateNestedManyWithoutStageInput
+    teamStats?: TeamStatsUncheckedCreateNestedManyWithoutStageInput
+  }
+
+  export type StageCreateOrConnectWithoutTeamsInput = {
+    where: StageWhereUniqueInput
+    create: XOR<StageCreateWithoutTeamsInput, StageUncheckedCreateWithoutTeamsInput>
+  }
+
   export type TeamAllianceCreateWithoutTeamInput = {
     id?: string
     stationPosition?: number
@@ -31121,6 +31485,47 @@ export namespace Prisma {
     scoreConfigs?: ScoreConfigUncheckedUpdateManyWithoutTournamentNestedInput
   }
 
+  export type StageUpsertWithoutTeamsInput = {
+    update: XOR<StageUpdateWithoutTeamsInput, StageUncheckedUpdateWithoutTeamsInput>
+    create: XOR<StageCreateWithoutTeamsInput, StageUncheckedCreateWithoutTeamsInput>
+    where?: StageWhereInput
+  }
+
+  export type StageUpdateToOneWithWhereWithoutTeamsInput = {
+    where?: StageWhereInput
+    data: XOR<StageUpdateWithoutTeamsInput, StageUncheckedUpdateWithoutTeamsInput>
+  }
+
+  export type StageUpdateWithoutTeamsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    type?: EnumStageTypeFieldUpdateOperationsInput | $Enums.StageType
+    status?: EnumStageStatusFieldUpdateOperationsInput | $Enums.StageStatus
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    teamsPerAlliance?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tournament?: TournamentUpdateOneRequiredWithoutStagesNestedInput
+    matches?: MatchUpdateManyWithoutStageNestedInput
+    teamStats?: TeamStatsUpdateManyWithoutStageNestedInput
+  }
+
+  export type StageUncheckedUpdateWithoutTeamsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    type?: EnumStageTypeFieldUpdateOperationsInput | $Enums.StageType
+    status?: EnumStageStatusFieldUpdateOperationsInput | $Enums.StageStatus
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    tournamentId?: StringFieldUpdateOperationsInput | string
+    teamsPerAlliance?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    matches?: MatchUncheckedUpdateManyWithoutStageNestedInput
+    teamStats?: TeamStatsUncheckedUpdateManyWithoutStageNestedInput
+  }
+
   export type TeamAllianceUpsertWithWhereUniqueWithoutTeamInput = {
     where: TeamAllianceWhereUniqueInput
     update: XOR<TeamAllianceUpdateWithoutTeamInput, TeamAllianceUncheckedUpdateWithoutTeamInput>
@@ -31166,6 +31571,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     tournament?: TournamentCreateNestedOneWithoutTeamsInput
+    currentStage?: StageCreateNestedOneWithoutTeamsInput
     teamStats?: TeamStatsCreateNestedManyWithoutTeamInput
   }
 
@@ -31180,6 +31586,7 @@ export namespace Prisma {
     teamLeadId?: string | null
     teamMembers?: NullableJsonNullValueInput | InputJsonValue
     tournamentId?: string | null
+    currentStageId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     teamStats?: TeamStatsUncheckedCreateNestedManyWithoutTeamInput
@@ -31243,6 +31650,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     tournament?: TournamentUpdateOneWithoutTeamsNestedInput
+    currentStage?: StageUpdateOneWithoutTeamsNestedInput
     teamStats?: TeamStatsUpdateManyWithoutTeamNestedInput
   }
 
@@ -31257,6 +31665,7 @@ export namespace Prisma {
     teamLeadId?: NullableStringFieldUpdateOperationsInput | string | null
     teamMembers?: NullableJsonNullValueInput | InputJsonValue
     tournamentId?: NullableStringFieldUpdateOperationsInput | string | null
+    currentStageId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     teamStats?: TeamStatsUncheckedUpdateManyWithoutTeamNestedInput
@@ -31310,6 +31719,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     tournament?: TournamentCreateNestedOneWithoutTeamsInput
+    currentStage?: StageCreateNestedOneWithoutTeamsInput
     teamAlliances?: TeamAllianceCreateNestedManyWithoutTeamInput
   }
 
@@ -31324,6 +31734,7 @@ export namespace Prisma {
     teamLeadId?: string | null
     teamMembers?: NullableJsonNullValueInput | InputJsonValue
     tournamentId?: string | null
+    currentStageId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     teamAlliances?: TeamAllianceUncheckedCreateNestedManyWithoutTeamInput
@@ -31375,6 +31786,7 @@ export namespace Prisma {
     id?: string
     name: string
     type: $Enums.StageType
+    status?: $Enums.StageStatus
     startDate: Date | string
     endDate: Date | string
     teamsPerAlliance?: number
@@ -31382,12 +31794,14 @@ export namespace Prisma {
     updatedAt?: Date | string
     tournament: TournamentCreateNestedOneWithoutStagesInput
     matches?: MatchCreateNestedManyWithoutStageInput
+    teams?: TeamCreateNestedManyWithoutCurrentStageInput
   }
 
   export type StageUncheckedCreateWithoutTeamStatsInput = {
     id?: string
     name: string
     type: $Enums.StageType
+    status?: $Enums.StageStatus
     startDate: Date | string
     endDate: Date | string
     tournamentId: string
@@ -31395,6 +31809,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     matches?: MatchUncheckedCreateNestedManyWithoutStageInput
+    teams?: TeamUncheckedCreateNestedManyWithoutCurrentStageInput
   }
 
   export type StageCreateOrConnectWithoutTeamStatsInput = {
@@ -31426,6 +31841,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     tournament?: TournamentUpdateOneWithoutTeamsNestedInput
+    currentStage?: StageUpdateOneWithoutTeamsNestedInput
     teamAlliances?: TeamAllianceUpdateManyWithoutTeamNestedInput
   }
 
@@ -31440,6 +31856,7 @@ export namespace Prisma {
     teamLeadId?: NullableStringFieldUpdateOperationsInput | string | null
     teamMembers?: NullableJsonNullValueInput | InputJsonValue
     tournamentId?: NullableStringFieldUpdateOperationsInput | string | null
+    currentStageId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     teamAlliances?: TeamAllianceUncheckedUpdateManyWithoutTeamNestedInput
@@ -31503,6 +31920,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     type?: EnumStageTypeFieldUpdateOperationsInput | $Enums.StageType
+    status?: EnumStageStatusFieldUpdateOperationsInput | $Enums.StageStatus
     startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     endDate?: DateTimeFieldUpdateOperationsInput | Date | string
     teamsPerAlliance?: IntFieldUpdateOperationsInput | number
@@ -31510,12 +31928,14 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     tournament?: TournamentUpdateOneRequiredWithoutStagesNestedInput
     matches?: MatchUpdateManyWithoutStageNestedInput
+    teams?: TeamUpdateManyWithoutCurrentStageNestedInput
   }
 
   export type StageUncheckedUpdateWithoutTeamStatsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     type?: EnumStageTypeFieldUpdateOperationsInput | $Enums.StageType
+    status?: EnumStageStatusFieldUpdateOperationsInput | $Enums.StageStatus
     startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     endDate?: DateTimeFieldUpdateOperationsInput | Date | string
     tournamentId?: StringFieldUpdateOperationsInput | string
@@ -31523,6 +31943,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     matches?: MatchUncheckedUpdateManyWithoutStageNestedInput
+    teams?: TeamUncheckedUpdateManyWithoutCurrentStageNestedInput
   }
 
   export type TournamentCreateWithoutFieldsInput = {
@@ -33022,6 +33443,7 @@ export namespace Prisma {
     id?: string
     name: string
     type: $Enums.StageType
+    status?: $Enums.StageStatus
     startDate: Date | string
     endDate: Date | string
     teamsPerAlliance?: number
@@ -33039,6 +33461,7 @@ export namespace Prisma {
     teamLead?: string | null
     teamLeadId?: string | null
     teamMembers?: NullableJsonNullValueInput | InputJsonValue
+    currentStageId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -33085,6 +33508,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     type?: EnumStageTypeFieldUpdateOperationsInput | $Enums.StageType
+    status?: EnumStageStatusFieldUpdateOperationsInput | $Enums.StageStatus
     startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     endDate?: DateTimeFieldUpdateOperationsInput | Date | string
     teamsPerAlliance?: IntFieldUpdateOperationsInput | number
@@ -33092,12 +33516,14 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     matches?: MatchUpdateManyWithoutStageNestedInput
     teamStats?: TeamStatsUpdateManyWithoutStageNestedInput
+    teams?: TeamUpdateManyWithoutCurrentStageNestedInput
   }
 
   export type StageUncheckedUpdateWithoutTournamentInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     type?: EnumStageTypeFieldUpdateOperationsInput | $Enums.StageType
+    status?: EnumStageStatusFieldUpdateOperationsInput | $Enums.StageStatus
     startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     endDate?: DateTimeFieldUpdateOperationsInput | Date | string
     teamsPerAlliance?: IntFieldUpdateOperationsInput | number
@@ -33105,12 +33531,14 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     matches?: MatchUncheckedUpdateManyWithoutStageNestedInput
     teamStats?: TeamStatsUncheckedUpdateManyWithoutStageNestedInput
+    teams?: TeamUncheckedUpdateManyWithoutCurrentStageNestedInput
   }
 
   export type StageUncheckedUpdateManyWithoutTournamentInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     type?: EnumStageTypeFieldUpdateOperationsInput | $Enums.StageType
+    status?: EnumStageStatusFieldUpdateOperationsInput | $Enums.StageStatus
     startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     endDate?: DateTimeFieldUpdateOperationsInput | Date | string
     teamsPerAlliance?: IntFieldUpdateOperationsInput | number
@@ -33130,6 +33558,7 @@ export namespace Prisma {
     teamMembers?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    currentStage?: StageUpdateOneWithoutTeamsNestedInput
     teamAlliances?: TeamAllianceUpdateManyWithoutTeamNestedInput
     teamStats?: TeamStatsUpdateManyWithoutTeamNestedInput
   }
@@ -33144,6 +33573,7 @@ export namespace Prisma {
     teamLead?: NullableStringFieldUpdateOperationsInput | string | null
     teamLeadId?: NullableStringFieldUpdateOperationsInput | string | null
     teamMembers?: NullableJsonNullValueInput | InputJsonValue
+    currentStageId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     teamAlliances?: TeamAllianceUncheckedUpdateManyWithoutTeamNestedInput
@@ -33160,6 +33590,7 @@ export namespace Prisma {
     teamLead?: NullableStringFieldUpdateOperationsInput | string | null
     teamLeadId?: NullableStringFieldUpdateOperationsInput | string | null
     teamMembers?: NullableJsonNullValueInput | InputJsonValue
+    currentStageId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -33327,6 +33758,21 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type TeamCreateManyCurrentStageInput = {
+    id?: string
+    teamNumber: string
+    name: string
+    organization?: string | null
+    avatar?: string | null
+    description?: string | null
+    teamLead?: string | null
+    teamLeadId?: string | null
+    teamMembers?: NullableJsonNullValueInput | InputJsonValue
+    tournamentId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type MatchUpdateWithoutStageInput = {
     id?: StringFieldUpdateOperationsInput | string
     matchNumber?: IntFieldUpdateOperationsInput | number
@@ -33448,6 +33894,55 @@ export namespace Prisma {
     rank?: NullableIntFieldUpdateOperationsInput | number | null
     tiebreaker1?: FloatFieldUpdateOperationsInput | number
     tiebreaker2?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TeamUpdateWithoutCurrentStageInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    teamNumber?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    organization?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    teamLead?: NullableStringFieldUpdateOperationsInput | string | null
+    teamLeadId?: NullableStringFieldUpdateOperationsInput | string | null
+    teamMembers?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tournament?: TournamentUpdateOneWithoutTeamsNestedInput
+    teamAlliances?: TeamAllianceUpdateManyWithoutTeamNestedInput
+    teamStats?: TeamStatsUpdateManyWithoutTeamNestedInput
+  }
+
+  export type TeamUncheckedUpdateWithoutCurrentStageInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    teamNumber?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    organization?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    teamLead?: NullableStringFieldUpdateOperationsInput | string | null
+    teamLeadId?: NullableStringFieldUpdateOperationsInput | string | null
+    teamMembers?: NullableJsonNullValueInput | InputJsonValue
+    tournamentId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    teamAlliances?: TeamAllianceUncheckedUpdateManyWithoutTeamNestedInput
+    teamStats?: TeamStatsUncheckedUpdateManyWithoutTeamNestedInput
+  }
+
+  export type TeamUncheckedUpdateManyWithoutCurrentStageInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    teamNumber?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    organization?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    teamLead?: NullableStringFieldUpdateOperationsInput | string | null
+    teamLeadId?: NullableStringFieldUpdateOperationsInput | string | null
+    teamMembers?: NullableJsonNullValueInput | InputJsonValue
+    tournamentId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

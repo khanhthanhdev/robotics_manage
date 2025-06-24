@@ -147,6 +147,7 @@ exports.Prisma.StageScalarFieldEnum = {
   id: 'id',
   name: 'name',
   type: 'type',
+  status: 'status',
   startDate: 'startDate',
   endDate: 'endDate',
   tournamentId: 'tournamentId',
@@ -207,6 +208,7 @@ exports.Prisma.TeamScalarFieldEnum = {
   teamLeadId: 'teamLeadId',
   teamMembers: 'teamMembers',
   tournamentId: 'tournamentId',
+  currentStageId: 'currentStageId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -363,6 +365,11 @@ exports.StageType = exports.$Enums.StageType = {
   SWISS: 'SWISS',
   PLAYOFF: 'PLAYOFF',
   FINAL: 'FINAL'
+};
+
+exports.StageStatus = exports.$Enums.StageStatus = {
+  ACTIVE: 'ACTIVE',
+  COMPLETED: 'COMPLETED'
 };
 
 exports.MatchState = exports.$Enums.MatchState = {
