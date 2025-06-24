@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { StagesService } from './stages.service';
 import { PrismaService } from '../prisma.service';
 import { mockDeep, DeepMockProxy } from 'jest-mock-extended';
-import { StageType } from '../utils/prisma-types';
+import { StageType, StageStatus } from '../utils/prisma-types';
 
 describe('StagesService', () => {
   let service: StagesService;
@@ -19,7 +19,6 @@ describe('StagesService', () => {
     service = module.get<StagesService>(StagesService);
     jest.clearAllMocks();
   });
-
   describe('create', () => {
     it('should create a stage', async () => {
       const now = new Date();
@@ -27,11 +26,11 @@ describe('StagesService', () => {
         id: 's1',
         name: 'Stage 1',
         type: StageType.SWISS,
+        status: StageStatus.ACTIVE,
         startDate: new Date('2025-05-13'),
         endDate: new Date('2025-05-14'),
         tournamentId: 't1',
         teamsPerAlliance: 2,
-        teamsPerMatch: 4,
         createdAt: now,
         updatedAt: now,
       };
@@ -54,7 +53,6 @@ describe('StagesService', () => {
       await expect(service.create({} as any)).rejects.toThrow('DB error');
     });
   });
-
   describe('findAll', () => {
     it('should return all stages', async () => {
       const now = new Date();
@@ -62,11 +60,11 @@ describe('StagesService', () => {
         id: 's1',
         name: 'Stage 1',
         type: StageType.SWISS,
+        status: StageStatus.ACTIVE,
         startDate: now,
         endDate: now,
         tournamentId: 't1',
         teamsPerAlliance: 2,
-        teamsPerMatch: 4,
         createdAt: now,
         updatedAt: now,
       };
@@ -85,7 +83,6 @@ describe('StagesService', () => {
       await expect(service.findAll()).rejects.toThrow('DB error');
     });
   });
-
   describe('findOne', () => {
     it('should return a stage by id', async () => {
       const now = new Date();
@@ -93,11 +90,11 @@ describe('StagesService', () => {
         id: 's1',
         name: 'Stage 1',
         type: StageType.SWISS,
+        status: StageStatus.ACTIVE,
         startDate: now,
         endDate: now,
         tournamentId: 't1',
         teamsPerAlliance: 2,
-        teamsPerMatch: 4,
         createdAt: now,
         updatedAt: now,
       };
@@ -115,7 +112,6 @@ describe('StagesService', () => {
       await expect(service.findOne('s1')).rejects.toThrow('DB error');
     });
   });
-
   describe('update', () => {
     it('should update a stage', async () => {
       const now = new Date();
@@ -123,11 +119,11 @@ describe('StagesService', () => {
         id: 's1',
         name: 'Updated',
         type: StageType.SWISS,
+        status: StageStatus.ACTIVE,
         startDate: now,
         endDate: now,
         tournamentId: 't1',
         teamsPerAlliance: 2,
-        teamsPerMatch: 4,
         createdAt: now,
         updatedAt: now,
       };
@@ -144,7 +140,6 @@ describe('StagesService', () => {
       await expect(service.update('s1', { name: 'fail' } as any)).rejects.toThrow('DB error');
     });
   });
-
   describe('remove', () => {
     it('should delete a stage', async () => {
       const now = new Date();
@@ -152,11 +147,11 @@ describe('StagesService', () => {
         id: 's1',
         name: 'Stage 1',
         type: StageType.SWISS,
+        status: StageStatus.ACTIVE,
         startDate: now,
         endDate: now,
         tournamentId: 't1',
         teamsPerAlliance: 2,
-        teamsPerMatch: 4,
         createdAt: now,
         updatedAt: now,
       };

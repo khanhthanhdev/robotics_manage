@@ -1,7 +1,8 @@
 // Re-export types from Prisma client to simplify imports
 export { 
   UserRole,
-  StageType, 
+  StageType,
+  StageStatus,
   CardType,
   MatchState,
   DisplayState,
