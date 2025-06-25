@@ -262,3 +262,34 @@ export function useAllMatchScores(enabled: boolean = true) {
     enabled,
   });
 }
+
+/**
+ * Hook to delete a match
+ */
+export function useDeleteMatch() {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async (matchId: string) => {
+      try {
+        return await apiClient.delete(`/matches/${matchId}`);
+      } catch (error: any) {
+        throw error;
+      }
+    },
+    onSuccess: (data, matchId) => {
+      toast.success("Match deleted successfully");
+      queryClient.invalidateQueries({ queryKey: QueryKeys.matches.all() });
+      queryClient.invalidateQueries({ queryKey: QueryKeys.matches.byId(matchId) });
+      // Also invalidate stage-specific matches if we can determine the stageId
+      queryClient.invalidateQueries({ 
+        predicate: (query) => 
+          query.queryKey[0] === 'matches' && 
+          query.queryKey[1] === 'byStage'
+      });
+    },
+    onError: (error: any) => {
+      toast.error(`Failed to delete match: ${error.message}`);
+    },
+  });
+}

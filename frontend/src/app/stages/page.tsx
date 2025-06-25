@@ -6,7 +6,7 @@ import { format } from "date-fns";
 import { useAuth } from "@/hooks/common/use-auth";
 import { useTournaments } from "@/hooks/api/use-tournaments";
 import { useStage, useDeleteStage, useStagesByTournament } from "@/hooks/api/use-stages";
-import { useMatchesByStage } from "@/hooks/api/use-matches";
+import { useMatchesByStage, useDeleteMatch } from "@/hooks/api/use-matches";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -51,6 +51,7 @@ import { PlusIcon, PencilIcon, TrashIcon, InfoIcon, CalendarIcon, ArrowLeftIcon,
 import StageDialog from "./stage-dialog";
 import MatchSchedulerDialog from "./match-scheduler-dialog";
 import EndStageDialog from "@/components/stages/end-stage-dialog";
+import DeleteMatchDialog from "@/components/stages/delete-match-dialog";
 import { MatchService } from "@/services/match-service";
 
 export default function StagesPage() {
@@ -110,6 +111,15 @@ export default function StagesPage() {
 
   // State for end stage dialog
   const [isEndStageDialogOpen, setIsEndStageDialogOpen] = useState(false);
+
+  // State for match delete dialog
+  const [isDeleteMatchDialogOpen, setIsDeleteMatchDialogOpen] = useState(false);
+  const [selectedMatch, setSelectedMatch] = useState<{
+    id: string;
+    matchNumber: number;
+    roundNumber?: number;
+    status: string;
+  } | null>(null);
 
   // Add state for match scores map
   const [matchScoresMap, setMatchScoresMap] = useState<Record<string, { redTotalScore: number, blueTotalScore: number }>>({});
@@ -252,6 +262,24 @@ export default function StagesPage() {
   const handleBackClick = () => {
     setSelectedStageId("");
     setSelectedStage(null);
+  };
+
+  // Handle match delete click
+  const handleDeleteMatchClick = (match: any, e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent row click
+    setSelectedMatch({
+      id: match.id,
+      matchNumber: match.matchNumber ?? 0,
+      roundNumber: match.roundNumber,
+      status: match.status
+    });
+    setIsDeleteMatchDialogOpen(true);
+  };
+
+  // Handle match view click
+  const handleViewMatchClick = (matchId: string, e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent row click
+    router.push(`/matches/${matchId}`);
   };
 
   // Find the latest round number and check if all matches in that round are completed
@@ -555,14 +583,29 @@ export default function StagesPage() {
                           )}
                         </TableCell>
                         <TableCell className="text-right">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-gray-900 focus:ring-2 focus:ring-blue-100 focus:border-blue-300"
-                            onClick={() => router.push(`/matches/${match.id}`)}
-                          >
-                            View
-                          </Button>
+                          <div className="flex gap-2 justify-end">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="border-gray-600 text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                              onClick={(e) => handleViewMatchClick(match.id, e)}
+                            >
+                              View
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              disabled={match.status !== "PENDING"}
+                              className={`${
+                                match.status === "PENDING"
+                                  ? "border-red-600 text-red-600 hover:bg-red-50 hover:text-red-700"
+                                  : "border-gray-300 text-gray-400 cursor-not-allowed opacity-50"
+                              }`}
+                              onClick={(e) => handleDeleteMatchClick(match, e)}
+                            >
+                              Delete
+                            </Button>
+                          </div>
                         </TableCell>
                       </TableRow>
                     ))}
@@ -763,6 +806,16 @@ export default function StagesPage() {
           }}
         />
       )}
+
+      {/* Delete Match Dialog */}
+      <DeleteMatchDialog
+        isOpen={isDeleteMatchDialogOpen}
+        onClose={() => {
+          setIsDeleteMatchDialogOpen(false);
+          setSelectedMatch(null);
+        }}
+        match={selectedMatch}
+      />
     </div>
   );
 }

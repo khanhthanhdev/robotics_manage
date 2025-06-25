@@ -3,10 +3,11 @@
 import { useState, useMemo } from "react";
 import { format } from "date-fns";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { useMatches, useAllMatchScores } from "@/hooks/api/use-matches";
+import { useMatches, useAllMatchScores, useDeleteMatch } from "@/hooks/api/use-matches";
 import { MatchStatus, Alliance } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import DeleteMatchDialog from "@/components/stages/delete-match-dialog";
 import {
   Card,
   CardContent,
@@ -65,9 +66,17 @@ export default function MatchesPage() {
   // State for sorting
   const [sortField, setSortField] = useState<string>('tournamentName');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
-  
-  // State for filter
+    // State for filter
   const [statusFilter, setStatusFilter] = useState<string>("all");
+
+  // State for delete dialog
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [selectedMatch, setSelectedMatch] = useState<{
+    id: string;
+    matchNumber: number;
+    roundNumber?: number;
+    status: string;
+  } | null>(null);
 
   // Handle sort click
   const handleSortClick = (field: string) => {
@@ -155,9 +164,26 @@ export default function MatchesPage() {
         return <Badge variant="outline" className="bg-gray-100 text-gray-800 border border-gray-300 font-semibold">{status}</Badge>;
     }
   };
-
   // Navigate to match details
   const handleMatchClick = (matchId: string) => {
+    router.push(`/matches/${matchId}`);
+  };
+
+  // Handle delete click
+  const handleDeleteClick = (match: any, e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent row click
+    setSelectedMatch({
+      id: match.id,
+      matchNumber: match.matchNumber ?? 0,
+      roundNumber: match.roundNumber,
+      status: match.status
+    });
+    setIsDeleteDialogOpen(true);
+  };
+
+  // Handle view click
+  const handleViewClick = (matchId: string, e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent row click
     router.push(`/matches/${matchId}`);
   };
 
@@ -302,9 +328,30 @@ export default function MatchesPage() {
                       <span className="text-blue-400 font-semibold">
                         {matchScoresMap[match.id]?.blueTotalScore ?? match.alliances?.find((a: Alliance) => a.color === 'BLUE')?.score ?? 0}
                       </span>
-                    </TableCell>
-                    <TableCell>
-                      <Link href={`/matches/${match.id}`} className="text-blue-500 hover:underline">View</Link>
+                    </TableCell>                    <TableCell>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
+                          onClick={(e) => handleViewClick(match.id, e)}
+                        >
+                          View
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          disabled={match.status !== "PENDING"}
+                          className={`${
+                            match.status === "PENDING"
+                              ? "border-red-600 text-red-400 hover:bg-red-600 hover:text-white"
+                              : "border-gray-600 text-gray-500 cursor-not-allowed opacity-50"
+                          }`}
+                          onClick={(e) => handleDeleteClick(match, e)}
+                        >
+                          Delete
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -323,9 +370,18 @@ export default function MatchesPage() {
                   : "There are no matches in the system yet."}
               </p>
             </div>
-          </CardContent>
-        </Card>
+          </CardContent>        </Card>
       )}
+
+      {/* Delete Match Dialog */}
+      <DeleteMatchDialog
+        isOpen={isDeleteDialogOpen}
+        onClose={() => {
+          setIsDeleteDialogOpen(false);
+          setSelectedMatch(null);
+        }}
+        match={selectedMatch}
+      />
     </div>
   );
 }
