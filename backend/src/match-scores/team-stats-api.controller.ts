@@ -44,4 +44,28 @@ export class TeamStatsApiController {
     await this.teamStatsApiService.calculateAndWriteRankings(tournamentId, stageId);
     return { success: true };
   }
+
+  @Post('recalculate-all')
+  async recalculateAllStats(
+    @Query('tournamentId') tournamentId: string,
+    @Query('stageId') stageId?: string
+  ): Promise<{ success: boolean; message: string; recalculatedCount: number }> {
+    if (!tournamentId) {
+      throw new BadRequestException('tournamentId is required');
+    }
+    const result = await this.teamStatsApiService.recalculateAllTeamStats(tournamentId, stageId);
+    return { 
+      success: true, 
+      message: result.message,
+      recalculatedCount: result.recalculatedCount
+    };
+  }
+
+  @Get('debug/:tournamentId')
+  async debugTournamentData(
+    @Param('tournamentId') tournamentId: string,
+    @Query('stageId') stageId?: string
+  ) {
+    return this.teamStatsApiService.debugTournamentData(tournamentId, stageId);
+  }
 }

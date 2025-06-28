@@ -106,7 +106,7 @@ export class TeamStatsApiService {
 
   /**
    * Calculates rankings for all teams in a tournament (optionally by stage) and writes them to the database.
-   * Ranking is by total score (pointsScored desc), then by number of wins (desc).
+   * Ranking is by FRC standard rules: ranking points desc, opponent win percentage desc, point differential desc.
    * Updates the 'rank' field in teamStats for each team.
    */
   async calculateAndWriteRankings(tournamentId: string, stageId?: string): Promise<void> {
@@ -116,12 +116,25 @@ export class TeamStatsApiService {
       where,
       include: { team: true }
     });
-    // Sort: total score desc, then wins desc
+    
+    // Sort by FRC ranking rules: ranking points desc, then opponent win percentage desc, then point differential desc
     const sorted = stats.slice().sort((a, b) => {
-      if (b.pointsScored !== a.pointsScored) return b.pointsScored - a.pointsScored;
-      if (b.wins !== a.wins) return b.wins - a.wins;
-      return 0;
+      if (b.rankingPoints !== a.rankingPoints) return b.rankingPoints - a.rankingPoints;
+      if (b.opponentWinPercentage !== a.opponentWinPercentage) return b.opponentWinPercentage - a.opponentWinPercentage;
+      if (b.pointDifferential !== a.pointDifferential) return b.pointDifferential - a.pointDifferential;
+      return b.pointsScored - a.pointsScored; // Final tiebreaker: total points scored
     });
+    
+    console.log(`🏆 Updating rankings for ${sorted.length} teams in tournament ${tournamentId}:`, 
+      sorted.slice(0, 5).map(s => ({ 
+        team: s.team.name, 
+        rankingPoints: s.rankingPoints, 
+        wins: s.wins, 
+        losses: s.losses, 
+        ties: s.ties 
+      }))
+    );
+    
     // Assign and write ranks
     for (let i = 0; i < sorted.length; i++) {
       const stat = sorted[i];
@@ -131,5 +144,171 @@ export class TeamStatsApiService {
         data: { rank }
       });
     }
+  }
+
+  /**
+   * Manually recalculate all team stats for a tournament by processing all completed matches
+   * @param tournamentId - The tournament ID
+   * @param stageId - Optional stage ID to limit recalculation to a specific stage
+   * @returns Object with recalculation results
+   */
+  async recalculateAllTeamStats(
+    tournamentId: string, 
+    stageId?: string
+  ): Promise<{ message: string; recalculatedCount: number }> {
+    const scope = stageId ? `stage ${stageId}` : `tournament ${tournamentId}`;
+    console.log(`🔄 Recalculating team stats for ${scope}`);
+    
+    // Build where clause based on parameters
+    const whereClause: any = {
+      stage: { tournamentId },
+      status: 'COMPLETED'
+    };
+    
+    if (stageId) {
+      whereClause.stageId = stageId;
+    }
+    
+    // Get all completed matches for this tournament/stage
+    const completedMatches = await this.prisma.match.findMany({
+      where: whereClause,
+      include: {
+        stage: {
+          include: { tournament: true }
+        },
+        alliances: {
+          include: {
+            teamAlliances: {
+              include: { team: true }
+            },
+            matchScores: true
+          }
+        }
+      }
+    });
+
+    console.log(`🔍 Found ${completedMatches.length} completed matches in ${scope}`);
+
+    if (completedMatches.length === 0) {
+      console.log(`⚠️ No completed matches found for ${scope}. Check if matches exist and are marked as COMPLETED.`);
+      return {
+        message: `No completed matches found for ${scope}`,
+        recalculatedCount: 0
+      };
+    }
+
+    // Debug: Show details of first few matches
+    console.log(`🔍 Sample match details:`, completedMatches.slice(0, 2).map(m => ({
+      id: m.id,
+      status: m.status,
+      allianceCount: m.alliances?.length,
+      hasMatchScores: m.alliances?.some(a => a.matchScores?.length > 0),
+      allianceScores: m.alliances?.map(a => ({ color: a.color, score: a.score, matchScoreCount: a.matchScores?.length || 0 }))
+    })));
+
+    // Clear existing stats for this tournament/stage
+    const deleteWhere: any = { tournamentId };
+    if (stageId) {
+      deleteWhere.stageId = stageId;
+    }
+    
+    const deletedStats = await this.prisma.teamStats.deleteMany({
+      where: deleteWhere
+    });
+    
+    console.log(`🗑️ Cleared ${deletedStats.count} existing team stats records`);
+
+    // Track unique teams processed
+    const processedTeams = new Set<string>();
+
+    // Process each match to rebuild stats
+    for (const match of completedMatches) {
+      const teamIds = new Set<string>();
+      
+      // Extract all team IDs from this match
+      for (const alliance of match.alliances) {
+        for (const teamAlliance of alliance.teamAlliances) {
+          if (!teamAlliance.isSurrogate) {
+            teamIds.add(teamAlliance.teamId);
+            processedTeams.add(teamAlliance.teamId);
+          }
+        }
+      }
+
+      if (teamIds.size > 0) {
+        console.log(`🔄 Processing match ${match.id} with teams:`, Array.from(teamIds));
+        // Import and use the TeamStatsService
+        const { TeamStatsService } = await import('./team-stats.service');
+        const teamStatsService = new TeamStatsService(this.prisma);
+        await teamStatsService.recalculateTeamStats(match, Array.from(teamIds));
+      }
+    }
+
+    // After all stats are recalculated, update rankings
+    await this.calculateAndWriteRankings(tournamentId, stageId);
+    
+    const message = `Successfully recalculated team statistics for ${processedTeams.size} teams in ${scope}`;
+    console.log(`✅ ${message}`);
+    
+    return {
+      message,
+      recalculatedCount: processedTeams.size
+    };
+  }
+
+  /**
+   * Debug method to check tournament data
+   */
+  async debugTournamentData(tournamentId: string, stageId?: string) {
+    const whereClause: any = {
+      stage: { tournamentId }
+    };
+    
+    if (stageId) {
+      whereClause.stageId = stageId;
+    }
+    
+    const allMatches = await this.prisma.match.findMany({
+      where: whereClause,
+      include: {
+        stage: { select: { name: true, type: true } },
+        alliances: {
+          include: {
+            teamAlliances: { include: { team: { select: { name: true, teamNumber: true } } } },
+            matchScores: true
+          }
+        }
+      }
+    });
+    
+    const completedMatches = allMatches.filter(m => m.status === 'COMPLETED');
+    
+    const summary = {
+      tournamentId,
+      stageId,
+      totalMatches: allMatches.length,
+      completedMatches: completedMatches.length,
+      matchStatusBreakdown: allMatches.reduce((acc, m) => {
+        acc[m.status] = (acc[m.status] || 0) + 1;
+        return acc;
+      }, {} as Record<string, number>),
+      sampleMatches: completedMatches.slice(0, 3).map(m => ({
+        id: m.id,
+        status: m.status,
+        stage: m.stage.name,
+        alliances: m.alliances.map(a => ({
+          color: a.color,
+          score: a.score,
+          autoScore: a.autoScore,
+          driveScore: a.driveScore,
+          teams: a.teamAlliances.map(ta => `${ta.team.teamNumber} (${ta.team.name})`),
+          matchScoreCount: a.matchScores?.length || 0,
+          matchScoreSample: a.matchScores?.slice(0, 2).map(ms => ({ totalPoints: ms.totalPoints, units: ms.units }))
+        }))
+      }))
+    };
+    
+    console.log(`🔍 Debug data for tournament ${tournamentId}:`, JSON.stringify(summary, null, 2));
+    return summary;
   }
 }

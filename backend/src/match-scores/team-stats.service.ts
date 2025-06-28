@@ -8,6 +8,7 @@ export class TeamStatsService implements ITeamStatsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async recalculateTeamStats(match: any, teamIds: string[]): Promise<void> {
+    console.log(`🔄 TeamStatsService.recalculateTeamStats called for ${teamIds.length} teams in tournament ${match?.stage?.tournament?.id}, stage ${match?.stage?.id}`);
     if (!match || !teamIds.length) return;
     const allTeamMatches = await this.prisma.match.findMany({
       where: {
@@ -25,6 +26,7 @@ export class TeamStatsService implements ITeamStatsService {
         alliances: {
           include: {
             teamAlliances: { where: { teamId: { in: teamIds } } },
+            matchScores: true, // Include match scores to calculate total score
           },
         },
       },
@@ -56,41 +58,131 @@ export class TeamStatsService implements ITeamStatsService {
         const opponentAlliance = teamMatch.alliances.find((a: any) => a.color !== teamMatch.teamAllianceColor);
         
         if (teamAlliance) {
-          pointsScored += teamAlliance.totalScore || 0;
+          // Try to get score from alliance, or calculate from matchScores
+          let allianceScore = teamAlliance.score || 0;
+          if (allianceScore === 0 && teamAlliance.matchScores && teamAlliance.matchScores.length > 0) {
+            // Calculate total from match scores if score is not set
+            allianceScore = teamAlliance.matchScores.reduce((total: number, score: any) => total + (score.totalPoints || score.score || 0), 0);
+          }
+          pointsScored += allianceScore;
+          console.log(`🔍 Team ${teamId} alliance score in match ${teamMatch.id}:`, allianceScore, 'from score:', teamAlliance.score, 'matchScores:', teamAlliance.matchScores?.length);
         }
         if (opponentAlliance) {
-          pointsConceded += opponentAlliance.totalScore || 0;
+          // Try to get score from alliance, or calculate from matchScores
+          let opponentScore = opponentAlliance.score || 0;
+          if (opponentScore === 0 && opponentAlliance.matchScores && opponentAlliance.matchScores.length > 0) {
+            // Calculate total from match scores if score is not set
+            opponentScore = opponentAlliance.matchScores.reduce((total: number, score: any) => total + (score.totalPoints || score.score || 0), 0);
+          }
+          pointsConceded += opponentScore;
+          console.log(`🔍 Team ${teamId} opponent score in match ${teamMatch.id}:`, opponentScore, 'from score:', opponentAlliance.score, 'matchScores:', opponentAlliance.matchScores?.length);
         }
       }
       
       const pointDifferential = pointsScored - pointsConceded;
+      
+      // Calculate additional statistics
+      const winPercentage = matchesPlayed > 0 ? wins / matchesPlayed : 0;
+      const rankingPoints = (wins * 2) + ties; // Standard FRC ranking: 2 points for win, 1 for tie
+      
+      // Calculate opponent win percentage (tiebreaker)
+      let opponentWinPercentage = 0;
+      if (teamMatches.length > 0) {
+        const opponentStats = await this.calculateOpponentWinPercentage(teamMatches, match.stage.tournament.id);
+        opponentWinPercentage = opponentStats;
+      }
+      
+      // Tiebreakers (can be customized based on game rules)
+      const tiebreaker1 = pointsScored; // Total points as first tiebreaker
+      const tiebreaker2 = pointDifferential; // Point differential as second tiebreaker
+      
+      // Debug logging
+      console.log(`🔍 TeamStatsService calculating stats for team ${teamId}:`, {
+        wins, losses, ties, matchesPlayed,
+        pointsScored, pointsConceded, pointDifferential,
+        rankingPoints, opponentWinPercentage,
+        tiebreaker1, tiebreaker2,
+        tournamentId: match.stage.tournament.id,
+        stageId: match.stage.id
+      });
       
       statsUpdates.push(
         this.prisma.teamStats.upsert({
           where: { teamId_tournamentId: { teamId, tournamentId: match.stage.tournament.id } },
           create: { 
             teamId, 
-            tournamentId: match.stage.tournament.id, 
+            tournamentId: match.stage.tournament.id,
+            stageId: match.stage.id, // Include stageId for consistency with SwissScheduler
             wins, 
             losses, 
             ties, 
             matchesPlayed,
             pointsScored,
             pointsConceded,
-            pointDifferential
+            pointDifferential,
+            rankingPoints,
+            opponentWinPercentage,
+            tiebreaker1,
+            tiebreaker2
           },
           update: { 
+            stageId: match.stage.id, // Update stageId to match current stage
             wins, 
             losses, 
             ties, 
             matchesPlayed,
             pointsScored,
             pointsConceded,
-            pointDifferential
+            pointDifferential,
+            rankingPoints,
+            opponentWinPercentage,
+            tiebreaker1,
+            tiebreaker2
           },
         })
       );
     }
     await Promise.all(statsUpdates);
+  }
+
+  /**
+   * Calculate the opponent win percentage for tiebreaker purposes
+   */
+  private async calculateOpponentWinPercentage(teamMatches: any[], tournamentId: string): Promise<number> {
+    const opponentTeamIds = new Set<string>();
+    
+    // Collect all opponent team IDs
+    for (const teamMatch of teamMatches) {
+      const opponentAlliance = teamMatch.alliances.find((a: any) => a.color !== teamMatch.teamAllianceColor);
+      if (opponentAlliance) {
+        for (const teamAlliance of opponentAlliance.teamAlliances) {
+          opponentTeamIds.add(teamAlliance.teamId);
+        }
+      }
+    }
+    
+    if (opponentTeamIds.size === 0) return 0;
+    
+    // Get stats for all opponent teams
+    const opponentStats = await this.prisma.teamStats.findMany({
+      where: {
+        teamId: { in: Array.from(opponentTeamIds) },
+        tournamentId
+      }
+    });
+    
+    // Calculate average win percentage of opponents
+    let totalWinPercentage = 0;
+    let validOpponents = 0;
+    
+    for (const stat of opponentStats) {
+      if (stat.matchesPlayed > 0) {
+        const winPercentage = stat.wins / stat.matchesPlayed;
+        totalWinPercentage += winPercentage;
+        validOpponents++;
+      }
+    }
+    
+    return validOpponents > 0 ? totalWinPercentage / validOpponents : 0;
   }
 }

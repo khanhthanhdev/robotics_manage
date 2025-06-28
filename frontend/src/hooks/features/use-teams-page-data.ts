@@ -30,11 +30,20 @@ export function useTeamsPageData() {
     const triggerRankingCalculation = async () => {
       if (selectedTournamentId && tournamentStats.length === 0 && !tournamentStatsLoading) {
         try {
-          console.log("🔄 Triggering ranking calculation for tournament:", selectedTournamentId);
+          console.log("🔄 Triggering full team stats recalculation for tournament:", selectedTournamentId);
+          // First try to recalculate all stats from matches
+          await apiClient.post(`/team-stats/recalculate-all?tournamentId=${selectedTournamentId}`);
+          // Then update rankings
           await apiClient.post(`/team-stats/update-rankings?tournamentId=${selectedTournamentId}`);
           // The stats query will automatically refetch due to React Query
         } catch (error) {
-          console.error("Failed to trigger ranking calculation:", error);
+          console.error("Failed to trigger team stats recalculation:", error);
+          // Fallback to just ranking calculation
+          try {
+            await apiClient.post(`/team-stats/update-rankings?tournamentId=${selectedTournamentId}`);
+          } catch (fallbackError) {
+            console.error("Failed to trigger ranking calculation:", fallbackError);
+          }
         }
       }
     };
@@ -76,6 +85,24 @@ export function useTeamsPageData() {
         swissLoading,
         stagesLoading
       });
+      
+      // Detailed debug of tournament stats structure
+      if (tournamentStats.length > 0) {
+        console.log("🔍 First tournament stat item:", tournamentStats[0]);
+        console.log("🔍 Tournament stat keys:", Object.keys(tournamentStats[0]));
+        console.log("🔍 Score values in first item:", {
+          totalScore: tournamentStats[0].totalScore,
+          highestScore: tournamentStats[0].highestScore,
+          pointsScored: tournamentStats[0].pointsScored,
+          rank: tournamentStats[0].rank
+        });
+      }
+      
+      // Detailed debug of leaderboard row structure
+      if (leaderboardRows.length > 0) {
+        console.log("🔍 First leaderboard row:", leaderboardRows[0]);
+        console.log("🔍 Leaderboard row keys:", Object.keys(leaderboardRows[0]));
+      }
     }
   }, [selectedTournamentId, selectedStageId, tournamentStats, tournamentTeams, swissRankings, leaderboardRows, tournamentStatsLoading, tournamentTeamsLoading, swissLoading, stagesLoading]);
 

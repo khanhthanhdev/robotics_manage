@@ -11,6 +11,7 @@ export class SwissScheduler {
   constructor(private readonly prisma: PrismaService) {}
 
   async updateSwissRankings(stageId: string): Promise<void> {
+    console.log(`🔄 SwissScheduler.updateSwissRankings called for stage ${stageId}`);
     let teamStats = await this.prisma.teamStats.findMany({
       where: { stageId },
       include: { team: true }
@@ -76,16 +77,30 @@ export class SwissScheduler {
     for (const match of matches) {      const redTeams = match.alliances.find(a => a.color === AllianceColor.RED)?.teamAlliances.map(ta => ta.teamId) ?? [];
       const blueTeams = match.alliances.find(a => a.color === AllianceColor.BLUE)?.teamAlliances.map(ta => ta.teamId) ?? [];
       
-      // Calculate scores from flexible scoring system
-      const redAllianceScores = match.matchScores?.filter(score => 
-        match.alliances.find(a => a.id === score.allianceId)?.color === AllianceColor.RED
-      ) ?? [];
-      const blueAllianceScores = match.matchScores?.filter(score => 
-        match.alliances.find(a => a.id === score.allianceId)?.color === AllianceColor.BLUE
-      ) ?? [];
+      // Calculate scores - try multiple sources
+      const redAlliance = match.alliances.find(a => a.color === AllianceColor.RED);
+      const blueAlliance = match.alliances.find(a => a.color === AllianceColor.BLUE);
       
-      const scoreRed = redAllianceScores.reduce((sum, score) => sum + score.totalPoints, 0);
-      const scoreBlue = blueAllianceScores.reduce((sum, score) => sum + score.totalPoints, 0);
+      // Try to get scores from alliance.score first, then from matchScores
+      let scoreRed = redAlliance?.score || 0;
+      let scoreBlue = blueAlliance?.score || 0;
+      
+      // If alliance scores are 0, try flexible scoring system
+      if (scoreRed === 0 && match.matchScores) {
+        const redAllianceScores = match.matchScores.filter(score => 
+          match.alliances.find(a => a.id === score.allianceId)?.color === AllianceColor.RED
+        );
+        scoreRed = redAllianceScores.reduce((sum, score) => sum + (score.totalPoints || 0), 0);
+      }
+      
+      if (scoreBlue === 0 && match.matchScores) {
+        const blueAllianceScores = match.matchScores.filter(score => 
+          match.alliances.find(a => a.id === score.allianceId)?.color === AllianceColor.BLUE
+        );
+        scoreBlue = blueAllianceScores.reduce((sum, score) => sum + (score.totalPoints || 0), 0);
+      }
+      
+      console.log(`🔍 SwissScheduler match ${match.id} scores: RED=${scoreRed}, BLUE=${scoreBlue} (from alliance.score or matchScores)`);
       for (const teamId of redTeams) {
         const result = teamResults.get(teamId);
         if (!result) continue;
@@ -112,6 +127,18 @@ export class SwissScheduler {
       const total = result.wins + result.losses + result.ties;
       winPercents.set(teamId, total > 0 ? result.wins / total : 0);
     }
+    // Get tournament ID from stage once
+    const stage = await this.prisma.stage.findUnique({
+      where: { id: stageId },
+      select: { tournamentId: true }
+    });
+    
+    if (!stage) {
+      throw new Error(`Stage ${stageId} not found`);
+    }
+    
+    // Update team stats with calculated values
+    const statsUpdates: Promise<any>[] = [];
     for (const [teamId, result] of teamResults.entries()) {
       let owp = 0;
       if (result.opponents.size > 0) {
@@ -121,21 +148,46 @@ export class SwissScheduler {
       }
       const pointDiff = result.pointsScored - result.pointsConceded;
       const rankingPoints = result.wins * 2 + result.ties;
-      await this.prisma.teamStats.updateMany({
-        where: { stageId, teamId },
-        data: {
-          wins: result.wins,
-          losses: result.losses,
-          ties: result.ties,
-          pointsScored: result.pointsScored,
-          pointsConceded: result.pointsConceded,
-          matchesPlayed: result.wins + result.losses + result.ties,
-          rankingPoints,
-          opponentWinPercentage: owp,
-          pointDifferential: pointDiff
-        }
+      
+      console.log(`🔍 SwissScheduler updating stats for team ${teamId}:`, {
+        wins: result.wins, losses: result.losses, ties: result.ties,
+        rankingPoints, opponentWinPercentage: owp, pointDifferential: pointDiff
       });
+      
+      // Use upsert to ensure we update the correct record, prioritizing the unique constraint
+      statsUpdates.push(
+        this.prisma.teamStats.upsert({
+          where: { teamId_tournamentId: { teamId, tournamentId: stage.tournamentId } },
+          create: {
+            teamId,
+            tournamentId: stage.tournamentId,
+            stageId,
+            wins: result.wins,
+            losses: result.losses,
+            ties: result.ties,
+            pointsScored: result.pointsScored,
+            pointsConceded: result.pointsConceded,
+            matchesPlayed: result.wins + result.losses + result.ties,
+            rankingPoints,
+            opponentWinPercentage: owp,
+            pointDifferential: pointDiff
+          },
+          update: {
+            stageId, // Update stageId to current stage
+            wins: result.wins,
+            losses: result.losses,
+            ties: result.ties,
+            pointsScored: result.pointsScored,
+            pointsConceded: result.pointsConceded,
+            matchesPlayed: result.wins + result.losses + result.ties,
+            rankingPoints,
+            opponentWinPercentage: owp,
+            pointDifferential: pointDiff
+          }
+        })
+      );
     }
+    await Promise.all(statsUpdates);
   }
 
   async getSwissRankings(stageId: string) {

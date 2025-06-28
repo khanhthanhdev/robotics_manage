@@ -8,6 +8,7 @@ import { UploadIcon, DownloadIcon } from "lucide-react";
 import { LeaderboardTable } from "@/components/features/leaderboard/leaderboard-table";
 import { LeaderboardFilters } from "@/components/features/leaderboard/leaderboard-filters";
 import { teamLeaderboardColumns, TeamLeaderboardRow } from "@/components/features/leaderboard/team-leaderboard-columns";
+import { TeamStatsRecalculateButton } from "@/components/features/admin/team-stats-recalculate-button";
 import { useTeams } from "@/hooks/api/use-teams";
 import { useTeamsPageData } from "@/hooks/features/use-teams-page-data";
 import { useTeamManagement } from "@/hooks/features/use-team-management";
@@ -38,7 +39,7 @@ export default function TeamsPage() {
   } = useTeamManagement();
 
   // All teams query for export functionality
-  const { data: allTeams = [] } = useTeams(undefined);
+  const { data: allTeams = [] } = useTeams(selectedTournamentId);
 
   // Local UI state
   const [showImportCard, setShowImportCard] = useState(false);
@@ -150,6 +151,14 @@ export default function TeamsPage() {
           >
             <UploadIcon size={16} /> Import
           </Button>
+          
+          <TeamStatsRecalculateButton
+            tournamentId={selectedTournamentId}
+            stageId={selectedStageId}
+            disabled={!selectedTournamentId}
+            variant="outline"
+            size="default"
+          />
         </div>
       </div>      {showImportCard && (
         <Card className="mb-6 border-2 border-blue-700 bg-gradient-to-br from-blue-950 to-blue-900 shadow-xl">
