@@ -31,6 +31,8 @@ export class TeamStatsService implements ITeamStatsService {
         },
       },
     });
+    
+    console.log(`🔍 TeamStatsService found ${allTeamMatches.length} completed matches for ${teamIds.length} teams in tournament ${match?.stage?.tournament?.id}`);
     const matchesByTeam = new Map<string, any[]>();
     teamIds.forEach(teamId => matchesByTeam.set(teamId, []));
     for (const teamMatch of allTeamMatches) {
@@ -49,9 +51,21 @@ export class TeamStatsService implements ITeamStatsService {
       
       for (const teamMatch of teamMatches) {
         // Calculate wins/losses/ties
+        console.log(`🔍 TeamStatsService processing match ${teamMatch.id} for team ${teamId}:`, {
+          status: teamMatch.status,
+          winningAlliance: teamMatch.winningAlliance,
+          teamAllianceColor: teamMatch.teamAllianceColor
+        });
+        
         if (teamMatch.winningAlliance === null) ties++; // null means tie
         else if (teamMatch.winningAlliance === teamMatch.teamAllianceColor) wins++;
         else losses++;
+        
+        console.log(`🔍 TeamStatsService match ${teamMatch.id} result for team ${teamId}:`, {
+          wins, losses, ties, 
+          resultThisMatch: teamMatch.winningAlliance === null ? 'TIE' : 
+                          teamMatch.winningAlliance === teamMatch.teamAllianceColor ? 'WIN' : 'LOSS'
+        });
         
         // Calculate points scored and conceded
         const teamAlliance = teamMatch.alliances.find((a: any) => a.color === teamMatch.teamAllianceColor);

@@ -1,12 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
+import { TeamStatsService } from './team-stats.service';
 import { TeamStatsFilterDto } from './dto/team-stats-filter.dto';
 import { TeamStatsResponseDto } from './dto/team-stats-response.dto';
 import { LeaderboardResponseDto, LeaderboardEntryDto } from './dto/leaderboard-response.dto';
 
 @Injectable()
 export class TeamStatsApiService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly teamStatsService: TeamStatsService
+  ) {}
 
   async getTeamStats(teamId: string, tournamentId?: string, stageId?: string): Promise<TeamStatsResponseDto[]> {
     const where: any = { teamId };
@@ -156,18 +160,21 @@ export class TeamStatsApiService {
     tournamentId: string, 
     stageId?: string
   ): Promise<{ message: string; recalculatedCount: number }> {
-    const scope = stageId ? `stage ${stageId}` : `tournament ${tournamentId}`;
-    console.log(`🔄 Recalculating team stats for ${scope}`);
-    
-    // Build where clause based on parameters
-    const whereClause: any = {
-      stage: { tournamentId },
-      status: 'COMPLETED'
-    };
-    
-    if (stageId) {
-      whereClause.stageId = stageId;
-    }
+    try {
+      const scope = stageId ? `stage ${stageId}` : `tournament ${tournamentId}`;
+      console.log(`🔄 Recalculating team stats for ${scope}`);
+      
+      // Build where clause based on parameters
+      const whereClause: any = {
+        stage: { tournamentId },
+        status: 'COMPLETED'
+      };
+      
+      if (stageId) {
+        whereClause.stageId = stageId;
+      }
+      
+      console.log(`🔍 Query where clause:`, JSON.stringify(whereClause, null, 2));
     
     // Get all completed matches for this tournament/stage
     const completedMatches = await this.prisma.match.findMany({
@@ -203,7 +210,8 @@ export class TeamStatsApiService {
       status: m.status,
       allianceCount: m.alliances?.length,
       hasMatchScores: m.alliances?.some(a => a.matchScores?.length > 0),
-      allianceScores: m.alliances?.map(a => ({ color: a.color, score: a.score, matchScoreCount: a.matchScores?.length || 0 }))
+      allianceScores: m.alliances?.map(a => ({ color: a.color, score: a.score, matchScoreCount: a.matchScores?.length || 0 })),
+      winningAlliance: m.winningAlliance
     })));
 
     // Clear existing stats for this tournament/stage
@@ -218,42 +226,44 @@ export class TeamStatsApiService {
     
     console.log(`🗑️ Cleared ${deletedStats.count} existing team stats records`);
 
-    // Track unique teams processed
-    const processedTeams = new Set<string>();
-
-    // Process each match to rebuild stats
+    // Collect all unique teams from all matches
+    const allTeamIds = new Set<string>();
     for (const match of completedMatches) {
-      const teamIds = new Set<string>();
-      
-      // Extract all team IDs from this match
       for (const alliance of match.alliances) {
         for (const teamAlliance of alliance.teamAlliances) {
           if (!teamAlliance.isSurrogate) {
-            teamIds.add(teamAlliance.teamId);
-            processedTeams.add(teamAlliance.teamId);
+            allTeamIds.add(teamAlliance.teamId);
           }
         }
       }
+    }
 
-      if (teamIds.size > 0) {
-        console.log(`🔄 Processing match ${match.id} with teams:`, Array.from(teamIds));
-        // Import and use the TeamStatsService
-        const { TeamStatsService } = await import('./team-stats.service');
-        const teamStatsService = new TeamStatsService(this.prisma);
-        await teamStatsService.recalculateTeamStats(match, Array.from(teamIds));
-      }
+    console.log(`🔄 Processing ${allTeamIds.size} unique teams from ${completedMatches.length} matches`);
+
+    // Use the first match to get tournament/stage info (all matches are from same tournament/stage)
+    if (completedMatches.length > 0) {
+      const sampleMatch = completedMatches[0];
+      await this.teamStatsService.recalculateTeamStats(
+        sampleMatch, 
+        Array.from(allTeamIds)
+      );
     }
 
     // After all stats are recalculated, update rankings
     await this.calculateAndWriteRankings(tournamentId, stageId);
     
-    const message = `Successfully recalculated team statistics for ${processedTeams.size} teams in ${scope}`;
+    const message = `Successfully recalculated team statistics for ${allTeamIds.size} teams in ${scope}`;
     console.log(`✅ ${message}`);
     
     return {
       message,
-      recalculatedCount: processedTeams.size
+      recalculatedCount: allTeamIds.size
     };
+    
+    } catch (error) {
+      console.error(`❌ Error recalculating team stats for ${tournamentId}:`, error);
+      throw error;
+    }
   }
 
   /**
@@ -283,6 +293,13 @@ export class TeamStatsApiService {
     
     const completedMatches = allMatches.filter(m => m.status === 'COMPLETED');
     
+    // Get current team stats
+    const currentTeamStats = await this.prisma.teamStats.findMany({
+      where: { tournamentId, ...(stageId ? { stageId } : {}) },
+      include: { team: { select: { name: true, teamNumber: true } } },
+      orderBy: { rankingPoints: 'desc' }
+    });
+    
     const summary = {
       tournamentId,
       stageId,
@@ -292,10 +309,22 @@ export class TeamStatsApiService {
         acc[m.status] = (acc[m.status] || 0) + 1;
         return acc;
       }, {} as Record<string, number>),
+      currentTeamStats: currentTeamStats.map(ts => ({
+        teamNumber: ts.team.teamNumber,
+        teamName: ts.team.name,
+        wins: ts.wins,
+        losses: ts.losses,
+        ties: ts.ties,
+        rankingPoints: ts.rankingPoints,
+        matchesPlayed: ts.matchesPlayed,
+        pointsScored: ts.pointsScored,
+        pointsConceded: ts.pointsConceded
+      })),
       sampleMatches: completedMatches.slice(0, 3).map(m => ({
         id: m.id,
         status: m.status,
         stage: m.stage.name,
+        winningAlliance: m.winningAlliance,
         alliances: m.alliances.map(a => ({
           color: a.color,
           score: a.score,

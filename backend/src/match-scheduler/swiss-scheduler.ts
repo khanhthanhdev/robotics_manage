@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
-import { Match as PrismaMatch, AllianceColor } from '../utils/prisma-types';
+import { Match as PrismaMatch, AllianceColor, MatchState } from '../utils/prisma-types';
 
 /**
  * Swiss-style round generation and ranking logic.
@@ -23,6 +23,15 @@ export class SwissScheduler {
         matchScores: true
       }
     });
+    
+    console.log(`🔍 SwissScheduler found ${matches.length} matches for stage ${stageId}`);
+    console.log(`🔍 Match status breakdown:`, matches.reduce((acc, m) => {
+      acc[m.status] = (acc[m.status] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>));
+    
+    const completedMatches = matches.filter(m => m.status === MatchState.COMPLETED);
+    console.log(`🔍 Processing ${completedMatches.length} completed matches out of ${matches.length} total matches`);
     if (teamStats.length === 0) {
       const stageObj = await this.prisma.stage.findUnique({
         where: { id: stageId },
@@ -44,6 +53,17 @@ export class SwissScheduler {
                 teamId: team.id,
                 tournamentId: stageObj.tournament.id,
                 stageId,
+                wins: 0,
+                losses: 0,
+                ties: 0,
+                pointsScored: 0,
+                pointsConceded: 0,
+                matchesPlayed: 0,
+                rankingPoints: 0,
+                opponentWinPercentage: 0,
+                pointDifferential: 0,
+                tiebreaker1: 0,
+                tiebreaker2: 0
               }
             });
           }
@@ -74,7 +94,7 @@ export class SwissScheduler {
         opponents: new Set<string>()
       });
     }
-    for (const match of matches) {      const redTeams = match.alliances.find(a => a.color === AllianceColor.RED)?.teamAlliances.map(ta => ta.teamId) ?? [];
+    for (const match of completedMatches) {      const redTeams = match.alliances.find(a => a.color === AllianceColor.RED)?.teamAlliances.map(ta => ta.teamId) ?? [];
       const blueTeams = match.alliances.find(a => a.color === AllianceColor.BLUE)?.teamAlliances.map(ta => ta.teamId) ?? [];
       
       // Calculate scores - try multiple sources
