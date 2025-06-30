@@ -13,7 +13,9 @@ export enum CardType {
 export enum UserRole {
   ADMIN = "ADMIN",
   HEAD_REFEREE = "HEAD_REFEREE",
-  ALLIANCE_REFEREE = "ALLIANCE_REFEREE"
+  ALLIANCE_REFEREE = "ALLIANCE_REFEREE",
+  TEAM_LEADER = "TEAM_LEADER",
+  TEAM_MEMBER = "TEAM_MEMBER"
 }
 
 // --- Audience Display Types ---

@@ -1,85 +1,94 @@
+/**
+
+ * This module implements centralized authentication state management using React Context.
+ * 
+ * Features:
+ * - Centralized authentication state management
+ * - Secure error handling and logging
+ * - React Query integration for efficient data fetching
+ * - Type-safe API with comprehensive TypeScript support
+ * - RBAC logging for security auditing
+ * 
+ * @author Robotics Tournament Management System
+ * @version 1.0.0
+ */
+
 "use client";
 
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { AuthContextType, User } from "@/lib/types";
-import { apiClient } from "@/lib/api-client";
+import { authService, AuthError, AuthErrorType } from "@/services/authService";
+import { rbacLogger } from "../../utils/rbacLogger";
 
-// Create the auth context
+// Create the auth context with strict typing
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Auth provider component
+/**
+ * AuthProvider Component
+ * 
+ * Provides authentication state management using React Context.
+ * Follows the Provider pattern and Dependency Injection principles.
+ * Uses React Query for efficient data fetching and caching.
+ */
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   
-  // Use React Query to fetch current user data
+  // Use React Query to manage authentication state with proper error handling
   const { data, error, isLoading, refetch } = useQuery({
     queryKey: ['currentUser'],
-    queryFn: async () => {
-      try {
-        const data = await apiClient.get<{ user: User | null }>("/auth/check-auth");
-        return data.user;
-      } catch (err: any) {
-        if (err?.response?.status === 401) return null;
-        throw new Error('Failed to fetch user data');
-      }
-    },
+    queryFn: () => authService.getCurrentUser(),
     retry: false,
     refetchOnWindowFocus: false,
+    staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
   });
   
-  // Update user state when data changes
+  // Sync user state with query data
   useEffect(() => {
     setUser(data ?? null);
   }, [data]);
-  const register = async (username: string, password: string, email?: string) => {
+
+  /**
+   * Register a new user and automatically log them in
+   */
+  const register = async (username: string, password: string, email?: string): Promise<void> => {
     try {
-      await apiClient.post("/auth/register", { username, password, email });
+      await authService.register({ username, password, email });
       await login(username, password);
-    } catch (error: any) {
-      let errorMsg = 'Registration failed';
-      if (error?.response?.data?.message) {
-        // Handle validation messages that can be arrays or strings
-        const message = error.response.data.message;
-        if (Array.isArray(message)) {
-          errorMsg = message.join('. ');
-        } else {
-          errorMsg = message;
-        }
-      }
-      throw new Error(errorMsg);
+    } catch (error) {
+      // Re-throw AuthError for proper error handling
+      throw error;
     }
-  }  // Login function
-  const login = async (username: string, password: string) => {
+  };
+
+  /**
+   * Log in user and refresh authentication state
+   */
+  const login = async (username: string, password: string): Promise<void> => {
     try {
-      await apiClient.post("/auth/login", { username, password });
-      await refetch();
-    } catch (error: any) {
-      let errorMsg = 'Login failed';
-      if (error?.response?.data?.message) {
-        // Handle validation messages that can be arrays or strings
-        const message = error.response.data.message;
-        if (Array.isArray(message)) {
-          errorMsg = message.join('. ');
-        } else {
-          errorMsg = message;
-        }
-      }
-      // Preserve status code for rate limiting detection
-      const loginError = new Error(errorMsg) as Error & { status?: number };
-      loginError.status = error?.status || error?.response?.status;
-      throw loginError;
+      await authService.login({ username, password });
+      await refetch(); // Refetch user data after successful login
+    } catch (error) {
+      // Re-throw AuthError for proper error handling
+      throw error;
     }
   };
-  
-  // Logout function
-  const logout = async () => {
-    await apiClient.post("/auth/logout", {});
+
+  /**
+   * Log out user and clear authentication state
+   */
+  const logout = async (): Promise<void> => {
+    // Log the logout event before clearing state
+    if (user) {
+      await rbacLogger.logout(user.id, user.role);
+    }
+    
+    await authService.logout();
     setUser(null);
-    await refetch();
+    await refetch(); // This will return null and update the state
   };
-  
-  // Create context value
+
+  // Create context value with all required methods and state
   const contextValue: AuthContextType = {
     user,
     isLoading,
@@ -96,12 +105,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 }
 
-// Auth hook
-export function useAuth() {
+/**
+ * useAuth Hook
+ * 
+ * Custom hook for accessing authentication context.
+ * Provides type-safe access to authentication state and methods.
+ * 
+ * @throws {Error} When used outside of AuthProvider
+ * @returns {AuthContextType} Authentication context with user state and methods
+ */
+export function useAuth(): AuthContextType {
   const context = useContext(AuthContext);
   
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error(
+      'useAuth must be used within an AuthProvider. ' +
+      'Make sure to wrap your component tree with <AuthProvider>.'
+    );
   }
   
   return context;

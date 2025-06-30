@@ -7,6 +7,7 @@ import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/hooks/common/use-auth";
 import { MatchProvider } from "@/hooks/context/use-match-context";
+import { AuthErrorBoundary } from "@/components/auth/AuthErrorBoundary";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   // Create a client for React Query
@@ -23,19 +24,29 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <MatchProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            {children}
-            <Toaster position="bottom-right" />
-          </ThemeProvider>
-        </MatchProvider>
-      </AuthProvider>
+      <AuthErrorBoundary
+        maxRetries={3}
+        onError={(error, errorInfo) => {
+          // Log to console in development
+          if (process.env.NODE_ENV === 'development') {
+            console.error('[AuthErrorBoundary] Caught error:', error, errorInfo);
+          }
+        }}
+      >
+        <AuthProvider>
+          <MatchProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              {children}
+              <Toaster position="bottom-right" />
+            </ThemeProvider>
+          </MatchProvider>
+        </AuthProvider>
+      </AuthErrorBoundary>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
