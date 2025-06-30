@@ -1,6 +1,4 @@
 /**
- * Next.js Middleware for Route Protection - Enhanced with Step 6 Permissions
- * 
  * Features:
  * - Secure JWT verification using the 'jose' library
  * - Feature-based route protection using the new permission system
@@ -23,7 +21,7 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { jwtVerify } from 'jose';
 import { UserRole } from '@/lib/types';
-import { PROTECTED_ROUTES, AUTH_CONFIG } from '@/config/rbac';
+import { AUTH_CONFIG } from '@/config/rbac';
 import { PERMISSIONS, PermissionService, type IPermissionDefinition } from '@/constants/permissions';
 
 /**
@@ -265,18 +263,29 @@ class JWTVerifier implements IJWTVerifier {
    */
   async verifyToken(token: string): Promise<UserRole | null> {
     try {
+      console.log('[JWT Debug] Verifying token...');
+      console.log('[JWT Debug] Token preview:', token.substring(0, 20) + '...');
+      
       const { payload } = await jwtVerify(token, this.jwtSecret);
+      
+      console.log('[JWT Debug] Decoded payload:', payload);
+      
       const role = payload.role as UserRole;
+      
+      console.log('[JWT Debug] Extracted role:', role);
+      console.log('[JWT Debug] Valid roles:', Object.values(UserRole));
       
       // Validate that the role is a valid UserRole
       if (Object.values(UserRole).includes(role)) {
+        console.log('[JWT Debug] Role validation: SUCCESS');
         return role;
       }
       
+      console.log('[JWT Debug] Role validation: FAILED - invalid role');
       return null;
     } catch (error) {
       // Token verification failed - log for security monitoring
-      console.error('JWT verification failed:', error);
+      console.error('[JWT Debug] JWT verification failed:', error);
       return null;
     }
   }
@@ -423,7 +432,11 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
   // Extract and verify authentication token
   const token = request.cookies.get(AUTH_CONFIG.cookieName)?.value;
   
+  console.log('[Middleware Debug] Cookie name:', AUTH_CONFIG.cookieName);
+  console.log('[Middleware Debug] Token exists:', !!token);
+  
   if (!token) {
+    console.log('[Middleware Debug] No token found, logging access denied');
     securityLogger.logAccessDenied(null, pathname);
     return redirectToAccessDenied(request);
   }
@@ -431,7 +444,10 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
   // Verify token and extract user role
   const userRole = await jwtVerifier.verifyToken(token);
   
+  console.log('[Middleware Debug] JWT verification result:', userRole);
+  
   if (!userRole) {
+    console.log('[Middleware Debug] JWT verification failed');
     securityLogger.logAuthenticationFailed(
       token.substring(0, 10) + '...', 
       'Invalid or expired token'

@@ -18,8 +18,8 @@ export {
   AuthErrorType 
 } from './AuthErrorBoundary';
 
-// Example components (for documentation/testing)
-export { default as RoleGuardExamples } from './RoleGuardExamples';
+
+
 
 // Re-export types for convenience
 export type { UserRole } from '@/lib/types';

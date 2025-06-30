@@ -19,11 +19,44 @@ export default function Navbar() {
   const pathname = usePathname();
   const { user, logout, isLoading } = useAuth();
   const [isMounted, setIsMounted] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   // Only show user-dependent UI after hydration to avoid mismatch
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    try {
+      await logout();
+      // Reset the logging out state after successful logout
+      // Note: This might not execute if redirect happens immediately
+      setIsLoggingOut(false);
+    } catch (error) {
+      console.error('Logout failed:', error);
+      // Reset loading state if logout fails
+      setIsLoggingOut(false);
+    }
+  };
+
+  // Reset logout state when user changes (e.g., after login or logout completion)
+  useEffect(() => {
+    if (user && isLoggingOut) {
+      // User is now present, so reset logout state
+      setIsLoggingOut(false);
+    } else if (!user && !isLoading && isLoggingOut) {
+      // User is null and not loading, logout is complete
+      setIsLoggingOut(false);
+    }
+  }, [user, isLoading, isLoggingOut]);
+
+  // Reset logout state when pathname changes (navigation)
+  useEffect(() => {
+    if (isLoggingOut && pathname !== '/login') {
+      setIsLoggingOut(false);
+    }
+  }, [pathname, isLoggingOut]);
 
   return (
     <nav className="bg-background border-b sticky top-0 z-50 shadow-sm">
@@ -68,10 +101,11 @@ export default function Navbar() {
                 <div className="flex items-center gap-3">
                   <span className="text-sm text-muted-foreground truncate max-w-[100px]">{user?.username}</span>
                   <button
-                    onClick={logout}
-                    className="px-3 py-1.5 border border-destructive/30 text-destructive hover:bg-destructive/10 rounded text-sm font-medium transition-colors"
+                    onClick={handleLogout}
+                    disabled={isLoggingOut}
+                    className="px-3 py-1.5 border border-destructive/30 text-destructive hover:bg-destructive/10 rounded text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Sign out
+                    {isLoggingOut ? 'Signing out...' : 'Sign out'}
                   </button>
                 </div>
               ) : (
@@ -93,8 +127,9 @@ export default function Navbar() {
               navigationItems={navigationItems}
               pathname={pathname}
               user={isMounted ? user : null}
-              logout={logout}
+              logout={handleLogout}
               isMounted={isMounted}
+              isLoggingOut={isLoggingOut}
             />
           </div>
         </div>
@@ -103,12 +138,13 @@ export default function Navbar() {
   );
 }
 
-function MobileMenu({ navigationItems, pathname, user, logout, isMounted }: {
+function MobileMenu({ navigationItems, pathname, user, logout, isMounted, isLoggingOut }: {
   navigationItems: { name: string; href: string }[];
   pathname: string | null;
   user: any;
-  logout: () => void;
+  logout: () => Promise<void>;
   isMounted: boolean;
+  isLoggingOut: boolean;
 }) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -184,13 +220,14 @@ function MobileMenu({ navigationItems, pathname, user, logout, isMounted }: {
                   <>
                     <div className="px-3 py-2 text-base font-medium text-foreground truncate">{user.username}</div>
                     <button
-                      onClick={() => {
-                        logout();
+                      onClick={async () => {
+                        await logout();
                         setIsOpen(false);
                       }}
-                      className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-destructive hover:bg-destructive/10 transition-colors"
+                      disabled={isLoggingOut}
+                      className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-destructive hover:bg-destructive/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      Sign out
+                      {isLoggingOut ? 'Signing out...' : 'Sign out'}
                     </button>
                   </>
                 ) : (

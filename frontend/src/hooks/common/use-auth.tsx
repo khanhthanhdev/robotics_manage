@@ -17,6 +17,7 @@
 
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { AuthContextType, User } from "@/lib/types";
 import { authService, AuthError, AuthErrorType } from "@/services/authService";
 import { rbacLogger } from "../../utils/rbacLogger";
@@ -33,6 +34,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
  */
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const router = useRouter();
   
   // Use React Query to manage authentication state with proper error handling
   const { data, error, isLoading, refetch } = useQuery({
@@ -86,6 +88,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await authService.logout();
     setUser(null);
     await refetch(); // This will return null and update the state
+    
+    // Small delay to ensure state updates are processed before redirect
+    setTimeout(() => {
+      router.push('/login');
+    }, 100);
   };
 
   // Create context value with all required methods and state

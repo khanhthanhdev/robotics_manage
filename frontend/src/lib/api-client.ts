@@ -55,16 +55,19 @@ class ApiClient {
       'Content-Type': 'application/json',
     };
 
-
     const config: RequestInit = {
       method,
       headers,
-      credentials: 'include',
+      credentials: 'include', // Important: This ensures cookies are sent with requests
     };
 
     if (data) {
       config.body = JSON.stringify(data);
-    }    try {
+    }
+
+    try {
+      console.log(`[API] ${method} ${url}`, data ? { data } : '');
+      
       const response = await fetch(url, config);
       
       // Handle non-JSON responses (like 429 rate limit responses)
@@ -75,16 +78,24 @@ class ApiClient {
         responseData = { message: response.statusText || 'Request failed' };
       }
 
+      console.log(`[API] ${method} ${url} -> ${response.status}`, responseData);
+
       if (!response.ok) {
         // Handle API errors with proper status code propagation
         const error = new Error(
-          responseData.message || 'An error occurred during the API request.'
+          responseData.message || `HTTP ${response.status}: ${response.statusText}`
         ) as Error & { status?: number; response?: { status: number; data: any } };
         error.status = response.status;
         error.response = {
           status: response.status,
           data: responseData
         };
+        
+        // Special handling for authentication errors
+        if (response.status === 401) {
+          console.warn(`[API] Unauthorized access to ${url}. This might be expected for initial auth checks.`);
+        }
+        
         throw error;
       }
 
@@ -92,8 +103,25 @@ class ApiClient {
     } catch (error: any) {
       // Add more context to fetch errors
       if (!error.status) {
-        console.error(`Network error while accessing: ${url}`, error);
-        throw new Error(`Network error: Unable to connect to ${url}. Please check if the API server is running.`);
+        console.error(`[API] Network error while accessing: ${url}`, {
+          error: error.message,
+          url,
+          method,
+          data
+        });
+        
+        // Check if it's a connection error
+        if (error.message?.includes('Failed to fetch') || 
+            error.message?.includes('NetworkError') ||
+            error.message?.includes('ERR_NETWORK')) {
+          throw new Error(`Unable to connect to the API server at ${API_URL}. Please ensure:
+1. The backend server is running
+2. The API URL is correct: ${API_URL}
+3. CORS is properly configured
+4. No firewall is blocking the connection`);
+        }
+        
+        throw new Error(`Network error: ${error.message}`);
       }
       throw error;
     }

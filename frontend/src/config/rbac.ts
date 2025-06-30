@@ -91,8 +91,8 @@ export const PROTECTED_ROUTES: Record<string, readonly UserRole[]> = {
  * Authentication Configuration
  */
 export const AUTH_CONFIG = {
-  // Cookie settings
-  cookieName: 'auth_token',
+  // Cookie settings - Updated to match backend cookie name
+  cookieName: 'token', // Backend sets 'token', not 'auth_token'
   cookieMaxAge: 7 * 24 * 60 * 60, // 7 days in seconds
   
   // Route settings

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
@@ -23,10 +23,17 @@ const formSchema = z.object({
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login } = useAuth();
+  const { login, user, isLoading: authLoading } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
   const [rateLimitWarning, setRateLimitWarning] = useState<string | null>(null);
+
+  // Redirect if user is already logged in - use useEffect to avoid early return
+  useEffect(() => {
+    if (user && !authLoading) {
+      router.replace("/");
+    }
+  }, [user, authLoading, router]);
 
   // Form definition using react-hook-form
   const form = useForm<z.infer<typeof formSchema>>({
@@ -36,6 +43,7 @@ export default function LoginPage() {
       password: "",
     },
   });
+
   // Handle form submission
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
@@ -46,11 +54,9 @@ export default function LoginPage() {
       // Perform login
       await login(values.username, values.password);
       
-      // Add a small delay before navigating to ensure auth state is updated
-      setTimeout(() => {
-        // Use replace instead of push to prevent back navigation issues
-        router.replace("/");
-      }, 100);
+      // Login successful - redirect to home page
+      // The AuthProvider will automatically update the user state
+      router.replace("/");
       
     } catch (error: any) {
       // Handle specific error types
@@ -62,6 +68,30 @@ export default function LoginPage() {
       setIsLoading(false);
     }
   };
+
+  // Show loading state while checking authentication
+  if (authLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
+        <div className="text-center">
+          <h2 className="text-xl font-semibold mb-2">Loading...</h2>
+          <p className="text-gray-500">Checking authentication status...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't render login form if user is already authenticated
+  if (user) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
+        <div className="text-center">
+          <h2 className="text-xl font-semibold mb-2">Redirecting...</h2>
+          <p className="text-gray-500">You are already logged in. Redirecting to dashboard...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
