@@ -16,7 +16,6 @@ describe('MatchesController', () => {
   beforeAll(async () => {
     prisma = mockDeep<PrismaService>();
     matchScoresService = mockDeep<MatchScoresService>();
-    matchScoresService.initializeForMatch.mockResolvedValue(undefined);
 
     const moduleRef: TestingModule = await Test.createTestingModule({
       controllers: [MatchesController],
@@ -46,7 +45,6 @@ describe('MatchesController', () => {
       prisma.match.create.mockResolvedValue({ id: 'match1', alliances: [] } as any);
       prisma.alliance.create.mockResolvedValue({ id: 'alliance1' } as any);
       prisma.teamAlliance.create.mockResolvedValue({} as any);
-      prisma.allianceScoring.create.mockResolvedValue({} as any);
       prisma.match.findUnique.mockResolvedValue({ id: 'match1', alliances: [] } as any);
 
       const dto = {
@@ -63,7 +61,7 @@ describe('MatchesController', () => {
       expect(result).toHaveProperty('id', 'match1');
       expect(prisma.match.create).toHaveBeenCalled();
       expect(prisma.alliance.create).toHaveBeenCalledTimes(2);
-      expect(matchScoresService.initializeForMatch).toHaveBeenCalledWith('match1');
+      expect(prisma.teamAlliance.create).toHaveBeenCalledTimes(4);
     });
   });
 
@@ -139,6 +137,227 @@ describe('MatchesController', () => {
       const result = await matchesService.remove('match1');
       expect(result).toHaveProperty('id', 'match1');
       expect(prisma.match.delete).toHaveBeenCalledWith({ where: { id: 'match1' } });
+    });
+  });
+
+  describe('assignMatchToField', () => {
+    const mockHeadReferee = {
+      id: 'fr1',
+      fieldId: 'field1',
+      userId: 'headref1',
+      isHeadRef: true,
+      createdAt: new Date()
+    };
+
+    const mockUpdatedMatch = {
+      id: 'match1',
+      matchNumber: 1,
+      status: 'PENDING',
+      fieldId: 'field1',
+      scoredById: 'headref1',
+      field: {
+        id: 'field1',
+        name: 'Field 1',
+        number: 1,
+        fieldReferees: [
+          {
+            id: 'fr1',
+            isHeadRef: true,
+            user: {
+              id: 'headref1',
+              username: 'headref',
+              role: 'HEAD_REFEREE'
+            }
+          }
+        ]
+      },
+      scoredBy: {
+        id: 'headref1',
+        username: 'headref',
+        role: 'HEAD_REFEREE'
+      }
+    };
+
+    it('should assign match to field and auto-assign head referee as scorer', async () => {
+      prisma.fieldReferee.findFirst.mockResolvedValue(mockHeadReferee as any);
+      prisma.match.update.mockResolvedValue(mockUpdatedMatch as any);
+
+      const result = await matchesService.assignMatchToField('match1', 'field1');
+
+      expect(result).toEqual(mockUpdatedMatch);
+      expect(prisma.fieldReferee.findFirst).toHaveBeenCalledWith({
+        where: {
+          fieldId: 'field1',
+          isHeadRef: true,
+        },
+      });
+      expect(prisma.match.update).toHaveBeenCalledWith({
+        where: { id: 'match1' },
+        data: {
+          fieldId: 'field1',
+          scoredById: 'headref1',
+        },
+        include: {
+          field: {
+            include: {
+              fieldReferees: {
+                include: {
+                  user: {
+                    select: {
+                      id: true,
+                      username: true,
+                      role: true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          scoredBy: {
+            select: {
+              id: true,
+              username: true,
+              role: true
+            }
+          }
+        }
+      });
+    });
+
+    it('should throw error when no head referee is assigned to field', async () => {
+      prisma.fieldReferee.findFirst.mockResolvedValue(null);
+
+      await expect(
+        matchesService.assignMatchToField('match1', 'field1')
+      ).rejects.toThrow('No head referee assigned to field field1');
+
+      expect(prisma.match.update).not.toHaveBeenCalled();
+    });
+
+    it('should handle prisma errors gracefully', async () => {
+      prisma.fieldReferee.findFirst.mockResolvedValue(mockHeadReferee as any);
+      prisma.match.update.mockRejectedValue(new Error('Database error'));
+
+      await expect(
+        matchesService.assignMatchToField('match1', 'field1')
+      ).rejects.toThrow('Database error');
+    });
+  });
+
+  describe('update with auto head referee assignment', () => {
+    const mockHeadReferee = {
+      id: 'fr1',
+      fieldId: 'field1',
+      userId: 'headref1',
+      isHeadRef: true
+    };
+
+    const mockField = {
+      id: 'field1',
+      number: 1,
+      name: 'Field 1'
+    };
+
+    const mockUpdatedMatch = {
+      id: 'match1',
+      fieldId: 'field1',
+      scoredById: 'headref1',
+      matchNumber: 1,
+      status: 'PENDING'
+    };
+
+    it('should auto-assign head referee when fieldId is updated and no scoredById provided', async () => {
+      const updateDto = { fieldId: 'field1' };
+      
+      prisma.field.findUnique.mockResolvedValue(mockField as any);
+      prisma.fieldReferee.findFirst.mockResolvedValue(mockHeadReferee as any);
+      prisma.match.update.mockResolvedValue(mockUpdatedMatch as any);
+
+      const result = await matchesService.update('match1', updateDto as any);
+
+      expect(result).toEqual(mockUpdatedMatch);
+      expect(prisma.field.findUnique).toHaveBeenCalledWith({
+        where: { id: 'field1' },
+        select: { number: true },
+      });
+      expect(prisma.fieldReferee.findFirst).toHaveBeenCalledWith({
+        where: {
+          fieldId: 'field1',
+          isHeadRef: true,
+        },
+      });
+      expect(prisma.match.update).toHaveBeenCalledWith({
+        where: { id: 'match1' },
+        data: {
+          fieldId: 'field1',
+          fieldNumber: 1,
+          scoredById: 'headref1'
+        },
+        include: expect.any(Object)
+      });
+    });
+
+    it('should not override existing scoredById when explicitly provided', async () => {
+      const updateDto = { fieldId: 'field1', scoredById: 'existing-scorer' };
+      
+      prisma.field.findUnique.mockResolvedValue(mockField as any);
+      prisma.match.update.mockResolvedValue({ ...mockUpdatedMatch, scoredById: 'existing-scorer' } as any);
+
+      const result = await matchesService.update('match1', updateDto as any);
+
+      expect(prisma.fieldReferee.findFirst).not.toHaveBeenCalled();
+      expect(prisma.match.update).toHaveBeenCalledWith({
+        where: { id: 'match1' },
+        data: { 
+          fieldId: 'field1',
+          fieldNumber: 1,
+          scoredById: 'existing-scorer'
+        },
+        include: expect.any(Object)
+      });
+    });
+
+    it('should not assign head referee when fieldId is not being updated', async () => {
+      const updateDto = { status: 'IN_PROGRESS' };
+      
+      prisma.match.update.mockResolvedValue({ id: 'match1', status: 'IN_PROGRESS' } as any);
+
+      const result = await matchesService.update('match1', updateDto as any);
+
+      expect(prisma.field.findUnique).not.toHaveBeenCalled();
+      expect(prisma.fieldReferee.findFirst).not.toHaveBeenCalled();
+      expect(prisma.match.update).toHaveBeenCalledWith({
+        where: { id: 'match1' },
+        data: { status: 'IN_PROGRESS' },
+        include: expect.any(Object)
+      });
+    });
+
+    it('should handle case when field is not found', async () => {
+      const updateDto = { fieldId: 'nonexistent-field' };
+      
+      prisma.field.findUnique.mockResolvedValue(null);
+
+      await expect(matchesService.update('match1', updateDto as any)).rejects.toThrow('Field not found');
+    });
+
+    it('should handle case when no head referee exists for field', async () => {
+      const updateDto = { fieldId: 'field1' };
+      
+      prisma.field.findUnique.mockResolvedValue(mockField as any);
+      prisma.fieldReferee.findFirst.mockResolvedValue(null);
+      prisma.match.update.mockResolvedValue({ ...mockUpdatedMatch, scoredById: null } as any);
+
+      const result = await matchesService.update('match1', updateDto as any);
+
+      expect(prisma.match.update).toHaveBeenCalledWith({
+        where: { id: 'match1' },
+        data: { 
+          fieldId: 'field1',
+          fieldNumber: 1
+        },
+        include: expect.any(Object)
+      });
     });
   });
 });

@@ -475,3 +475,4 @@ export interface GeneratePlayoffRequest {
   stageId: string;
   numberOfRounds: number;
 }
+

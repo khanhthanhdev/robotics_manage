@@ -258,6 +258,316 @@ describe('TournamentsService', () => {
     });
   });
 
+  describe('findOneWithFullDetails', () => {
+    it('should return tournament with full nested details', async () => {
+      const now = new Date();
+      const mockTournamentWithDetails = {
+        id: 't1',
+        name: 'Tournament 1',
+        description: 'Test tournament',
+        startDate: now,
+        endDate: now,
+        createdAt: now,
+        updatedAt: now,
+        adminId: 'admin1',
+        numberOfFields: 2,
+        admin: {
+          id: 'admin1',
+          username: 'admin',
+          email: 'admin@test.com'
+        },
+        stages: [
+          {
+            id: 's1',
+            name: 'Qualification',
+            stageType: 'QUALIFICATION',
+            status: 'PENDING',
+            matches: [
+              {
+                id: 'm1',
+                matchNumber: 1,
+                status: 'PENDING',
+                startTime: now
+              }
+            ]
+          }
+        ],
+        fields: [
+          {
+            id: 'f1',
+            number: 1,
+            name: 'Field 1',
+            fieldReferees: [
+              {
+                id: 'fr1',
+                isHeadRef: true,
+                createdAt: now,
+                user: {
+                  id: 'ref1',
+                  username: 'headref',
+                  email: 'headref@test.com',
+                  role: 'HEAD_REFEREE'
+                }
+              }
+            ],
+            _count: { matches: 5 }
+          }
+        ],
+        teams: [
+          {
+            id: 'team1',
+            teamNumber: 1234,
+            name: 'Test Team',
+            organization: 'Test Org'
+          }
+        ],
+        _count: {
+          stages: 1,
+          fields: 2,
+          teams: 1
+        }
+      };
+
+      prisma.tournament.findUnique.mockResolvedValue(mockTournamentWithDetails as any);
+
+      const result = await service.findOneWithFullDetails('t1');
+
+      expect(result).toEqual(mockTournamentWithDetails);
+      expect(prisma.tournament.findUnique).toHaveBeenCalledWith({
+        where: { id: 't1' },
+        include: {
+          admin: {
+            select: {
+              id: true,
+              username: true,
+              email: true
+            }
+          },
+          stages: {
+            include: {
+              matches: {
+                select: {
+                  id: true,
+                  matchNumber: true,
+                  status: true,
+                  startTime: true,
+                  endTime: true
+                },
+                orderBy: { startDate: 'asc' }
+              }
+            },
+            orderBy: { startDate: 'asc' }
+          },
+          fields: {
+            include: {
+              fieldReferees: {
+                include: {
+                  user: { 
+                    select: { 
+                      id: true, 
+                      username: true, 
+                      email: true,
+                      role: true 
+                    } 
+                  }
+                },
+                orderBy: [
+                  { isHeadRef: 'desc' },
+                  { createdAt: 'asc' }
+                ]
+              },
+              _count: { 
+                select: { 
+                  matches: true
+                } 
+              }
+            },
+            orderBy: { number: 'asc' }
+          },
+          teams: {
+            select: {
+              id: true,
+              teamNumber: true,
+              name: true,
+              organization: true
+            }
+          },
+          _count: {
+            select: {
+              stages: true,
+              fields: true,
+              teams: true
+            }
+          }
+        }
+      });
+    });
+
+    it('should return null if tournament not found', async () => {
+      prisma.tournament.findUnique.mockResolvedValue(null);
+
+      const result = await service.findOneWithFullDetails('nonexistent');
+
+      expect(result).toBeNull();
+    });
+
+    it('should handle tournament with no stages, fields, or teams', async () => {
+      const now = new Date();
+      const mockMinimalTournament = {
+        id: 't1',
+        name: 'Minimal Tournament',
+        description: 'Test',
+        startDate: now,
+        endDate: now,
+        createdAt: now,
+        updatedAt: now,
+        adminId: 'admin1',
+        numberOfFields: 0,
+        admin: { id: 'admin1', username: 'admin', email: 'admin@test.com' },
+        stages: [],
+        fields: [],
+        teams: [],
+        _count: { stages: 0, fields: 0, teams: 0 }
+      };
+
+      prisma.tournament.findUnique.mockResolvedValue(mockMinimalTournament as any);
+
+      const result = await service.findOneWithFullDetails('t1');
+
+      expect(result).toEqual(mockMinimalTournament);
+      expect(result).not.toBeNull();
+      if (result) {
+        expect(result.stages).toHaveLength(0);
+        expect(result.fields).toHaveLength(0);
+        expect(result.teams).toHaveLength(0);
+      }
+    });
+
+    it('should throw if prisma throws', async () => {
+      prisma.tournament.findUnique.mockRejectedValue(new Error('DB error'));
+
+      await expect(service.findOneWithFullDetails('t1')).rejects.toThrow('DB error');
+    });
+  });
+
+  describe('getFieldsWithRefereesByTournament', () => {
+    it('should return fields with referees for a tournament', async () => {
+      const now = new Date();
+      const mockFieldsWithReferees = [
+        {
+          id: 'f1',
+          number: 1,
+          name: 'Field 1',
+          tournamentId: 't1',
+          fieldReferees: [
+            {
+              id: 'fr1',
+              fieldId: 'f1',
+              userId: 'ref1',
+              isHeadRef: true,
+              createdAt: now,
+              user: {
+                id: 'ref1',
+                username: 'headref',
+                email: 'headref@test.com',
+                role: 'HEAD_REFEREE'
+              }
+            },
+            {
+              id: 'fr2',
+              fieldId: 'f1',
+              userId: 'ref2',
+              isHeadRef: false,
+              createdAt: now,
+              user: {
+                id: 'ref2',
+                username: 'allianceref',
+                email: 'allianceref@test.com',
+                role: 'ALLIANCE_REFEREE'
+              }
+            }
+          ],
+          _count: { matches: 3 }
+        },
+        {
+          id: 'f2',
+          number: 2,
+          name: 'Field 2',
+          tournamentId: 't1',
+          fieldReferees: [],
+          _count: { matches: 0 }
+        }
+      ];
+
+      prisma.field.findMany.mockResolvedValue(mockFieldsWithReferees as any);
+
+      const result = await service.getFieldsWithRefereesByTournament('t1');
+
+      expect(result).toEqual(mockFieldsWithReferees);
+      expect(prisma.field.findMany).toHaveBeenCalledWith({
+        where: { tournamentId: 't1' },
+        include: {
+          fieldReferees: {
+            include: {
+              user: {
+                select: {
+                  id: true,
+                  username: true,
+                  email: true,
+                  role: true
+                }
+              }
+            },
+            orderBy: [
+              { isHeadRef: 'desc' },
+              { createdAt: 'asc' }
+            ]
+          },
+          _count: {
+            select: {
+              matches: true
+            }
+          }
+        },
+        orderBy: { number: 'asc' }
+      });
+    });
+
+    it('should return empty array if no fields exist', async () => {
+      prisma.field.findMany.mockResolvedValue([]);
+
+      const result = await service.getFieldsWithRefereesByTournament('t1');
+
+      expect(result).toEqual([]);
+    });
+
+    it('should handle fields with no referees assigned', async () => {
+      const mockFieldsNoReferees = [
+        {
+          id: 'f1',
+          number: 1,
+          name: 'Field 1',
+          tournamentId: 't1',
+          fieldReferees: [],
+          _count: { matches: 0 }
+        }
+      ];
+
+      prisma.field.findMany.mockResolvedValue(mockFieldsNoReferees as any);
+
+      const result = await service.getFieldsWithRefereesByTournament('t1');
+
+      expect(result).toEqual(mockFieldsNoReferees);
+      expect(result[0].fieldReferees).toHaveLength(0);
+    });
+
+    it('should throw if prisma throws', async () => {
+      prisma.field.findMany.mockRejectedValue(new Error('DB error'));
+
+      await expect(service.getFieldsWithRefereesByTournament('t1')).rejects.toThrow('DB error');
+    });
+  });
+
   describe('getFieldsByTournament', () => {
     it('should return fields for a tournament', async () => {
       prisma.field.findMany.mockResolvedValue([

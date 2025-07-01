@@ -267,6 +267,15 @@ exports.Prisma.FieldDisplayScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.FieldRefereeScalarFieldEnum = {
+  id: 'id',
+  fieldId: 'fieldId',
+  userId: 'userId',
+  isHeadRef: 'isHeadRef',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.ScoreConfigScalarFieldEnum = {
   id: 'id',
   tournamentId: 'tournamentId',
@@ -425,6 +434,7 @@ exports.Prisma.ModelName = {
   TeamStats: 'TeamStats',
   Field: 'Field',
   FieldDisplay: 'FieldDisplay',
+  FieldReferee: 'FieldReferee',
   ScoreConfig: 'ScoreConfig',
   ScoreElement: 'ScoreElement',
   BonusCondition: 'BonusCondition',

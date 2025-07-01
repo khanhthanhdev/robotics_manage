@@ -157,4 +157,96 @@ export class TournamentsService {
       orderBy: { number: 'asc' },
     });
   }
+
+  async findOneWithFullDetails(id: string) {
+    return this.prisma.tournament.findUnique({
+      where: { id },
+      include: {
+        admin: { 
+          select: { id: true, username: true, email: true } 
+        },
+        stages: {
+          include: {
+            _count: { 
+              select: { 
+                matches: true
+              } 
+            }
+          },
+          orderBy: { startDate: 'asc' }
+        },
+        fields: {
+          include: {
+            fieldReferees: {
+              include: {
+                user: { 
+                  select: { 
+                    id: true, 
+                    username: true, 
+                    email: true,
+                    role: true 
+                  } 
+                }
+              },
+              orderBy: [
+                { isHeadRef: 'desc' },
+                { createdAt: 'asc' }
+              ]
+            },
+            _count: { 
+              select: { 
+                matches: true
+              } 
+            }
+          },
+          orderBy: { number: 'asc' }
+        },
+        teams: {
+          select: {
+            id: true,
+            teamNumber: true,
+            name: true,
+            organization: true
+          }
+        },
+        _count: {
+          select: {
+            stages: true,
+            fields: true,
+            teams: true
+          }
+        }
+      }
+    });
+  }
+
+  async getFieldsWithRefereesByTournament(tournamentId: string) {
+    return this.prisma.field.findMany({
+      where: { tournamentId },
+      include: {
+        fieldReferees: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                username: true,
+                email: true,
+                role: true
+              }
+            }
+          },
+          orderBy: [
+            { isHeadRef: 'desc' },
+            { createdAt: 'asc' }
+          ]
+        },
+        _count: {
+          select: {
+            matches: true
+          }
+        }
+      },
+      orderBy: { number: 'asc' }
+    });
+  }
 }

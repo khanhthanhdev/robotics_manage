@@ -69,6 +69,11 @@ export type Field = $Result.DefaultSelection<Prisma.$FieldPayload>
  */
 export type FieldDisplay = $Result.DefaultSelection<Prisma.$FieldDisplayPayload>
 /**
+ * Model FieldReferee
+ * 
+ */
+export type FieldReferee = $Result.DefaultSelection<Prisma.$FieldRefereePayload>
+/**
  * Model ScoreConfig
  * 
  */
@@ -497,6 +502,16 @@ export class PrismaClient<
     * ```
     */
   get fieldDisplay(): Prisma.FieldDisplayDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.fieldReferee`: Exposes CRUD operations for the **FieldReferee** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more FieldReferees
+    * const fieldReferees = await prisma.fieldReferee.findMany()
+    * ```
+    */
+  get fieldReferee(): Prisma.FieldRefereeDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.scoreConfig`: Exposes CRUD operations for the **ScoreConfig** model.
@@ -998,6 +1013,7 @@ export namespace Prisma {
     TeamStats: 'TeamStats',
     Field: 'Field',
     FieldDisplay: 'FieldDisplay',
+    FieldReferee: 'FieldReferee',
     ScoreConfig: 'ScoreConfig',
     ScoreElement: 'ScoreElement',
     BonusCondition: 'BonusCondition',
@@ -1021,7 +1037,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "tournament" | "stage" | "match" | "matchReferee" | "alliance" | "team" | "teamAlliance" | "teamStats" | "field" | "fieldDisplay" | "scoreConfig" | "scoreElement" | "bonusCondition" | "penaltyCondition" | "matchScore"
+      modelProps: "user" | "tournament" | "stage" | "match" | "matchReferee" | "alliance" | "team" | "teamAlliance" | "teamStats" | "field" | "fieldDisplay" | "fieldReferee" | "scoreConfig" | "scoreElement" | "bonusCondition" | "penaltyCondition" | "matchScore"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1839,6 +1855,80 @@ export namespace Prisma {
           }
         }
       }
+      FieldReferee: {
+        payload: Prisma.$FieldRefereePayload<ExtArgs>
+        fields: Prisma.FieldRefereeFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.FieldRefereeFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FieldRefereePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.FieldRefereeFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FieldRefereePayload>
+          }
+          findFirst: {
+            args: Prisma.FieldRefereeFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FieldRefereePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.FieldRefereeFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FieldRefereePayload>
+          }
+          findMany: {
+            args: Prisma.FieldRefereeFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FieldRefereePayload>[]
+          }
+          create: {
+            args: Prisma.FieldRefereeCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FieldRefereePayload>
+          }
+          createMany: {
+            args: Prisma.FieldRefereeCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.FieldRefereeCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FieldRefereePayload>[]
+          }
+          delete: {
+            args: Prisma.FieldRefereeDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FieldRefereePayload>
+          }
+          update: {
+            args: Prisma.FieldRefereeUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FieldRefereePayload>
+          }
+          deleteMany: {
+            args: Prisma.FieldRefereeDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.FieldRefereeUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.FieldRefereeUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FieldRefereePayload>[]
+          }
+          upsert: {
+            args: Prisma.FieldRefereeUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FieldRefereePayload>
+          }
+          aggregate: {
+            args: Prisma.FieldRefereeAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateFieldReferee>
+          }
+          groupBy: {
+            args: Prisma.FieldRefereeGroupByArgs<ExtArgs>
+            result: $Utils.Optional<FieldRefereeGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.FieldRefereeCountArgs<ExtArgs>
+            result: $Utils.Optional<FieldRefereeCountAggregateOutputType> | number
+          }
+        }
+      }
       ScoreConfig: {
         payload: Prisma.$ScoreConfigPayload<ExtArgs>
         fields: Prisma.ScoreConfigFieldRefs
@@ -2304,6 +2394,7 @@ export namespace Prisma {
     teamStats?: TeamStatsOmit
     field?: FieldOmit
     fieldDisplay?: FieldDisplayOmit
+    fieldReferee?: FieldRefereeOmit
     scoreConfig?: ScoreConfigOmit
     scoreElement?: ScoreElementOmit
     bonusCondition?: BonusConditionOmit
@@ -2408,6 +2499,7 @@ export namespace Prisma {
     scoredMatches: number
     matchReferees: number
     fieldDisplays: number
+    fieldReferees: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2416,6 +2508,7 @@ export namespace Prisma {
     scoredMatches?: boolean | UserCountOutputTypeCountScoredMatchesArgs
     matchReferees?: boolean | UserCountOutputTypeCountMatchRefereesArgs
     fieldDisplays?: boolean | UserCountOutputTypeCountFieldDisplaysArgs
+    fieldReferees?: boolean | UserCountOutputTypeCountFieldRefereesArgs
   }
 
   // Custom InputTypes
@@ -2462,6 +2555,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountFieldDisplaysArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: FieldDisplayWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountFieldRefereesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: FieldRefereeWhereInput
   }
 
 
@@ -2725,10 +2825,12 @@ export namespace Prisma {
 
   export type FieldCountOutputType = {
     matches: number
+    fieldReferees: number
   }
 
   export type FieldCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     matches?: boolean | FieldCountOutputTypeCountMatchesArgs
+    fieldReferees?: boolean | FieldCountOutputTypeCountFieldRefereesArgs
   }
 
   // Custom InputTypes
@@ -2747,6 +2849,13 @@ export namespace Prisma {
    */
   export type FieldCountOutputTypeCountMatchesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: MatchWhereInput
+  }
+
+  /**
+   * FieldCountOutputType without action
+   */
+  export type FieldCountOutputTypeCountFieldRefereesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: FieldRefereeWhereInput
   }
 
 
@@ -3052,6 +3161,7 @@ export namespace Prisma {
     scoredMatches?: boolean | User$scoredMatchesArgs<ExtArgs>
     matchReferees?: boolean | User$matchRefereesArgs<ExtArgs>
     fieldDisplays?: boolean | User$fieldDisplaysArgs<ExtArgs>
+    fieldReferees?: boolean | User$fieldRefereesArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -3107,6 +3217,7 @@ export namespace Prisma {
     scoredMatches?: boolean | User$scoredMatchesArgs<ExtArgs>
     matchReferees?: boolean | User$matchRefereesArgs<ExtArgs>
     fieldDisplays?: boolean | User$fieldDisplaysArgs<ExtArgs>
+    fieldReferees?: boolean | User$fieldRefereesArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3125,6 +3236,7 @@ export namespace Prisma {
       scoredMatches: Prisma.$MatchPayload<ExtArgs>[]
       matchReferees: Prisma.$MatchRefereePayload<ExtArgs>[]
       fieldDisplays: Prisma.$FieldDisplayPayload<ExtArgs>[]
+      fieldReferees: Prisma.$FieldRefereePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -3538,6 +3650,7 @@ export namespace Prisma {
     scoredMatches<T extends User$scoredMatchesArgs<ExtArgs> = {}>(args?: Subset<T, User$scoredMatchesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MatchPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     matchReferees<T extends User$matchRefereesArgs<ExtArgs> = {}>(args?: Subset<T, User$matchRefereesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MatchRefereePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     fieldDisplays<T extends User$fieldDisplaysArgs<ExtArgs> = {}>(args?: Subset<T, User$fieldDisplaysArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FieldDisplayPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    fieldReferees<T extends User$fieldRefereesArgs<ExtArgs> = {}>(args?: Subset<T, User$fieldRefereesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FieldRefereePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4110,6 +4223,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: FieldDisplayScalarFieldEnum | FieldDisplayScalarFieldEnum[]
+  }
+
+  /**
+   * User.fieldReferees
+   */
+  export type User$fieldRefereesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FieldReferee
+     */
+    select?: FieldRefereeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FieldReferee
+     */
+    omit?: FieldRefereeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FieldRefereeInclude<ExtArgs> | null
+    where?: FieldRefereeWhereInput
+    orderBy?: FieldRefereeOrderByWithRelationInput | FieldRefereeOrderByWithRelationInput[]
+    cursor?: FieldRefereeWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: FieldRefereeScalarFieldEnum | FieldRefereeScalarFieldEnum[]
   }
 
   /**
@@ -14330,6 +14467,7 @@ export namespace Prisma {
     tournament?: boolean | TournamentDefaultArgs<ExtArgs>
     matches?: boolean | Field$matchesArgs<ExtArgs>
     fieldDisplay?: boolean | Field$fieldDisplayArgs<ExtArgs>
+    fieldReferees?: boolean | Field$fieldRefereesArgs<ExtArgs>
     _count?: boolean | FieldCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["field"]>
 
@@ -14373,6 +14511,7 @@ export namespace Prisma {
     tournament?: boolean | TournamentDefaultArgs<ExtArgs>
     matches?: boolean | Field$matchesArgs<ExtArgs>
     fieldDisplay?: boolean | Field$fieldDisplayArgs<ExtArgs>
+    fieldReferees?: boolean | Field$fieldRefereesArgs<ExtArgs>
     _count?: boolean | FieldCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type FieldIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -14388,6 +14527,7 @@ export namespace Prisma {
       tournament: Prisma.$TournamentPayload<ExtArgs>
       matches: Prisma.$MatchPayload<ExtArgs>[]
       fieldDisplay: Prisma.$FieldDisplayPayload<ExtArgs> | null
+      fieldReferees: Prisma.$FieldRefereePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -14795,6 +14935,7 @@ export namespace Prisma {
     tournament<T extends TournamentDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TournamentDefaultArgs<ExtArgs>>): Prisma__TournamentClient<$Result.GetResult<Prisma.$TournamentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     matches<T extends Field$matchesArgs<ExtArgs> = {}>(args?: Subset<T, Field$matchesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MatchPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     fieldDisplay<T extends Field$fieldDisplayArgs<ExtArgs> = {}>(args?: Subset<T, Field$fieldDisplayArgs<ExtArgs>>): Prisma__FieldDisplayClient<$Result.GetResult<Prisma.$FieldDisplayPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    fieldReferees<T extends Field$fieldRefereesArgs<ExtArgs> = {}>(args?: Subset<T, Field$fieldRefereesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FieldRefereePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -15268,6 +15409,30 @@ export namespace Prisma {
      */
     include?: FieldDisplayInclude<ExtArgs> | null
     where?: FieldDisplayWhereInput
+  }
+
+  /**
+   * Field.fieldReferees
+   */
+  export type Field$fieldRefereesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FieldReferee
+     */
+    select?: FieldRefereeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FieldReferee
+     */
+    omit?: FieldRefereeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FieldRefereeInclude<ExtArgs> | null
+    where?: FieldRefereeWhereInput
+    orderBy?: FieldRefereeOrderByWithRelationInput | FieldRefereeOrderByWithRelationInput[]
+    cursor?: FieldRefereeWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: FieldRefereeScalarFieldEnum | FieldRefereeScalarFieldEnum[]
   }
 
   /**
@@ -16450,6 +16615,1085 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: FieldDisplayInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model FieldReferee
+   */
+
+  export type AggregateFieldReferee = {
+    _count: FieldRefereeCountAggregateOutputType | null
+    _min: FieldRefereeMinAggregateOutputType | null
+    _max: FieldRefereeMaxAggregateOutputType | null
+  }
+
+  export type FieldRefereeMinAggregateOutputType = {
+    id: string | null
+    fieldId: string | null
+    userId: string | null
+    isHeadRef: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type FieldRefereeMaxAggregateOutputType = {
+    id: string | null
+    fieldId: string | null
+    userId: string | null
+    isHeadRef: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type FieldRefereeCountAggregateOutputType = {
+    id: number
+    fieldId: number
+    userId: number
+    isHeadRef: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type FieldRefereeMinAggregateInputType = {
+    id?: true
+    fieldId?: true
+    userId?: true
+    isHeadRef?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type FieldRefereeMaxAggregateInputType = {
+    id?: true
+    fieldId?: true
+    userId?: true
+    isHeadRef?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type FieldRefereeCountAggregateInputType = {
+    id?: true
+    fieldId?: true
+    userId?: true
+    isHeadRef?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type FieldRefereeAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which FieldReferee to aggregate.
+     */
+    where?: FieldRefereeWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FieldReferees to fetch.
+     */
+    orderBy?: FieldRefereeOrderByWithRelationInput | FieldRefereeOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: FieldRefereeWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FieldReferees from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FieldReferees.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned FieldReferees
+    **/
+    _count?: true | FieldRefereeCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: FieldRefereeMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: FieldRefereeMaxAggregateInputType
+  }
+
+  export type GetFieldRefereeAggregateType<T extends FieldRefereeAggregateArgs> = {
+        [P in keyof T & keyof AggregateFieldReferee]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateFieldReferee[P]>
+      : GetScalarType<T[P], AggregateFieldReferee[P]>
+  }
+
+
+
+
+  export type FieldRefereeGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: FieldRefereeWhereInput
+    orderBy?: FieldRefereeOrderByWithAggregationInput | FieldRefereeOrderByWithAggregationInput[]
+    by: FieldRefereeScalarFieldEnum[] | FieldRefereeScalarFieldEnum
+    having?: FieldRefereeScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: FieldRefereeCountAggregateInputType | true
+    _min?: FieldRefereeMinAggregateInputType
+    _max?: FieldRefereeMaxAggregateInputType
+  }
+
+  export type FieldRefereeGroupByOutputType = {
+    id: string
+    fieldId: string
+    userId: string
+    isHeadRef: boolean
+    createdAt: Date
+    updatedAt: Date
+    _count: FieldRefereeCountAggregateOutputType | null
+    _min: FieldRefereeMinAggregateOutputType | null
+    _max: FieldRefereeMaxAggregateOutputType | null
+  }
+
+  type GetFieldRefereeGroupByPayload<T extends FieldRefereeGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<FieldRefereeGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof FieldRefereeGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], FieldRefereeGroupByOutputType[P]>
+            : GetScalarType<T[P], FieldRefereeGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type FieldRefereeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    fieldId?: boolean
+    userId?: boolean
+    isHeadRef?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    field?: boolean | FieldDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["fieldReferee"]>
+
+  export type FieldRefereeSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    fieldId?: boolean
+    userId?: boolean
+    isHeadRef?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    field?: boolean | FieldDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["fieldReferee"]>
+
+  export type FieldRefereeSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    fieldId?: boolean
+    userId?: boolean
+    isHeadRef?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    field?: boolean | FieldDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["fieldReferee"]>
+
+  export type FieldRefereeSelectScalar = {
+    id?: boolean
+    fieldId?: boolean
+    userId?: boolean
+    isHeadRef?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type FieldRefereeOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "fieldId" | "userId" | "isHeadRef" | "createdAt" | "updatedAt", ExtArgs["result"]["fieldReferee"]>
+  export type FieldRefereeInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    field?: boolean | FieldDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type FieldRefereeIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    field?: boolean | FieldDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type FieldRefereeIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    field?: boolean | FieldDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $FieldRefereePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "FieldReferee"
+    objects: {
+      field: Prisma.$FieldPayload<ExtArgs>
+      user: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      fieldId: string
+      userId: string
+      isHeadRef: boolean
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["fieldReferee"]>
+    composites: {}
+  }
+
+  type FieldRefereeGetPayload<S extends boolean | null | undefined | FieldRefereeDefaultArgs> = $Result.GetResult<Prisma.$FieldRefereePayload, S>
+
+  type FieldRefereeCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<FieldRefereeFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: FieldRefereeCountAggregateInputType | true
+    }
+
+  export interface FieldRefereeDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['FieldReferee'], meta: { name: 'FieldReferee' } }
+    /**
+     * Find zero or one FieldReferee that matches the filter.
+     * @param {FieldRefereeFindUniqueArgs} args - Arguments to find a FieldReferee
+     * @example
+     * // Get one FieldReferee
+     * const fieldReferee = await prisma.fieldReferee.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends FieldRefereeFindUniqueArgs>(args: SelectSubset<T, FieldRefereeFindUniqueArgs<ExtArgs>>): Prisma__FieldRefereeClient<$Result.GetResult<Prisma.$FieldRefereePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one FieldReferee that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {FieldRefereeFindUniqueOrThrowArgs} args - Arguments to find a FieldReferee
+     * @example
+     * // Get one FieldReferee
+     * const fieldReferee = await prisma.fieldReferee.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends FieldRefereeFindUniqueOrThrowArgs>(args: SelectSubset<T, FieldRefereeFindUniqueOrThrowArgs<ExtArgs>>): Prisma__FieldRefereeClient<$Result.GetResult<Prisma.$FieldRefereePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first FieldReferee that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FieldRefereeFindFirstArgs} args - Arguments to find a FieldReferee
+     * @example
+     * // Get one FieldReferee
+     * const fieldReferee = await prisma.fieldReferee.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends FieldRefereeFindFirstArgs>(args?: SelectSubset<T, FieldRefereeFindFirstArgs<ExtArgs>>): Prisma__FieldRefereeClient<$Result.GetResult<Prisma.$FieldRefereePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first FieldReferee that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FieldRefereeFindFirstOrThrowArgs} args - Arguments to find a FieldReferee
+     * @example
+     * // Get one FieldReferee
+     * const fieldReferee = await prisma.fieldReferee.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends FieldRefereeFindFirstOrThrowArgs>(args?: SelectSubset<T, FieldRefereeFindFirstOrThrowArgs<ExtArgs>>): Prisma__FieldRefereeClient<$Result.GetResult<Prisma.$FieldRefereePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more FieldReferees that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FieldRefereeFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all FieldReferees
+     * const fieldReferees = await prisma.fieldReferee.findMany()
+     * 
+     * // Get first 10 FieldReferees
+     * const fieldReferees = await prisma.fieldReferee.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const fieldRefereeWithIdOnly = await prisma.fieldReferee.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends FieldRefereeFindManyArgs>(args?: SelectSubset<T, FieldRefereeFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FieldRefereePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a FieldReferee.
+     * @param {FieldRefereeCreateArgs} args - Arguments to create a FieldReferee.
+     * @example
+     * // Create one FieldReferee
+     * const FieldReferee = await prisma.fieldReferee.create({
+     *   data: {
+     *     // ... data to create a FieldReferee
+     *   }
+     * })
+     * 
+     */
+    create<T extends FieldRefereeCreateArgs>(args: SelectSubset<T, FieldRefereeCreateArgs<ExtArgs>>): Prisma__FieldRefereeClient<$Result.GetResult<Prisma.$FieldRefereePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many FieldReferees.
+     * @param {FieldRefereeCreateManyArgs} args - Arguments to create many FieldReferees.
+     * @example
+     * // Create many FieldReferees
+     * const fieldReferee = await prisma.fieldReferee.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends FieldRefereeCreateManyArgs>(args?: SelectSubset<T, FieldRefereeCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many FieldReferees and returns the data saved in the database.
+     * @param {FieldRefereeCreateManyAndReturnArgs} args - Arguments to create many FieldReferees.
+     * @example
+     * // Create many FieldReferees
+     * const fieldReferee = await prisma.fieldReferee.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many FieldReferees and only return the `id`
+     * const fieldRefereeWithIdOnly = await prisma.fieldReferee.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends FieldRefereeCreateManyAndReturnArgs>(args?: SelectSubset<T, FieldRefereeCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FieldRefereePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a FieldReferee.
+     * @param {FieldRefereeDeleteArgs} args - Arguments to delete one FieldReferee.
+     * @example
+     * // Delete one FieldReferee
+     * const FieldReferee = await prisma.fieldReferee.delete({
+     *   where: {
+     *     // ... filter to delete one FieldReferee
+     *   }
+     * })
+     * 
+     */
+    delete<T extends FieldRefereeDeleteArgs>(args: SelectSubset<T, FieldRefereeDeleteArgs<ExtArgs>>): Prisma__FieldRefereeClient<$Result.GetResult<Prisma.$FieldRefereePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one FieldReferee.
+     * @param {FieldRefereeUpdateArgs} args - Arguments to update one FieldReferee.
+     * @example
+     * // Update one FieldReferee
+     * const fieldReferee = await prisma.fieldReferee.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends FieldRefereeUpdateArgs>(args: SelectSubset<T, FieldRefereeUpdateArgs<ExtArgs>>): Prisma__FieldRefereeClient<$Result.GetResult<Prisma.$FieldRefereePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more FieldReferees.
+     * @param {FieldRefereeDeleteManyArgs} args - Arguments to filter FieldReferees to delete.
+     * @example
+     * // Delete a few FieldReferees
+     * const { count } = await prisma.fieldReferee.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends FieldRefereeDeleteManyArgs>(args?: SelectSubset<T, FieldRefereeDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more FieldReferees.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FieldRefereeUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many FieldReferees
+     * const fieldReferee = await prisma.fieldReferee.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends FieldRefereeUpdateManyArgs>(args: SelectSubset<T, FieldRefereeUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more FieldReferees and returns the data updated in the database.
+     * @param {FieldRefereeUpdateManyAndReturnArgs} args - Arguments to update many FieldReferees.
+     * @example
+     * // Update many FieldReferees
+     * const fieldReferee = await prisma.fieldReferee.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more FieldReferees and only return the `id`
+     * const fieldRefereeWithIdOnly = await prisma.fieldReferee.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends FieldRefereeUpdateManyAndReturnArgs>(args: SelectSubset<T, FieldRefereeUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FieldRefereePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one FieldReferee.
+     * @param {FieldRefereeUpsertArgs} args - Arguments to update or create a FieldReferee.
+     * @example
+     * // Update or create a FieldReferee
+     * const fieldReferee = await prisma.fieldReferee.upsert({
+     *   create: {
+     *     // ... data to create a FieldReferee
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the FieldReferee we want to update
+     *   }
+     * })
+     */
+    upsert<T extends FieldRefereeUpsertArgs>(args: SelectSubset<T, FieldRefereeUpsertArgs<ExtArgs>>): Prisma__FieldRefereeClient<$Result.GetResult<Prisma.$FieldRefereePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of FieldReferees.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FieldRefereeCountArgs} args - Arguments to filter FieldReferees to count.
+     * @example
+     * // Count the number of FieldReferees
+     * const count = await prisma.fieldReferee.count({
+     *   where: {
+     *     // ... the filter for the FieldReferees we want to count
+     *   }
+     * })
+    **/
+    count<T extends FieldRefereeCountArgs>(
+      args?: Subset<T, FieldRefereeCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], FieldRefereeCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a FieldReferee.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FieldRefereeAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends FieldRefereeAggregateArgs>(args: Subset<T, FieldRefereeAggregateArgs>): Prisma.PrismaPromise<GetFieldRefereeAggregateType<T>>
+
+    /**
+     * Group by FieldReferee.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FieldRefereeGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends FieldRefereeGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: FieldRefereeGroupByArgs['orderBy'] }
+        : { orderBy?: FieldRefereeGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, FieldRefereeGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetFieldRefereeGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the FieldReferee model
+   */
+  readonly fields: FieldRefereeFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for FieldReferee.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__FieldRefereeClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    field<T extends FieldDefaultArgs<ExtArgs> = {}>(args?: Subset<T, FieldDefaultArgs<ExtArgs>>): Prisma__FieldClient<$Result.GetResult<Prisma.$FieldPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the FieldReferee model
+   */
+  interface FieldRefereeFieldRefs {
+    readonly id: FieldRef<"FieldReferee", 'String'>
+    readonly fieldId: FieldRef<"FieldReferee", 'String'>
+    readonly userId: FieldRef<"FieldReferee", 'String'>
+    readonly isHeadRef: FieldRef<"FieldReferee", 'Boolean'>
+    readonly createdAt: FieldRef<"FieldReferee", 'DateTime'>
+    readonly updatedAt: FieldRef<"FieldReferee", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * FieldReferee findUnique
+   */
+  export type FieldRefereeFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FieldReferee
+     */
+    select?: FieldRefereeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FieldReferee
+     */
+    omit?: FieldRefereeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FieldRefereeInclude<ExtArgs> | null
+    /**
+     * Filter, which FieldReferee to fetch.
+     */
+    where: FieldRefereeWhereUniqueInput
+  }
+
+  /**
+   * FieldReferee findUniqueOrThrow
+   */
+  export type FieldRefereeFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FieldReferee
+     */
+    select?: FieldRefereeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FieldReferee
+     */
+    omit?: FieldRefereeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FieldRefereeInclude<ExtArgs> | null
+    /**
+     * Filter, which FieldReferee to fetch.
+     */
+    where: FieldRefereeWhereUniqueInput
+  }
+
+  /**
+   * FieldReferee findFirst
+   */
+  export type FieldRefereeFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FieldReferee
+     */
+    select?: FieldRefereeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FieldReferee
+     */
+    omit?: FieldRefereeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FieldRefereeInclude<ExtArgs> | null
+    /**
+     * Filter, which FieldReferee to fetch.
+     */
+    where?: FieldRefereeWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FieldReferees to fetch.
+     */
+    orderBy?: FieldRefereeOrderByWithRelationInput | FieldRefereeOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for FieldReferees.
+     */
+    cursor?: FieldRefereeWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FieldReferees from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FieldReferees.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of FieldReferees.
+     */
+    distinct?: FieldRefereeScalarFieldEnum | FieldRefereeScalarFieldEnum[]
+  }
+
+  /**
+   * FieldReferee findFirstOrThrow
+   */
+  export type FieldRefereeFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FieldReferee
+     */
+    select?: FieldRefereeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FieldReferee
+     */
+    omit?: FieldRefereeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FieldRefereeInclude<ExtArgs> | null
+    /**
+     * Filter, which FieldReferee to fetch.
+     */
+    where?: FieldRefereeWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FieldReferees to fetch.
+     */
+    orderBy?: FieldRefereeOrderByWithRelationInput | FieldRefereeOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for FieldReferees.
+     */
+    cursor?: FieldRefereeWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FieldReferees from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FieldReferees.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of FieldReferees.
+     */
+    distinct?: FieldRefereeScalarFieldEnum | FieldRefereeScalarFieldEnum[]
+  }
+
+  /**
+   * FieldReferee findMany
+   */
+  export type FieldRefereeFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FieldReferee
+     */
+    select?: FieldRefereeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FieldReferee
+     */
+    omit?: FieldRefereeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FieldRefereeInclude<ExtArgs> | null
+    /**
+     * Filter, which FieldReferees to fetch.
+     */
+    where?: FieldRefereeWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FieldReferees to fetch.
+     */
+    orderBy?: FieldRefereeOrderByWithRelationInput | FieldRefereeOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing FieldReferees.
+     */
+    cursor?: FieldRefereeWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FieldReferees from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FieldReferees.
+     */
+    skip?: number
+    distinct?: FieldRefereeScalarFieldEnum | FieldRefereeScalarFieldEnum[]
+  }
+
+  /**
+   * FieldReferee create
+   */
+  export type FieldRefereeCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FieldReferee
+     */
+    select?: FieldRefereeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FieldReferee
+     */
+    omit?: FieldRefereeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FieldRefereeInclude<ExtArgs> | null
+    /**
+     * The data needed to create a FieldReferee.
+     */
+    data: XOR<FieldRefereeCreateInput, FieldRefereeUncheckedCreateInput>
+  }
+
+  /**
+   * FieldReferee createMany
+   */
+  export type FieldRefereeCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many FieldReferees.
+     */
+    data: FieldRefereeCreateManyInput | FieldRefereeCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * FieldReferee createManyAndReturn
+   */
+  export type FieldRefereeCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FieldReferee
+     */
+    select?: FieldRefereeSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the FieldReferee
+     */
+    omit?: FieldRefereeOmit<ExtArgs> | null
+    /**
+     * The data used to create many FieldReferees.
+     */
+    data: FieldRefereeCreateManyInput | FieldRefereeCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FieldRefereeIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * FieldReferee update
+   */
+  export type FieldRefereeUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FieldReferee
+     */
+    select?: FieldRefereeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FieldReferee
+     */
+    omit?: FieldRefereeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FieldRefereeInclude<ExtArgs> | null
+    /**
+     * The data needed to update a FieldReferee.
+     */
+    data: XOR<FieldRefereeUpdateInput, FieldRefereeUncheckedUpdateInput>
+    /**
+     * Choose, which FieldReferee to update.
+     */
+    where: FieldRefereeWhereUniqueInput
+  }
+
+  /**
+   * FieldReferee updateMany
+   */
+  export type FieldRefereeUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update FieldReferees.
+     */
+    data: XOR<FieldRefereeUpdateManyMutationInput, FieldRefereeUncheckedUpdateManyInput>
+    /**
+     * Filter which FieldReferees to update
+     */
+    where?: FieldRefereeWhereInput
+    /**
+     * Limit how many FieldReferees to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * FieldReferee updateManyAndReturn
+   */
+  export type FieldRefereeUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FieldReferee
+     */
+    select?: FieldRefereeSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the FieldReferee
+     */
+    omit?: FieldRefereeOmit<ExtArgs> | null
+    /**
+     * The data used to update FieldReferees.
+     */
+    data: XOR<FieldRefereeUpdateManyMutationInput, FieldRefereeUncheckedUpdateManyInput>
+    /**
+     * Filter which FieldReferees to update
+     */
+    where?: FieldRefereeWhereInput
+    /**
+     * Limit how many FieldReferees to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FieldRefereeIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * FieldReferee upsert
+   */
+  export type FieldRefereeUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FieldReferee
+     */
+    select?: FieldRefereeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FieldReferee
+     */
+    omit?: FieldRefereeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FieldRefereeInclude<ExtArgs> | null
+    /**
+     * The filter to search for the FieldReferee to update in case it exists.
+     */
+    where: FieldRefereeWhereUniqueInput
+    /**
+     * In case the FieldReferee found by the `where` argument doesn't exist, create a new FieldReferee with this data.
+     */
+    create: XOR<FieldRefereeCreateInput, FieldRefereeUncheckedCreateInput>
+    /**
+     * In case the FieldReferee was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<FieldRefereeUpdateInput, FieldRefereeUncheckedUpdateInput>
+  }
+
+  /**
+   * FieldReferee delete
+   */
+  export type FieldRefereeDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FieldReferee
+     */
+    select?: FieldRefereeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FieldReferee
+     */
+    omit?: FieldRefereeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FieldRefereeInclude<ExtArgs> | null
+    /**
+     * Filter which FieldReferee to delete.
+     */
+    where: FieldRefereeWhereUniqueInput
+  }
+
+  /**
+   * FieldReferee deleteMany
+   */
+  export type FieldRefereeDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which FieldReferees to delete
+     */
+    where?: FieldRefereeWhereInput
+    /**
+     * Limit how many FieldReferees to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * FieldReferee without action
+   */
+  export type FieldRefereeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FieldReferee
+     */
+    select?: FieldRefereeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FieldReferee
+     */
+    omit?: FieldRefereeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FieldRefereeInclude<ExtArgs> | null
   }
 
 
@@ -22424,6 +23668,18 @@ export namespace Prisma {
   export type FieldDisplayScalarFieldEnum = (typeof FieldDisplayScalarFieldEnum)[keyof typeof FieldDisplayScalarFieldEnum]
 
 
+  export const FieldRefereeScalarFieldEnum: {
+    id: 'id',
+    fieldId: 'fieldId',
+    userId: 'userId',
+    isHeadRef: 'isHeadRef',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type FieldRefereeScalarFieldEnum = (typeof FieldRefereeScalarFieldEnum)[keyof typeof FieldRefereeScalarFieldEnum]
+
+
   export const ScoreConfigScalarFieldEnum: {
     id: 'id',
     tournamentId: 'tournamentId',
@@ -22775,6 +24031,7 @@ export namespace Prisma {
     scoredMatches?: MatchListRelationFilter
     matchReferees?: MatchRefereeListRelationFilter
     fieldDisplays?: FieldDisplayListRelationFilter
+    fieldReferees?: FieldRefereeListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -22795,6 +24052,7 @@ export namespace Prisma {
     scoredMatches?: MatchOrderByRelationAggregateInput
     matchReferees?: MatchRefereeOrderByRelationAggregateInput
     fieldDisplays?: FieldDisplayOrderByRelationAggregateInput
+    fieldReferees?: FieldRefereeOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -22818,6 +24076,7 @@ export namespace Prisma {
     scoredMatches?: MatchListRelationFilter
     matchReferees?: MatchRefereeListRelationFilter
     fieldDisplays?: FieldDisplayListRelationFilter
+    fieldReferees?: FieldRefereeListRelationFilter
   }, "id" | "username" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -23638,6 +24897,7 @@ export namespace Prisma {
     tournament?: XOR<TournamentScalarRelationFilter, TournamentWhereInput>
     matches?: MatchListRelationFilter
     fieldDisplay?: XOR<FieldDisplayNullableScalarRelationFilter, FieldDisplayWhereInput> | null
+    fieldReferees?: FieldRefereeListRelationFilter
   }
 
   export type FieldOrderByWithRelationInput = {
@@ -23652,6 +24912,7 @@ export namespace Prisma {
     tournament?: TournamentOrderByWithRelationInput
     matches?: MatchOrderByRelationAggregateInput
     fieldDisplay?: FieldDisplayOrderByWithRelationInput
+    fieldReferees?: FieldRefereeOrderByRelationAggregateInput
   }
 
   export type FieldWhereUniqueInput = Prisma.AtLeast<{
@@ -23670,6 +24931,7 @@ export namespace Prisma {
     tournament?: XOR<TournamentScalarRelationFilter, TournamentWhereInput>
     matches?: MatchListRelationFilter
     fieldDisplay?: XOR<FieldDisplayNullableScalarRelationFilter, FieldDisplayWhereInput> | null
+    fieldReferees?: FieldRefereeListRelationFilter
   }, "id" | "tournamentId_number">
 
   export type FieldOrderByWithAggregationInput = {
@@ -23781,6 +25043,70 @@ export namespace Prisma {
     autoAdvance?: BoolWithAggregatesFilter<"FieldDisplay"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"FieldDisplay"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"FieldDisplay"> | Date | string
+  }
+
+  export type FieldRefereeWhereInput = {
+    AND?: FieldRefereeWhereInput | FieldRefereeWhereInput[]
+    OR?: FieldRefereeWhereInput[]
+    NOT?: FieldRefereeWhereInput | FieldRefereeWhereInput[]
+    id?: StringFilter<"FieldReferee"> | string
+    fieldId?: StringFilter<"FieldReferee"> | string
+    userId?: StringFilter<"FieldReferee"> | string
+    isHeadRef?: BoolFilter<"FieldReferee"> | boolean
+    createdAt?: DateTimeFilter<"FieldReferee"> | Date | string
+    updatedAt?: DateTimeFilter<"FieldReferee"> | Date | string
+    field?: XOR<FieldScalarRelationFilter, FieldWhereInput>
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type FieldRefereeOrderByWithRelationInput = {
+    id?: SortOrder
+    fieldId?: SortOrder
+    userId?: SortOrder
+    isHeadRef?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    field?: FieldOrderByWithRelationInput
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type FieldRefereeWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    fieldId_userId?: FieldRefereeFieldIdUserIdCompoundUniqueInput
+    AND?: FieldRefereeWhereInput | FieldRefereeWhereInput[]
+    OR?: FieldRefereeWhereInput[]
+    NOT?: FieldRefereeWhereInput | FieldRefereeWhereInput[]
+    fieldId?: StringFilter<"FieldReferee"> | string
+    userId?: StringFilter<"FieldReferee"> | string
+    isHeadRef?: BoolFilter<"FieldReferee"> | boolean
+    createdAt?: DateTimeFilter<"FieldReferee"> | Date | string
+    updatedAt?: DateTimeFilter<"FieldReferee"> | Date | string
+    field?: XOR<FieldScalarRelationFilter, FieldWhereInput>
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id" | "fieldId_userId">
+
+  export type FieldRefereeOrderByWithAggregationInput = {
+    id?: SortOrder
+    fieldId?: SortOrder
+    userId?: SortOrder
+    isHeadRef?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: FieldRefereeCountOrderByAggregateInput
+    _max?: FieldRefereeMaxOrderByAggregateInput
+    _min?: FieldRefereeMinOrderByAggregateInput
+  }
+
+  export type FieldRefereeScalarWhereWithAggregatesInput = {
+    AND?: FieldRefereeScalarWhereWithAggregatesInput | FieldRefereeScalarWhereWithAggregatesInput[]
+    OR?: FieldRefereeScalarWhereWithAggregatesInput[]
+    NOT?: FieldRefereeScalarWhereWithAggregatesInput | FieldRefereeScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"FieldReferee"> | string
+    fieldId?: StringWithAggregatesFilter<"FieldReferee"> | string
+    userId?: StringWithAggregatesFilter<"FieldReferee"> | string
+    isHeadRef?: BoolWithAggregatesFilter<"FieldReferee"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"FieldReferee"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"FieldReferee"> | Date | string
   }
 
   export type ScoreConfigWhereInput = {
@@ -24185,6 +25511,7 @@ export namespace Prisma {
     scoredMatches?: MatchCreateNestedManyWithoutScoredByInput
     matchReferees?: MatchRefereeCreateNestedManyWithoutUserInput
     fieldDisplays?: FieldDisplayCreateNestedManyWithoutLastUpdatedUserInput
+    fieldReferees?: FieldRefereeCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -24204,6 +25531,7 @@ export namespace Prisma {
     scoredMatches?: MatchUncheckedCreateNestedManyWithoutScoredByInput
     matchReferees?: MatchRefereeUncheckedCreateNestedManyWithoutUserInput
     fieldDisplays?: FieldDisplayUncheckedCreateNestedManyWithoutLastUpdatedUserInput
+    fieldReferees?: FieldRefereeUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -24223,6 +25551,7 @@ export namespace Prisma {
     scoredMatches?: MatchUpdateManyWithoutScoredByNestedInput
     matchReferees?: MatchRefereeUpdateManyWithoutUserNestedInput
     fieldDisplays?: FieldDisplayUpdateManyWithoutLastUpdatedUserNestedInput
+    fieldReferees?: FieldRefereeUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -24242,6 +25571,7 @@ export namespace Prisma {
     scoredMatches?: MatchUncheckedUpdateManyWithoutScoredByNestedInput
     matchReferees?: MatchRefereeUncheckedUpdateManyWithoutUserNestedInput
     fieldDisplays?: FieldDisplayUncheckedUpdateManyWithoutLastUpdatedUserNestedInput
+    fieldReferees?: FieldRefereeUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -25136,6 +26466,7 @@ export namespace Prisma {
     tournament: TournamentCreateNestedOneWithoutFieldsInput
     matches?: MatchCreateNestedManyWithoutFieldInput
     fieldDisplay?: FieldDisplayCreateNestedOneWithoutFieldInput
+    fieldReferees?: FieldRefereeCreateNestedManyWithoutFieldInput
   }
 
   export type FieldUncheckedCreateInput = {
@@ -25149,6 +26480,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     matches?: MatchUncheckedCreateNestedManyWithoutFieldInput
     fieldDisplay?: FieldDisplayUncheckedCreateNestedOneWithoutFieldInput
+    fieldReferees?: FieldRefereeUncheckedCreateNestedManyWithoutFieldInput
   }
 
   export type FieldUpdateInput = {
@@ -25162,6 +26494,7 @@ export namespace Prisma {
     tournament?: TournamentUpdateOneRequiredWithoutFieldsNestedInput
     matches?: MatchUpdateManyWithoutFieldNestedInput
     fieldDisplay?: FieldDisplayUpdateOneWithoutFieldNestedInput
+    fieldReferees?: FieldRefereeUpdateManyWithoutFieldNestedInput
   }
 
   export type FieldUncheckedUpdateInput = {
@@ -25175,6 +26508,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     matches?: MatchUncheckedUpdateManyWithoutFieldNestedInput
     fieldDisplay?: FieldDisplayUncheckedUpdateOneWithoutFieldNestedInput
+    fieldReferees?: FieldRefereeUncheckedUpdateManyWithoutFieldNestedInput
   }
 
   export type FieldCreateManyInput = {
@@ -25286,6 +26620,67 @@ export namespace Prisma {
     customMessage?: NullableStringFieldUpdateOperationsInput | string | null
     lastUpdatedBy?: NullableStringFieldUpdateOperationsInput | string | null
     autoAdvance?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FieldRefereeCreateInput = {
+    id?: string
+    isHeadRef?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    field: FieldCreateNestedOneWithoutFieldRefereesInput
+    user: UserCreateNestedOneWithoutFieldRefereesInput
+  }
+
+  export type FieldRefereeUncheckedCreateInput = {
+    id?: string
+    fieldId: string
+    userId: string
+    isHeadRef?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type FieldRefereeUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    isHeadRef?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    field?: FieldUpdateOneRequiredWithoutFieldRefereesNestedInput
+    user?: UserUpdateOneRequiredWithoutFieldRefereesNestedInput
+  }
+
+  export type FieldRefereeUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fieldId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    isHeadRef?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FieldRefereeCreateManyInput = {
+    id?: string
+    fieldId: string
+    userId: string
+    isHeadRef?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type FieldRefereeUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    isHeadRef?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FieldRefereeUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fieldId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    isHeadRef?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -25790,6 +27185,12 @@ export namespace Prisma {
     none?: FieldDisplayWhereInput
   }
 
+  export type FieldRefereeListRelationFilter = {
+    every?: FieldRefereeWhereInput
+    some?: FieldRefereeWhereInput
+    none?: FieldRefereeWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -25812,6 +27213,10 @@ export namespace Prisma {
   }
 
   export type FieldDisplayOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type FieldRefereeOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -26872,6 +28277,38 @@ export namespace Prisma {
     _max?: NestedEnumDisplayStateFilter<$PrismaModel>
   }
 
+  export type FieldRefereeFieldIdUserIdCompoundUniqueInput = {
+    fieldId: string
+    userId: string
+  }
+
+  export type FieldRefereeCountOrderByAggregateInput = {
+    id?: SortOrder
+    fieldId?: SortOrder
+    userId?: SortOrder
+    isHeadRef?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type FieldRefereeMaxOrderByAggregateInput = {
+    id?: SortOrder
+    fieldId?: SortOrder
+    userId?: SortOrder
+    isHeadRef?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type FieldRefereeMinOrderByAggregateInput = {
+    id?: SortOrder
+    fieldId?: SortOrder
+    userId?: SortOrder
+    isHeadRef?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
   export type ScoreElementListRelationFilter = {
     every?: ScoreElementWhereInput
     some?: ScoreElementWhereInput
@@ -27244,6 +28681,13 @@ export namespace Prisma {
     connect?: FieldDisplayWhereUniqueInput | FieldDisplayWhereUniqueInput[]
   }
 
+  export type FieldRefereeCreateNestedManyWithoutUserInput = {
+    create?: XOR<FieldRefereeCreateWithoutUserInput, FieldRefereeUncheckedCreateWithoutUserInput> | FieldRefereeCreateWithoutUserInput[] | FieldRefereeUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: FieldRefereeCreateOrConnectWithoutUserInput | FieldRefereeCreateOrConnectWithoutUserInput[]
+    createMany?: FieldRefereeCreateManyUserInputEnvelope
+    connect?: FieldRefereeWhereUniqueInput | FieldRefereeWhereUniqueInput[]
+  }
+
   export type UserUncheckedCreateNestedManyWithoutCreatedByInput = {
     create?: XOR<UserCreateWithoutCreatedByInput, UserUncheckedCreateWithoutCreatedByInput> | UserCreateWithoutCreatedByInput[] | UserUncheckedCreateWithoutCreatedByInput[]
     connectOrCreate?: UserCreateOrConnectWithoutCreatedByInput | UserCreateOrConnectWithoutCreatedByInput[]
@@ -27277,6 +28721,13 @@ export namespace Prisma {
     connectOrCreate?: FieldDisplayCreateOrConnectWithoutLastUpdatedUserInput | FieldDisplayCreateOrConnectWithoutLastUpdatedUserInput[]
     createMany?: FieldDisplayCreateManyLastUpdatedUserInputEnvelope
     connect?: FieldDisplayWhereUniqueInput | FieldDisplayWhereUniqueInput[]
+  }
+
+  export type FieldRefereeUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<FieldRefereeCreateWithoutUserInput, FieldRefereeUncheckedCreateWithoutUserInput> | FieldRefereeCreateWithoutUserInput[] | FieldRefereeUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: FieldRefereeCreateOrConnectWithoutUserInput | FieldRefereeCreateOrConnectWithoutUserInput[]
+    createMany?: FieldRefereeCreateManyUserInputEnvelope
+    connect?: FieldRefereeWhereUniqueInput | FieldRefereeWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -27383,6 +28834,20 @@ export namespace Prisma {
     deleteMany?: FieldDisplayScalarWhereInput | FieldDisplayScalarWhereInput[]
   }
 
+  export type FieldRefereeUpdateManyWithoutUserNestedInput = {
+    create?: XOR<FieldRefereeCreateWithoutUserInput, FieldRefereeUncheckedCreateWithoutUserInput> | FieldRefereeCreateWithoutUserInput[] | FieldRefereeUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: FieldRefereeCreateOrConnectWithoutUserInput | FieldRefereeCreateOrConnectWithoutUserInput[]
+    upsert?: FieldRefereeUpsertWithWhereUniqueWithoutUserInput | FieldRefereeUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: FieldRefereeCreateManyUserInputEnvelope
+    set?: FieldRefereeWhereUniqueInput | FieldRefereeWhereUniqueInput[]
+    disconnect?: FieldRefereeWhereUniqueInput | FieldRefereeWhereUniqueInput[]
+    delete?: FieldRefereeWhereUniqueInput | FieldRefereeWhereUniqueInput[]
+    connect?: FieldRefereeWhereUniqueInput | FieldRefereeWhereUniqueInput[]
+    update?: FieldRefereeUpdateWithWhereUniqueWithoutUserInput | FieldRefereeUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: FieldRefereeUpdateManyWithWhereWithoutUserInput | FieldRefereeUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: FieldRefereeScalarWhereInput | FieldRefereeScalarWhereInput[]
+  }
+
   export type UserUncheckedUpdateManyWithoutCreatedByNestedInput = {
     create?: XOR<UserCreateWithoutCreatedByInput, UserUncheckedCreateWithoutCreatedByInput> | UserCreateWithoutCreatedByInput[] | UserUncheckedCreateWithoutCreatedByInput[]
     connectOrCreate?: UserCreateOrConnectWithoutCreatedByInput | UserCreateOrConnectWithoutCreatedByInput[]
@@ -27451,6 +28916,20 @@ export namespace Prisma {
     update?: FieldDisplayUpdateWithWhereUniqueWithoutLastUpdatedUserInput | FieldDisplayUpdateWithWhereUniqueWithoutLastUpdatedUserInput[]
     updateMany?: FieldDisplayUpdateManyWithWhereWithoutLastUpdatedUserInput | FieldDisplayUpdateManyWithWhereWithoutLastUpdatedUserInput[]
     deleteMany?: FieldDisplayScalarWhereInput | FieldDisplayScalarWhereInput[]
+  }
+
+  export type FieldRefereeUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<FieldRefereeCreateWithoutUserInput, FieldRefereeUncheckedCreateWithoutUserInput> | FieldRefereeCreateWithoutUserInput[] | FieldRefereeUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: FieldRefereeCreateOrConnectWithoutUserInput | FieldRefereeCreateOrConnectWithoutUserInput[]
+    upsert?: FieldRefereeUpsertWithWhereUniqueWithoutUserInput | FieldRefereeUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: FieldRefereeCreateManyUserInputEnvelope
+    set?: FieldRefereeWhereUniqueInput | FieldRefereeWhereUniqueInput[]
+    disconnect?: FieldRefereeWhereUniqueInput | FieldRefereeWhereUniqueInput[]
+    delete?: FieldRefereeWhereUniqueInput | FieldRefereeWhereUniqueInput[]
+    connect?: FieldRefereeWhereUniqueInput | FieldRefereeWhereUniqueInput[]
+    update?: FieldRefereeUpdateWithWhereUniqueWithoutUserInput | FieldRefereeUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: FieldRefereeUpdateManyWithWhereWithoutUserInput | FieldRefereeUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: FieldRefereeScalarWhereInput | FieldRefereeScalarWhereInput[]
   }
 
   export type UserCreateNestedOneWithoutTournamentsInput = {
@@ -28420,6 +29899,13 @@ export namespace Prisma {
     connect?: FieldDisplayWhereUniqueInput
   }
 
+  export type FieldRefereeCreateNestedManyWithoutFieldInput = {
+    create?: XOR<FieldRefereeCreateWithoutFieldInput, FieldRefereeUncheckedCreateWithoutFieldInput> | FieldRefereeCreateWithoutFieldInput[] | FieldRefereeUncheckedCreateWithoutFieldInput[]
+    connectOrCreate?: FieldRefereeCreateOrConnectWithoutFieldInput | FieldRefereeCreateOrConnectWithoutFieldInput[]
+    createMany?: FieldRefereeCreateManyFieldInputEnvelope
+    connect?: FieldRefereeWhereUniqueInput | FieldRefereeWhereUniqueInput[]
+  }
+
   export type MatchUncheckedCreateNestedManyWithoutFieldInput = {
     create?: XOR<MatchCreateWithoutFieldInput, MatchUncheckedCreateWithoutFieldInput> | MatchCreateWithoutFieldInput[] | MatchUncheckedCreateWithoutFieldInput[]
     connectOrCreate?: MatchCreateOrConnectWithoutFieldInput | MatchCreateOrConnectWithoutFieldInput[]
@@ -28431,6 +29917,13 @@ export namespace Prisma {
     create?: XOR<FieldDisplayCreateWithoutFieldInput, FieldDisplayUncheckedCreateWithoutFieldInput>
     connectOrCreate?: FieldDisplayCreateOrConnectWithoutFieldInput
     connect?: FieldDisplayWhereUniqueInput
+  }
+
+  export type FieldRefereeUncheckedCreateNestedManyWithoutFieldInput = {
+    create?: XOR<FieldRefereeCreateWithoutFieldInput, FieldRefereeUncheckedCreateWithoutFieldInput> | FieldRefereeCreateWithoutFieldInput[] | FieldRefereeUncheckedCreateWithoutFieldInput[]
+    connectOrCreate?: FieldRefereeCreateOrConnectWithoutFieldInput | FieldRefereeCreateOrConnectWithoutFieldInput[]
+    createMany?: FieldRefereeCreateManyFieldInputEnvelope
+    connect?: FieldRefereeWhereUniqueInput | FieldRefereeWhereUniqueInput[]
   }
 
   export type TournamentUpdateOneRequiredWithoutFieldsNestedInput = {
@@ -28465,6 +29958,20 @@ export namespace Prisma {
     update?: XOR<XOR<FieldDisplayUpdateToOneWithWhereWithoutFieldInput, FieldDisplayUpdateWithoutFieldInput>, FieldDisplayUncheckedUpdateWithoutFieldInput>
   }
 
+  export type FieldRefereeUpdateManyWithoutFieldNestedInput = {
+    create?: XOR<FieldRefereeCreateWithoutFieldInput, FieldRefereeUncheckedCreateWithoutFieldInput> | FieldRefereeCreateWithoutFieldInput[] | FieldRefereeUncheckedCreateWithoutFieldInput[]
+    connectOrCreate?: FieldRefereeCreateOrConnectWithoutFieldInput | FieldRefereeCreateOrConnectWithoutFieldInput[]
+    upsert?: FieldRefereeUpsertWithWhereUniqueWithoutFieldInput | FieldRefereeUpsertWithWhereUniqueWithoutFieldInput[]
+    createMany?: FieldRefereeCreateManyFieldInputEnvelope
+    set?: FieldRefereeWhereUniqueInput | FieldRefereeWhereUniqueInput[]
+    disconnect?: FieldRefereeWhereUniqueInput | FieldRefereeWhereUniqueInput[]
+    delete?: FieldRefereeWhereUniqueInput | FieldRefereeWhereUniqueInput[]
+    connect?: FieldRefereeWhereUniqueInput | FieldRefereeWhereUniqueInput[]
+    update?: FieldRefereeUpdateWithWhereUniqueWithoutFieldInput | FieldRefereeUpdateWithWhereUniqueWithoutFieldInput[]
+    updateMany?: FieldRefereeUpdateManyWithWhereWithoutFieldInput | FieldRefereeUpdateManyWithWhereWithoutFieldInput[]
+    deleteMany?: FieldRefereeScalarWhereInput | FieldRefereeScalarWhereInput[]
+  }
+
   export type MatchUncheckedUpdateManyWithoutFieldNestedInput = {
     create?: XOR<MatchCreateWithoutFieldInput, MatchUncheckedCreateWithoutFieldInput> | MatchCreateWithoutFieldInput[] | MatchUncheckedCreateWithoutFieldInput[]
     connectOrCreate?: MatchCreateOrConnectWithoutFieldInput | MatchCreateOrConnectWithoutFieldInput[]
@@ -28487,6 +29994,20 @@ export namespace Prisma {
     delete?: FieldDisplayWhereInput | boolean
     connect?: FieldDisplayWhereUniqueInput
     update?: XOR<XOR<FieldDisplayUpdateToOneWithWhereWithoutFieldInput, FieldDisplayUpdateWithoutFieldInput>, FieldDisplayUncheckedUpdateWithoutFieldInput>
+  }
+
+  export type FieldRefereeUncheckedUpdateManyWithoutFieldNestedInput = {
+    create?: XOR<FieldRefereeCreateWithoutFieldInput, FieldRefereeUncheckedCreateWithoutFieldInput> | FieldRefereeCreateWithoutFieldInput[] | FieldRefereeUncheckedCreateWithoutFieldInput[]
+    connectOrCreate?: FieldRefereeCreateOrConnectWithoutFieldInput | FieldRefereeCreateOrConnectWithoutFieldInput[]
+    upsert?: FieldRefereeUpsertWithWhereUniqueWithoutFieldInput | FieldRefereeUpsertWithWhereUniqueWithoutFieldInput[]
+    createMany?: FieldRefereeCreateManyFieldInputEnvelope
+    set?: FieldRefereeWhereUniqueInput | FieldRefereeWhereUniqueInput[]
+    disconnect?: FieldRefereeWhereUniqueInput | FieldRefereeWhereUniqueInput[]
+    delete?: FieldRefereeWhereUniqueInput | FieldRefereeWhereUniqueInput[]
+    connect?: FieldRefereeWhereUniqueInput | FieldRefereeWhereUniqueInput[]
+    update?: FieldRefereeUpdateWithWhereUniqueWithoutFieldInput | FieldRefereeUpdateWithWhereUniqueWithoutFieldInput[]
+    updateMany?: FieldRefereeUpdateManyWithWhereWithoutFieldInput | FieldRefereeUpdateManyWithWhereWithoutFieldInput[]
+    deleteMany?: FieldRefereeScalarWhereInput | FieldRefereeScalarWhereInput[]
   }
 
   export type FieldCreateNestedOneWithoutFieldDisplayInput = {
@@ -28537,6 +30058,34 @@ export namespace Prisma {
     delete?: UserWhereInput | boolean
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutFieldDisplaysInput, UserUpdateWithoutFieldDisplaysInput>, UserUncheckedUpdateWithoutFieldDisplaysInput>
+  }
+
+  export type FieldCreateNestedOneWithoutFieldRefereesInput = {
+    create?: XOR<FieldCreateWithoutFieldRefereesInput, FieldUncheckedCreateWithoutFieldRefereesInput>
+    connectOrCreate?: FieldCreateOrConnectWithoutFieldRefereesInput
+    connect?: FieldWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutFieldRefereesInput = {
+    create?: XOR<UserCreateWithoutFieldRefereesInput, UserUncheckedCreateWithoutFieldRefereesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutFieldRefereesInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type FieldUpdateOneRequiredWithoutFieldRefereesNestedInput = {
+    create?: XOR<FieldCreateWithoutFieldRefereesInput, FieldUncheckedCreateWithoutFieldRefereesInput>
+    connectOrCreate?: FieldCreateOrConnectWithoutFieldRefereesInput
+    upsert?: FieldUpsertWithoutFieldRefereesInput
+    connect?: FieldWhereUniqueInput
+    update?: XOR<XOR<FieldUpdateToOneWithWhereWithoutFieldRefereesInput, FieldUpdateWithoutFieldRefereesInput>, FieldUncheckedUpdateWithoutFieldRefereesInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutFieldRefereesNestedInput = {
+    create?: XOR<UserCreateWithoutFieldRefereesInput, UserUncheckedCreateWithoutFieldRefereesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutFieldRefereesInput
+    upsert?: UserUpsertWithoutFieldRefereesInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutFieldRefereesInput, UserUpdateWithoutFieldRefereesInput>, UserUncheckedUpdateWithoutFieldRefereesInput>
   }
 
   export type TournamentCreateNestedOneWithoutScoreConfigsInput = {
@@ -29271,6 +30820,7 @@ export namespace Prisma {
     scoredMatches?: MatchCreateNestedManyWithoutScoredByInput
     matchReferees?: MatchRefereeCreateNestedManyWithoutUserInput
     fieldDisplays?: FieldDisplayCreateNestedManyWithoutLastUpdatedUserInput
+    fieldReferees?: FieldRefereeCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutCreatedUsersInput = {
@@ -29289,6 +30839,7 @@ export namespace Prisma {
     scoredMatches?: MatchUncheckedCreateNestedManyWithoutScoredByInput
     matchReferees?: MatchRefereeUncheckedCreateNestedManyWithoutUserInput
     fieldDisplays?: FieldDisplayUncheckedCreateNestedManyWithoutLastUpdatedUserInput
+    fieldReferees?: FieldRefereeUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutCreatedUsersInput = {
@@ -29312,6 +30863,7 @@ export namespace Prisma {
     scoredMatches?: MatchCreateNestedManyWithoutScoredByInput
     matchReferees?: MatchRefereeCreateNestedManyWithoutUserInput
     fieldDisplays?: FieldDisplayCreateNestedManyWithoutLastUpdatedUserInput
+    fieldReferees?: FieldRefereeCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutCreatedByInput = {
@@ -29330,6 +30882,7 @@ export namespace Prisma {
     scoredMatches?: MatchUncheckedCreateNestedManyWithoutScoredByInput
     matchReferees?: MatchRefereeUncheckedCreateNestedManyWithoutUserInput
     fieldDisplays?: FieldDisplayUncheckedCreateNestedManyWithoutLastUpdatedUserInput
+    fieldReferees?: FieldRefereeUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutCreatedByInput = {
@@ -29500,6 +31053,32 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type FieldRefereeCreateWithoutUserInput = {
+    id?: string
+    isHeadRef?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    field: FieldCreateNestedOneWithoutFieldRefereesInput
+  }
+
+  export type FieldRefereeUncheckedCreateWithoutUserInput = {
+    id?: string
+    fieldId: string
+    isHeadRef?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type FieldRefereeCreateOrConnectWithoutUserInput = {
+    where: FieldRefereeWhereUniqueInput
+    create: XOR<FieldRefereeCreateWithoutUserInput, FieldRefereeUncheckedCreateWithoutUserInput>
+  }
+
+  export type FieldRefereeCreateManyUserInputEnvelope = {
+    data: FieldRefereeCreateManyUserInput | FieldRefereeCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserUpsertWithoutCreatedUsersInput = {
     update: XOR<UserUpdateWithoutCreatedUsersInput, UserUncheckedUpdateWithoutCreatedUsersInput>
     create: XOR<UserCreateWithoutCreatedUsersInput, UserUncheckedCreateWithoutCreatedUsersInput>
@@ -29527,6 +31106,7 @@ export namespace Prisma {
     scoredMatches?: MatchUpdateManyWithoutScoredByNestedInput
     matchReferees?: MatchRefereeUpdateManyWithoutUserNestedInput
     fieldDisplays?: FieldDisplayUpdateManyWithoutLastUpdatedUserNestedInput
+    fieldReferees?: FieldRefereeUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCreatedUsersInput = {
@@ -29545,6 +31125,7 @@ export namespace Prisma {
     scoredMatches?: MatchUncheckedUpdateManyWithoutScoredByNestedInput
     matchReferees?: MatchRefereeUncheckedUpdateManyWithoutUserNestedInput
     fieldDisplays?: FieldDisplayUncheckedUpdateManyWithoutLastUpdatedUserNestedInput
+    fieldReferees?: FieldRefereeUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserUpsertWithWhereUniqueWithoutCreatedByInput = {
@@ -29710,6 +31291,34 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"FieldDisplay"> | Date | string
   }
 
+  export type FieldRefereeUpsertWithWhereUniqueWithoutUserInput = {
+    where: FieldRefereeWhereUniqueInput
+    update: XOR<FieldRefereeUpdateWithoutUserInput, FieldRefereeUncheckedUpdateWithoutUserInput>
+    create: XOR<FieldRefereeCreateWithoutUserInput, FieldRefereeUncheckedCreateWithoutUserInput>
+  }
+
+  export type FieldRefereeUpdateWithWhereUniqueWithoutUserInput = {
+    where: FieldRefereeWhereUniqueInput
+    data: XOR<FieldRefereeUpdateWithoutUserInput, FieldRefereeUncheckedUpdateWithoutUserInput>
+  }
+
+  export type FieldRefereeUpdateManyWithWhereWithoutUserInput = {
+    where: FieldRefereeScalarWhereInput
+    data: XOR<FieldRefereeUpdateManyMutationInput, FieldRefereeUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type FieldRefereeScalarWhereInput = {
+    AND?: FieldRefereeScalarWhereInput | FieldRefereeScalarWhereInput[]
+    OR?: FieldRefereeScalarWhereInput[]
+    NOT?: FieldRefereeScalarWhereInput | FieldRefereeScalarWhereInput[]
+    id?: StringFilter<"FieldReferee"> | string
+    fieldId?: StringFilter<"FieldReferee"> | string
+    userId?: StringFilter<"FieldReferee"> | string
+    isHeadRef?: BoolFilter<"FieldReferee"> | boolean
+    createdAt?: DateTimeFilter<"FieldReferee"> | Date | string
+    updatedAt?: DateTimeFilter<"FieldReferee"> | Date | string
+  }
+
   export type UserCreateWithoutTournamentsInput = {
     id?: string
     username: string
@@ -29726,6 +31335,7 @@ export namespace Prisma {
     scoredMatches?: MatchCreateNestedManyWithoutScoredByInput
     matchReferees?: MatchRefereeCreateNestedManyWithoutUserInput
     fieldDisplays?: FieldDisplayCreateNestedManyWithoutLastUpdatedUserInput
+    fieldReferees?: FieldRefereeCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutTournamentsInput = {
@@ -29744,6 +31354,7 @@ export namespace Prisma {
     scoredMatches?: MatchUncheckedCreateNestedManyWithoutScoredByInput
     matchReferees?: MatchRefereeUncheckedCreateNestedManyWithoutUserInput
     fieldDisplays?: FieldDisplayUncheckedCreateNestedManyWithoutLastUpdatedUserInput
+    fieldReferees?: FieldRefereeUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutTournamentsInput = {
@@ -29895,6 +31506,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     matches?: MatchCreateNestedManyWithoutFieldInput
     fieldDisplay?: FieldDisplayCreateNestedOneWithoutFieldInput
+    fieldReferees?: FieldRefereeCreateNestedManyWithoutFieldInput
   }
 
   export type FieldUncheckedCreateWithoutTournamentInput = {
@@ -29907,6 +31519,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     matches?: MatchUncheckedCreateNestedManyWithoutFieldInput
     fieldDisplay?: FieldDisplayUncheckedCreateNestedOneWithoutFieldInput
+    fieldReferees?: FieldRefereeUncheckedCreateNestedManyWithoutFieldInput
   }
 
   export type FieldCreateOrConnectWithoutTournamentInput = {
@@ -29978,6 +31591,7 @@ export namespace Prisma {
     scoredMatches?: MatchUpdateManyWithoutScoredByNestedInput
     matchReferees?: MatchRefereeUpdateManyWithoutUserNestedInput
     fieldDisplays?: FieldDisplayUpdateManyWithoutLastUpdatedUserNestedInput
+    fieldReferees?: FieldRefereeUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTournamentsInput = {
@@ -29996,6 +31610,7 @@ export namespace Prisma {
     scoredMatches?: MatchUncheckedUpdateManyWithoutScoredByNestedInput
     matchReferees?: MatchRefereeUncheckedUpdateManyWithoutUserNestedInput
     fieldDisplays?: FieldDisplayUncheckedUpdateManyWithoutLastUpdatedUserNestedInput
+    fieldReferees?: FieldRefereeUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type StageUpsertWithWhereUniqueWithoutTournamentInput = {
@@ -30526,6 +32141,7 @@ export namespace Prisma {
     tournaments?: TournamentCreateNestedManyWithoutAdminInput
     matchReferees?: MatchRefereeCreateNestedManyWithoutUserInput
     fieldDisplays?: FieldDisplayCreateNestedManyWithoutLastUpdatedUserInput
+    fieldReferees?: FieldRefereeCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutScoredMatchesInput = {
@@ -30544,6 +32160,7 @@ export namespace Prisma {
     tournaments?: TournamentUncheckedCreateNestedManyWithoutAdminInput
     matchReferees?: MatchRefereeUncheckedCreateNestedManyWithoutUserInput
     fieldDisplays?: FieldDisplayUncheckedCreateNestedManyWithoutLastUpdatedUserInput
+    fieldReferees?: FieldRefereeUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutScoredMatchesInput = {
@@ -30589,6 +32206,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     tournament: TournamentCreateNestedOneWithoutFieldsInput
     fieldDisplay?: FieldDisplayCreateNestedOneWithoutFieldInput
+    fieldReferees?: FieldRefereeCreateNestedManyWithoutFieldInput
   }
 
   export type FieldUncheckedCreateWithoutMatchesInput = {
@@ -30601,6 +32219,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     fieldDisplay?: FieldDisplayUncheckedCreateNestedOneWithoutFieldInput
+    fieldReferees?: FieldRefereeUncheckedCreateNestedManyWithoutFieldInput
   }
 
   export type FieldCreateOrConnectWithoutMatchesInput = {
@@ -30768,6 +32387,7 @@ export namespace Prisma {
     tournaments?: TournamentUpdateManyWithoutAdminNestedInput
     matchReferees?: MatchRefereeUpdateManyWithoutUserNestedInput
     fieldDisplays?: FieldDisplayUpdateManyWithoutLastUpdatedUserNestedInput
+    fieldReferees?: FieldRefereeUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutScoredMatchesInput = {
@@ -30786,6 +32406,7 @@ export namespace Prisma {
     tournaments?: TournamentUncheckedUpdateManyWithoutAdminNestedInput
     matchReferees?: MatchRefereeUncheckedUpdateManyWithoutUserNestedInput
     fieldDisplays?: FieldDisplayUncheckedUpdateManyWithoutLastUpdatedUserNestedInput
+    fieldReferees?: FieldRefereeUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type MatchRefereeUpsertWithWhereUniqueWithoutMatchInput = {
@@ -30825,6 +32446,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     tournament?: TournamentUpdateOneRequiredWithoutFieldsNestedInput
     fieldDisplay?: FieldDisplayUpdateOneWithoutFieldNestedInput
+    fieldReferees?: FieldRefereeUpdateManyWithoutFieldNestedInput
   }
 
   export type FieldUncheckedUpdateWithoutMatchesInput = {
@@ -30837,6 +32459,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     fieldDisplay?: FieldDisplayUncheckedUpdateOneWithoutFieldNestedInput
+    fieldReferees?: FieldRefereeUncheckedUpdateManyWithoutFieldNestedInput
   }
 
   export type MatchScoreUpsertWithWhereUniqueWithoutMatchInput = {
@@ -30952,6 +32575,7 @@ export namespace Prisma {
     tournaments?: TournamentCreateNestedManyWithoutAdminInput
     scoredMatches?: MatchCreateNestedManyWithoutScoredByInput
     fieldDisplays?: FieldDisplayCreateNestedManyWithoutLastUpdatedUserInput
+    fieldReferees?: FieldRefereeCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutMatchRefereesInput = {
@@ -30970,6 +32594,7 @@ export namespace Prisma {
     tournaments?: TournamentUncheckedCreateNestedManyWithoutAdminInput
     scoredMatches?: MatchUncheckedCreateNestedManyWithoutScoredByInput
     fieldDisplays?: FieldDisplayUncheckedCreateNestedManyWithoutLastUpdatedUserInput
+    fieldReferees?: FieldRefereeUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutMatchRefereesInput = {
@@ -31061,6 +32686,7 @@ export namespace Prisma {
     tournaments?: TournamentUpdateManyWithoutAdminNestedInput
     scoredMatches?: MatchUpdateManyWithoutScoredByNestedInput
     fieldDisplays?: FieldDisplayUpdateManyWithoutLastUpdatedUserNestedInput
+    fieldReferees?: FieldRefereeUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutMatchRefereesInput = {
@@ -31079,6 +32705,7 @@ export namespace Prisma {
     tournaments?: TournamentUncheckedUpdateManyWithoutAdminNestedInput
     scoredMatches?: MatchUncheckedUpdateManyWithoutScoredByNestedInput
     fieldDisplays?: FieldDisplayUncheckedUpdateManyWithoutLastUpdatedUserNestedInput
+    fieldReferees?: FieldRefereeUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type MatchCreateWithoutAlliancesInput = {
@@ -32066,6 +33693,32 @@ export namespace Prisma {
     create: XOR<FieldDisplayCreateWithoutFieldInput, FieldDisplayUncheckedCreateWithoutFieldInput>
   }
 
+  export type FieldRefereeCreateWithoutFieldInput = {
+    id?: string
+    isHeadRef?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutFieldRefereesInput
+  }
+
+  export type FieldRefereeUncheckedCreateWithoutFieldInput = {
+    id?: string
+    userId: string
+    isHeadRef?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type FieldRefereeCreateOrConnectWithoutFieldInput = {
+    where: FieldRefereeWhereUniqueInput
+    create: XOR<FieldRefereeCreateWithoutFieldInput, FieldRefereeUncheckedCreateWithoutFieldInput>
+  }
+
+  export type FieldRefereeCreateManyFieldInputEnvelope = {
+    data: FieldRefereeCreateManyFieldInput | FieldRefereeCreateManyFieldInput[]
+    skipDuplicates?: boolean
+  }
+
   export type TournamentUpsertWithoutFieldsInput = {
     update: XOR<TournamentUpdateWithoutFieldsInput, TournamentUncheckedUpdateWithoutFieldsInput>
     create: XOR<TournamentCreateWithoutFieldsInput, TournamentUncheckedCreateWithoutFieldsInput>
@@ -32158,6 +33811,22 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type FieldRefereeUpsertWithWhereUniqueWithoutFieldInput = {
+    where: FieldRefereeWhereUniqueInput
+    update: XOR<FieldRefereeUpdateWithoutFieldInput, FieldRefereeUncheckedUpdateWithoutFieldInput>
+    create: XOR<FieldRefereeCreateWithoutFieldInput, FieldRefereeUncheckedCreateWithoutFieldInput>
+  }
+
+  export type FieldRefereeUpdateWithWhereUniqueWithoutFieldInput = {
+    where: FieldRefereeWhereUniqueInput
+    data: XOR<FieldRefereeUpdateWithoutFieldInput, FieldRefereeUncheckedUpdateWithoutFieldInput>
+  }
+
+  export type FieldRefereeUpdateManyWithWhereWithoutFieldInput = {
+    where: FieldRefereeScalarWhereInput
+    data: XOR<FieldRefereeUpdateManyMutationInput, FieldRefereeUncheckedUpdateManyWithoutFieldInput>
+  }
+
   export type FieldCreateWithoutFieldDisplayInput = {
     id?: string
     name: string
@@ -32168,6 +33837,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     tournament: TournamentCreateNestedOneWithoutFieldsInput
     matches?: MatchCreateNestedManyWithoutFieldInput
+    fieldReferees?: FieldRefereeCreateNestedManyWithoutFieldInput
   }
 
   export type FieldUncheckedCreateWithoutFieldDisplayInput = {
@@ -32180,6 +33850,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     matches?: MatchUncheckedCreateNestedManyWithoutFieldInput
+    fieldReferees?: FieldRefereeUncheckedCreateNestedManyWithoutFieldInput
   }
 
   export type FieldCreateOrConnectWithoutFieldDisplayInput = {
@@ -32254,6 +33925,7 @@ export namespace Prisma {
     tournaments?: TournamentCreateNestedManyWithoutAdminInput
     scoredMatches?: MatchCreateNestedManyWithoutScoredByInput
     matchReferees?: MatchRefereeCreateNestedManyWithoutUserInput
+    fieldReferees?: FieldRefereeCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutFieldDisplaysInput = {
@@ -32272,6 +33944,7 @@ export namespace Prisma {
     tournaments?: TournamentUncheckedCreateNestedManyWithoutAdminInput
     scoredMatches?: MatchUncheckedCreateNestedManyWithoutScoredByInput
     matchReferees?: MatchRefereeUncheckedCreateNestedManyWithoutUserInput
+    fieldReferees?: FieldRefereeUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutFieldDisplaysInput = {
@@ -32300,6 +33973,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     tournament?: TournamentUpdateOneRequiredWithoutFieldsNestedInput
     matches?: MatchUpdateManyWithoutFieldNestedInput
+    fieldReferees?: FieldRefereeUpdateManyWithoutFieldNestedInput
   }
 
   export type FieldUncheckedUpdateWithoutFieldDisplayInput = {
@@ -32312,6 +33986,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     matches?: MatchUncheckedUpdateManyWithoutFieldNestedInput
+    fieldReferees?: FieldRefereeUncheckedUpdateManyWithoutFieldNestedInput
   }
 
   export type MatchUpsertWithoutFieldDisplaysInput = {
@@ -32398,6 +34073,7 @@ export namespace Prisma {
     tournaments?: TournamentUpdateManyWithoutAdminNestedInput
     scoredMatches?: MatchUpdateManyWithoutScoredByNestedInput
     matchReferees?: MatchRefereeUpdateManyWithoutUserNestedInput
+    fieldReferees?: FieldRefereeUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutFieldDisplaysInput = {
@@ -32416,6 +34092,167 @@ export namespace Prisma {
     tournaments?: TournamentUncheckedUpdateManyWithoutAdminNestedInput
     scoredMatches?: MatchUncheckedUpdateManyWithoutScoredByNestedInput
     matchReferees?: MatchRefereeUncheckedUpdateManyWithoutUserNestedInput
+    fieldReferees?: FieldRefereeUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type FieldCreateWithoutFieldRefereesInput = {
+    id?: string
+    name: string
+    number: number
+    location?: string | null
+    description?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    tournament: TournamentCreateNestedOneWithoutFieldsInput
+    matches?: MatchCreateNestedManyWithoutFieldInput
+    fieldDisplay?: FieldDisplayCreateNestedOneWithoutFieldInput
+  }
+
+  export type FieldUncheckedCreateWithoutFieldRefereesInput = {
+    id?: string
+    name: string
+    number: number
+    location?: string | null
+    description?: string | null
+    tournamentId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    matches?: MatchUncheckedCreateNestedManyWithoutFieldInput
+    fieldDisplay?: FieldDisplayUncheckedCreateNestedOneWithoutFieldInput
+  }
+
+  export type FieldCreateOrConnectWithoutFieldRefereesInput = {
+    where: FieldWhereUniqueInput
+    create: XOR<FieldCreateWithoutFieldRefereesInput, FieldUncheckedCreateWithoutFieldRefereesInput>
+  }
+
+  export type UserCreateWithoutFieldRefereesInput = {
+    id?: string
+    username: string
+    password: string
+    role: $Enums.UserRole
+    email?: string | null
+    gender?: boolean | null
+    DateOfBirth?: Date | string | null
+    phoneNumber?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy?: UserCreateNestedOneWithoutCreatedUsersInput
+    createdUsers?: UserCreateNestedManyWithoutCreatedByInput
+    tournaments?: TournamentCreateNestedManyWithoutAdminInput
+    scoredMatches?: MatchCreateNestedManyWithoutScoredByInput
+    matchReferees?: MatchRefereeCreateNestedManyWithoutUserInput
+    fieldDisplays?: FieldDisplayCreateNestedManyWithoutLastUpdatedUserInput
+  }
+
+  export type UserUncheckedCreateWithoutFieldRefereesInput = {
+    id?: string
+    username: string
+    password: string
+    role: $Enums.UserRole
+    email?: string | null
+    gender?: boolean | null
+    DateOfBirth?: Date | string | null
+    phoneNumber?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdById?: string | null
+    createdUsers?: UserUncheckedCreateNestedManyWithoutCreatedByInput
+    tournaments?: TournamentUncheckedCreateNestedManyWithoutAdminInput
+    scoredMatches?: MatchUncheckedCreateNestedManyWithoutScoredByInput
+    matchReferees?: MatchRefereeUncheckedCreateNestedManyWithoutUserInput
+    fieldDisplays?: FieldDisplayUncheckedCreateNestedManyWithoutLastUpdatedUserInput
+  }
+
+  export type UserCreateOrConnectWithoutFieldRefereesInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutFieldRefereesInput, UserUncheckedCreateWithoutFieldRefereesInput>
+  }
+
+  export type FieldUpsertWithoutFieldRefereesInput = {
+    update: XOR<FieldUpdateWithoutFieldRefereesInput, FieldUncheckedUpdateWithoutFieldRefereesInput>
+    create: XOR<FieldCreateWithoutFieldRefereesInput, FieldUncheckedCreateWithoutFieldRefereesInput>
+    where?: FieldWhereInput
+  }
+
+  export type FieldUpdateToOneWithWhereWithoutFieldRefereesInput = {
+    where?: FieldWhereInput
+    data: XOR<FieldUpdateWithoutFieldRefereesInput, FieldUncheckedUpdateWithoutFieldRefereesInput>
+  }
+
+  export type FieldUpdateWithoutFieldRefereesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    number?: IntFieldUpdateOperationsInput | number
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tournament?: TournamentUpdateOneRequiredWithoutFieldsNestedInput
+    matches?: MatchUpdateManyWithoutFieldNestedInput
+    fieldDisplay?: FieldDisplayUpdateOneWithoutFieldNestedInput
+  }
+
+  export type FieldUncheckedUpdateWithoutFieldRefereesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    number?: IntFieldUpdateOperationsInput | number
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    tournamentId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    matches?: MatchUncheckedUpdateManyWithoutFieldNestedInput
+    fieldDisplay?: FieldDisplayUncheckedUpdateOneWithoutFieldNestedInput
+  }
+
+  export type UserUpsertWithoutFieldRefereesInput = {
+    update: XOR<UserUpdateWithoutFieldRefereesInput, UserUncheckedUpdateWithoutFieldRefereesInput>
+    create: XOR<UserCreateWithoutFieldRefereesInput, UserUncheckedCreateWithoutFieldRefereesInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutFieldRefereesInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutFieldRefereesInput, UserUncheckedUpdateWithoutFieldRefereesInput>
+  }
+
+  export type UserUpdateWithoutFieldRefereesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    gender?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    DateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: UserUpdateOneWithoutCreatedUsersNestedInput
+    createdUsers?: UserUpdateManyWithoutCreatedByNestedInput
+    tournaments?: TournamentUpdateManyWithoutAdminNestedInput
+    scoredMatches?: MatchUpdateManyWithoutScoredByNestedInput
+    matchReferees?: MatchRefereeUpdateManyWithoutUserNestedInput
+    fieldDisplays?: FieldDisplayUpdateManyWithoutLastUpdatedUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutFieldRefereesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    gender?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    DateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdUsers?: UserUncheckedUpdateManyWithoutCreatedByNestedInput
+    tournaments?: TournamentUncheckedUpdateManyWithoutAdminNestedInput
+    scoredMatches?: MatchUncheckedUpdateManyWithoutScoredByNestedInput
+    matchReferees?: MatchRefereeUncheckedUpdateManyWithoutUserNestedInput
+    fieldDisplays?: FieldDisplayUncheckedUpdateManyWithoutLastUpdatedUserNestedInput
   }
 
   export type TournamentCreateWithoutScoreConfigsInput = {
@@ -33222,6 +35059,14 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type FieldRefereeCreateManyUserInput = {
+    id?: string
+    fieldId: string
+    isHeadRef?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type UserUpdateWithoutCreatedByInput = {
     id?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
@@ -33238,6 +35083,7 @@ export namespace Prisma {
     scoredMatches?: MatchUpdateManyWithoutScoredByNestedInput
     matchReferees?: MatchRefereeUpdateManyWithoutUserNestedInput
     fieldDisplays?: FieldDisplayUpdateManyWithoutLastUpdatedUserNestedInput
+    fieldReferees?: FieldRefereeUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCreatedByInput = {
@@ -33256,6 +35102,7 @@ export namespace Prisma {
     scoredMatches?: MatchUncheckedUpdateManyWithoutScoredByNestedInput
     matchReferees?: MatchRefereeUncheckedUpdateManyWithoutUserNestedInput
     fieldDisplays?: FieldDisplayUncheckedUpdateManyWithoutLastUpdatedUserNestedInput
+    fieldReferees?: FieldRefereeUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateManyWithoutCreatedByInput = {
@@ -33435,6 +35282,30 @@ export namespace Prisma {
     currentMatchId?: NullableStringFieldUpdateOperationsInput | string | null
     customMessage?: NullableStringFieldUpdateOperationsInput | string | null
     autoAdvance?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FieldRefereeUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    isHeadRef?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    field?: FieldUpdateOneRequiredWithoutFieldRefereesNestedInput
+  }
+
+  export type FieldRefereeUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fieldId?: StringFieldUpdateOperationsInput | string
+    isHeadRef?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FieldRefereeUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fieldId?: StringFieldUpdateOperationsInput | string
+    isHeadRef?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -33665,6 +35536,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     matches?: MatchUpdateManyWithoutFieldNestedInput
     fieldDisplay?: FieldDisplayUpdateOneWithoutFieldNestedInput
+    fieldReferees?: FieldRefereeUpdateManyWithoutFieldNestedInput
   }
 
   export type FieldUncheckedUpdateWithoutTournamentInput = {
@@ -33677,6 +35549,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     matches?: MatchUncheckedUpdateManyWithoutFieldNestedInput
     fieldDisplay?: FieldDisplayUncheckedUpdateOneWithoutFieldNestedInput
+    fieldReferees?: FieldRefereeUncheckedUpdateManyWithoutFieldNestedInput
   }
 
   export type FieldUncheckedUpdateManyWithoutTournamentInput = {
@@ -34322,6 +36195,14 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type FieldRefereeCreateManyFieldInput = {
+    id?: string
+    userId: string
+    isHeadRef?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type MatchUpdateWithoutFieldInput = {
     id?: StringFieldUpdateOperationsInput | string
     matchNumber?: IntFieldUpdateOperationsInput | number
@@ -34384,6 +36265,30 @@ export namespace Prisma {
     scheduleId?: NullableStringFieldUpdateOperationsInput | string | null
     matchType?: EnumMatchTypeFieldUpdateOperationsInput | $Enums.MatchType
     matchDuration?: NullableIntFieldUpdateOperationsInput | number | null
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FieldRefereeUpdateWithoutFieldInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    isHeadRef?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutFieldRefereesNestedInput
+  }
+
+  export type FieldRefereeUncheckedUpdateWithoutFieldInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    isHeadRef?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FieldRefereeUncheckedUpdateManyWithoutFieldInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    isHeadRef?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 

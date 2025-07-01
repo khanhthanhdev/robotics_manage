@@ -283,8 +283,8 @@ export const ENVIRONMENT_CONFIG = {
   isTest: process.env.NODE_ENV === 'test',
   
   // API endpoints
-  apiUrl: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001',
-  wsUrl: process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:3001',
+  apiUrl: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000',
+  wsUrl: process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:3000',
   
   // External services
   sentry: {

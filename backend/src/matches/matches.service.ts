@@ -119,7 +119,7 @@ export class MatchesService {
     });
   }
 
-  update(id: string, updateMatchDto: UpdateMatchDto & { fieldId?: string; fieldNumber?: number }) {
+  async update(id: string, updateMatchDto: UpdateMatchDto & { fieldId?: string; fieldNumber?: number }) {
     const data: any = {};
     
     if (updateMatchDto.matchNumber !== undefined) {
@@ -150,25 +150,64 @@ export class MatchesService {
       data.matchType = updateMatchDto.matchType;
     }
 
-    // Handle fieldId and fieldNumber
+    // Handle fieldId and fieldNumber with auto-assignment
     if (updateMatchDto.fieldId) {
       data.fieldId = updateMatchDto.fieldId;
-      // Fetch the field and set fieldNumber
-      return this.prisma.field.findUnique({
+      
+      // Fetch the field and auto-assign head referee
+      const field = await this.prisma.field.findUnique({
         where: { id: updateMatchDto.fieldId },
         select: { number: true },
-      }).then(field => {
-        if (!field) throw new Error('Field not found');
-        data.fieldNumber = field.number;
-        return this.prisma.match.update({
-          where: { id },
-          data,
-          include: {
-            alliances: true,
+      });
+      
+      if (!field) throw new Error('Field not found');
+      data.fieldNumber = field.number;
+      
+      // Auto-assign head referee if not already assigned and no explicit scoredById
+      if (!updateMatchDto.scoredById && !data.scoredById) {
+        const headReferee = await this.prisma.fieldReferee.findFirst({
+          where: {
+            fieldId: updateMatchDto.fieldId,
+            isHeadRef: true,
           },
         });
+        
+        if (headReferee) {
+          data.scoredById = headReferee.userId;
+        }
+      }
+      
+      return this.prisma.match.update({
+        where: { id },
+        data,
+        include: {
+          alliances: true,
+          field: {
+            include: {
+              fieldReferees: {
+                include: {
+                  user: {
+                    select: {
+                      id: true,
+                      username: true,
+                      role: true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          scoredBy: {
+            select: {
+              id: true,
+              username: true,
+              role: true
+            }
+          }
+        },
       });
     }
+    
     // Allow direct fieldNumber update (if provided, but not recommended)
     if (updateMatchDto.fieldNumber !== undefined) {
       data.fieldNumber = updateMatchDto.fieldNumber;
@@ -202,6 +241,53 @@ export class MatchesService {
   remove(id: string) {
     return this.prisma.match.delete({
       where: { id },
+    });
+  }
+
+  async assignMatchToField(matchId: string, fieldId: string): Promise<any> {
+    // Get the head referee for this field
+    const headReferee = await this.prisma.fieldReferee.findFirst({
+      where: {
+        fieldId: fieldId,
+        isHeadRef: true,
+      },
+    });
+
+    if (!headReferee) {
+      throw new Error(`No head referee assigned to field ${fieldId}`);
+    }
+
+    // Update the match with field and head referee
+    return await this.prisma.match.update({
+      where: { id: matchId },
+      data: {
+        fieldId: fieldId,
+        scoredById: headReferee.userId, // Auto-assign head ref as scorer
+      },
+      include: {
+        field: {
+          include: {
+            fieldReferees: {
+              include: {
+                user: {
+                  select: {
+                    id: true,
+                    username: true,
+                    role: true
+                  }
+                }
+              }
+            }
+          }
+        },
+        scoredBy: {
+          select: {
+            id: true,
+            username: true,
+            role: true
+          }
+        }
+      }
     });
   }
 }

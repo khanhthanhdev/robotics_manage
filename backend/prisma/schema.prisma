@@ -117,6 +117,7 @@ model User {
   scoredMatches   Match[]          @relation("ScoredBy")
   matchReferees   MatchReferee[]   // New relation for match referees
   fieldDisplays   FieldDisplay[]   // Relation to field displays updated by this user
+  fieldReferees   FieldReferee[]   // Relation to field referee assignments
 
   @@index([createdById])
 }
@@ -311,6 +312,7 @@ model Field {
   tournament   Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
   matches      Match[]
   fieldDisplay FieldDisplay? // Relation to field display state
+  fieldReferees FieldReferee[] // Relation to field referees
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
 
@@ -335,6 +337,24 @@ model FieldDisplay {
   @@index([fieldId])
   @@index([displayState])
   @@index([lastUpdatedBy])
+}
+
+model FieldReferee {
+  id        String   @id @default(uuid())
+  fieldId   String
+  userId    String
+  isHeadRef Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field Field @relation(fields: [fieldId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([fieldId, userId])
+  @@index([fieldId])
+  @@index([userId])
+  @@index([fieldId, isHeadRef]) // Optimized for finding head referee
+  @@map("field_referees")
 }
 
 // New models for flexible scoring system

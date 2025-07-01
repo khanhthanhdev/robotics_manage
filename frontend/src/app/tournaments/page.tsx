@@ -100,6 +100,11 @@ export default function TournamentsPage() {
     }
   };
 
+  // Handler for navigating to tournament detail page
+  const handleTournamentClick = (tournamentId: string) => {
+    router.push(`/tournaments/${tournamentId}`);
+  };
+
   // Format date for display
   const formatDate = (dateString: string) => {
     try {
@@ -159,7 +164,11 @@ export default function TournamentsPage() {
               </TableHeader>
               <TableBody>
                 {tournaments.map((tournament) => (
-                  <TableRow key={tournament.id} className="hover:bg-gray-50 transition-colors duration-150">
+                  <TableRow 
+                    key={tournament.id} 
+                    className="hover:bg-gray-50 transition-colors duration-150 cursor-pointer"
+                    onClick={() => handleTournamentClick(tournament.id)}
+                  >
                     <TableCell className="font-medium text-gray-900 whitespace-nowrap">{tournament.name}</TableCell>
                     <TableCell className="text-gray-600 max-w-xs truncate" title={tournament.description}>{tournament.description}</TableCell>
                     <TableCell className="text-gray-700">{formatDate(tournament.startDate)}</TableCell>
@@ -171,7 +180,10 @@ export default function TournamentsPage() {
                         variant="outline"
                         size="icon"
                         className="border-gray-300 text-gray-600 hover:bg-gray-50 hover:text-gray-900 focus:ring-2 focus:ring-blue-500 shadow-sm"
-                        onClick={() => handleEditTournament(tournament)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleEditTournament(tournament);
+                        }}
                       >
                         <PencilIcon size={16} />
                         <span className="sr-only">Edit</span>
@@ -180,7 +192,10 @@ export default function TournamentsPage() {
                         variant="outline"
                         size="icon"
                         className="border-red-300 text-red-600 hover:bg-red-50 hover:text-red-700 focus:ring-2 focus:ring-red-500 shadow-sm"
-                        onClick={() => handleDeleteClick(tournament)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteClick(tournament);
+                        }}
                       >
                         <TrashIcon size={16} />
                         <span className="sr-only">Delete</span>
