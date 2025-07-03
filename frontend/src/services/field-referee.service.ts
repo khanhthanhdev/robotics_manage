@@ -11,6 +11,10 @@ export class FieldRefereeService {
     return apiClient.get<AvailableReferee[]>('field-referees/available');
   }
 
+  static async getAvailableRefereesForTournament(tournamentId: string): Promise<AvailableReferee[]> {
+    return apiClient.get<AvailableReferee[]>(`field-referees/tournaments/${tournamentId}/available`);
+  }
+
   static async assignReferees(fieldId: string, data: AssignRefereesDto): Promise<FieldReferee[]> {
     return apiClient.post<FieldReferee[]>(`field-referees/fields/${fieldId}/assign`, data);
   }
@@ -29,5 +33,9 @@ export class FieldRefereeService {
 
   static async getRefereesByTournament(tournamentId: string): Promise<FieldReferee[]> {
     return apiClient.get<FieldReferee[]>(`field-referees/tournaments/${tournamentId}`);
+  }
+
+  static async replaceAllReferees(fieldId: string, data: AssignRefereesDto): Promise<FieldReferee[]> {
+    return apiClient.post<FieldReferee[]>(`field-referees/fields/${fieldId}/replace`, data);
   }
 }

@@ -39,6 +39,11 @@ export class FieldRefereesController {
     return this.fieldRefereesService.getRefereesByTournament(tournamentId);
   }
 
+  @Get('tournaments/:tournamentId/available')
+  async getAvailableRefereesForTournament(@Param('tournamentId') tournamentId: string) {
+    return this.fieldRefereesService.getAvailableRefereesForTournament(tournamentId);
+  }
+
   @Post('fields/:fieldId/assign')
   @UseGuards(RolesGuard)
   @Roles(UserRole.ADMIN)
@@ -84,5 +89,19 @@ export class FieldRefereesController {
     @Param('userId') userId: string
   ) {
     await this.fieldRefereesService.removeRefereeFromField(fieldId, userId);
+  }
+
+  @Post('fields/:fieldId/replace')
+  @UseGuards(RolesGuard)
+  @Roles(UserRole.ADMIN)
+  @HttpCode(HttpStatus.OK)
+  async replaceAllRefereesForField(
+    @Param('fieldId') fieldId: string,
+    @Body() assignRefereesDto: AssignRefereesDto
+  ) {
+    return this.fieldRefereesService.replaceAllRefereesForField(
+      fieldId, 
+      assignRefereesDto.referees
+    );
   }
 }
