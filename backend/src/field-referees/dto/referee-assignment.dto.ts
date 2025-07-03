@@ -17,12 +17,11 @@ export const BatchRefereeAssignmentSchema = z.object({
 // Field referee assignment request schema
 export const AssignRefereesSchema = z.object({
   referees: z.array(RefereeAssignmentSchema)
-    .min(3, 'At least 3 referees must be assigned')
     .max(4, 'Maximum 4 referees can be assigned')
 }).refine(
-  data => data.referees.filter(ref => ref.isHeadRef).length === 1,
+  data => data.referees.filter(ref => ref.isHeadRef).length <= 1,
   {
-    message: 'Exactly one head referee must be designated',
+    message: 'At most one head referee can be designated',
     path: ['referees'],
   }
 );

@@ -2962,6 +2962,10 @@ export namespace Prisma {
     gender: boolean | null
     DateOfBirth: Date | null
     phoneNumber: string | null
+    avatar: string | null
+    isActive: boolean | null
+    lastLoginAt: Date | null
+    emailVerified: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
     createdById: string | null
@@ -2976,6 +2980,10 @@ export namespace Prisma {
     gender: boolean | null
     DateOfBirth: Date | null
     phoneNumber: string | null
+    avatar: string | null
+    isActive: boolean | null
+    lastLoginAt: Date | null
+    emailVerified: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
     createdById: string | null
@@ -2990,6 +2998,10 @@ export namespace Prisma {
     gender: number
     DateOfBirth: number
     phoneNumber: number
+    avatar: number
+    isActive: number
+    lastLoginAt: number
+    emailVerified: number
     createdAt: number
     updatedAt: number
     createdById: number
@@ -3006,6 +3018,10 @@ export namespace Prisma {
     gender?: true
     DateOfBirth?: true
     phoneNumber?: true
+    avatar?: true
+    isActive?: true
+    lastLoginAt?: true
+    emailVerified?: true
     createdAt?: true
     updatedAt?: true
     createdById?: true
@@ -3020,6 +3036,10 @@ export namespace Prisma {
     gender?: true
     DateOfBirth?: true
     phoneNumber?: true
+    avatar?: true
+    isActive?: true
+    lastLoginAt?: true
+    emailVerified?: true
     createdAt?: true
     updatedAt?: true
     createdById?: true
@@ -3034,6 +3054,10 @@ export namespace Prisma {
     gender?: true
     DateOfBirth?: true
     phoneNumber?: true
+    avatar?: true
+    isActive?: true
+    lastLoginAt?: true
+    emailVerified?: true
     createdAt?: true
     updatedAt?: true
     createdById?: true
@@ -3121,6 +3145,10 @@ export namespace Prisma {
     gender: boolean | null
     DateOfBirth: Date | null
     phoneNumber: string | null
+    avatar: string | null
+    isActive: boolean
+    lastLoginAt: Date | null
+    emailVerified: boolean
     createdAt: Date
     updatedAt: Date
     createdById: string | null
@@ -3152,6 +3180,10 @@ export namespace Prisma {
     gender?: boolean
     DateOfBirth?: boolean
     phoneNumber?: boolean
+    avatar?: boolean
+    isActive?: boolean
+    lastLoginAt?: boolean
+    emailVerified?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     createdById?: boolean
@@ -3174,6 +3206,10 @@ export namespace Prisma {
     gender?: boolean
     DateOfBirth?: boolean
     phoneNumber?: boolean
+    avatar?: boolean
+    isActive?: boolean
+    lastLoginAt?: boolean
+    emailVerified?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     createdById?: boolean
@@ -3189,6 +3225,10 @@ export namespace Prisma {
     gender?: boolean
     DateOfBirth?: boolean
     phoneNumber?: boolean
+    avatar?: boolean
+    isActive?: boolean
+    lastLoginAt?: boolean
+    emailVerified?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     createdById?: boolean
@@ -3204,12 +3244,16 @@ export namespace Prisma {
     gender?: boolean
     DateOfBirth?: boolean
     phoneNumber?: boolean
+    avatar?: boolean
+    isActive?: boolean
+    lastLoginAt?: boolean
+    emailVerified?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     createdById?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "username" | "password" | "role" | "email" | "gender" | "DateOfBirth" | "phoneNumber" | "createdAt" | "updatedAt" | "createdById", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "username" | "password" | "role" | "email" | "gender" | "DateOfBirth" | "phoneNumber" | "avatar" | "isActive" | "lastLoginAt" | "emailVerified" | "createdAt" | "updatedAt" | "createdById", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     createdBy?: boolean | User$createdByArgs<ExtArgs>
     createdUsers?: boolean | User$createdUsersArgs<ExtArgs>
@@ -3247,6 +3291,10 @@ export namespace Prisma {
       gender: boolean | null
       DateOfBirth: Date | null
       phoneNumber: string | null
+      avatar: string | null
+      isActive: boolean
+      lastLoginAt: Date | null
+      emailVerified: boolean
       createdAt: Date
       updatedAt: Date
       createdById: string | null
@@ -3688,6 +3736,10 @@ export namespace Prisma {
     readonly gender: FieldRef<"User", 'Boolean'>
     readonly DateOfBirth: FieldRef<"User", 'DateTime'>
     readonly phoneNumber: FieldRef<"User", 'String'>
+    readonly avatar: FieldRef<"User", 'String'>
+    readonly isActive: FieldRef<"User", 'Boolean'>
+    readonly lastLoginAt: FieldRef<"User", 'DateTime'>
+    readonly emailVerified: FieldRef<"User", 'Boolean'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
     readonly createdById: FieldRef<"User", 'String'>
@@ -23494,6 +23546,10 @@ export namespace Prisma {
     gender: 'gender',
     DateOfBirth: 'DateOfBirth',
     phoneNumber: 'phoneNumber',
+    avatar: 'avatar',
+    isActive: 'isActive',
+    lastLoginAt: 'lastLoginAt',
+    emailVerified: 'emailVerified',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
     createdById: 'createdById'
@@ -24022,6 +24078,10 @@ export namespace Prisma {
     gender?: BoolNullableFilter<"User"> | boolean | null
     DateOfBirth?: DateTimeNullableFilter<"User"> | Date | string | null
     phoneNumber?: StringNullableFilter<"User"> | string | null
+    avatar?: StringNullableFilter<"User"> | string | null
+    isActive?: BoolFilter<"User"> | boolean
+    lastLoginAt?: DateTimeNullableFilter<"User"> | Date | string | null
+    emailVerified?: BoolFilter<"User"> | boolean
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     createdById?: StringNullableFilter<"User"> | string | null
@@ -24043,6 +24103,10 @@ export namespace Prisma {
     gender?: SortOrderInput | SortOrder
     DateOfBirth?: SortOrderInput | SortOrder
     phoneNumber?: SortOrderInput | SortOrder
+    avatar?: SortOrderInput | SortOrder
+    isActive?: SortOrder
+    lastLoginAt?: SortOrderInput | SortOrder
+    emailVerified?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     createdById?: SortOrderInput | SortOrder
@@ -24067,6 +24131,10 @@ export namespace Prisma {
     gender?: BoolNullableFilter<"User"> | boolean | null
     DateOfBirth?: DateTimeNullableFilter<"User"> | Date | string | null
     phoneNumber?: StringNullableFilter<"User"> | string | null
+    avatar?: StringNullableFilter<"User"> | string | null
+    isActive?: BoolFilter<"User"> | boolean
+    lastLoginAt?: DateTimeNullableFilter<"User"> | Date | string | null
+    emailVerified?: BoolFilter<"User"> | boolean
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     createdById?: StringNullableFilter<"User"> | string | null
@@ -24088,6 +24156,10 @@ export namespace Prisma {
     gender?: SortOrderInput | SortOrder
     DateOfBirth?: SortOrderInput | SortOrder
     phoneNumber?: SortOrderInput | SortOrder
+    avatar?: SortOrderInput | SortOrder
+    isActive?: SortOrder
+    lastLoginAt?: SortOrderInput | SortOrder
+    emailVerified?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     createdById?: SortOrderInput | SortOrder
@@ -24108,6 +24180,10 @@ export namespace Prisma {
     gender?: BoolNullableWithAggregatesFilter<"User"> | boolean | null
     DateOfBirth?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
     phoneNumber?: StringNullableWithAggregatesFilter<"User"> | string | null
+    avatar?: StringNullableWithAggregatesFilter<"User"> | string | null
+    isActive?: BoolWithAggregatesFilter<"User"> | boolean
+    lastLoginAt?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+    emailVerified?: BoolWithAggregatesFilter<"User"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     createdById?: StringNullableWithAggregatesFilter<"User"> | string | null
@@ -25503,6 +25579,10 @@ export namespace Prisma {
     gender?: boolean | null
     DateOfBirth?: Date | string | null
     phoneNumber?: string | null
+    avatar?: string | null
+    isActive?: boolean
+    lastLoginAt?: Date | string | null
+    emailVerified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     createdBy?: UserCreateNestedOneWithoutCreatedUsersInput
@@ -25523,6 +25603,10 @@ export namespace Prisma {
     gender?: boolean | null
     DateOfBirth?: Date | string | null
     phoneNumber?: string | null
+    avatar?: string | null
+    isActive?: boolean
+    lastLoginAt?: Date | string | null
+    emailVerified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     createdById?: string | null
@@ -25543,6 +25627,10 @@ export namespace Prisma {
     gender?: NullableBoolFieldUpdateOperationsInput | boolean | null
     DateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdBy?: UserUpdateOneWithoutCreatedUsersNestedInput
@@ -25563,6 +25651,10 @@ export namespace Prisma {
     gender?: NullableBoolFieldUpdateOperationsInput | boolean | null
     DateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
@@ -25583,6 +25675,10 @@ export namespace Prisma {
     gender?: boolean | null
     DateOfBirth?: Date | string | null
     phoneNumber?: string | null
+    avatar?: string | null
+    isActive?: boolean
+    lastLoginAt?: Date | string | null
+    emailVerified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     createdById?: string | null
@@ -25597,6 +25693,10 @@ export namespace Prisma {
     gender?: NullableBoolFieldUpdateOperationsInput | boolean | null
     DateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -25610,6 +25710,10 @@ export namespace Prisma {
     gender?: NullableBoolFieldUpdateOperationsInput | boolean | null
     DateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
@@ -27139,6 +27243,11 @@ export namespace Prisma {
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
   export type DateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -27229,6 +27338,10 @@ export namespace Prisma {
     gender?: SortOrder
     DateOfBirth?: SortOrder
     phoneNumber?: SortOrder
+    avatar?: SortOrder
+    isActive?: SortOrder
+    lastLoginAt?: SortOrder
+    emailVerified?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     createdById?: SortOrder
@@ -27243,6 +27356,10 @@ export namespace Prisma {
     gender?: SortOrder
     DateOfBirth?: SortOrder
     phoneNumber?: SortOrder
+    avatar?: SortOrder
+    isActive?: SortOrder
+    lastLoginAt?: SortOrder
+    emailVerified?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     createdById?: SortOrder
@@ -27257,6 +27374,10 @@ export namespace Prisma {
     gender?: SortOrder
     DateOfBirth?: SortOrder
     phoneNumber?: SortOrder
+    avatar?: SortOrder
+    isActive?: SortOrder
+    lastLoginAt?: SortOrder
+    emailVerified?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     createdById?: SortOrder
@@ -27328,6 +27449,14 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedDateTimeNullableFilter<$PrismaModel>
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
   }
 
   export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
@@ -27972,11 +28101,6 @@ export namespace Prisma {
     _max?: NestedJsonNullableFilter<$PrismaModel>
   }
 
-  export type BoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
-  }
-
   export type TeamScalarRelationFilter = {
     is?: TeamWhereInput
     isNot?: TeamWhereInput
@@ -28028,14 +28152,6 @@ export namespace Prisma {
 
   export type TeamAllianceSumOrderByAggregateInput = {
     stationPosition?: SortOrder
-  }
-
-  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
   }
 
   export type FloatFilter<$PrismaModel = never> = {
@@ -28748,6 +28864,10 @@ export namespace Prisma {
 
   export type NullableDateTimeFieldUpdateOperationsInput = {
     set?: Date | string | null
+  }
+
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
   }
 
   export type DateTimeFieldUpdateOperationsInput = {
@@ -29808,10 +29928,6 @@ export namespace Prisma {
     connect?: AllianceWhereUniqueInput
   }
 
-  export type BoolFieldUpdateOperationsInput = {
-    set?: boolean
-  }
-
   export type TeamUpdateOneRequiredWithoutTeamAlliancesNestedInput = {
     create?: XOR<TeamCreateWithoutTeamAlliancesInput, TeamUncheckedCreateWithoutTeamAlliancesInput>
     connectOrCreate?: TeamCreateOrConnectWithoutTeamAlliancesInput
@@ -30409,6 +30525,11 @@ export namespace Prisma {
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
   export type NestedDateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -30506,6 +30627,14 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedDateTimeNullableFilter<$PrismaModel>
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
   }
 
   export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
@@ -30718,19 +30847,6 @@ export namespace Prisma {
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
-  export type NestedBoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
-  }
-
-  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
-  }
-
   export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | FloatFieldRefInput<$PrismaModel>
     in?: number[] | ListFloatFieldRefInput<$PrismaModel>
@@ -30813,6 +30929,10 @@ export namespace Prisma {
     gender?: boolean | null
     DateOfBirth?: Date | string | null
     phoneNumber?: string | null
+    avatar?: string | null
+    isActive?: boolean
+    lastLoginAt?: Date | string | null
+    emailVerified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     createdBy?: UserCreateNestedOneWithoutCreatedUsersInput
@@ -30832,6 +30952,10 @@ export namespace Prisma {
     gender?: boolean | null
     DateOfBirth?: Date | string | null
     phoneNumber?: string | null
+    avatar?: string | null
+    isActive?: boolean
+    lastLoginAt?: Date | string | null
+    emailVerified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     createdById?: string | null
@@ -30856,6 +30980,10 @@ export namespace Prisma {
     gender?: boolean | null
     DateOfBirth?: Date | string | null
     phoneNumber?: string | null
+    avatar?: string | null
+    isActive?: boolean
+    lastLoginAt?: Date | string | null
+    emailVerified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     createdUsers?: UserCreateNestedManyWithoutCreatedByInput
@@ -30875,6 +31003,10 @@ export namespace Prisma {
     gender?: boolean | null
     DateOfBirth?: Date | string | null
     phoneNumber?: string | null
+    avatar?: string | null
+    isActive?: boolean
+    lastLoginAt?: Date | string | null
+    emailVerified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     createdUsers?: UserUncheckedCreateNestedManyWithoutCreatedByInput
@@ -31099,6 +31231,10 @@ export namespace Prisma {
     gender?: NullableBoolFieldUpdateOperationsInput | boolean | null
     DateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdBy?: UserUpdateOneWithoutCreatedUsersNestedInput
@@ -31118,6 +31254,10 @@ export namespace Prisma {
     gender?: NullableBoolFieldUpdateOperationsInput | boolean | null
     DateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
@@ -31156,6 +31296,10 @@ export namespace Prisma {
     gender?: BoolNullableFilter<"User"> | boolean | null
     DateOfBirth?: DateTimeNullableFilter<"User"> | Date | string | null
     phoneNumber?: StringNullableFilter<"User"> | string | null
+    avatar?: StringNullableFilter<"User"> | string | null
+    isActive?: BoolFilter<"User"> | boolean
+    lastLoginAt?: DateTimeNullableFilter<"User"> | Date | string | null
+    emailVerified?: BoolFilter<"User"> | boolean
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     createdById?: StringNullableFilter<"User"> | string | null
@@ -31328,6 +31472,10 @@ export namespace Prisma {
     gender?: boolean | null
     DateOfBirth?: Date | string | null
     phoneNumber?: string | null
+    avatar?: string | null
+    isActive?: boolean
+    lastLoginAt?: Date | string | null
+    emailVerified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     createdBy?: UserCreateNestedOneWithoutCreatedUsersInput
@@ -31347,6 +31495,10 @@ export namespace Prisma {
     gender?: boolean | null
     DateOfBirth?: Date | string | null
     phoneNumber?: string | null
+    avatar?: string | null
+    isActive?: boolean
+    lastLoginAt?: Date | string | null
+    emailVerified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     createdById?: string | null
@@ -31584,6 +31736,10 @@ export namespace Prisma {
     gender?: NullableBoolFieldUpdateOperationsInput | boolean | null
     DateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdBy?: UserUpdateOneWithoutCreatedUsersNestedInput
@@ -31603,6 +31759,10 @@ export namespace Prisma {
     gender?: NullableBoolFieldUpdateOperationsInput | boolean | null
     DateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
@@ -32134,6 +32294,10 @@ export namespace Prisma {
     gender?: boolean | null
     DateOfBirth?: Date | string | null
     phoneNumber?: string | null
+    avatar?: string | null
+    isActive?: boolean
+    lastLoginAt?: Date | string | null
+    emailVerified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     createdBy?: UserCreateNestedOneWithoutCreatedUsersInput
@@ -32153,6 +32317,10 @@ export namespace Prisma {
     gender?: boolean | null
     DateOfBirth?: Date | string | null
     phoneNumber?: string | null
+    avatar?: string | null
+    isActive?: boolean
+    lastLoginAt?: Date | string | null
+    emailVerified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     createdById?: string | null
@@ -32380,6 +32548,10 @@ export namespace Prisma {
     gender?: NullableBoolFieldUpdateOperationsInput | boolean | null
     DateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdBy?: UserUpdateOneWithoutCreatedUsersNestedInput
@@ -32399,6 +32571,10 @@ export namespace Prisma {
     gender?: NullableBoolFieldUpdateOperationsInput | boolean | null
     DateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
@@ -32568,6 +32744,10 @@ export namespace Prisma {
     gender?: boolean | null
     DateOfBirth?: Date | string | null
     phoneNumber?: string | null
+    avatar?: string | null
+    isActive?: boolean
+    lastLoginAt?: Date | string | null
+    emailVerified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     createdBy?: UserCreateNestedOneWithoutCreatedUsersInput
@@ -32587,6 +32767,10 @@ export namespace Prisma {
     gender?: boolean | null
     DateOfBirth?: Date | string | null
     phoneNumber?: string | null
+    avatar?: string | null
+    isActive?: boolean
+    lastLoginAt?: Date | string | null
+    emailVerified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     createdById?: string | null
@@ -32679,6 +32863,10 @@ export namespace Prisma {
     gender?: NullableBoolFieldUpdateOperationsInput | boolean | null
     DateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdBy?: UserUpdateOneWithoutCreatedUsersNestedInput
@@ -32698,6 +32886,10 @@ export namespace Prisma {
     gender?: NullableBoolFieldUpdateOperationsInput | boolean | null
     DateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
@@ -33918,6 +34110,10 @@ export namespace Prisma {
     gender?: boolean | null
     DateOfBirth?: Date | string | null
     phoneNumber?: string | null
+    avatar?: string | null
+    isActive?: boolean
+    lastLoginAt?: Date | string | null
+    emailVerified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     createdBy?: UserCreateNestedOneWithoutCreatedUsersInput
@@ -33937,6 +34133,10 @@ export namespace Prisma {
     gender?: boolean | null
     DateOfBirth?: Date | string | null
     phoneNumber?: string | null
+    avatar?: string | null
+    isActive?: boolean
+    lastLoginAt?: Date | string | null
+    emailVerified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     createdById?: string | null
@@ -34066,6 +34266,10 @@ export namespace Prisma {
     gender?: NullableBoolFieldUpdateOperationsInput | boolean | null
     DateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdBy?: UserUpdateOneWithoutCreatedUsersNestedInput
@@ -34085,6 +34289,10 @@ export namespace Prisma {
     gender?: NullableBoolFieldUpdateOperationsInput | boolean | null
     DateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
@@ -34135,6 +34343,10 @@ export namespace Prisma {
     gender?: boolean | null
     DateOfBirth?: Date | string | null
     phoneNumber?: string | null
+    avatar?: string | null
+    isActive?: boolean
+    lastLoginAt?: Date | string | null
+    emailVerified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     createdBy?: UserCreateNestedOneWithoutCreatedUsersInput
@@ -34154,6 +34366,10 @@ export namespace Prisma {
     gender?: boolean | null
     DateOfBirth?: Date | string | null
     phoneNumber?: string | null
+    avatar?: string | null
+    isActive?: boolean
+    lastLoginAt?: Date | string | null
+    emailVerified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     createdById?: string | null
@@ -34226,6 +34442,10 @@ export namespace Prisma {
     gender?: NullableBoolFieldUpdateOperationsInput | boolean | null
     DateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdBy?: UserUpdateOneWithoutCreatedUsersNestedInput
@@ -34245,6 +34465,10 @@ export namespace Prisma {
     gender?: NullableBoolFieldUpdateOperationsInput | boolean | null
     DateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
@@ -35005,6 +35229,10 @@ export namespace Prisma {
     gender?: boolean | null
     DateOfBirth?: Date | string | null
     phoneNumber?: string | null
+    avatar?: string | null
+    isActive?: boolean
+    lastLoginAt?: Date | string | null
+    emailVerified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -35076,6 +35304,10 @@ export namespace Prisma {
     gender?: NullableBoolFieldUpdateOperationsInput | boolean | null
     DateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdUsers?: UserUpdateManyWithoutCreatedByNestedInput
@@ -35095,6 +35327,10 @@ export namespace Prisma {
     gender?: NullableBoolFieldUpdateOperationsInput | boolean | null
     DateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdUsers?: UserUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -35114,6 +35350,10 @@ export namespace Prisma {
     gender?: NullableBoolFieldUpdateOperationsInput | boolean | null
     DateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

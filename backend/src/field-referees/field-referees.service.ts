@@ -7,27 +7,99 @@ export class FieldRefereesService {
   constructor(private prisma: PrismaService) {}
 
   async assignRefereesToField(fieldId: string, assignments: RefereeAssignment[]) {
-    // Validate: exactly one head referee
-    const headRefCount = assignments.filter(a => a.isHeadRef).length;
-    if (headRefCount !== 1) {
-      throw new BadRequestException('Exactly one head referee must be assigned per field');
-    }
+    // Validate: field exists
+    await this.validateFieldExists(fieldId);
 
-    // Validate: 3-4 referees total
-    if (assignments.length < 3 || assignments.length > 4) {
-      throw new BadRequestException('Must assign 3-4 referees per field');
+    // If no assignments provided, just clear existing assignments
+    if (assignments.length === 0) {
+      return this.prisma.$transaction(async (tx) => {
+        await tx.fieldReferee.deleteMany({ where: { fieldId } });
+        return this.getFieldReferees(fieldId);
+      });
     }
 
     // Validate: all users exist and have appropriate roles
     await this.validateRefereeUsers(assignments);
 
-    // Validate: field exists
-    await this.validateFieldExists(fieldId);
+    // Validate: at most one head referee
+    const headRefCount = assignments.filter(a => a.isHeadRef).length;
+    if (headRefCount > 1) {
+      throw new BadRequestException('At most one head referee can be assigned per field');
+    }
+
+    // Validate: maximum 4 referees
+    if (assignments.length > 4) {
+      throw new BadRequestException('Maximum 4 referees can be assigned per field');
+    }
 
     return this.prisma.$transaction(async (tx) => {
       // Clear existing assignments
       await tx.fieldReferee.deleteMany({ where: { fieldId } });
       
+      // Create new assignments
+      await tx.fieldReferee.createMany({
+        data: assignments.map(a => ({
+          fieldId,
+          userId: a.userId,
+          isHeadRef: a.isHeadRef
+        }))
+      });
+
+      // Auto-assign head referee to existing matches without a scorer
+      const headReferee = assignments.find(a => a.isHeadRef);
+      if (headReferee) {
+        await tx.match.updateMany({
+          where: { fieldId, scoredById: null },
+          data: { scoredById: headReferee.userId }
+        });
+      }
+
+      return this.getFieldReferees(fieldId);
+    });
+  }
+
+  async addRefereesToField(fieldId: string, assignments: RefereeAssignment[]) {
+    // Validate: field exists
+    await this.validateFieldExists(fieldId);
+
+    if (assignments.length === 0) {
+      throw new BadRequestException('At least one referee assignment is required');
+    }
+
+    // Validate: all users exist and have appropriate roles
+    await this.validateRefereeUsers(assignments);
+
+    // Get current assignments
+    const currentAssignments = await this.prisma.fieldReferee.findMany({
+      where: { fieldId },
+      select: { userId: true, isHeadRef: true }
+    });
+
+    // Check for duplicates
+    const currentUserIds = new Set(currentAssignments.map(a => a.userId));
+    const newUserIds = assignments.map(a => a.userId);
+    const duplicates = newUserIds.filter(id => currentUserIds.has(id));
+    
+    if (duplicates.length > 0) {
+      throw new BadRequestException(`Users ${duplicates.join(', ')} are already assigned to this field`);
+    }
+
+    // Validate total referee count after addition
+    const totalAfterAddition = currentAssignments.length + assignments.length;
+    if (totalAfterAddition > 4) {
+      throw new BadRequestException(`Cannot assign ${assignments.length} more referees. Field would have ${totalAfterAddition} referees (maximum is 4)`);
+    }
+
+    // Validate head referee count
+    const currentHeadRefCount = currentAssignments.filter(a => a.isHeadRef).length;
+    const newHeadRefCount = assignments.filter(a => a.isHeadRef).length;
+    const totalHeadRefCount = currentHeadRefCount + newHeadRefCount;
+    
+    if (totalHeadRefCount > 1) {
+      throw new BadRequestException('Cannot assign multiple head referees. Field already has a head referee or you are trying to assign multiple head referees.');
+    }
+
+    return this.prisma.$transaction(async (tx) => {
       // Create new assignments
       await tx.fieldReferee.createMany({
         data: assignments.map(a => ({
@@ -187,12 +259,15 @@ export class FieldRefereesService {
       throw new BadRequestException('One or more users are not valid referees');
     }
 
-    // Validate head referee role
+    // Check for head referee assignment - prefer HEAD_REFEREE role but allow ALLIANCE_REFEREE
     const headRefereeAssignment = assignments.find(a => a.isHeadRef);
-    const headRefereeUser = users.find(u => u.id === headRefereeAssignment?.userId);
-    
-    if (headRefereeUser && headRefereeUser.role !== 'HEAD_REFEREE') {
-      throw new BadRequestException('Head referee must have HEAD_REFEREE role');
+    if (headRefereeAssignment) {
+      const headRefereeUser = users.find(u => u.id === headRefereeAssignment.userId);
+      
+      // Log a warning if an ALLIANCE_REFEREE is being assigned as head referee
+      if (headRefereeUser && headRefereeUser.role === 'ALLIANCE_REFEREE') {
+        console.warn(`Warning: ALLIANCE_REFEREE ${headRefereeUser.id} is being assigned as head referee`);
+      }
     }
   }
 

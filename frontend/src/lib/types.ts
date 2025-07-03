@@ -15,7 +15,8 @@ export enum UserRole {
   HEAD_REFEREE = "HEAD_REFEREE",
   ALLIANCE_REFEREE = "ALLIANCE_REFEREE",
   TEAM_LEADER = "TEAM_LEADER",
-  TEAM_MEMBER = "TEAM_MEMBER"
+  TEAM_MEMBER = "TEAM_MEMBER",
+  COMMON = "COMMON",
 }
 
 // --- Audience Display Types ---

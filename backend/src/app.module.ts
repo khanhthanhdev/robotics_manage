@@ -8,6 +8,7 @@ import { StagesModule } from './stages/stages.module';
 import { MatchesModule } from './matches/matches.module';
 import { MatchScoresModule } from './match-scores/match-scores.module';
 import { MatchSchedulerModule } from './match-scheduler/match-scheduler.module';
+import { FieldRefereesModule } from './field-referees/field-referees.module';
 import { AuthModule } from './auth/auth.module';
 import { AuthService } from './auth/auth.service';
 import { PrismaService } from './prisma.service';
@@ -25,6 +26,7 @@ import { ScoreConfigModule } from './score-config/score-config.module';
     MatchesModule,
     MatchScoresModule,
     MatchSchedulerModule,
+    FieldRefereesModule,
     TeamStatsApiModule,
     ScoreConfigModule,
   ],

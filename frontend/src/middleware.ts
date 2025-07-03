@@ -89,6 +89,11 @@ const ENHANCED_PROTECTED_ROUTES: Record<string, RouteConfig> = {
     action: 'FULL_CONTROL',
     description: 'User management interface'
   },
+  '/users': {
+    feature: 'USER_MANAGEMENT',
+    action: 'FULL_CONTROL',
+    description: 'User Management Dashboard'
+  },
   '/admin/tournaments': {
     feature: 'SYSTEM_SETTINGS',
     action: 'MANAGE_TOURNAMENTS',
@@ -424,19 +429,25 @@ const securityLogger = new SecurityLogger();
 export async function middleware(request: NextRequest): Promise<NextResponse> {
   const { pathname } = request.nextUrl;
 
+  console.log('[Middleware Debug] Processing request for:', pathname);
+
   // Skip processing for non-protected routes
   if (!routeProtector.isRouteProtected(pathname)) {
+    console.log('[Middleware Debug] Route not protected, allowing access:', pathname);
     return NextResponse.next();
   }
+
+  console.log('[Middleware Debug] Route is protected:', pathname);
 
   // Extract and verify authentication token
   const token = request.cookies.get(AUTH_CONFIG.cookieName)?.value;
   
   console.log('[Middleware Debug] Cookie name:', AUTH_CONFIG.cookieName);
   console.log('[Middleware Debug] Token exists:', !!token);
+  console.log('[Middleware Debug] Token value (first 20 chars):', token?.substring(0, 20));
   
   if (!token) {
-    console.log('[Middleware Debug] No token found, logging access denied');
+    console.log('[Middleware Debug] No token found, redirecting to access denied');
     securityLogger.logAccessDenied(null, pathname);
     return redirectToAccessDenied(request);
   }
@@ -503,6 +514,7 @@ export const config = {
   matcher: [
     // Admin routes (system settings and user management)
     '/admin/:path*',
+    '/users/:path*', // User Management Dashboard
     '/stages/:path*',
     '/system-settings/:path*',
     '/user-management/:path*',

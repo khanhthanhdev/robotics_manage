@@ -22,7 +22,9 @@ import {
 
 export function Sidebar() {
   const pathname = usePathname();
-  const { user, isAdmin, isHeadReferee, logout } = useAuth();
+  const { user, logout } = useAuth();
+  const isAdmin = user?.role === 'ADMIN';
+  const isHeadReferee = user?.role === 'HEAD_REFEREE';
   const { isMobile } = useMobile();
   const [isOpen, setIsOpen] = useState(false);
 

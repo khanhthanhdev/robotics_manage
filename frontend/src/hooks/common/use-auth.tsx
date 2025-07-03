@@ -16,50 +16,76 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { AuthContextType, User } from "@/lib/types";
-import { authService, AuthError, AuthErrorType } from "@/services/authService";
-import { rbacLogger } from "../../utils/rbacLogger";
+import { User, UserRole } from "@/types/user.types";
+import { authService } from "@/services/authService";
 
-// Create the auth context with strict typing
+// Create the auth context with updated typing
+interface AuthContextType {
+  user: User | null;
+  isLoading: boolean;
+  error: Error | null;
+  login: (username: string, password: string) => Promise<void>;
+  logout: () => Promise<void>;
+  register: (username: string, password: string, email?: string) => Promise<void>;
+}
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 /**
  * AuthProvider Component
  * 
  * Provides authentication state management using React Context.
- * Follows the Provider pattern and Dependency Injection principles.
- * Uses React Query for efficient data fetching and caching.
+ * Updated to use real backend authentication instead of React Query.
  */
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
   const router = useRouter();
-  
-  // Use React Query to manage authentication state with proper error handling
-  const { data, error, isLoading, refetch } = useQuery({
-    queryKey: ['currentUser'],
-    queryFn: () => authService.getCurrentUser(),
-    retry: false,
-    refetchOnWindowFocus: false,
-    staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
-  });
-  
-  // Sync user state with query data
+
+  // Check authentication status on mount
+  const checkAuth = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      console.log('[AuthProvider] Checking authentication...');
+      
+      const currentUser = await authService.getCurrentUser();
+      console.log('[AuthProvider] Auth check response:', currentUser);
+      
+      setUser(currentUser as User | null);
+    } catch (err) {
+      console.error('[AuthProvider] Auth check failed:', err);
+      setUser(null);
+      setError(err as Error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Initial auth check
   useEffect(() => {
-    setUser(data ?? null);
-  }, [data]);
+    checkAuth();
+  }, []);
 
   /**
    * Register a new user and automatically log them in
    */
   const register = async (username: string, password: string, email?: string): Promise<void> => {
     try {
+      setIsLoading(true);
+      setError(null);
+      console.log('[AuthProvider] Attempting registration for:', username);
+      
       await authService.register({ username, password, email });
       await login(username, password);
-    } catch (error) {
-      // Re-throw AuthError for proper error handling
-      throw error;
+    } catch (err) {
+      console.error('[AuthProvider] Registration failed:', err);
+      setError(err as Error);
+      throw err;
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -68,11 +94,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
    */
   const login = async (username: string, password: string): Promise<void> => {
     try {
-      await authService.login({ username, password });
-      await refetch(); // Refetch user data after successful login
-    } catch (error) {
-      // Re-throw AuthError for proper error handling
-      throw error;
+      setIsLoading(true);
+      setError(null);
+      console.log('[AuthProvider] Attempting login for:', username);
+      
+      const authenticatedUser = await authService.login({ username, password });
+      console.log('[AuthProvider] Login successful:', authenticatedUser);
+      
+      setUser(authenticatedUser as User);
+    } catch (err) {
+      console.error('[AuthProvider] Login failed:', err);
+      setUser(null);
+      setError(err as Error);
+      throw err;
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -80,26 +116,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
    * Log out user and clear authentication state
    */
   const logout = async (): Promise<void> => {
-    // Log the logout event before clearing state
-    if (user) {
-      await rbacLogger.logout(user.id, user.role);
+    try {
+      console.log('[AuthProvider] Logging out...');
+      await authService.logout();
+      setUser(null);
+      setError(null);
+      
+      // Small delay to ensure state updates are processed before redirect
+      setTimeout(() => {
+        router.push('/login');
+      }, 100);
+    } catch (err) {
+      console.error('[AuthProvider] Logout failed:', err);
+      // Still clear user state even if logout fails
+      setUser(null);
+      setError(null);
     }
-    
-    await authService.logout();
-    setUser(null);
-    await refetch(); // This will return null and update the state
-    
-    // Small delay to ensure state updates are processed before redirect
-    setTimeout(() => {
-      router.push('/login');
-    }, 100);
   };
 
   // Create context value with all required methods and state
   const contextValue: AuthContextType = {
     user,
     isLoading,
-    error: error as Error | null,
+    error,
     login,
     logout,
     register

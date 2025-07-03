@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { webSocketService } from '@/lib/websocket';
+import { apiClient } from '@/lib/api-client';
 import type { BaseScoreData } from '@/types/websocket';
 
 
@@ -85,19 +86,8 @@ class FallbackManager implements IFallbackManager {
       try {
         console.log('📊 Polling database for match scores:', matchId);
 
-        // Fetch scores from database - adjust endpoint as needed
-        const response = await fetch(`/api/match-scores/match/${matchId}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error(`Database fetch failed: ${response.status} ${response.statusText}`);
-        }
-
-        const data = await response.json();
+        // Fetch scores from database using API client
+        const data = await apiClient.get(`/match-scores/match/${matchId}`);
         this.onScoreUpdate(data, 'database');
 
       } catch (error) {

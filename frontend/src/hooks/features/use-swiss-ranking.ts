@@ -1,19 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 import { QueryKeys } from '@/lib/query-keys';
+import { apiClient } from '@/lib/api-client';
 
 export function useSwissRankings(stageId: string | undefined) {
   return useQuery({
     queryKey: QueryKeys.swissRankings.byStage(stageId ?? ''),
     queryFn: async () => {
       if (!stageId) return [];
-      const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
-      const response = await fetch(`${API_BASE_URL}/api/match-scheduler/get-swiss-rankings/${stageId}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-      });
-      if (!response.ok) throw new Error('Failed to fetch Swiss rankings');
-      const data = await response.json();
+      const data = await apiClient.post(`/match-scheduler/get-swiss-rankings/${stageId}`);
       return data.rankings || [];
     },
     enabled: !!stageId,

@@ -32,6 +32,7 @@ export const ROUTE_PROTECTION_CONFIG = {
     '/admin/system': [UserRole.ADMIN],
     '/system-settings': [UserRole.ADMIN],
     '/user-management': [UserRole.ADMIN],
+    '/users': [UserRole.ADMIN], // User Management Dashboard
   },
 
   // Tournament Management
@@ -97,7 +98,7 @@ export const AUTH_CONFIG = {
   
   // Route settings
   accessDeniedPath: '/access-denied',
-  loginPath: '/auth/login',
+  loginPath: '/login', // Updated to match standardized login page
   logoutPath: '/auth/logout',
   
   // JWT settings
@@ -121,6 +122,7 @@ export const DASHBOARD_ROUTES: Record<UserRole, string> = {
   [UserRole.ALLIANCE_REFEREE]: '/referee/dashboard',
   [UserRole.TEAM_LEADER]: '/team/dashboard',
   [UserRole.TEAM_MEMBER]: '/team/dashboard',
+  [UserRole.COMMON]: '/dashboard', // Fallback for common users
 };
 
 /**
@@ -159,6 +161,7 @@ export const API_ROUTE_CONFIG = {
   // Protected API endpoints with role requirements
   protected: {
     '/api/admin/*': [UserRole.ADMIN],
+    '/api/users/*': [UserRole.ADMIN], // User management API endpoints
     '/api/tournaments/*': [UserRole.ADMIN, UserRole.HEAD_REFEREE],
     '/api/teams/*': [UserRole.ADMIN, UserRole.TEAM_LEADER, UserRole.TEAM_MEMBER],
     '/api/scoring/*': [UserRole.ADMIN, UserRole.HEAD_REFEREE, UserRole.ALLIANCE_REFEREE],

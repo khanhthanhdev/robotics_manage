@@ -68,6 +68,13 @@ class ApiClient {
     try {
       console.log(`[API] ${method} ${url}`, data ? { data } : '');
       
+      // For sensitive operations, log additional debug info
+      if (url.includes('bulk-role') || url.includes('bulk-delete')) {
+        console.log(`[API] DEBUG - Cookies:`, document.cookie);
+        console.log(`[API] DEBUG - Headers:`, headers);
+        console.log(`[API] DEBUG - Config:`, config);
+      }
+      
       const response = await fetch(url, config);
       
       // Handle non-JSON responses (like 429 rate limit responses)

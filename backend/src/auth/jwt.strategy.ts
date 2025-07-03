@@ -39,7 +39,16 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       }
 
       this.logger.debug(`User authenticated: ${user.username}, role: ${user.role}`);
-      return user;
+      
+      // Return user object in format expected by controllers
+      // Controllers expect req.user.sub for the user ID
+      const userObject = {
+        ...user,
+        sub: user.id // Add sub field for compatibility with existing controller code
+      };
+      
+      this.logger.debug(`Returning user object: ${JSON.stringify(userObject)}`);
+      return userObject;
     } catch (error) {
       this.logger.error(`JWT validation error: ${error.message}`);
       throw new UnauthorizedException('Authentication failed');
