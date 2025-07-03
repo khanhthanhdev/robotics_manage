@@ -89,7 +89,35 @@ class UserService {
    * Create new user
    */
   async createUser(userData: CreateUserRequest): Promise<User> {
-    const response = await apiClient.post<any>('/users', userData);
+    // Debug: Log the data being sent
+    console.log('[UserService] Creating user with data:', userData);
+    
+    // Clean up the data to ensure proper serialization
+    const cleanedData: any = {
+      ...userData,
+      // Convert Date to ISO string if it exists
+      DateOfBirth: userData.DateOfBirth ? 
+        (userData.DateOfBirth instanceof Date ? userData.DateOfBirth.toISOString() : userData.DateOfBirth)
+        : undefined,
+    };
+    
+    // Remove empty string values and undefined values
+    if (cleanedData.email === '' || cleanedData.email === undefined) {
+      delete cleanedData.email;
+    }
+    if (cleanedData.phoneNumber === '' || cleanedData.phoneNumber === undefined) {
+      delete cleanedData.phoneNumber;
+    }
+    if (cleanedData.DateOfBirth === undefined) {
+      delete cleanedData.DateOfBirth;
+    }
+    if (cleanedData.gender === undefined) {
+      delete cleanedData.gender;
+    }
+    
+    console.log('[UserService] Cleaned data being sent:', cleanedData);
+    
+    const response = await apiClient.post<any>('/users', cleanedData);
     
     // Handle backend response structure {success: true, data: {...}}
     return response.data || response;

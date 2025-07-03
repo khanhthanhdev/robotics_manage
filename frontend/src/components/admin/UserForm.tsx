@@ -379,12 +379,12 @@ export const UserForm: React.FC<UserFormProps> = ({
                 />
               </FormField>
               <FormField id="gender" label="Gender">
-                <Select value={formData.gender === null ? '' : formData.gender ? 'male' : 'female'} onValueChange={(value) => handleInputChange('gender', value === '' ? null : value === 'male') }>
+                <Select value={formData.gender === null ? 'not-specified' : formData.gender ? 'male' : 'female'} onValueChange={(value) => handleInputChange('gender', value === 'not-specified' ? null : value === 'male') }>
                   <SelectTrigger>
                     <SelectValue placeholder="Select gender" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Not specified</SelectItem>
+                    <SelectItem value="not-specified">Not specified</SelectItem>
                     <SelectItem value="male">Male</SelectItem>
                     <SelectItem value="female">Female</SelectItem>
                   </SelectContent>
