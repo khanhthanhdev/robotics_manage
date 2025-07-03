@@ -149,7 +149,20 @@ export function useRemoveFieldReferee(fieldId: string, tournamentId?: string) {
       if (context?.previousData && tournamentId) {
         queryClient.setQueryData(tournamentQueryKey, context.previousData);
       }
-      toast.error('Failed to remove referee');
+      
+      // Check if the error is because the assignment was already removed
+      const errorMessage = (err as any)?.response?.data?.message || (err as Error)?.message || 'Failed to remove referee';
+      
+      if (errorMessage.includes('not found') || errorMessage.includes('already')) {
+        // If the assignment was already removed, just show a warning and refresh
+        toast.warning('Referee was already removed');
+        // Force refresh to sync the UI with the actual database state
+        if (tournamentId) {
+          queryClient.invalidateQueries({ queryKey: tournamentQueryKey });
+        }
+      } else {
+        toast.error('Failed to remove referee');
+      }
     },
     
     onSuccess: () => {

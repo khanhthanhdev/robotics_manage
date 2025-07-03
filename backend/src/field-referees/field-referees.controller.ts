@@ -104,4 +104,12 @@ export class FieldRefereesController {
       assignRefereesDto.referees
     );
   }
+
+  @Get('fields/:fieldId/debug')
+  async getFieldRefereeAssignmentDetails(
+    @Param('fieldId') fieldId: string,
+    @Param('userId') userId?: string
+  ) {
+    return this.fieldRefereesService.getFieldRefereeAssignmentDetails(fieldId, userId);
+  }
 }

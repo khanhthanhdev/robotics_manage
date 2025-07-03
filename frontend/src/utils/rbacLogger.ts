@@ -1,8 +1,6 @@
 /**
- * RBAC Security Logging Utility - Step 5 Implementation
+ * RBAC Security Logging Utility
  * 
- * Provides centralized logging for authentication and authorization events
- * following SOLID principles for security monitoring and audit trails.
  * 
  * Features:
  * - Interface-driven design for extensibility

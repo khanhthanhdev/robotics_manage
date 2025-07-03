@@ -115,8 +115,8 @@ export function FieldRefereeDialog({
     }
   };
 
-  const handleRemoveReferee = async (refereeId: string) => {
-    await removeRefereeMutation.mutateAsync(refereeId);
+  const handleRemoveReferee = async (referee: FieldReferee) => {
+    await removeRefereeMutation.mutateAsync(referee.userId);
   };
 
   const selectedCount = Object.values(refereeSelection).filter(state => state.selected).length;
@@ -186,7 +186,7 @@ export function FieldRefereeDialog({
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => handleRemoveReferee(referee.id)}
+                        onClick={() => handleRemoveReferee(referee)}
                         disabled={removeRefereeMutation.isPending}
                       >
                         {removeRefereeMutation.isPending ? (

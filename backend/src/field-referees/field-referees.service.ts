@@ -159,6 +159,7 @@ export class FieldRefereesService {
   }
 
   async removeRefereeFromField(fieldId: string, userId: string) {
+    // First check if the assignment exists
     const assignment = await this.prisma.fieldReferee.findUnique({
       where: {
         fieldId_userId: { fieldId, userId }
@@ -166,7 +167,9 @@ export class FieldRefereesService {
     });
 
     if (!assignment) {
-      throw new BadRequestException('Referee assignment not found');
+      // Instead of throwing an error, log a warning and return gracefully
+      console.warn(`Referee assignment not found for field ${fieldId} and user ${userId}. It may have already been removed.`);
+      return null; // Return null to indicate the assignment was already removed
     }
 
     // Check if this is a head referee and prevent removal if matches are assigned
@@ -182,9 +185,19 @@ export class FieldRefereesService {
       }
     }
 
-    return this.prisma.fieldReferee.delete({
-      where: { fieldId_userId: { fieldId, userId } }
-    });
+    // Perform the deletion
+    try {
+      return await this.prisma.fieldReferee.delete({
+        where: { fieldId_userId: { fieldId, userId } }
+      });
+    } catch (error) {
+      // Handle the case where the record was deleted between the check and the delete
+      if (error.code === 'P2025') { // Prisma "Record not found" error
+        console.warn(`Referee assignment was already removed for field ${fieldId} and user ${userId}.`);
+        return null;
+      }
+      throw error; // Re-throw other errors
+    }
   }
 
   async batchAssignReferees(assignments: BatchRefereeAssignment[]) {
@@ -389,6 +402,43 @@ export class FieldRefereesService {
 
       return this.getFieldReferees(fieldId);
     });
+  }
+
+  async getFieldRefereeAssignmentDetails(fieldId: string, userId?: string) {
+    const where = userId 
+      ? { fieldId, userId }
+      : { fieldId };
+
+    const assignments = await this.prisma.fieldReferee.findMany({
+      where,
+      include: {
+        user: {
+          select: {
+            id: true,
+            username: true,
+            email: true,
+            role: true
+          }
+        },
+        field: {
+          select: {
+            id: true,
+            name: true,
+            number: true,
+            tournamentId: true
+          }
+        }
+      }
+    });
+
+    return {
+      fieldId,
+      userId,
+      assignments,
+      count: assignments.length,
+      headRefereeCount: assignments.filter(a => a.isHeadRef).length,
+      allianceRefereeCount: assignments.filter(a => !a.isHeadRef).length
+    };
   }
 
   // Private validation methods
